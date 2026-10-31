@@ -52,6 +52,19 @@ if (!requireNamespace("ggplot2",quietly=TRUE)) {
   ot <- data.frame(row_id="a-b",y_position=8,x=2)
   ob <- ggplot_build(base+stat_inference(omni,ot,rows="a-b"))
   stopifnot(length(ob$data)==2L)
+  # A real factorial term is also an omnibus hypothesis, not a pairwise effect.
+  native_fixtures <- readRDS(system.file("methods", "synthetic-baseline.rds", package="infercalcR"))
+  fa <- native_fixtures[["anova_factorial"]]$arguments
+  fa[c("alternative", "conf.level")] <- NULL
+  factorial <- do.call(infercalcR::run_inference,
+    c(list(spec=infercalcR::method_spec("anova_factorial")), fa))
+  term <- infercalcR::result_data(factorial)$row_id[1L]
+  term_bracket <- data.frame(row_id=term, xmin=1, xmax=2, y_position=8)
+  invalid(stat_inference(factorial,term_bracket,rows=term))
+  term_text <- data.frame(row_id=term,x=2,y_position=8)
+  term_plot <- ggplot_build(base+stat_inference(factorial,term_text,rows=term))
+  stopifnot(length(term_plot$data)==2L,
+    identical(term_plot$data[[2L]]$label,report_table(factorial,rows=term)$p_display))
   missing <- fixture(); missing$data$p.value[1] <- missing$data$p.reported[1] <- NA_real_; missing$data$status[1] <- "undefined"
   unavailableplot <- base+stat_inference(missing,subpos,rows="a-b",groups=levels(d$group),label="stars")
   ub <- ggplot_build(unavailableplot)

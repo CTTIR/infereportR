@@ -36,7 +36,7 @@ stat_inference <- function(x, positions, rows = NULL, label = c("p","estimate_ci
   if (!"type" %in% names(pos)) pos$type <- if (named || numeric) "bracket" else "text"
   if (!is.character(pos$type) || anyNA(pos$type) || any(!pos$type %in% c("bracket","text"))) .ir_abort("position type must be bracket or text")
   bracket <- pos$type == "bracket"
-  if (any(bracket & !is.na(d$component) & d$component == "omnibus")) .ir_abort("omnibus tests require text-only annotations")
+  if (any(bracket & !is.na(d$component) & grepl("^omnibus($|_)", d$component))) .ir_abort("omnibus tests require text-only annotations")
   a <- pos[,facet_vars,drop=FALSE]
   a$row_id <- d$row_id
   a$.ir_x <- a$.ir_xend <- rep(NA_real_,nrow(d))
