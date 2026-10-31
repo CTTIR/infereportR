@@ -8,7 +8,9 @@ Description: Formats finalized statistical results as tables, text and optional 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
-Imports: infercalcR, stats, utils
-Suggests: ggplot2, DescrTab2
+Imports: infercalcR (>= 0.0.0.9000), utils
+Suggests: ggplot2 (>= 3.4.0), DescrTab2
 URL: https://github.com/CTTIR/infereportR
 BugReports: https://github.com/CTTIR/infereportR/issues
+Remotes: CTTIR/infercalcR@cafc437f15030e6b93a002bb574a2189eaaec19d,
+    imbi-heidelberg/DescrTab2@f157380e7abcb7964612a480e09e59a45e7a01be
