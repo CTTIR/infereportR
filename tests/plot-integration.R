@@ -31,7 +31,8 @@ if (!requireNamespace("ggplot2",quietly=TRUE)) {
   dodge <- data.frame(row_id="a-b",y_position=8,xmin=.8,xmax=1.2)
   db <- ggplot_build(base+stat_inference(x,dodge,rows="a-b"))
   stopifnot(as.numeric(db$data[[2]]$x[1])==.8,as.numeric(db$data[[2]]$xend[1])==1.2)
-  horiz <- base+stat_inference(x,pos,groups=levels(d$group),p="adjusted",text_hjust=-.1,text_vjust=.5)+scale_y_continuous(expand=expansion(mult=c(.05,.2)))+coord_flip(); hb <- ggplot_build(horiz)
+  hpos <- pos; hpos$y_position <- c(8,10.5,13)
+  horiz <- base+stat_inference(x,hpos,groups=levels(d$group),p="adjusted",text_hjust=-.1,text_vjust=.5)+scale_y_continuous(expand=expansion(mult=c(.05,.2)))+coord_flip(); hb <- ggplot_build(horiz)
   stopifnot(inherits(hb$layout$coord,"CoordFlip"),identical(hb$data[[3]]$label,b1$data[[3]]$label))
   fac <- x; fac$data$site <- c("east","west","east"); fac$metadata$facet_vars <- "site"
   fp <- pos; fp$site <- fac$data$site
