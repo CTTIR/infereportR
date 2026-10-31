@@ -1,0 +1,14 @@
+Package: infereportR
+Type: Package
+Title: Tables, Text and Plot Annotations for Statistical Results
+Version: 0.0.0.9000
+Authors@R: person("Raban", "Heller", , "raban.heller@charite.de",
+    role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-8006-9742"))
+Description: Formats finalized statistical results as tables, text and optional plot annotations. Preserves numerical precision and method metadata without recomputing inference.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports: infercalcR, stats, utils
+Suggests: ggplot2, DescrTab2
+URL: https://github.com/CTTIR/infereportR
+BugReports: https://github.com/CTTIR/infereportR/issues
