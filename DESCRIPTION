@@ -12,5 +12,5 @@ Imports: infercalcR (>= 0.0.0.9000), utils
 Suggests: ggplot2 (>= 3.4.0), DescrTab2
 URL: https://github.com/CTTIR/infereportR
 BugReports: https://github.com/CTTIR/infereportR/issues
-Remotes: CTTIR/infercalcR@70a3ecbd626df69da4b9b9ec101da2eb68b94d12,
+Remotes: CTTIR/infercalcR@9834850a7dac6623ecc57a6ff888e737e082246a,
     imbi-heidelberg/DescrTab2@f157380e7abcb7964612a480e09e59a45e7a01be
