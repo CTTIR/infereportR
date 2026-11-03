@@ -1,4 +1,4 @@
-# infereportR
+# infereportR <picture class="cttir-readme-logo"><source class="cttir-logo-dark-source" media="(prefers-color-scheme: dark)" srcset="man/figures/logo-dark.png" /><img src="man/figures/logo.png" align="right" alt="infereportR logo" width="120" height="139" /></picture>
 
 Tables, manuscript-ready values and ggplot annotations from finalized statistical
 results. Numerical inference belongs to **infercalcR**; guidance and prospective
