@@ -2,8 +2,11 @@ library(infereportR)
 if (!requireNamespace("DescrTab2",quietly=TRUE)) {
   if (identical(Sys.getenv("INFER_SUITE_FULL"),"true")) stop("DescrTab2 required in full lane")
   cat("SKIP DescrTab2 integration: optional backend absent in minimal lane\n")
+} else if (!identical(dt2_version <- as.character(utils::packageVersion("DescrTab2")),"2.1.26")) {
+  # The adapter is pinned to 2.1.26; CRAN's archive only has older releases.
+  if (identical(Sys.getenv("INFER_SUITE_FULL"),"true")) stop("DescrTab2 2.1.26 required in full lane, found ",dt2_version)
+  cat("SKIP DescrTab2 integration: installed version",dt2_version,"is not the pinned 2.1.26\n")
 } else local({
-  stopifnot(identical(as.character(utils::packageVersion("DescrTab2")),"2.1.26"))
   d <- data.frame(value=c(1,2,4,5,3,5,6,9),group=factor(rep(c("control","treated"),each=4)))
   # Explicit computation happens once before importing/rendering.
   native <- DescrTab2::descr(d,group="group",format_options=list(print_CI=TRUE))
