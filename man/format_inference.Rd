@@ -18,7 +18,7 @@ format_p(x, digits = 3L, decimal_mark = ".", prefix = TRUE)
 \item{prefix}{Include \code{p =} or \code{p <} when TRUE.}
 }
 \value{A character vector.}
-\details{P-values below \code{10^-digits}, including stored zero, display a strict upper threshold. Missing p-values never display as nonsignificant. A stored zero may represent numerical underflow, and is not labelled as a mathematically zero probability. Intervals are formatted without calculation or changes of scale.}
+\details{P-values below \code{10^-digits}, including stored zero, display a strict upper threshold. Missing p-values never display as nonsignificant. A stored zero may represent numerical underflow, and is not labeled as a mathematically zero probability. Intervals are formatted without calculation or changes of scale.}
 \examples{
 format_p(c(0.03, 1e-20, 0, NA_real_))
 format_interval(c(-Inf, 0.1), c(2, 0.5))

@@ -55,7 +55,7 @@ variable denominators, missing counts, labels and units. To add already computed
 inference, supply `inference`, an explicit `mapping` data.frame with
 `variable_id`, `result_id`, `row_id`, and an `inference_population` label. At most
 one inference row per variable is supported. Descriptive and inferential
-populations remain separately labelled.
+populations remain separately labeled.
 
 ## ggplot annotations
 
@@ -110,7 +110,7 @@ reshaping callbacks. Row-level group membership, input options and presentation 
 while aggregate counts and levels remain. Native method labels and numbers are retained;
 there is no normalized inference conversion. In the pinned version, native
 `CI_upper`/`CI_lower` column names reverse the stored CI-vector order. They are
-labelled `native_CI_first`/`native_CI_second` to avoid misleading upper/lower
+labeled `native_CI_first`/`native_CI_second` to avoid misleading upper/lower
 headings, with original names retained in metadata; no normalized inference
 conversion is claimed.
 Use the shared result route for normalized estimates and intervals.

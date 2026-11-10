@@ -21,7 +21,7 @@ report_descriptive(x, variables = NULL, group = NULL, labels = NULL,
 \item{digits, p_digits, decimal_mark}{Display settings as in \code{report_table}.}
 }
 \value{An ordinary data.frame with full-precision descriptions, n, n.missing, n.total, group/level labels and display columns. No p-value columns exist by default. Optional joined inference fields have an \code{inference_} prefix. Metadata retains descriptive and inferential populations separately.}
-\details{The raw route delegates to \code{infercalcR::describe_data}. Categorical percentages use nonmissing denominators and missing groups remain explicit. No automatic hypothesis test is selected. The join never matches on display labels, and cannot infer that two differently labelled analysis populations are identical. Group-specific multiple tests per variable require separate explicitly scoped reports.}
+\details{The raw route delegates to \code{infercalcR::describe_data}. Categorical percentages use nonmissing denominators and missing groups remain explicit. No automatic hypothesis test is selected. The join never matches on display labels, and cannot infer that two differently labeled analysis populations are identical. Group-specific multiple tests per variable require separate explicitly scoped reports.}
 \examples{
 d <- data.frame(value = c(1, 2, NA, 4), group = c("A", "A", "B", "B"))
 report_descriptive(d, group = "group", units = c(value = "mm"))
