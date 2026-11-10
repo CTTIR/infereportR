@@ -19,3 +19,15 @@ Rendering uses the public registered print method with print_format="numeric" an
 
 The native numbers and test labels are preserved. It is not converted into a shared inference result: native fields alone do not reliably establish every estimand, orientation and interval policy. In particular the pinned native numeric renderer uses CI_upper/CI_lower column names in the reverse order of the stored CI vector; the adapter gives them neutral native_CI_first/native_CI_second names, retaining the original headings in report metadata. It does not reinterpret them as a normalized inference result. Prefer the shared result route for normalized inferential reporting. Imports are trusted native R objects, not an untrusted serialized-data format.}
 \seealso{\url{https://imbi-heidelberg.github.io/DescrTab2/reference/print.DescrList.html}}
+\examples{
+# Runs only with the pinned optional DescrTab2 2.1.26 installed.
+if (requireNamespace("DescrTab2", quietly = TRUE) &&
+    identical(as.character(utils::packageVersion("DescrTab2")), "2.1.26")) {
+  d <- data.frame(value = c(1, 2, 4, 5, 3, 5, 6, 9),
+    group = factor(rep(c("control", "treated"), each = 4)))
+  native <- DescrTab2::descr(d, group = "group",
+    format_options = list(print_CI = TRUE))
+  imported <- import_descrtab2(native)
+  render_descrtab2(imported, "table")
+}
+}
