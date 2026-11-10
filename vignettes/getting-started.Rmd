@@ -209,3 +209,6 @@ never as nonsignificant. Infinite interval limits stay infinite.
 - `vignette("descriptive-tables", package = "infereportR")` describes data with
   explicit denominators, joins supplied inference and renders precomputed
   DescrTab2 tables.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```
