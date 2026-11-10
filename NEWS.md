@@ -1,6 +1,17 @@
-# infereportR 0.0.0.9000
+# infereportR 0.1.0
 
-* Add a CTTIR v5 hex logo in the statistical inference colour shared with
+* Prepared for a first CRAN submission, which has to wait until
+  infercalcR is on CRAN.
+* The maintainer address is now raban.heller@uni-ulm.de.
+* DESCRIPTION drops the `Remotes` field, requires infercalcR 0.1.0 or
+  later, gains a fuller Description and declares `Language: en-US`;
+  `inst/WORDLIST` records the technical terms used in the documentation.
+* `import_descrtab2()` and `render_descrtab2()` gain examples, which run
+  only when the pinned optional DescrTab2 2.1.26 is installed.
+* The GitHub Actions check installs infercalcR and the pinned DescrTab2
+  explicitly, adds R-devel and R oldrel-1 on Linux, and explains what is
+  missing when it cannot read infercalcR.
+* Add a CTTIR v5 hex logo in the statistical inference color shared with
   the other inference packages; `tools/branding/render.R` draws it in R.
 * Added plain tables, deterministic text and descriptions through infercalcR's
   shared result contract, with full-precision analytical fields and common

@@ -3,3 +3,7 @@
 ^tools$
 ^\.github$
 ^LICENSE\.md$
+^cran-comments\.md$
+^.*\.tar\.gz$
+^.*\.Rcheck$
+^\.DS_Store$
