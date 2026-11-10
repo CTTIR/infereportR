@@ -137,3 +137,56 @@ DescrTab2; absence fails that lane. Minimal-library runs test explicit missing
 feature errors and label unexecuted integrations as SKIP. Skips do not establish
 backend support. Set `INFER_SUITE_PLOT_DIR` and `INFER_SUITE_REPORT_DIR` to retain
 plot/native-output artifacts during verification.
+
+## Acknowledgments and sources
+
+infereportR is part of an inference suite with infercalcR and inferguidR. The
+suite builds on the work of others. We gratefully acknowledge that work here and
+cite it, so that every method can be traced to its source.
+
+### DescrTab2, Institute of Medical Biometry, Heidelberg University
+
+The suite is deeply inspired by **DescrTab2** [1], the R package for
+publication-quality descriptive statistics tables developed at the Institute of
+Medical Biometry (IMBI), Heidelberg University, by Jan Meis, Lukas Baumann,
+Maximilian Pilz and Lukas Sauer, with contributions from Lorenz Uhlmann and
+Csilla van Lunteren. Its documented test-choice tree, its validation statement
+and its practice of computing each test with an established implementation (R's
+stats package, exact2x2, DescTools and nlme) are the model for how the suite
+chooses, computes and reports statistical tests. infereportR also renders tables
+that were precomputed with DescrTab2 2.1.26 (`import_descrtab2()`,
+`render_descrtab2()`). DescrTab2 was archived on CRAN on 18 October 2025; its
+source code remains available on GitHub. We thank its authors and IMBI
+Heidelberg for making their work openly available.
+
+### Methodenberatung, University of Zurich
+
+The methods-consulting pages of the University of Zurich [2] inspired the
+guidance in this suite: their decision tree and step-by-step decision assistant
+for choosing a statistical method, and their worked examples and explanations of
+each method.
+
+### G\*Power
+
+The power and sample-size procedures of inferguidR follow the test inventory of
+G\*Power 3.1 [3, 4], and the distribution calculator of infercalcR follows the
+G\*Power 3.1.9.7 calculator. Their results are compared with values recorded
+from G\*Power 3.1.9.7. G\*Power is neither distributed with nor called by these
+packages.
+
+### Software
+
+infereportR is written in R [5] and imports infercalcR [6]. Plot annotations use
+the optional ggplot2 [7]; precomputed tables use the optional DescrTab2 [1]. Use
+`citation("infereportR")` for this package and `citation()` or
+`citation("<package>")` for R and the packages you used.
+
+### References
+
+1. Meis J, Baumann L, Pilz M, Sauer L (2022). *DescrTab2: Publication Quality Descriptive Statistics Tables*. R package version 2.1.16. <https://doi.org/10.32614/CRAN.package.DescrTab2>. Source code, including the development version 2.1.26: <https://github.com/imbi-heidelberg/DescrTab2>.
+2. Universität Zürich, Methodenberatung. *Datenanalyse mit SPSS*: decision tree (Entscheidbaum), decision assistant (Entscheidassistent) and method pages with examples and explanations. <https://www.methodenberatung.uzh.ch/de/datenanalyse_spss.html>. Accessed 3 October 2026.
+3. Faul F, Erdfelder E, Lang A-G, Buchner A (2007). G\*Power 3: A flexible statistical power analysis program for the social, behavioral, and biomedical sciences. *Behavior Research Methods*, 39(2), 175-191. <https://doi.org/10.3758/BF03193146>.
+4. Faul F, Erdfelder E, Buchner A, Lang A-G (2009). Statistical power analyses using G\*Power 3.1: Tests for correlation and regression analyses. *Behavior Research Methods*, 41(4), 1149-1160. <https://doi.org/10.3758/BRM.41.4.1149>.
+5. R Core Team. *R: A Language and Environment for Statistical Computing*. R Foundation for Statistical Computing, Vienna, Austria. <https://www.R-project.org/>.
+6. Heller R. *infercalcR: Statistical Inference and Diagnostic Calculations*. R package. <https://github.com/CTTIR/infercalcR>.
+7. Wickham H (2016). *ggplot2: Elegant Graphics for Data Analysis*. Springer, New York. <https://doi.org/10.1007/978-3-319-24277-4>.

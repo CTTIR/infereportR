@@ -204,3 +204,6 @@ names them `native_CI_first` and `native_CI_second` and keeps the original
 names in the metadata. Native DescrTab2 output is not converted into the shared
 result format; for normalized estimates and intervals, compute the analysis
 with infercalcR and use `report_table()` or `report_descriptive()`.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```

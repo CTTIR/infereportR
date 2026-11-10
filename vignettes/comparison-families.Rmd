@@ -285,3 +285,6 @@ ggplot(tg, aes(supp, len)) +
 Annotations are placed only where the positions say. Automatic placement,
 automatic dodging and free facet scales are not inferred. For dodged groups,
 give numeric `xmin` and `xmax` instead of `group1` and `group2`.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```
