@@ -1,0 +1,206 @@
+---
+title: "Descriptive tables and DescrTab2 output"
+author: "Raban Heller"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Descriptive tables and DescrTab2 output}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
+---
+
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+has_descrtab2 <- requireNamespace("DescrTab2", quietly = TRUE) &&
+  identical(as.character(utils::packageVersion("DescrTab2")), "2.1.26")
+```
+
+A descriptive table summarizes the analyzed data, usually by group. In
+infereportR such a table states its denominators and missing counts, contains
+no hypothesis test by default, and keeps any added inference apart from the
+descriptive summaries. This vignette uses the `ToothGrowth` data set that
+ships with R. The last section shows the optional adapter for tables already
+computed with DescrTab2.
+
+```{r packages}
+library(infercalcR)
+library(infereportR)
+```
+
+## Describe raw data
+
+`ToothGrowth` records the length of odontoblasts, the cells responsible for
+tooth growth, in 60 guinea pigs. Each animal received vitamin C as orange juice
+(`OJ`) or ascorbic acid (`VC`) at one of three daily doses. Two lengths are set
+to missing here to show how denominators are reported, and the dose is treated
+as an ordered category.
+
+```{r data}
+tg <- ToothGrowth
+tg$dose <- factor(tg$dose, levels = c(0.5, 1, 2), ordered = TRUE)
+tg$len[c(3, 41)] <- NA
+```
+
+Given a data frame, `report_descriptive()` asks `infercalcR::describe_data()`
+for the summaries and formats the result. Labels and units are optional and
+are matched by variable name:
+
+```{r describe}
+desc <- report_descriptive(tg, group = "supp",
+  labels = c(len = "Odontoblast length", dose = "Daily dose"),
+  units = c(dose = "mg/day"))
+```
+
+Continuous variables are summarized by mean, standard deviation, median,
+quartiles, minimum and maximum. Each row reports the number of observations
+used (`n`), the number missing (`n.missing`) and the group total (`n.total`):
+
+```{r continuous}
+continuous <- desc$variable_type == "continuous" &
+  desc$estimand %in% c("mean", "sd", "median")
+desc[continuous, c("group", "label", "estimand", "estimate_display",
+  "n", "n.missing", "n.total")]
+```
+
+Categorical variables, including ordered factors, are reported as counts with
+proportions of the nonmissing observations in each group:
+
+```{r categorical}
+desc[desc$variable_type == "categorical",
+  c("group", "label", "unit", "level", "estimate_display", "proportion", "n")]
+```
+
+The table is a plain data frame in long format. Base R can reshape it into the
+familiar layout with one column per group:
+
+```{r wide}
+summary_rows <- desc[desc$estimand %in% c("mean", "sd"),
+  c("label", "estimand", "group", "estimate_display")]
+reshape(summary_rows, idvar = c("label", "estimand"), timevar = "group",
+  direction = "wide")
+```
+
+No p-value columns are created and no test is chosen automatically.
+
+## Report a stored description
+
+A description can also be computed once with infercalcR and reported later.
+In that case the selection and labeling arguments are not used, since they
+already belong to the stored result:
+
+```{r stored}
+stored <- describe_data(tg, variables = "len", group = "supp")
+report_descriptive(stored)[, c("group", "estimand", "estimate_display", "n")]
+try(report_descriptive(stored, group = "supp"))
+```
+
+## Add supplied inference
+
+A prespecified test can be shown next to the descriptive rows. It is computed
+separately, here on the complete cases, and joined only through explicit
+identifiers: the variable, the result and the result row. Display labels are
+never used for matching, and the analysis population of the test must be named.
+
+```{r inference}
+complete <- !is.na(tg$len)
+len_test <- run_inference(method_spec("t_means_two_independent_welch"),
+  x = tg$len[complete & tg$supp == "OJ"],
+  y = tg$len[complete & tg$supp == "VC"],
+  result_id = "len-oj-vs-vc")
+
+mapping <- data.frame(
+  variable_id = "len",
+  result_id = "len-oj-vs-vc",
+  row_id = result_data(len_test)$row_id
+)
+
+joined <- report_descriptive(tg, group = "supp",
+  labels = c(len = "Odontoblast length", dose = "Daily dose"),
+  units = c(dose = "mg/day"),
+  inference = len_test, mapping = mapping,
+  inference_population = "Complete cases; OJ minus VC")
+
+joined[joined$estimand == "mean",
+  c("group", "label", "estimate_display", "n", "inference_p_display",
+    "inference_n", "inference_population")]
+```
+
+All joined fields carry the prefix `inference_`. At most one inference row can
+be attached to each variable. The metadata keeps the descriptive and the
+inferential population separately:
+
+```{r populations}
+meta <- report_metadata(joined)
+meta$inference_population
+meta$inference_mapping
+```
+
+## Precomputed DescrTab2 tables
+
+DescrTab2 builds descriptive tables with its own tests. It was archived on CRAN
+on 2025-10-18. The adapter in infereportR is verified for DescrTab2 2.1.26
+from upstream commit `f157380e7abcb7964612a480e09e59a45e7a01be`, and the
+chunks below run only when that version is installed. infereportR never
+installs it.
+
+`DescrTab2::descr()` calculates the summaries and, by default, also runs tests.
+That calculation happens before the import. `import_descrtab2()` keeps the
+finished numbers and test labels, removes the row-level group membership and
+any presentation callbacks, and never calls `descr()` again:
+
+```{r descrtab2-import, eval = has_descrtab2}
+native <- DescrTab2::descr(ToothGrowth[c("len", "supp")], group = "supp",
+  format_options = list(print_CI = TRUE))
+imported <- import_descrtab2(native)
+str(report_metadata(imported)$tests$len[c("test_name", "p")])
+```
+
+`render_descrtab2()` returns the native numerical table as a data frame. The
+interval belongs to the row of the test:
+
+```{r descrtab2-table, eval = has_descrtab2}
+native_table <- render_descrtab2(imported, "table")
+native_table[, c("Variable", "OJ", "VC", "Total", "p")]
+native_table[1, c("Test", "native_CI_first", "native_CI_second")]
+```
+
+The same cells, formatted with the shared formatters, are available as plain
+text lines with `format = "text"` or as an HTML table with `format = "html"`:
+
+```{r descrtab2-html, eval = has_descrtab2}
+html <- render_descrtab2(imported, "html")
+```
+
+```{r descrtab2-html-show, eval = has_descrtab2, echo = FALSE, results = "asis"}
+cat('<div style="overflow-x: auto;">', html, "</div>", sep = "")
+```
+
+The pinned DescrTab2 version labels its interval columns `CI_upper` and
+`CI_lower` in the reverse order of the stored interval. The adapter therefore
+names them `native_CI_first` and `native_CI_second` and keeps the original
+names in the metadata. Native DescrTab2 output is not converted into the shared
+result format; for normalized estimates and intervals, compute the analysis
+with infercalcR and use `report_table()` or `report_descriptive()`.

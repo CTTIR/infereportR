@@ -1,0 +1,211 @@
+---
+title: "Getting started with infereportR"
+author: "Raban Heller"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with infereportR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
+---
+
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+has_ggplot2 <- requireNamespace("ggplot2", quietly = TRUE)
+```
+
+infereportR presents statistical results that are already finished. It turns
+them into tables, sentences for a manuscript and labels for a plot. It does not
+run tests, fit models, compute intervals or adjust p-values. Those steps belong
+to infercalcR, which stores every result in a common, plain-data format.
+infereportR reads that format through `infercalcR::result_data()` and
+`infercalcR::result_metadata()` and formats what it finds.
+
+This vignette walks through one result from calculation to table, text and
+plot. It uses the `PlantGrowth` data set that ships with R and runs offline.
+
+```{r packages}
+library(infercalcR)
+library(infereportR)
+```
+
+## Compute a result with infercalcR
+
+`PlantGrowth` holds the dried weight of 30 plants: 10 in a control condition
+(`ctrl`) and 10 in each of two treatment conditions (`trt1`, `trt2`). The
+analysis is chosen in advance: a Welch two-sample t-test comparing `trt2`
+with `ctrl`. The method, sidedness and confidence level are fixed in the
+specification before any data are seen.
+
+```{r compute}
+trt2 <- PlantGrowth$weight[PlantGrowth$group == "trt2"]
+ctrl <- PlantGrowth$weight[PlantGrowth$group == "ctrl"]
+
+welch <- run_inference(
+  method_spec("t_means_two_independent_welch"),
+  x = trt2, y = ctrl,
+  result_id = "trt2-vs-ctrl"
+)
+welch
+```
+
+The estimate is the difference in means, `x` minus `y`, here `trt2` minus
+`ctrl`. All numbers are now final. Every step below only reads them.
+
+## Report a table
+
+`report_table()` returns an ordinary data frame with one row per stored result
+row. The analytical columns keep their full precision:
+
+```{r table-precision}
+tab <- report_table(welch)
+tab[, c("estimand", "estimate", "conf.low", "conf.high", "p.value", "n")]
+```
+
+Formatted values sit in separate columns ending in `_display`, so rounding
+never replaces a stored number:
+
+```{r table-display}
+tab[, c("estimate_display", "interval_display", "p_display", "confidence_display")]
+```
+
+`p_selected` and `p_selection` record which stored p-value is shown. The
+default is the reported p-value; `p = "raw"` and `p = "adjusted"` select the
+other stored columns. The number of digits and the decimal mark change the
+presentation only:
+
+```{r table-settings}
+report_table(welch, digits = 2, p_digits = 4, decimal_mark = ",")[
+  , c("estimate_display", "interval_display", "p_display")]
+```
+
+Because the result is a plain data frame, any table tool can print it. For
+example, with `knitr::kable()`:
+
+```{r table-kable}
+knitr::kable(
+  tab[, c("estimand", "estimate_display", "interval_display", "p_display", "n")],
+  col.names = c("Estimand", "Estimate", "Interval", "p-value", "n")
+)
+```
+
+## Report text
+
+`report_text()` writes one neutral sentence per row. The full style names the
+method, the estimand, the estimate, the interval with its confidence level and
+method, the test statistic, the p-value together with which p-value it is, the
+sample size and the number of excluded observations:
+
+```{r text-full}
+cat(report_text(welch), sep = "\n")
+```
+
+The sentence contains no interpretation. It does not call a result
+significant or relevant; that judgment stays with the author.
+
+Shorter presets suit tables and figure legends:
+
+```{r text-styles}
+cat(report_text(welch, style = "estimate_ci_p"), sep = "\n")
+cat(report_text(welch, style = "p"), sep = "\n")
+```
+
+A template inserts stored fields into your own wording. The supported fields
+are `estimate`, `ci`, `p`, `statistic`, `method`, `estimand`, `contrast`,
+`status` and `n`. Templates are substituted, never evaluated, and an unknown
+field is an error:
+
+```{r text-template}
+cat(report_text(welch,
+  template = "trt2 minus ctrl: {estimate} {ci}; {p}; n = {n}"), sep = "\n")
+try(report_text(welch, template = "{mean}"))
+```
+
+## Annotate a plot
+
+The optional ggplot2 integration draws brackets and labels from the same
+stored result. The chunks in this section run only when ggplot2 is installed.
+
+A positions data frame states where each annotation goes. It has one row per
+result row, identified by `row_id`, and a `y_position` in data units. Named
+endpoints (`group1`, `group2`) need the order of the groups on the discrete
+axis, given in `groups`.
+
+```{r plot-bracket, eval = has_ggplot2, fig.width = 6, fig.height = 4, fig.alt = "Box plots of dried plant weight for the groups ctrl, trt1 and trt2, with a bracket from ctrl to trt2 labeled with the estimate, its interval and the p-value."}
+library(ggplot2)
+
+positions <- data.frame(
+  row_id = result_data(welch)$row_id,
+  group1 = "ctrl", group2 = "trt2",
+  y_position = 6.6
+)
+
+ggplot(PlantGrowth, aes(group, weight)) +
+  geom_boxplot(width = 0.5) +
+  stat_inference(welch, positions, groups = levels(PlantGrowth$group),
+    label = "estimate_ci_p", tip_length = 0.1) +
+  labs(x = NULL, y = "Dried weight")
+```
+
+`stat_inference()` returns ordinary ggplot2 layers. No test runs while the plot
+is built or drawn, and the label is the same text that `report_text()` gives
+for `style = "estimate_ci_p"`. `tip_length` is also in data units.
+
+## Keep the provenance
+
+Tables and text carry the result metadata as an attribute.
+`report_metadata()` retrieves it, for example to record the method, the
+result identifier and the analysis population next to a table:
+
+```{r metadata}
+meta <- report_metadata(tab)
+meta[c("method_id", "result_id", "kind")]
+str(meta$population)
+```
+
+## Shared formatters
+
+Tables, text and plot labels use the same three formatters, which are also
+exported:
+
+```{r formatters}
+format_estimate(c(0.494, -1.23456, NA))
+format_interval(c(0.00513, -Inf), c(0.983, 2))
+format_p(c(0.0479, 0.0004, 0, NA))
+```
+
+A p-value below the display threshold, including a stored zero, is shown as
+`p < 0.001` rather than `p = 0`. A missing p-value is shown as unavailable and
+never as nonsignificant. Infinite interval limits stay infinite.
+
+## Next steps
+
+- `vignette("comparison-families", package = "infereportR")` combines several
+  comparisons, displays adjusted p-values and covers plot annotations in more
+  detail.
+- `vignette("descriptive-tables", package = "infereportR")` describes data with
+  explicit denominators, joins supplied inference and renders precomputed
+  DescrTab2 tables.

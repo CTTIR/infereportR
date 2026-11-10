@@ -1,0 +1,60 @@
+url: https://cttir.github.io/infereportR/
+template:
+  includes:
+    in_header: |
+      <meta name="theme-color" content="#1565c0">
+      <script defer data-domain="cttir.github.io/infereportr" src="https://analytics.hellebo.de/js/script.file-downloads.outbound-links.js"></script>
+  package: themakR
+  math-rendering: mathml
+  bslib:
+    base_font: system-ui
+    heading_font: system-ui
+    code_font: monospace
+destination: docs
+development:
+  mode: auto
+home:
+  sidebar:
+    structure:
+    - links
+    - license
+    - citation
+    - authors
+  title: infereportR
+  description: Tables, text and plot annotations for finalized statistical results,
+    reported at full precision without recomputation.
+articles:
+- title: Learn infereportR
+  navbar: null
+  contents:
+  - getting-started
+  - comparison-families
+  - descriptive-tables
+reference:
+- title: Tables and text
+  desc: Present finalized results as tables and neutral text.
+  contents:
+  - report_table
+  - report_text
+  - report_metadata
+- title: Formatting
+  desc: Shared display rules for estimates, intervals and p-values.
+  contents:
+  - format_estimate
+  - format_interval
+  - format_p
+- title: Descriptive tables
+  contents:
+  - report_descriptive
+- title: Plot annotations
+  desc: Optional ggplot2 layers built from stored results.
+  contents:
+  - stat_inference
+  - annotate_inference
+- title: DescrTab2 adapter
+  desc: Optional import and rendering of precomputed DescrTab2 tables.
+  contents:
+  - import_descrtab2
+  - render_descrtab2
+
+llm-docs: false

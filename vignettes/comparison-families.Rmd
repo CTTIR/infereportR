@@ -1,0 +1,287 @@
+---
+title: "Comparison families, adjusted p-values and plot annotations"
+author: "Raban Heller"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparison families, adjusted p-values and plot annotations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
+---
+
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+has_ggplot2 <- requireNamespace("ggplot2", quietly = TRUE)
+```
+
+A study often reports several related comparisons. Whether their p-values are
+adjusted, and over which set of hypotheses, is part of the analysis and is
+decided in infercalcR. infereportR then shows the stored raw or adjusted
+values and keeps the definition of the family attached to every table, text
+and plot label. This vignette uses the `PlantGrowth` and `ToothGrowth` data
+sets that ship with R.
+
+```{r packages}
+library(infercalcR)
+library(infereportR)
+```
+
+## One result for a family of comparisons
+
+`PlantGrowth` has three groups, which give three pairwise comparisons. Each
+one is a Welch two-sample t-test computed by infercalcR. The finished rows are
+then combined into a single result with stable row identifiers and explicit
+contrast labels, so that the family can be adjusted as a whole.
+
+```{r family}
+weight <- PlantGrowth$weight
+group <- PlantGrowth$group
+spec <- method_spec("t_means_two_independent_welch")
+
+pairs <- data.frame(
+  row_id = c("trt1-ctrl", "trt2-ctrl", "trt2-trt1"),
+  comparison = c("trt1", "trt2", "trt2"),
+  reference = c("ctrl", "ctrl", "trt1")
+)
+
+rows <- do.call(rbind, lapply(seq_len(nrow(pairs)), function(i) {
+  fit <- run_inference(spec,
+    x = weight[group == pairs$comparison[i]],
+    y = weight[group == pairs$reference[i]])
+  result_data(fit)
+}))
+rows$row_id <- pairs$row_id
+rows$variable_id <- "weight"
+rows$contrast <- paste(pairs$comparison, "minus", pairs$reference)
+
+unadjusted <- new_inference_result(rows, list(
+  method_id = "t_means_two_independent_welch",
+  result_id = "plantgrowth-pairwise",
+  population = "PlantGrowth: 30 plants, 10 per group"
+))
+```
+
+The Holm adjustment is a calculation, so it also happens in infercalcR. It is
+applied once to the complete declared family:
+
+```{r adjust}
+family <- adjust_inference(unadjusted, method = "holm", family_id = "all-pairwise")
+```
+
+## Choose the stored p-value
+
+The `p` argument selects which stored p-value is displayed. Nothing is
+recalculated; the choice only decides which column feeds `p_display`.
+
+```{r p-choice}
+cols <- c("row_id", "contrast", "estimate_display", "p.value", "p.adjusted", "p_display")
+report_table(family, p = "raw")[, cols]
+report_table(family, p = "adjusted")[, cols]
+```
+
+Asking for adjusted values that were never computed is an error rather than a
+silent fallback to raw p-values:
+
+```{r p-missing}
+try(report_table(unadjusted, p = "adjusted"))
+```
+
+## Select rows after adjustment
+
+`rows` picks rows for display. Selecting happens after the adjustment, and the
+metadata still describes the full family, including its size and members:
+
+```{r rows}
+one <- report_table(family, rows = "trt2-trt1", p = "adjusted")
+one[, cols]
+str(report_metadata(one)$adjustment)
+```
+
+Full text names the adjustment method next to the displayed p-value:
+
+```{r text}
+cat(report_text(family, p = "adjusted"), sep = "\n")
+```
+
+## Stars and unavailable results
+
+The `stars` preset uses the thresholds 0.05, 0.01, 0.001 and 0.0001:
+
+```{r stars}
+stars <- report_text(family, p = "adjusted", style = "stars")
+data.frame(row_id = names(stars), label = as.character(stars))
+```
+
+A result that could not be computed keeps its status. It never receives stars
+or `ns`, and full text states the recorded reason:
+
+```{r unavailable}
+incomplete <- new_inference_result(
+  data.frame(
+    row_id = c("a", "b"), estimand = "mean difference",
+    estimate = c(0.8, NA), conf.low = c(0.1, NA), conf.high = c(1.5, NA),
+    conf.level = 0.95, p.value = c(0.03, NA), status = c("ok", "undefined"),
+    reason = c(NA, "fewer than two observations in one group")
+  ),
+  list(method_id = "example", result_id = "incomplete")
+)
+cat(report_text(incomplete, style = "stars"), sep = "\n")
+cat(report_text(incomplete), sep = "\n")
+```
+
+## Brackets on a plot
+
+The remaining sections need the optional ggplot2 package; their chunks run
+only when it is installed.
+
+Each bracket is described by one row of a positions data frame. Coordinates are
+in data units. `group1` and `group2` name the endpoints, and `groups` gives the
+order of the groups on the discrete axis.
+
+```{r brackets, eval = has_ggplot2, fig.width = 6, fig.height = 4.5, fig.alt = "Box plots of dried plant weight for ctrl, trt1 and trt2 with three brackets, one per pairwise comparison, each labeled with its Holm-adjusted p-value."}
+library(ggplot2)
+
+positions <- data.frame(
+  row_id = pairs$row_id,
+  group1 = pairs$reference,
+  group2 = pairs$comparison,
+  y_position = c(6.5, 7.3, 6.9)
+)
+
+base <- ggplot(PlantGrowth, aes(group, weight)) +
+  geom_boxplot(width = 0.5) +
+  labs(x = NULL, y = "Dried weight")
+
+base + stat_inference(family, positions, groups = levels(group),
+  p = "adjusted", tip_length = 0.1)
+```
+
+Changing the order of the axis moves the brackets but never reverses a
+contrast. Below, `trt2` is drawn first, and each label still shows the stored
+difference with its original sign, for example `trt2` minus `trt1`:
+
+```{r reordered, eval = has_ggplot2, fig.width = 6, fig.height = 4.5, fig.alt = "The same box plots with the group order trt2, trt1, ctrl; each bracket shows the stored difference and its interval."}
+reordered <- PlantGrowth
+reordered$group <- factor(reordered$group, levels = c("trt2", "trt1", "ctrl"))
+
+ggplot(reordered, aes(group, weight)) +
+  geom_boxplot(width = 0.5) +
+  stat_inference(family, positions, groups = levels(reordered$group),
+    label = "estimate_ci", tip_length = 0.1) +
+  labs(x = NULL, y = "Dried weight")
+```
+
+## Text labels for omnibus tests
+
+An omnibus test has no pair of endpoints, so it is annotated with text only. Its
+position gives `x` and `y_position` instead of `group1` and `group2`:
+
+```{r omnibus}
+omnibus <- run_inference(method_spec("anova_one_way_welch"),
+  x = weight, group = group, result_id = "welch-anova")
+report_table(omnibus)[, c("component", "estimand", "statistic_display", "p_display")]
+```
+
+```{r omnibus-plot, eval = has_ggplot2, fig.width = 6, fig.height = 4.5, fig.alt = "Box plots with the three pairwise brackets and a text label for the Welch one-way analysis of means above them."}
+pairwise_plot <- base + stat_inference(family, positions, groups = levels(group),
+  p = "adjusted", tip_length = 0.1)
+text_position <- data.frame(row_id = result_data(omnibus)$row_id,
+  x = 2, y_position = 7.7)
+annotate_inference(pairwise_plot, omnibus, text_position,
+  template = "Welch ANOVA: {p}")
+```
+
+`annotate_inference()` adds the same layers as `stat_inference()` but first
+checks that the existing plot uses Cartesian coordinates or `coord_flip()`.
+Polar and other nonlinear coordinates are rejected.
+
+## Flipped coordinates and transformed scales
+
+Positions are always given in the original data units. With
+`scale_y_log10()`, a `y_position` of 100 is drawn at 2 on the log scale,
+transformed exactly once. For horizontal plots, adjust the text justification
+and leave room for the labels:
+
+```{r flipped, eval = has_ggplot2, fig.width = 6, fig.height = 4, fig.alt = "Horizontal box plots of dried plant weight with the three pairwise brackets and their labels to the right of each bracket."}
+pairwise_flipped <- base +
+  stat_inference(family, positions, groups = levels(group), p = "adjusted",
+    tip_length = 0.1, text_hjust = -0.1, text_vjust = 0.5) +
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.25))) +
+  coord_flip()
+pairwise_flipped
+```
+
+## Results per facet
+
+Results that belong to subgroups carry their subgroup key as a column, and the
+result metadata declares it in `facet_vars`. Here the two supplements in
+`ToothGrowth` are compared separately at each dose:
+
+```{r facets-data}
+tg <- ToothGrowth
+doses <- sort(unique(tg$dose))
+by_dose <- do.call(rbind, lapply(doses, function(d) {
+  fit <- run_inference(spec,
+    x = tg$len[tg$dose == d & tg$supp == "OJ"],
+    y = tg$len[tg$dose == d & tg$supp == "VC"])
+  out <- result_data(fit)
+  out$dose <- d
+  out
+}))
+by_dose$row_id <- paste0("OJ-VC-dose-", doses)
+by_dose$contrast <- "OJ minus VC"
+
+dose_results <- new_inference_result(by_dose, list(
+  method_id = "t_means_two_independent_welch",
+  result_id = "toothgrowth-by-dose",
+  population = "ToothGrowth: 10 animals per supplement and dose",
+  facet_vars = "dose"
+))
+report_table(dose_results)[, c("row_id", "dose", "estimate_display", "p_display")]
+```
+
+These three p-values are not adjusted. The positions repeat the facet key, and
+it must match the stored rows exactly; a missing or conflicting key is an error
+instead of a label copied into every panel:
+
+```{r facets-plot, eval = has_ggplot2, fig.width = 7, fig.height = 3.5, fig.alt = "Box plots of odontoblast length by supplement in three panels, one per dose, each with a bracket between OJ and VC labeled with its p-value."}
+facet_positions <- data.frame(
+  row_id = by_dose$row_id, dose = doses,
+  group1 = "OJ", group2 = "VC",
+  y_position = c(24, 30, 36)
+)
+
+ggplot(tg, aes(supp, len)) +
+  geom_boxplot(width = 0.5) +
+  facet_wrap(~dose) +
+  stat_inference(dose_results, facet_positions, groups = levels(tg$supp),
+    tip_length = 1) +
+  labs(x = "Supplement", y = "Odontoblast length")
+```
+
+Annotations are placed only where the positions say. Automatic placement,
+automatic dodging and free facet scales are not inferred. For dodged groups,
+give numeric `xmin` and `xmax` instead of `group1` and `group2`.

@@ -1,6 +1,8 @@
 abcb
 aes
+ascorbic
 ci
+CMD
 coord
 CTTIR
 customizations
@@ -11,6 +13,7 @@ descrtab
 estimand
 formatters
 ggplot
+Holm
 infercalcR
 infercalcR's
 inferguidR
@@ -20,11 +23,17 @@ nonmissing
 nonsignificance
 Nonsignificant
 nonsignificant
+odontoblasts
+oldrel
+pkgdown
+README
 renderer
 SHA
+sidedness
 sig
 testthat
 unexecuted
 untrusted
+Welch
 xmax
 xmin

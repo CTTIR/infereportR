@@ -15,6 +15,9 @@ Encoding: UTF-8
 Language: en-US
 Depends: R (>= 4.1.0)
 Imports: infercalcR (>= 0.1.0), utils
-Suggests: ggplot2 (>= 3.4.0), DescrTab2
-URL: https://github.com/CTTIR/infereportR
+Suggests: ggplot2 (>= 3.4.0), DescrTab2, knitr, rmarkdown
+VignetteBuilder: knitr
+URL: https://github.com/CTTIR/infereportR,
+    https://cttir.github.io/infereportR/
 BugReports: https://github.com/CTTIR/infereportR/issues
+Config/Needs/website: CTTIR/themakR
