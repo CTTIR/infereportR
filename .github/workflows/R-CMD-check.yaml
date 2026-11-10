@@ -19,6 +19,8 @@ jobs:
       matrix:
         include:
           - {os: ubuntu-latest, r: release, lane: full}
+          - {os: ubuntu-latest, r: devel, lane: full, http-user-agent: release}
+          - {os: ubuntu-latest, r: oldrel-1, lane: full}
           - {os: windows-latest, r: release, lane: full}
           - {os: macos-latest, r: release, lane: full}
           - {os: ubuntu-latest, r: '4.1', lane: minimal}
@@ -28,29 +30,43 @@ jobs:
       TESTTHAT_CPUS: '2'
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
-      GITHUB_PAT: ${{ secrets.INFER_SUITE_TOKEN }}
+      # INFER_SUITE_TOKEN reads the private provider CTTIR/infercalcR. Once
+      # that repository is public, the workflow token is enough.
+      GITHUB_PAT: ${{ secrets.INFER_SUITE_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
-      - name: Verify private provider credential is configured
+      - name: Verify the provider infercalcR can be read
         shell: bash
         env:
           SUITE_TOKEN: ${{ secrets.INFER_SUITE_TOKEN }}
         run: |
-          if [ -z "$SUITE_TOKEN" ]; then
-            echo 'INFER_SUITE_TOKEN must authorize read access to CTTIR/infercalcR for this consumer check.' >&2
+          if [ -n "$SUITE_TOKEN" ]; then
+            echo 'Using INFER_SUITE_TOKEN to read CTTIR/infercalcR.'
+            exit 0
+          fi
+          status=$(curl -s -o /dev/null -w '%{http_code}' https://api.github.com/repos/CTTIR/infercalcR)
+          if [ "$status" != "200" ]; then
+            echo '::error::CTTIR/infercalcR is not publicly readable and the INFER_SUITE_TOKEN secret is not set. Add a token with read access to CTTIR/infercalcR as INFER_SUITE_TOKEN, or make CTTIR/infercalcR public.'
             exit 1
           fi
+          echo 'CTTIR/infercalcR is public; the workflow token suffices.'
       - uses: r-lib/actions/setup-pandoc@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
       - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
         with:
           r-version: ${{ matrix.r }}
+          http-user-agent: ${{ matrix.http-user-agent }}
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
         with:
           dependencies: ${{ matrix.lane == 'full' && '"all"' || '"hard"' }}
-          extra-packages: any::rcmdcheck
+          # Neither provider is on CRAN yet: infercalcR comes from GitHub, and
+          # the optional DescrTab2 adapter is verified for one pinned commit.
+          extra-packages: |
+            any::rcmdcheck
+            github::CTTIR/infercalcR
+            ${{ matrix.lane == 'full' && 'github::imbi-heidelberg/DescrTab2@f157380e7abcb7964612a480e09e59a45e7a01be' || '' }}
           needs: check
       - uses: r-lib/actions/check-r-package@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
         with:
