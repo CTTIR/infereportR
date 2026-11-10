@@ -6,6 +6,9 @@
   <https://cttir.github.io/infereportR/>, built and deployed to GitHub Pages
   by a GitHub Actions workflow. The DescrTab2 chunks run only when the pinned
   version is installed.
+* The DescrTab2 integration test skips with a message when an installed
+  DescrTab2 is not the pinned 2.1.26, for example 2.1.16 from the CRAN
+  archive. With `INFER_SUITE_FULL=true` it still fails.
 * The repository is public. The README describes installation from GitHub,
   and the R CMD check workflow reads infercalcR with the standard workflow
   token instead of a separate access token.
