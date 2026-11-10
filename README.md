@@ -6,9 +6,21 @@ planning belong to **inferguidR**. Plain reporting requires infercalcR and
 R-distributed packages. It does not require inferguidR, ggplot2, a table framework
 or testthat.
 
-Install the exact infercalcR source candidate first, then this package with
-`R CMD INSTALL`. These development repositories may require authenticated access;
-no CRAN availability is implied.
+## Installation
+
+R 4.1.0 or later is required. Neither package is on CRAN yet. Install
+infercalcR first, then infereportR, from GitHub:
+
+```r
+install.packages("remotes")
+remotes::install_github("CTTIR/infercalcR")
+remotes::install_github("CTTIR/infereportR", build_vignettes = TRUE)
+```
+
+The documentation site, with the reference and three vignettes, is at
+<https://cttir.github.io/infereportR/>. Start with "Getting started with
+infereportR"; "Comparison families, adjusted p-values and plot annotations"
+and "Descriptive tables and DescrTab2 output" cover the remaining features.
 
 ## Tables and text
 

@@ -1,5 +1,14 @@
 # infereportR 0.1.0
 
+* Added three vignettes, "Getting started with infereportR", "Comparison
+  families, adjusted p-values and plot annotations" and "Descriptive tables
+  and DescrTab2 output", and a pkgdown site at
+  <https://cttir.github.io/infereportR/>, built and deployed to GitHub Pages
+  by a GitHub Actions workflow. The DescrTab2 chunks run only when the pinned
+  version is installed.
+* The repository is public. The README describes installation from GitHub,
+  and the R CMD check workflow reads infercalcR with the standard workflow
+  token instead of a separate access token.
 * Prepared for a first CRAN submission, which has to wait until
   infercalcR is on CRAN.
 * The maintainer address is now raban.heller@uni-ulm.de.
