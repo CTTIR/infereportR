@@ -37,12 +37,10 @@ jobs:
           Ncpus: '2'
       - uses: r-lib/actions/setup-r-dependencies@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
         with:
-          # infercalcR is not on CRAN, and the optional DescrTab2 adapter is
-          # verified for one pinned upstream commit.
+          # infercalcR is not on CRAN; the public package comes from GitHub.
           extra-packages: |
             any::pkgdown
             github::CTTIR/infercalcR
-            github::imbi-heidelberg/DescrTab2@f157380e7abcb7964612a480e09e59a45e7a01be
             local::.
           needs: website
       - name: Build site
