@@ -20,7 +20,7 @@ remotes::install_github("CTTIR/infereportR", build_vignettes = TRUE)
 The documentation site, with the reference and three vignettes, is at
 <https://cttir.github.io/infereportR/>. Start with "Getting started with
 infereportR"; "Comparison families, adjusted p-values and plot annotations"
-and "Descriptive tables and DescrTab2 output" cover the remaining features.
+and "Descriptive tables" cover the remaining features.
 
 ## Tables and text
 
@@ -98,45 +98,15 @@ stored result rows and positions. Missing declared keys error instead of
 broadcasting. A list of layers cannot infer undeclared subgroup meaning or
 validate arbitrary facets added later; maintain this explicit mapping contract.
 
-## Precomputed DescrTab2 objects
-
-The optional adapter is pinned to **DescrTab2 2.1.26**, upstream commit
-`f157380e7abcb7964612a480e09e59a45e7a01be` (source SHA-256
-`354157ec6b7ceef2cb328395e7fd20b0f13dff7715525284c5deacd2ba076f27`).
-[CRAN archived DescrTab2](https://CRAN.R-project.org/package=DescrTab2) on
-2025-10-18. Use the pinned upstream source and its declared dependencies for this
-optional lane; installation is never attempted by package functions.
-
-```r
-# native is an already computed DescrTab2::descr(...) result.
-# imported <- import_descrtab2(native)
-# render_descrtab2(imported, "table")
-# render_descrtab2(imported, "text")
-# render_descrtab2(imported, "html")
-```
-
-`descr()` can calculate tests even with `print_p = FALSE`. This adapter never
-calls it during import or rendering. It invokes the public native numeric
-print method and formats stored cells, avoiding custom native formatting and
-reshaping callbacks. Row-level group membership, input options and presentation callbacks are removed
-while aggregate counts and levels remain. Native method labels and numbers are retained;
-there is no normalized inference conversion. In the pinned version, native
-`CI_upper`/`CI_lower` column names reverse the stored CI-vector order. They are
-labeled `native_CI_first`/`native_CI_second` to avoid misleading upper/lower
-headings, with original names retained in metadata; no normalized inference
-conversion is claimed.
-Use the shared result route for normalized estimates and intervals.
-
 ## Verification
 
 All new tests are ordinary `tests/*.R` scripts against installed packages.
 They cover precision, interval/p-value semantics, no-computation guards,
-explicit populations/joins, actual ggplot builds and drawing, and the pinned
-native import/render route. `INFER_SUITE_FULL=true` requires ggplot2 and
-DescrTab2; absence fails that lane. Minimal-library runs test explicit missing
+explicit populations/joins, and actual ggplot builds and drawing.
+`INFER_SUITE_FULL=true` requires ggplot2; its absence fails that lane. Minimal-library runs test explicit missing
 feature errors and label unexecuted integrations as SKIP. Skips do not establish
-backend support. Set `INFER_SUITE_PLOT_DIR` and `INFER_SUITE_REPORT_DIR` to retain
-plot/native-output artifacts during verification.
+backend support. Set `INFER_SUITE_PLOT_DIR` to retain
+plot artifacts during verification.
 
 ## Acknowledgments and sources
 
@@ -153,11 +123,9 @@ Maximilian Pilz and Lukas Sauer, with contributions from Lorenz Uhlmann and
 Csilla van Lunteren. Its documented test-choice tree, its validation statement
 and its practice of computing each test with an established implementation (R's
 stats package, exact2x2, DescTools and nlme) are the model for how the suite
-chooses, computes and reports statistical tests. infereportR also renders tables
-that were precomputed with DescrTab2 2.1.26 (`import_descrtab2()`,
-`render_descrtab2()`). DescrTab2 was archived on CRAN on 18 October 2025; its
-source code remains available on GitHub. We thank its authors and IMBI
-Heidelberg for making their work openly available.
+chooses, computes and reports statistical tests. DescrTab2 was archived on CRAN
+on 18 October 2025; its source code remains available on GitHub. We thank its
+authors and IMBI Heidelberg for making their work openly available.
 
 ### Methodenberatung, University of Zurich
 
@@ -177,7 +145,7 @@ packages.
 ### Software
 
 infereportR is written in R [5] and imports infercalcR [6]. Plot annotations use
-the optional ggplot2 [7]; precomputed tables use the optional DescrTab2 [1]. Use
+the optional ggplot2 [7]. Use
 `citation("infereportR")` for this package and `citation()` or
 `citation("<package>")` for R and the packages you used.
 

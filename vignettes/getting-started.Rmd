@@ -207,8 +207,7 @@ never as nonsignificant. Infinite interval limits stay infinite.
   comparisons, displays adjusted p-values and covers plot annotations in more
   detail.
 - `vignette("descriptive-tables", package = "infereportR")` describes data with
-  explicit denominators, joins supplied inference and renders precomputed
-  DescrTab2 tables.
+  explicit denominators and joins supplied inference.
 
 ```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
 ```
