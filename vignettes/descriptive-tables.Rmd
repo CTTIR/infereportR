@@ -1,9 +1,9 @@
 ---
-title: "Descriptive tables and DescrTab2 output"
+title: "Descriptive tables"
 author: "Raban Heller"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Descriptive tables and DescrTab2 output}
+  %\VignetteIndexEntry{Descriptive tables}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 resource_files:
@@ -34,16 +34,13 @@ resource_files:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-has_descrtab2 <- requireNamespace("DescrTab2", quietly = TRUE) &&
-  identical(as.character(utils::packageVersion("DescrTab2")), "2.1.26")
 ```
 
 A descriptive table summarizes the analyzed data, usually by group. In
 infereportR such a table states its denominators and missing counts, contains
 no hypothesis test by default, and keeps any added inference apart from the
 descriptive summaries. This vignette uses the `ToothGrowth` data set that
-ships with R. The last section shows the optional adapter for tables already
-computed with DescrTab2.
+ships with R.
 
 ```{r packages}
 library(infercalcR)
@@ -157,53 +154,6 @@ meta <- report_metadata(joined)
 meta$inference_population
 meta$inference_mapping
 ```
-
-## Precomputed DescrTab2 tables
-
-DescrTab2 builds descriptive tables with its own tests. It was archived on CRAN
-on 2025-10-18. The adapter in infereportR is verified for DescrTab2 2.1.26
-from upstream commit `f157380e7abcb7964612a480e09e59a45e7a01be`, and the
-chunks below run only when that version is installed. infereportR never
-installs it.
-
-`DescrTab2::descr()` calculates the summaries and, by default, also runs tests.
-That calculation happens before the import. `import_descrtab2()` keeps the
-finished numbers and test labels, removes the row-level group membership and
-any presentation callbacks, and never calls `descr()` again:
-
-```{r descrtab2-import, eval = has_descrtab2}
-native <- DescrTab2::descr(ToothGrowth[c("len", "supp")], group = "supp",
-  format_options = list(print_CI = TRUE))
-imported <- import_descrtab2(native)
-str(report_metadata(imported)$tests$len[c("test_name", "p")])
-```
-
-`render_descrtab2()` returns the native numerical table as a data frame. The
-interval belongs to the row of the test:
-
-```{r descrtab2-table, eval = has_descrtab2}
-native_table <- render_descrtab2(imported, "table")
-native_table[, c("Variable", "OJ", "VC", "Total", "p")]
-native_table[1, c("Test", "native_CI_first", "native_CI_second")]
-```
-
-The same cells, formatted with the shared formatters, are available as plain
-text lines with `format = "text"` or as an HTML table with `format = "html"`:
-
-```{r descrtab2-html, eval = has_descrtab2}
-html <- render_descrtab2(imported, "html")
-```
-
-```{r descrtab2-html-show, eval = has_descrtab2, echo = FALSE, results = "asis"}
-cat('<div style="overflow-x: auto;">', html, "</div>", sep = "")
-```
-
-The pinned DescrTab2 version labels its interval columns `CI_upper` and
-`CI_lower` in the reverse order of the stored interval. The adapter therefore
-names them `native_CI_first` and `native_CI_second` and keeps the original
-names in the metadata. Native DescrTab2 output is not converted into the shared
-result format; for normalized estimates and intervals, compute the analysis
-with infercalcR and use `report_table()` or `report_descriptive()`.
 
 ```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
 ```

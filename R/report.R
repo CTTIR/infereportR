@@ -25,7 +25,6 @@ report_table <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),
 #' Retrieve reporting provenance and complete-family metadata
 #' @export
 report_metadata <- function(x) {
-  if (inherits(x, "descrtab2_import")) return(x$metadata)
   metadata <- attr(x, "inference_metadata", exact=TRUE)
   if (is.null(metadata)) .ir_abort("object has no reporting metadata")
   metadata

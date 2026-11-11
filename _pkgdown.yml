@@ -51,10 +51,3 @@ reference:
   contents:
   - stat_inference
   - annotate_inference
-- title: DescrTab2 adapter
-  desc: Optional import and rendering of precomputed DescrTab2 tables.
-  contents:
-  - import_descrtab2
-  - render_descrtab2
-
-llm-docs: false

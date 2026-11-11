@@ -8,14 +8,13 @@ Description: Formats finalized statistical results as tables, text and
     optional plot annotations. Results follow the common result contract of
     'infercalcR'; stored estimates, intervals, p-values and method metadata
     are reported at full precision and are never recomputed. Optional
-    'ggplot2' layers annotate plots with the stored results, and an
-    optional adapter renders precomputed 'DescrTab2' descriptive tables.
+    'ggplot2' layers annotate plots with the stored results.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
 Depends: R (>= 4.1.0)
 Imports: infercalcR (>= 0.1.0), utils
-Suggests: ggplot2 (>= 3.4.0), DescrTab2, knitr, rmarkdown
+Suggests: ggplot2 (>= 3.4.0), knitr, rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/CTTIR/infereportR,
     https://cttir.github.io/infereportR/
