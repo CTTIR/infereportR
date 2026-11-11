@@ -44,13 +44,10 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05
         with:
           dependencies: ${{ matrix.lane == 'full' && '"all"' || '"hard"' }}
-          # Neither provider is on CRAN yet: the public infercalcR comes from
-          # GitHub, and the optional DescrTab2 adapter is verified for one
-          # pinned commit.
+          # infercalcR is not on CRAN yet; the public package comes from GitHub.
           extra-packages: |
             any::rcmdcheck
             github::CTTIR/infercalcR
-            ${{ matrix.lane == 'full' && 'github::imbi-heidelberg/DescrTab2@f157380e7abcb7964612a480e09e59a45e7a01be' || '' }}
           needs: check
       # The minimal lane has no vignette builder (knitr is suggested), so it
       # skips the vignettes; the full lanes build and check them.
