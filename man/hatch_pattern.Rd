@@ -4,13 +4,15 @@
 \alias{hatch_pattern}
 \title{Hatch pattern fill}
 \usage{
-hatch_pattern(type, spacing = 1.6, linewidth = 0.4)
+hatch_pattern(type, spacing = .ip_hatch_spacing, linewidth = 0.4)
 }
 \arguments{
 \item{type}{One of \code{"solid"}, \code{"open"}, \code{"hatch"}, \code{"dots"},
 \code{"crosshatch"}, \code{"backhatch"}, \code{"horizontal"} or \code{"vertical"}.}
 
-\item{spacing}{Distance between lines in millimetres, between 0.5 and 10.}
+\item{spacing}{Distance between lines in millimetres, between 0.5 and 10.
+The default of 1.4 mm reads well at slide size; paper figures may pass
+\code{spacing = 1.6}.}
 
 \item{linewidth}{Width of the hatch lines in points, between 0.1 and 2.}
 }
@@ -35,7 +37,8 @@ and \code{"open"} gives white paper; every other type gives a repeating
 
 \code{spacing} is the perpendicular distance between neighbouring lines (or the
 distance between dot centres), so a pattern keeps its density whatever the
-size of the filled shape.
+size of the filled shape. The default spacing of 1.4 mm suits slides;
+figures for print may pass \code{spacing = 1.6}.
 
 Pattern fills need R 4.1.0 or later and a graphics device that supports
 patterns, such as \code{\link[grDevices:cairo_pdf]{grDevices::cairo_pdf()}}, \code{\link[grDevices:svg]{grDevices::svg()}}, \code{\link[grDevices:pdf]{grDevices::pdf()}}

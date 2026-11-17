@@ -34,6 +34,19 @@ test_that("tile geometry follows the specification", {
   expect_identical(.ip_hatch_segments("backhatch")$x0, 1 - .ip_hatch_segments("hatch")$x0)
 })
 
+test_that("default spacing is the 1.4 mm slide token", {
+  expect_identical(.ip_hatch_spacing, 1.4)
+  expect_identical(formals(hatch_pattern)$spacing, quote(.ip_hatch_spacing))
+  expect_identical(formals(scale_fill_hatch)$spacing, quote(.ip_hatch_spacing))
+  mm <- function(p) grid::convertUnit(p$width, "mm", valueOnly = TRUE)
+  expect_equal(mm(hatch_pattern("horizontal")), 1.4)
+  expect_equal(mm(hatch_pattern("hatch")), 1.4 * sqrt(2))
+  expect_equal(mm(scale_fill_hatch()$palette(3)[[3]]), 1.4 * sqrt(2))
+  # Paper figures may pass the former 1.6 mm.
+  expect_equal(mm(hatch_pattern("vertical", spacing = 1.6)), 1.6)
+  expect_equal(mm(scale_fill_hatch(spacing = 1.6)$palette(3)[[3]]), 1.6 * sqrt(2))
+})
+
 test_that("scale_fill_hatch palette returns the documented list", {
   pal <- scale_fill_hatch()$palette
   fills <- pal(6)

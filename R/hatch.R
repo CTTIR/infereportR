@@ -60,7 +60,8 @@
 #'
 #' `spacing` is the perpendicular distance between neighbouring lines (or the
 #' distance between dot centres), so a pattern keeps its density whatever the
-#' size of the filled shape.
+#' size of the filled shape. The default spacing of 1.4 mm suits slides;
+#' figures for print may pass `spacing = 1.6`.
 #'
 #' Pattern fills need R 4.1.0 or later and a graphics device that supports
 #' patterns, such as [grDevices::cairo_pdf()], [grDevices::svg()], [grDevices::pdf()]
@@ -70,6 +71,8 @@
 #' @param type One of `"solid"`, `"open"`, `"hatch"`, `"dots"`,
 #'   `"crosshatch"`, `"backhatch"`, `"horizontal"` or `"vertical"`.
 #' @param spacing Distance between lines in millimetres, between 0.5 and 10.
+#'   The default of 1.4 mm reads well at slide size; paper figures may pass
+#'   `spacing = 1.6`.
 #' @param linewidth Width of the hatch lines in points, between 0.1 and 2.
 #' @return For `"solid"` and `"open"`, a single colour string. Otherwise a
 #'   grid pattern object (class `GridTilingPattern`, inheriting `GridPattern`)
@@ -89,7 +92,7 @@
 #'   unlink(file)
 #' }
 #' @export
-hatch_pattern <- function(type, spacing = 1.6, linewidth = 0.4) {
+hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4) {
   if (missing(type)) .ip_abort("type must be given")
   type <- .ip_check_choice(type, .ip_hatch_types, "type")
   .ip_check_number(spacing, "spacing", min = 0.5, max = 10)
@@ -116,7 +119,8 @@ hatch_pattern <- function(type, spacing = 1.6, linewidth = 0.4) {
 #' Pattern fills need R 4.1.0 or later and a pattern-capable graphics device,
 #' such as [grDevices::cairo_pdf()], [grDevices::svg()] or the 'ragg' devices
 #' (`ragg::agg_png()`). Give the bars an ink outline (`colour = "black"` in the
-#' geom) so that `"open"` bars stay visible.
+#' geom) so that `"open"` bars stay visible. The default `spacing` is 1.4 mm
+#' for slides; paper figures may pass `spacing = 1.6`.
 #'
 #' @inheritParams scale_linetype_figure
 #' @param patterns Character vector of pattern types, used in order.
@@ -138,7 +142,8 @@ hatch_pattern <- function(type, spacing = 1.6, linewidth = 0.4) {
 #'   unlink(file)
 #' }
 #' @export
-scale_fill_hatch <- function(..., patterns = .ip_hatches, spacing = 1.6, linewidth = 0.4) {
+scale_fill_hatch <- function(..., patterns = .ip_hatches, spacing = .ip_hatch_spacing,
+                             linewidth = 0.4) {
   if (!is.character(patterns) || !length(patterns) || anyNA(patterns) ||
       !all(patterns %in% .ip_hatch_types)) {
     .ip_abort(sprintf("patterns must be a non-empty character vector of %s",
