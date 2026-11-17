@@ -37,6 +37,12 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
       out <- data.frame(x = keys$x[i], y = res$estimate, ymin = res$conf.low,
                         ymax = res$conf.high, n = res$n, label = text,
                         group = keys$group[i], PANEL = panel, stringsAsFactors = FALSE)
+      # Keep aesthetics that are constant within the group (shape, linetype,
+      # colour mappings), so legends and keys survive the summary.
+      for (nm in setdiff(names(cell), c(names(out), "y"))) {
+        v <- cell[[nm]]
+        if (!is.list(v) && length(unique(v)) == 1L) out[[nm]] <- v[1L]
+      }
       .ip_attach_result(out, result, id)
     })
     do.call(rbind, rows)
