@@ -21,6 +21,10 @@ otherwise the generic R families \code{"sans"} or \code{"mono"}. The function ne
 fails on a missing font. Fonts are not bundled and nothing is registered.
 }
 \details{
+IBM Plex ships with TeX Live (\code{fonts/opentype/ibm/plex}). To make it
+available to R through fontconfig, copy the Sans, Sans Condensed and Mono
+OTF files to \verb{~/.fonts} and run \code{fc-cache -f}; detection uses 'systemfonts'.
+
 The lookup is cached for the session; \code{reset = TRUE} clears the cache, for
 example after installing a font.
 }

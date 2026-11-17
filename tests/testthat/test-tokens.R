@@ -8,7 +8,7 @@ test_that("colour tokens are the two values and the Pepto pair", {
 test_that("size presets match the specification", {
   expected <- data.frame(
     preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half"),
-    width = c(85, 174, 134, 86, 64), height = c(70, 100, 50, 50, 50),
+    width = c(85, 174, 134, 86, 64), height = c(70, 100, 44, 44, 44),
     stringsAsFactors = FALSE)
   expect_identical(.ip_presets, expected)
 })
@@ -34,4 +34,14 @@ test_that(".ip_lw converts points to linewidth", {
 test_that(".ip_round rounds half up", {
   expect_identical(.ip_round(c(0.5, 1.5, 2.5)), c(1, 2, 3))
   expect_identical(.ip_round(c(-0.5, 0.49, 2.51)), c(0, 0, 3))
+})
+
+test_that("amendment 01 tokens have the measured values", {
+  expect_identical(.ip_hatch_spacing, 1.4)
+  expect_identical(.ip_label_size_pt, 8)
+  expect_identical(c(.ip_bracket_first, .ip_bracket_step), c(0.10, 0.20))
+  expect_identical(.ip_means_offset, 0.28)
+  expect_identical(.ip_halftone_spacing, 0.75)
+  expect_identical(c(.ip_endlabel_gap, .ip_endlabel_nudge), c(1.15, 2.5))
+  expect_identical(unname(.ip_screen), c("#000000", "#FFFFFF"))
 })

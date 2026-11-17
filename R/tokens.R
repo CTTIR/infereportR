@@ -18,9 +18,24 @@
 .ip_text_min_pt <- 8
 .ip_text_max_pt <- 14
 .ip_base_size <- 9
-.ip_hatch_spacing <- 1.6
+# In-plot text (end labels, brackets, annotations); axis text stays at base.
+.ip_label_size_pt <- 8
+# 1.4 mm reads better at slide size; paper figures may pass 1.6.
+.ip_hatch_spacing <- 1.4
+.ip_halftone_spacing <- 0.75
+.ip_endlabel_nudge <- 2.5
 .ip_slide_text_width <- 134
 .ip_char_width_em <- 0.6
+
+# Unitless factors: brackets as fractions of the panel's y range, the means
+# offset in x units, the end-label gap in text heights.
+.ip_bracket_first <- 0.10
+.ip_bracket_step <- 0.20
+.ip_means_offset <- 0.28
+.ip_endlabel_gap <- 1.15
+
+# The C64 black-and-white screen, fixed in every mode.
+.ip_screen <- c(background = "#000000", foreground = "#FFFFFF")
 
 .ip_linetypes <- c("solid", "22", "13", "1343", "73", "2262")
 .ip_shapes <- c(16, 1, 15, 0, 17, 2, 18, 5)
@@ -30,7 +45,9 @@
 .ip_presets <- data.frame(
   preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half"),
   width = c(85, 174, 134, 86, 64),
-  height = c(70, 100, 50, 50, 50),
+  # Slide slots: the Bleisatz frame body below a two-line title, minus one
+  # source line, measured at 44 mm.
+  height = c(70, 100, 44, 44, 44),
   stringsAsFactors = FALSE
 )
 
