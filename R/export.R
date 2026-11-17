@@ -4,15 +4,16 @@
 #' journal presets are common single- and double-column widths; APA style
 #' itself prescribes no physical figure widths, so check the target journal's
 #' author guidelines. The slide presets match the slots of the Bleisatz slide
-#' frame (text width 134 mm).
+#' frame (text width 134 mm). Their height of 44 mm is the frame body below a
+#' two-line title, minus one source line.
 #'
 #' | preset | width | height | meaning |
 #' |---|---|---|---|
 #' | `journal_column` | 85 | 70 | common single-column width |
 #' | `journal_page` | 174 | 100 | common double-column width |
-#' | `slide_full` | 134 | 50 | Bleisatz frame body, full width |
-#' | `slide_side` | 86 | 50 | Bleisatz side figure (0.64 x 134 mm) |
-#' | `slide_half` | 64 | 50 | Bleisatz two-column slot (0.48 x 134 mm) |
+#' | `slide_full` | 134 | 44 | Bleisatz frame body, full width |
+#' | `slide_side` | 86 | 44 | Bleisatz side figure (0.64 x 134 mm) |
+#' | `slide_half` | 64 | 44 | Bleisatz two-column slot (0.48 x 134 mm) |
 #'
 #' @param preset One of `"journal_column"` (default), `"journal_page"`,
 #'   `"slide_full"`, `"slide_side"` or `"slide_half"`.

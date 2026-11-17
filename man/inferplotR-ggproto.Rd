@@ -3,6 +3,7 @@
 %   R/stat-compare.R, R/stat-correlation.R, R/stat-means.R, R/stat-omnibus.R
 \name{StatEndlabel}
 \alias{StatEndlabel}
+\alias{GeomEndlabel}
 \alias{GeomBracket}
 \alias{StatCompare}
 \alias{StatCorrelation}
@@ -18,6 +19,11 @@ functions instead.
 \item \code{StatEndlabel}, the stat of \code{\link[=geom_endlabel]{geom_endlabel()}}: per group, it keeps the
 rows with finite \code{x} and \code{y} and returns the one with the largest \code{x}
 (the first one on ties). A group without finite rows yields no row.
+\item \code{GeomEndlabel}, the geom of \code{\link[=geom_endlabel]{geom_endlabel()}}: a \link[ggplot2:GeomText]{ggplot2::GeomText}
+that avoids collisions at draw time. In the panel viewport it sorts the
+labels by y, pushes them apart to at least 1.15 text heights while keeping
+their mean position, and draws them left-justified 2.5 mm right of their
+point.
 \item \code{GeomBracket} draws a comparison bracket (a bar with two downward tips)
 and its label; used by \code{\link[=stat_compare]{stat_compare()}}.
 \item \code{StatMeans}, \code{StatCompare}, \code{StatOmnibus}, \code{StatCorrelation} and

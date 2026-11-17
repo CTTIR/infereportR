@@ -3,6 +3,11 @@ png_width <- function(file) {
   sum(as.integer(header[17:20]) * 256^(3:0))
 }
 
+png_height <- function(file) {
+  header <- readBin(file, "raw", 24L)
+  sum(as.integer(header[21:24]) * 256^(3:0))
+}
+
 small_plot <- function() {
   ggplot2::ggplot(data.frame(x = 1:3, y = c(2, 1, 3)), ggplot2::aes(x, y)) +
     ggplot2::geom_line()
@@ -16,6 +21,21 @@ test_that("figure_size returns every preset exactly", {
     )
   }
   expect_identical(figure_size(), list(width = 85, height = 70, units = "mm"))
+})
+
+test_that("slide presets are 134, 86 and 64 mm wide and 44 mm high", {
+  expect_identical(figure_size("slide_full"), list(width = 134, height = 44, units = "mm"))
+  expect_identical(figure_size("slide_side"), list(width = 86, height = 44, units = "mm"))
+  expect_identical(figure_size("slide_half"), list(width = 64, height = 44, units = "mm"))
+  expect_identical(figure_size("journal_page"), list(width = 174, height = 100, units = "mm"))
+})
+
+test_that("save_figure writes a slide preset at 44 mm height", {
+  skip_if_not(isTRUE(capabilities("cairo")) || requireNamespace("ragg", quietly = TRUE))
+  f <- withr::local_tempfile(fileext = ".png")
+  save_figure(small_plot(), f, preset = "slide_side", dpi = 100)
+  expect_equal(png_width(f), 86 / 25.4 * 100, tolerance = 1.5 / 339)
+  expect_equal(png_height(f), 44 / 25.4 * 100, tolerance = 1.5 / 173)
 })
 
 test_that("figure_size rejects unknown presets", {

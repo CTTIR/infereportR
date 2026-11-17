@@ -2,8 +2,10 @@
 
 S3method(as.character,inferplotR_chargrid)
 S3method(format,inferplotR_chargrid)
+S3method(grid::makeContent,inferplotR_endlabel)
 S3method(print,inferplotR_chargrid)
 export(GeomBracket)
+export(GeomEndlabel)
 export(StatCompare)
 export(StatCorrelation)
 export(StatCorrelationFit)
