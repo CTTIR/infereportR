@@ -11,6 +11,7 @@ figure_forest(
   row = NULL,
   null_value = NULL,
   xlab = NULL,
+  xlim = NULL,
   header = c("Subgroup", "n", "Difference [95\% CI]"),
   overall = 1L,
   mode = "light",
@@ -38,6 +39,12 @@ every result, or one \code{row_id} per result.}
 results) or a number; \code{NA} draws no null line.}
 
 \item{xlab}{The x-axis title; \code{NULL} for none.}
+
+\item{xlim}{\code{NULL} (default: every estimate, interval and the null value,
+with 4 \% room) or two increasing finite numbers, the range of the x axis.
+The text columns are laid out outside this range. Interval lines are
+cut at the limits, and markers and a null line outside them are not
+drawn.}
 
 \item{header}{Three column headings, or \code{NULL} for no header row.}
 

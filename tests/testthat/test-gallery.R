@@ -64,9 +64,10 @@ test_that("figure 04 reproduces the correlation of the oracle", {
   got <- paste0("r = ", rep$estimate_display, " ", rep$interval_display, " | ",
                 rep$p_display, ", n = ", infercalcR::result_data(res[[1]])$n)
   expect_identical(got, gallery_value("04", "label"))
+  # The figure uses the two-line label with n, so it equals the oracle string
+  # (the oracle writes the line break as " | ").
   label <- ggplot2::layer_data(p, 2L)$label
-  expect_identical(label, paste0("r = ", rep$estimate_display, " ", rep$interval_display,
-                                 ", ", rep$p_display))
+  expect_identical(label, sub(" | ", "\n", gallery_value("04", "label"), fixed = TRUE))
 })
 
 test_that("figure 05 reproduces the medians of the oracle", {
@@ -91,6 +92,26 @@ test_that("figure 06 reproduces the seven forest rows of the oracle", {
     expect_near(marks$x[i], gallery_numbers(sub(" text=.*$", "", v))[2], 1e-6)
     expect_identical(n_layer$label[i], sub("^n=([0-9]+) .*$", "\\1", v))
   }
+  # The axis runs from -30 to 60 with a break at -20, as in the reference.
+  expect_equal(b$layout$panel_params[[1]]$x.range, c(-30, 60))
+  breaks <- b$layout$panel_params[[1]]$x$get_breaks()
+  expect_identical(as.numeric(breaks[!is.na(breaks)]), c(-20, 0, 20, 40))
+  expect_true(all(c(b$data[[4]]$x, b$data[[5]]$x) < -30))
+  expect_true(all(b$data[[6]]$x > 60))
+})
+
+test_that("caption 08 puts the circles above the diagonal and the values below", {
+  cap <- .ip_gallery_captions$caption[.ip_gallery_captions$name == "08-correlation-matrix"]
+  expect_true(grepl("above the diagonal, circle", cap, fixed = TRUE))
+  expect_true(grepl("mirrored below the diagonal", cap, fixed = TRUE))
+  # The figure agrees. The diagonal runs from top left to bottom right
+  # (x + y = 6 for five variables): circles (layer 1) lie above it, values
+  # (layer 2) below.
+  p8 <- .ip_gallery_08(.ip_gallery_data())
+  circles <- ggplot2::layer_data(p8, 1L)
+  values <- ggplot2::layer_data(p8, 2L)
+  expect_true(all(circles$x + circles$y > 6))
+  expect_true(all(values$x + values$y < 6))
 })
 
 test_that("figures 08 and 09 reproduce the matrix and the paired result of the oracle", {
@@ -168,7 +189,8 @@ test_that("figure_gallery() writes 48 PDFs at their slot size, leaving the seed 
   expect_equal(tab$width_mm, slots$width_mm)
   for (i in seq_len(nrow(tab))) {
     # Cairo writes the MediaBox in whole points (243 x 124 for 86 x 44 mm), so
-    # the page can be up to one point (0.353 mm) smaller than the slot.
+    # the page can be up to one point (0.353 mm) smaller than the slot. This
+    # 1 pt tolerance was approved by the owner (2026-11-17, STATE.md Q9).
     expect_near(mediabox_mm(tab$file[i]), c(slots$width_mm[i], slots$height_mm[i]),
                 25.4 / 72)
   }
@@ -180,7 +202,10 @@ test_that("figure_gallery() writes 48 PDFs at their slot size, leaving the seed 
   })
 })
 
-test_that("every figure passes the two-value audit in every mode except 11 (C64 colours)", {
+# Figure 11 (C64 colors) fails two_values in every mode, light, dark and both
+# transparent modes: the c64 style keeps its Pepto colors by design. This
+# documented exception was approved by the owner (2026-11-17, STATE.md Q9).
+test_that("every figure passes the two-value audit in every mode except 11 (C64 colors)", {
   skip_on_cran()
   d <- .ip_gallery_data()
   for (folder in .ip_set_modes) {

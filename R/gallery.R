@@ -29,8 +29,8 @@
           "is proportional to n; the dotted line is no difference."),
     paste("Three markers, one design: identical x axes, free y axes in their own units,",
           "lines labelled once in the last panel."),
-    paste("Spearman correlations: circle area shows the strength, filled is positive and",
-          "open is negative. The values are mirrored above the diagonal."),
+    paste("Spearman correlations: above the diagonal, circle area shows the strength, filled",
+          "is positive and open is negative. The values are mirrored below the diagonal."),
     paste("Each line is one patient; the thick line is the mean. Paired t-test from",
           "infercalcR: mean change with its 95% CI."),
     paste("Character mode: the time course from figure 1 redrawn with text characters, as",
@@ -109,13 +109,13 @@
 }
 
 # 04 Scatter with a Pearson correlation of log10 IL-6 (the stat sees the
-# transformed scale) and ISS.
+# transformed scale) and ISS, labeled on two lines with n.
 .ip_gallery_04 <- function(d, mode = "light", transparent = FALSE) {
   m <- .ip_mode(mode, transparent)
   ggplot2::ggplot(d$sc, ggplot2::aes(.data$iss, .data$il6)) +
     ggplot2::geom_point(shape = 1, size = 1.2, colour = m$ink, stroke = .ip_lw(0.5)) +
-    stat_correlation(method = "correlation_pearson", label_x = 9, mode = mode,
-                     transparent = transparent) +
+    stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n", label_x = 9,
+                     mode = mode, transparent = transparent) +
     ggplot2::scale_y_log10(breaks = c(10, 30, 100, 300, 1000), limits = c(10, 1000)) +
     ggplot2::scale_x_continuous(breaks = c(9, 16, 25, 50)) +
     ggplot2::labs(x = "Injury Severity Score", y = "IL-6 (pg/ml), log scale") +
@@ -150,7 +150,9 @@
   })
   names(results) <- names(subsets)
   figure_forest(results, xlab = "IL-6 difference, late minus early peak (pg/ml)",
-                mode = mode, transparent = transparent, slot = "slide_full")
+                xlim = c(-30, 60), mode = mode, transparent = transparent,
+                slot = "slide_full") +
+    ggplot2::scale_x_continuous(breaks = c(-20, 0, 20, 40))
 }
 
 # 07 Small multiples: three markers, free y, end labels in the last panel only.
@@ -249,9 +251,9 @@
 #' | `01-timecourse-direct-labels` | side | [theme_figure()], [scale_linetype_figure()], [scale_shape_figure()], [geom_endlabel()] |
 #' | `02-raw-data-mean-ci` | side | [inferplot()] with Welch comparisons against ISS < 16, Holm-adjusted |
 #' | `03-stacked-hatch` | side | `geom_col()`, [scale_fill_hatch()], [stat_stacklabel()] |
-#' | `04-scatter-correlation` | half | [stat_correlation()] (Pearson) on a log10 y axis |
+#' | `04-scatter-correlation` | half | [stat_correlation()] (Pearson, two-line label with n) on a log10 y axis |
 #' | `05-ecdf-distribution` | side | `stat_ecdf()`, [stat_ecdf_guides()] |
-#' | `06-forest-subgroups` | full | [figure_forest()] on seven Welch results |
+#' | `06-forest-subgroups` | full | [figure_forest()] on seven Welch results, x axis -30 to 60 |
 #' | `07-small-multiples` | full | facets with free y, [geom_endlabel()] in the last panel |
 #' | `08-correlation-matrix` | side | [figure_correlation_matrix()] (Spearman) |
 #' | `09-paired-slopegraph` | half | [stat_paired()] (paired t-test) |

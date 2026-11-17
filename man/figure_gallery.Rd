@@ -40,9 +40,9 @@ Bleisatz slot (all 44 mm high): \code{"slide_full"} (134 mm), \code{"slide_side"
    \code{01-timecourse-direct-labels} \tab side \tab \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}}, \code{\link[=geom_endlabel]{geom_endlabel()}} \cr
    \code{02-raw-data-mean-ci} \tab side \tab \code{\link[=inferplot]{inferplot()}} with Welch comparisons against ISS < 16, Holm-adjusted \cr
    \code{03-stacked-hatch} \tab side \tab \code{geom_col()}, \code{\link[=scale_fill_hatch]{scale_fill_hatch()}}, \code{\link[=stat_stacklabel]{stat_stacklabel()}} \cr
-   \code{04-scatter-correlation} \tab half \tab \code{\link[=stat_correlation]{stat_correlation()}} (Pearson) on a log10 y axis \cr
+   \code{04-scatter-correlation} \tab half \tab \code{\link[=stat_correlation]{stat_correlation()}} (Pearson, two-line label with n) on a log10 y axis \cr
    \code{05-ecdf-distribution} \tab side \tab \code{stat_ecdf()}, \code{\link[=stat_ecdf_guides]{stat_ecdf_guides()}} \cr
-   \code{06-forest-subgroups} \tab full \tab \code{\link[=figure_forest]{figure_forest()}} on seven Welch results \cr
+   \code{06-forest-subgroups} \tab full \tab \code{\link[=figure_forest]{figure_forest()}} on seven Welch results, x axis -30 to 60 \cr
    \code{07-small-multiples} \tab full \tab facets with free y, \code{\link[=geom_endlabel]{geom_endlabel()}} in the last panel \cr
    \code{08-correlation-matrix} \tab side \tab \code{\link[=figure_correlation_matrix]{figure_correlation_matrix()}} (Spearman) \cr
    \code{09-paired-slopegraph} \tab half \tab \code{\link[=stat_paired]{stat_paired()}} (paired t-test) \cr

@@ -77,3 +77,54 @@ test_that("correlation and omnibus labels default to the in-plot label size", {
                        stat_omnibus(method = "anova_one_way"), 2L)
   expect_equal(o$size * ggplot2::.pt, .ip_label_size_pt)
 })
+
+test_that("label = \"estimate_ci_p_n\" sets two lines with n from infereportR", {
+  p <- ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+    stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n")
+  d <- layer_data_of(p, 2L)
+  res <- d$.ip_result[[1]]
+  shown <- infereportR::report_table(res)
+  n <- infercalcR::result_data(res)$n
+  expect_equal(n, 32)
+  expect_identical(d$label, paste0("r = ", shown$estimate_display, " ", shown$interval_display,
+                                   "\n", shown$p_display, ", n = 32"))
+  # The count is written by infereportR and has no decimals.
+  expect_identical(.ip_format_n(n), "32")
+  expect_identical(.ip_format_n(80), "80")
+  expect_equal(d$lineheight, 0.95)
+  expect_no_warning(draws_silently(p))
+  # The default stays one line; lineheight given by the user wins.
+  one <- layer_data_of(ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+                         stat_correlation(method = "correlation_pearson"), 2L)
+  expect_false(grepl("\n", one$label, fixed = TRUE))
+  own <- layer_data_of(ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+                         stat_correlation(method = "correlation_pearson",
+                                          label = "estimate_ci_p_n", lineheight = 1.2), 2L)
+  expect_equal(own$lineheight, 1.2)
+  expect_error(stat_correlation(method = "correlation_pearson", label = "n"),
+               class = "inferplotR_invalid_input")
+})
+
+test_that("the two-line label leaves out a missing interval (D7)", {
+  for (m in c("correlation_spearman", "correlation_kendall")) {
+    d <- layer_data_of(ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+                         stat_correlation(method = m, label = "estimate_ci_p_n"), 2L)
+    shown <- infereportR::report_table(d$.ip_result[[1]])
+    expect_identical(d$label, paste0(.ip_correlation_symbol[[m]], shown$estimate_display,
+                                     "\n", shown$p_display, ", n = 32"))
+  }
+})
+
+test_that("small panels fail as documented: 4 pairs per correlation, 20 for the fit", {
+  small <- mt[1:10, ]
+  base <- ggplot2::ggplot(small, ggplot2::aes(wt, mpg)) + ggplot2::geom_point()
+  d <- layer_data_of(base + stat_correlation(method = "correlation_pearson",
+                                             label = "estimate_ci_p_n"), 2L)
+  expect_true(endsWith(d$label, "n = 10"))
+  expect_error(ggplot2::ggplot_build(base + stat_correlation(method = "correlation_pearson",
+                                                             fit = TRUE)),
+               class = "inferplotR_calculation_failed")
+  tiny <- ggplot2::ggplot(mt[1:3, ], ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+    stat_correlation(method = "correlation_pearson")
+  expect_error(ggplot2::ggplot_build(tiny), class = "inferplotR_calculation_failed")
+})
