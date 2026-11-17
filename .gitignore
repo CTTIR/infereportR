@@ -1,0 +1,24 @@
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+*.Rcheck/
+*.tar.gz
+/docs/
+/inst/doc/
+/vignettes/*.html
+/vignettes/*.R
+# Local build prompts, agent settings and orchestration files (never committed)
+inferplotR-build/
+.cla[u]de/
+CLA[U]DE.md
+AGENTS.md
+.codex/
+.cursor/
+.mcp.json
+*.prompt.md
+# Raw data, secrets and archives stay local
+.env
+.env.*
+data/
+*.zip
