@@ -189,7 +189,6 @@ test_that("both styles draw without warnings", {
 })
 
 test_that("the bw figure passes the two_values check", {
-  skip_if_not(exists("check_figure"))
   res <- check_figure(char_figure(cf_plot()))
   expect_identical(res$status[res$check == "two_values"], "pass")
 })
