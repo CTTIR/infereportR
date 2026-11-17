@@ -1,0 +1,92 @@
+# The test oracle of the Bleisatz gallery, transcribed from
+# reference/gallery/expected-numbers.csv (same rows and columns; non-ASCII
+# characters as escapes). The value column holds the source strings, which
+# mix numbers and display strings; the tests parse the numbers from them.
+
+gallery_expected <- data.frame(
+  figure = c(
+    "02",
+    "02",
+    "02",
+    "02",
+    "02",
+    "04",
+    "06",
+    "06",
+    "06",
+    "06",
+    "06",
+    "06",
+    "06",
+    "08",
+    "08",
+    "08",
+    "08",
+    "08",
+    "08",
+    "08",
+    "08",
+    "08",
+    "08",
+    "09",
+    "05"),
+  key = c(
+    "mean_ci:ISS < 16",
+    "mean_ci:ISS 16-24",
+    "mean_ci:ISS \u2265 25",
+    "p_adjusted_display:ISS 16-24 minus ISS < 16",
+    "p_adjusted_display:ISS \u2265 25 minus ISS < 16",
+    "label",
+    "row:All patients",
+    "row:< 50 years",
+    "row:\u2265 50 years",
+    "row:Male",
+    "row:Female",
+    "row:ISS 16-24",
+    "row:ISS \u2265 25",
+    "rho:C3a-C5a",
+    "rho:C3a-IL-6",
+    "rho:C3a-IL-10",
+    "rho:C3a-Lactate",
+    "rho:C5a-IL-6",
+    "rho:C5a-IL-10",
+    "rho:C5a-Lactate",
+    "rho:IL-6-IL-10",
+    "rho:IL-6-Lactate",
+    "rho:IL-10-Lactate",
+    "paired",
+    "median_peak_h"),
+  value = c(
+    "46.867569 [39.969889, 53.765249] n=24",
+    "65.079518 [56.001452, 74.157583] n=24",
+    "99.591038 [84.493943, 114.688133] n=24",
+    "p = 0.002",
+    "p < 0.001",
+    "r = 0.705 [0.574, 0.801] | p < 0.001, n = 80",
+    "n=240 est=22.783774 text=22.8 [13, 32.6]",
+    "n=115 est=11.276174 text=11.3 [-3.12, 25.7]",
+    "n=125 est=33.220067 text=33.2 [19.9, 46.5]",
+    "n=167 est=27.231342 text=27.2 [15.2, 39.3]",
+    "n=73 est=14.116106 text=14.1 [-2.4, 30.6]",
+    "n=118 est=18.524031 text=18.5 [5.49, 31.6]",
+    "n=122 est=26.785311 text=26.8 [12, 41.5]",
+    "0.642260 display=0.64",
+    "0.432424 display=0.43",
+    "0.042598 display=0.043",
+    "0.296802 display=0.3",
+    "0.625353 display=0.63",
+    "0.214553 display=0.21",
+    "0.403482 display=0.4",
+    "0.407713 display=0.41",
+    "0.491164 display=0.49",
+    "-0.476693 display=-0.48",
+    "-1.67 [-2.25, -1.1] p < 0.001",
+    "ISS 16-24=6.0909; ISS \u2265 25=8.2543"),
+  stringsAsFactors = FALSE
+)
+
+gallery_value <- function(figure, key) {
+  v <- gallery_expected$value[gallery_expected$figure == figure & gallery_expected$key == key]
+  stopifnot(length(v) == 1L)
+  v
+}

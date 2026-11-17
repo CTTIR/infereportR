@@ -6,7 +6,8 @@
   compare = c("t_means_two_independent_welch", "t_means_two_independent_student",
               "rank_sum_mann_whitney", "brunner_munzel"),
   omnibus = c("anova_one_way", "anova_one_way_welch", "kruskal_wallis"),
-  correlation = c("correlation_pearson", "correlation_spearman", "correlation_kendall")
+  correlation = c("correlation_pearson", "correlation_spearman", "correlation_kendall"),
+  paired = c("t_means_paired", "signed_rank_wilcoxon")
 )
 
 .ip_check_method <- function(method, set, arg = "method") {
