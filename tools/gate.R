@@ -48,7 +48,9 @@ for (f in r_files) {
   strings <- pd$text[pd$token == "STR_CONST"]
   if (basename(f) != "tokens.R" && any(grepl("#[0-9A-Fa-f]{6}", strings)))
     problems <- c(problems, paste(f, ": colour literal outside R/tokens.R"))
-  if (length(utils::capture.output(tools::showNonASCIIfile(f))))
+  # tools::showNonASCIIfile() writes to stderr on R >= 4.6, so capture.output()
+  # missed it; test the bytes directly.
+  if (any(grepl("[^\\x01-\\x7f]", readLines(f, warn = FALSE), perl = TRUE, useBytes = TRUE)))
     problems <- c(problems, paste(f, ": non-ASCII characters - use \\uXXXX escapes"))
 }
 step("source-scan (R/)", !length(problems), problems)
