@@ -109,13 +109,12 @@
 #' c64 <- char_figure(p, style = "c64")
 #' char_size(c64)
 #'
-#' # The same screen in two values, filling a half-width slide slot
+#' # The same screen in two values, filling a half-width slide slot; print a
+#' # figure to draw it. Dark and glyph-only versions use mode and transparent.
 #' half <- char_figure(p, style = "c64bw", slot = "slide_half")
 #' char_size(half)
-#'
-#' # The same for a dark slide, and glyphs only
-#' char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark")
-#' char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark", transparent = TRUE)
+#' dark <- char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark",
+#'                     transparent = TRUE)
 #' @export
 char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height = NULL,
                         charset = "ascii", case = NULL, family = NULL, width_mm = NULL,

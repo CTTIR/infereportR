@@ -86,7 +86,7 @@
 #' dir <- file.path(tempdir(), "figures")
 #' if (capabilities("cairo")) {
 #'   files <- save_figure_set(build, "plant-growth", preset = "slide_half", dir = dir,
-#'                            dpi = 150)
+#'                            modes = c("light", "dark"), png = FALSE)
 #'   files
 #'   list.files(dir, recursive = TRUE)
 #' }

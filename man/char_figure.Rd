@@ -147,13 +147,12 @@ save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
 c64 <- char_figure(p, style = "c64")
 char_size(c64)
 
-# The same screen in two values, filling a half-width slide slot
+# The same screen in two values, filling a half-width slide slot; print a
+# figure to draw it. Dark and glyph-only versions use mode and transparent.
 half <- char_figure(p, style = "c64bw", slot = "slide_half")
 char_size(half)
-
-# The same for a dark slide, and glyphs only
-char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark")
-char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark", transparent = TRUE)
+dark <- char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark",
+                    transparent = TRUE)
 }
 \seealso{
 \code{\link[=char_grid]{char_grid()}} for the grid, \code{\link[=char_size]{char_size()}} for the matching file size,

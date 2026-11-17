@@ -123,7 +123,7 @@ p <- ggplot(PlantGrowth, aes(group, weight)) +
 p
 
 # The same figure, part by part:
-ggplot(PlantGrowth, aes(group, weight)) +
+q <- ggplot(PlantGrowth, aes(group, weight)) +
   theme_figure("paper", base_size = 9, legend = "inside") +
   scale_colour_ink() + scale_linetype_figure() + scale_shape_figure() +
   scale_fill_hatch() +
@@ -137,8 +137,8 @@ ggplot(PlantGrowth, aes(group, weight)) +
 
 inference_results(p)
 
-# White on black for a dark slide:
-ggplot(PlantGrowth, aes(group, weight)) +
+# White on black for a dark slide (print it to draw):
+dark <- ggplot(PlantGrowth, aes(group, weight)) +
   inferplot("slide", mode = "dark") +
   labs(x = "Group", y = "Dried weight (g)")
 }

@@ -90,10 +90,9 @@ p <- ggplot(mtcars, aes(wt, mpg, shape = factor(cyl))) +
 p + theme_figure("paper")
 
 # Slide figure: 1 mm margins, dotted horizontal grid, legend at the bottom.
-p + theme_figure("slide", grid = "y", legend = "bottom")
-
-# Dark slide figure without a background.
-p + theme_figure("slide", mode = "dark", transparent = TRUE)
+# Print it to draw; the dark version has no background.
+slide <- p + theme_figure("slide", grid = "y", legend = "bottom")
+dark <- p + theme_figure("slide", mode = "dark", transparent = TRUE)
 }
 \seealso{
 \code{\link[=figure_font]{figure_font()}} for the default family; \code{check_figure()} audits a
