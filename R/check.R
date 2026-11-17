@@ -24,7 +24,11 @@
 #'   \item{`two_values`}{(inferplotR) every `colour` and `fill` value in the
 #'     built layer data, and the colours of drawn theme lines, rectangles and
 #'     text, is black, white, `NA`, fully transparent or a grid pattern.
-#'     `fail` lists the offending colours as hex codes.}
+#'     This holds in every mode: light (black on white), dark (white on
+#'     black) and the transparent modes, whose backgrounds are empty (`NA`).
+#'     `fail` lists the offending colours as hex codes. The `"c64"` style of
+#'     [char_figure()] is the one documented exception: its C64 blues fail
+#'     here by design.}
 #'   \item{`axis_labels`}{(APA 7) `fail` if the x or y label is missing or
 #'     empty; `note` if a label of a continuous axis has no unit marker (a
 #'     parenthesis, `%` or a comma followed by a unit). Discrete axes have no

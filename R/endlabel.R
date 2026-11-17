@@ -105,7 +105,8 @@ makeContent.inferplotR_endlabel <- function(x) {
 #' Labels each group at its last point, the point with the largest finite `x`,
 #' so that lines can be identified without a legend or colour. The layer uses
 #' the stat [StatEndlabel] and the geom [GeomEndlabel]; the text is always
-#' drawn in the ink colour, at 8 pt by default.
+#' drawn in the ink colour of `mode` (black in light, white in dark mode), at
+#' 8 pt by default.
 #'
 #' Labels never overlap. When the plot is drawn, `GeomEndlabel` sorts the labels
 #' of a panel by their y position and pushes them apart until neighbours are at
@@ -134,6 +135,10 @@ makeContent.inferplotR_endlabel <- function(x) {
 #' @param size Text size in mm (the ggplot2 unit of `size`). `NULL` means
 #'   8 pt, that is `8 / ggplot2::.pt`.
 #' @param family Font family. `NULL` means `figure_font("sans")`.
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent Accepted for a uniform interface (text has no
+#'   background); must be `TRUE` or `FALSE`.
 #' @param na.rm If `FALSE` (the default), rows with missing or non-finite
 #'   values are removed with a warning, as in every ggplot2 layer; if `TRUE`,
 #'   silently. Either way a group is labelled at its last finite point.
@@ -159,8 +164,9 @@ makeContent.inferplotR_endlabel <- function(x) {
 #' p
 #' @export
 geom_endlabel <- function(mapping = NULL, data = NULL, ..., hjust = 0, size = NULL,
-                          family = NULL, na.rm = FALSE, show.legend = FALSE,
-                          inherit.aes = TRUE) {
+                          family = NULL, mode = "light", transparent = FALSE, na.rm = FALSE,
+                          show.legend = FALSE, inherit.aes = TRUE) {
+  ink <- .ip_mode(mode, transparent)$ink
   .ip_check_number(hjust, "hjust")
   if (is.null(size)) {
     size <- .ip_label_size_pt / ggplot2::.pt
@@ -179,7 +185,7 @@ geom_endlabel <- function(mapping = NULL, data = NULL, ..., hjust = 0, size = NU
   nms <- names(dots)
   if (is.null(nms)) nms <- rep("", length(dots))
   dots <- dots[!nms %in% c("colour", "color", "col")]
-  params <- c(list(hjust = hjust, size = size, family = family, colour = .ip_ink,
+  params <- c(list(hjust = hjust, size = size, family = family, colour = ink,
                    na.rm = na.rm), dots)
   ggplot2::layer(
     data = data, mapping = mapping, stat = StatEndlabel, geom = GeomEndlabel,

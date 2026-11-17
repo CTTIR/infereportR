@@ -15,6 +15,7 @@ stat_paired(
   label = c("estimate_ci_p", "none"),
   unit = NULL,
   mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   inherit.aes = TRUE
 )
@@ -40,7 +41,11 @@ no label.}
 \item{unit}{\code{NULL} or a single string appended to the estimate, such as
 \code{"mmol/l"}.}
 
-\item{mode}{\code{"light"} (black ink) or \code{"dark"} (white ink).}
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); accepted by every layer of the package.}
 
 \item{na.rm}{Kept for the layer interface; incomplete pairs are always
 dropped.}

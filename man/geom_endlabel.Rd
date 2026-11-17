@@ -11,6 +11,8 @@ geom_endlabel(
   hjust = 0,
   size = NULL,
   family = NULL,
+  mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -36,6 +38,12 @@ the text there.}
 
 \item{family}{Font family. \code{NULL} means \code{figure_font("sans")}.}
 
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{Accepted for a uniform interface (text has no
+background); must be \code{TRUE} or \code{FALSE}.}
+
 \item{na.rm}{If \code{FALSE} (the default), rows with missing or non-finite
 values are removed with a warning, as in every ggplot2 layer; if \code{TRUE},
 silently. Either way a group is labelled at its last finite point.}
@@ -54,7 +62,8 @@ plot with \code{+}.
 Labels each group at its last point, the point with the largest finite \code{x},
 so that lines can be identified without a legend or colour. The layer uses
 the stat \link{StatEndlabel} and the geom \link{GeomEndlabel}; the text is always
-drawn in the ink colour, at 8 pt by default.
+drawn in the ink colour of \code{mode} (black in light, white in dark mode), at
+8 pt by default.
 }
 \details{
 Labels never overlap. When the plot is drawn, \code{GeomEndlabel} sorts the labels

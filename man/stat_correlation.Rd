@@ -19,6 +19,8 @@ stat_correlation(
   fit = FALSE,
   text_size = NULL,
   family = NULL,
+  mode = "light",
+  transparent = FALSE,
   inherit.aes = TRUE
 )
 }
@@ -48,6 +50,12 @@ panel edges (top left by default).}
 label size) by default.}
 
 \item{family}{Label font family; \code{figure_font("sans")} by default.}
+
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
 }
 \value{
 A ggplot2 layer; with \code{fit = TRUE}, a list of two layers (fit,

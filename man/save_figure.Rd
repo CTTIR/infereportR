@@ -11,7 +11,8 @@ save_figure(
   width = NULL,
   height = NULL,
   dpi = 600,
-  bg = NULL
+  bg = NULL,
+  transparent = FALSE
 )
 }
 \arguments{
@@ -28,7 +29,10 @@ overrides the corresponding value of the preset.}
 
 \item{dpi}{Resolution in dots per inch for PNG and TIFF output.}
 
-\item{bg}{Background colour. \code{NULL} means white paper.}
+\item{bg}{Background colour. \code{NULL} means white paper, or no background
+with \code{transparent = TRUE}; \code{bg} and \code{transparent = TRUE} are exclusive.}
+
+\item{transparent}{If \code{TRUE}, the device background is transparent.}
 }
 \value{
 \code{file}, invisibly.
@@ -36,7 +40,8 @@ overrides the corresponding value of the preset.}
 \description{
 Writes a ggplot to a PDF, PNG, SVG or TIFF file at one of the sizes of
 \code{\link[=figure_size]{figure_size()}}, or at an explicit width and height, with a white
-background. The device is chosen from the file extension:
+background, or none with \code{transparent = TRUE}. The device is chosen from
+the file extension:
 }
 \details{
 \itemize{
@@ -48,6 +53,12 @@ it is installed;
 \item \code{.tiff}: the \code{"tiff"} device of \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}.
 }
 
+\code{transparent = TRUE} writes with \code{bg = "transparent"}: a PNG written by
+'ragg' keeps its alpha channel (RGBA) and a PDF has no page background.
+Only areas the plot itself leaves empty become transparent, so use it with
+\code{theme_figure(transparent = TRUE)} or a figure builder called with
+\code{transparent = TRUE}; \code{\link[=save_figure_set]{save_figure_set()}} does this for every mode.
+
 PDF and SVG output need an R build with Cairo; PNG and TIFF need it only
 when 'ragg' is not installed. Without it the function fails with an error of
 class \code{inferplotR_device_unsupported}.
@@ -58,8 +69,14 @@ p <- ggplot2::ggplot(data.frame(x = 1:3, y = c(2, 1, 3)), ggplot2::aes(x, y)) +
 out <- save_figure(p, file.path(tempdir(), "figure.png"), dpi = 150)
 file.exists(out)
 unlink(out)
+
+# A dark figure without background, for a dark slide.
+q <- p + theme_figure("slide", mode = "dark", transparent = TRUE)
+out <- save_figure(q, file.path(tempdir(), "figure-dark.png"), preset = "slide_half",
+                   dpi = 150, transparent = TRUE)
+unlink(out)
 }
 \seealso{
-\code{\link[=figure_size]{figure_size()}} for the presets, \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}, which does
-the writing.
+\code{\link[=figure_size]{figure_size()}} for the presets, \code{\link[=save_figure_set]{save_figure_set()}} for all four
+modes at once, \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}, which does the writing.
 }

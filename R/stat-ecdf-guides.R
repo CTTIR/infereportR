@@ -143,7 +143,10 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
 #'   `"median"` by default, `""` for none.
 #' @param curve_labels `NULL` (no curve labels) or one cumulative proportion
 #'   per group.
-#' @param mode `"light"` (black ink) or `"dark"` (white ink).
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); accepted by every layer of the package.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`,
 #'   `part` (`"guide"`, `"drop"` or `"curve"`), `label` and `hjust`.
 #' @seealso [ggplot2::stat_ecdf()]
@@ -160,7 +163,7 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
 #' @export
 stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
                              guide_label = "median", curve_labels = NULL, mode = "light",
-                             inherit.aes = TRUE) {
+                             transparent = FALSE, inherit.aes = TRUE) {
   if (!is.numeric(probs) || !length(probs) || anyNA(probs) || any(probs <= 0) ||
       any(probs >= 1)) {
     .ip_abort("probs must be proportions strictly between 0 and 1")
@@ -173,7 +176,7 @@ stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
                                  any(curve_labels >= 1))) {
     .ip_abort("curve_labels must be NULL or proportions strictly between 0 and 1")
   }
-  ink <- .ip_mode(mode)$ink
+  ink <- .ip_mode(mode, transparent)$ink
   dots <- list(...)
   params <- c(list(probs = probs, guide_label = guide_label, curve_labels = curve_labels,
                    family = figure_font("sans"), guide_family = .ip_condensed_family()),

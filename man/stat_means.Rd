@@ -14,6 +14,8 @@ stat_means(
   conf.level = 0.95,
   label = c("none", "estimate", "estimate_ci"),
   offset = 0,
+  mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -37,6 +39,12 @@ placed in the \code{label} column, for geoms that draw it.}
 
 \item{offset}{Shift in x units for a discrete x scale (0 by default);
 ignored for continuous x.}
+
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }

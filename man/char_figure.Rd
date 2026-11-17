@@ -16,7 +16,9 @@ char_figure(
   cell_ratio = 1.75,
   char_width = 0.6,
   ready = NULL,
-  slot = NULL
+  slot = NULL,
+  mode = "light",
+  transparent = FALSE
 )
 }
 \arguments{
@@ -52,12 +54,17 @@ the c64 styles and \code{FALSE} for \code{"bw"}.}
 
 \item{slot}{\code{NULL} (default) or a preset name of \code{\link[=figure_size]{figure_size()}}: the figure
 then fills that slot exactly (see Size).}
+
+\item{mode}{\code{"light"} (default) or \code{"dark"}; see Modes.}
+
+\item{transparent}{If \code{TRUE}, glyphs only; see Modes.}
 }
 \value{
 A ggplot. Its data (\code{fig$data}) has one row per non-blank cell of the
 grid (columns \code{col}, \code{row} and \code{glyph}), drawn by a \code{geom_text()} layer.
 The cursor is a \code{geom_tile()} layer, and \code{"c64bw"} adds two \code{geom_rect()}
-layers below the text (halftone border, then screen). The coordinates are
+layers below the text (halftone border, then screen) unless
+\code{transparent = TRUE}. The coordinates are
 \code{coord_fixed(ratio = cell_ratio)} and the theme is \code{theme_void()} with the
 style's backgrounds.
 }
@@ -84,6 +91,20 @@ with a dot halftone (ink dots on paper, 0.75 mm apart, radius 0.18 times
 the spacing). One column and 0.4 rows of padding separate the glyphs from
 the screen edge. The border is drawn in data space, so the screen keeps its
 aspect and the figure fills its slot.
+}
+
+\strong{Modes.} \code{mode} and \code{transparent} work as in \code{\link[=theme_figure]{theme_figure()}}:
+\itemize{
+\item \code{"bw"} draws ink glyphs on the mode's background: black on white
+(light) or white on black (dark).
+\item \code{"c64"} keeps its two C64 colours in light and dark mode.
+\item \code{"c64bw"} keeps the black screen with white glyphs in light and dark
+mode; only the halftone border follows the mode (ink dots on paper).
+\item With \code{transparent = TRUE} every style is glyphs only: no screen, no
+border and no background. The glyphs and the cursor are in the mode's
+ink for \code{"bw"} and \code{"c64bw"}, and in C64 light blue (\verb{#6C5EB5}) for
+\code{"c64"}. The figure keeps its size, so the four versions of one figure
+are interchangeable (see \code{\link[=save_figure_set]{save_figure_set()}}).
 }
 
 The c64 styles end with \code{READY.} and a cursor by default, as on the real
@@ -129,6 +150,10 @@ char_size(c64)
 # The same screen in two values, filling a half-width slide slot
 half <- char_figure(p, style = "c64bw", slot = "slide_half")
 char_size(half)
+
+# The same for a dark slide, and glyphs only
+char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark")
+char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark", transparent = TRUE)
 }
 \seealso{
 \code{\link[=char_grid]{char_grid()}} for the grid, \code{\link[=char_size]{char_size()}} for the matching file size,

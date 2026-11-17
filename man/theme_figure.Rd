@@ -10,7 +10,9 @@ theme_figure(
   base_family = NULL,
   legend = c("inside", "right", "bottom", "none"),
   grid = c("none", "y", "x", "xy"),
-  border = FALSE
+  border = FALSE,
+  mode = "light",
+  transparent = FALSE
 )
 }
 \arguments{
@@ -30,6 +32,11 @@ the panel), \code{"right"}, \code{"bottom"} or \code{"none"}.}
 
 \item{border}{If \code{TRUE}, draw a black rectangle without fill around the
 panel.}
+
+\item{mode}{\code{"light"} (default, black on white) or \code{"dark"} (white on
+black).}
+
+\item{transparent}{If \code{TRUE}, no background is drawn.}
 }
 \value{
 A complete 'ggplot2' theme object (\code{attr(, "complete")} is \code{TRUE})
@@ -63,8 +70,15 @@ slots, and sets the axis titles in IBM Plex Sans Condensed when
 'systemfonts' reports that family (otherwise in the base family).
 
 The theme only styles non-data elements. In 'ggplot2' versions with a
-\code{geom} theme element, its ink, paper and accent are also set to black and
-white so that default geom colours stay black and white.
+\code{geom} theme element, its ink, paper and accent are also set to the mode's
+ink and background so that default geom colours stay black and white.
+
+\strong{Modes.} \code{mode = "light"} (default) draws black ink on white paper,
+\code{mode = "dark"} white ink on black, for dark Bleisatz slides
+(\verb{\\usetheme[dark]\{Bleisatz\}}) and inverse frames. With
+\code{transparent = TRUE} the plot, panel and legend backgrounds are not drawn
+(\code{fill = NA}), so only the information is left; open fills of the \code{geom}
+element are empty too. Pair it with \code{save_figure(transparent = TRUE)}.
 }
 \examples{
 library(ggplot2)
@@ -77,6 +91,9 @@ p + theme_figure("paper")
 
 # Slide figure: 1 mm margins, dotted horizontal grid, legend at the bottom.
 p + theme_figure("slide", grid = "y", legend = "bottom")
+
+# Dark slide figure without a background.
+p + theme_figure("slide", mode = "dark", transparent = TRUE)
 }
 \seealso{
 \code{\link[=figure_font]{figure_font()}} for the default family; \code{check_figure()} audits a

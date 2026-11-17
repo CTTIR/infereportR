@@ -8,7 +8,9 @@ scale_fill_hatch(
   ...,
   patterns = .ip_hatches,
   spacing = .ip_hatch_spacing,
-  linewidth = 0.4
+  linewidth = 0.4,
+  mode = "light",
+  transparent = FALSE
 )
 }
 \arguments{
@@ -22,6 +24,12 @@ The default of 1.4 mm reads well at slide size; paper figures may pass
 \code{spacing = 1.6}.}
 
 \item{linewidth}{Width of the hatch lines in points, between 0.1 and 2.}
+
+\item{mode}{\code{"light"} (default, black on white) or \code{"dark"} (white on
+black).}
+
+\item{transparent}{If \code{TRUE}, patterns have no background and \code{"open"} is
+\code{NA}.}
 }
 \value{
 A ggplot2 discrete scale object for the \code{fill} aesthetic.
@@ -41,7 +49,8 @@ building the plot fails with an error of class \code{inferplotR_too_many_groups}
 Pattern fills need R 4.1.0 or later and a pattern-capable graphics device,
 such as \code{\link[grDevices:cairo_pdf]{grDevices::cairo_pdf()}}, \code{\link[grDevices:svg]{grDevices::svg()}} or the 'ragg' devices
 (\code{ragg::agg_png()}). Give the bars an ink outline (\code{colour = "black"} in the
-geom) so that \code{"open"} bars stay visible. The default \code{spacing} is 1.4 mm
+geom, \code{"white"} in dark mode) so that \code{"open"} bars stay visible. \code{mode}
+and \code{transparent} are passed to \code{\link[=hatch_pattern]{hatch_pattern()}}. The default \code{spacing} is 1.4 mm
 for slides; paper figures may pass \code{spacing = 1.6}.
 }
 \examples{

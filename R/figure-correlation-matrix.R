@@ -153,7 +153,7 @@ figure_correlation_matrix <- function(data, vars = NULL, method, digits = 2L, la
     ggplot2::scale_size_area(max_size = .ip_matrix_circle, limits = c(0, 1), guide = "none") +
     ggplot2::coord_fixed(xlim = c(0.5, k + 0.5), ylim = c(0.5, k + 0.5), expand = FALSE,
                          clip = "off") +
-    # P13: theme_figure()/theme_void() backgrounds threaded by mode package-wide.
+    # theme_void() with the mode's ink and backgrounds (none when transparent).
     ggplot2::theme_void(base_size = base_size, base_family = sans) +
     ggplot2::theme(text = ggplot2::element_text(colour = ink),
                    plot.background = ggplot2::element_rect(fill = m$knock, colour = NA),

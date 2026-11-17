@@ -126,6 +126,10 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #'   placed in the `label` column, for geoms that draw it.
 #' @param offset Shift in x units for a discrete x scale (0 by default);
 #'   ignored for continuous x.
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); passed by [inferplot()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
 #' @return A ggplot2 layer. The computed data has columns `x` (shifted by
 #'   `offset`), `y` (the mean),
@@ -141,7 +145,9 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 stat_means <- function(mapping = NULL, data = NULL, geom = "pointrange",
                        position = "identity", ..., method = "t_mean_one_sample",
                        conf.level = 0.95, label = c("none", "estimate", "estimate_ci"),
-                       offset = 0, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+                       offset = 0, mode = "light", transparent = FALSE, na.rm = FALSE,
+                       show.legend = NA, inherit.aes = TRUE) {
+  m <- .ip_mode(mode, transparent)
   method <- .ip_check_method(method, "means")
   conf.level <- .ip_check_conf_level(conf.level)
   if (is.null(conf.level)) .ip_abort("conf.level must be a single number between 0 and 1")
@@ -152,7 +158,7 @@ stat_means <- function(mapping = NULL, data = NULL, geom = "pointrange",
   params <- c(list(method = method, conf.level = conf.level, label_type = label,
                    offset = offset, na.rm = na.rm),
               dots)
-  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- .ip_ink
+  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- m$ink
   if (identical(geom, "pointrange")) geom <- .ip_geom_means
   ggplot2::layer(stat = StatMeans, data = data, mapping = mapping, geom = geom,
                  position = position, show.legend = show.legend, inherit.aes = inherit.aes,

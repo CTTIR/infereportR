@@ -8,11 +8,13 @@
 #' hand (see the examples).
 #'
 #' The list holds, in this order:
-#' 1. `theme_figure(target, base_size = base_size, legend = legend)`;
+#' 1. `theme_figure(target, base_size = base_size, legend = legend, mode =
+#'    mode, transparent = transparent)`;
 #' 2. [scale_colour_ink()], [scale_linetype_figure()], [scale_shape_figure()]
 #'    and [scale_fill_hatch()];
-#' 3. unless `points = "none"`, the raw observations as open black circles
-#'    (`geom_point(shape = 1, colour = "black", size = 1.2)`), jittered
+#' 3. unless `points = "none"`, the raw observations as open circles in the
+#'    ink colour (`geom_point(shape = 1, colour = "black", size = 1.2)` in
+#'    light mode), jittered
 #'    horizontally with `position_jitter(width = 0.08, height = 0, seed = 1)`
 #'    for `points = "jitter"` (meant for a discrete x; the fixed seed keeps the
 #'    figure reproducible) or unmoved for `points = "plain"` (a continuous x);
@@ -24,6 +26,11 @@
 #' 6. if `compare` is set, `stat_compare(method = compare, comparisons =
 #'    comparisons, reference = reference, adjust = adjust, label = label)`;
 #' 7. if `correlation` is set, `stat_correlation(method = correlation)`.
+#'
+#' `mode` and `transparent` are passed to every component that draws (the
+#' theme, [scale_colour_ink()], [scale_fill_hatch()], the points and every
+#' layer), so one argument switches the whole figure between light, dark and
+#' transparent; see [save_figure_set()] to write all four versions.
 #'
 #' No test is ever added unless its procedure is named: `compare`, `omnibus`
 #' and `correlation` take 'infercalcR' method ids and default to `NULL`. With
@@ -54,6 +61,10 @@
 #' @param conf.level Confidence level of the mean intervals.
 #' @param legend Legend placement, as in [theme_figure()].
 #' @param base_size Base font size in points, as in [theme_figure()].
+#' @param mode `"light"` (default, black on white) or `"dark"` (white on
+#'   black), as in [theme_figure()].
+#' @param transparent If `TRUE`, no background is drawn, as in
+#'   [theme_figure()].
 #' @param ... Must be empty; any other argument is an error of class
 #'   `inferplotR_invalid_input`.
 #' @return A plain list of 'ggplot2' components (theme, scales and layers) to
@@ -84,11 +95,17 @@
 #'   labs(x = "Group", y = "Dried weight (g)")
 #'
 #' inference_results(p)
+#'
+#' # White on black for a dark slide:
+#' ggplot(PlantGrowth, aes(group, weight)) +
+#'   inferplot("slide", mode = "dark") +
+#'   labs(x = "Group", y = "Dried weight (g)")
 #' @export
 inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons = NULL,
                       reference = NULL, adjust = NULL, omnibus = NULL, correlation = NULL,
                       means = TRUE, points = c("jitter", "plain", "none"), label = "p",
-                      conf.level = 0.95, legend = "inside", base_size = 9, ...) {
+                      conf.level = 0.95, legend = "inside", base_size = 9, mode = "light",
+                      transparent = FALSE, ...) {
   dots <- list(...)
   if (length(dots)) {
     nm <- names(dots)
@@ -106,6 +123,7 @@ inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons 
   label <- .ip_check_choice(label, c("p", "estimate_ci", "estimate_ci_p", "stars"), "label")
   .ip_check_number(base_size, "base_size")
   if (base_size <= 0) .ip_abort("base_size must be a positive number")
+  m <- .ip_mode(mode, transparent)
   if (!is.null(compare)) .ip_check_method(compare, "compare", "compare")
   if (!is.null(omnibus)) .ip_check_method(omnibus, "omnibus", "omnibus")
   if (!is.null(correlation)) .ip_check_method(correlation, "correlation", "correlation")
@@ -119,28 +137,36 @@ inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons 
   }
 
   # Layer constructors run (and validate) before anything is returned.
-  theme <- theme_figure(target, base_size = base_size, legend = legend)
-  out <- list(theme, scale_colour_ink(), scale_linetype_figure(), scale_shape_figure(),
-              scale_fill_hatch())
+  theme <- theme_figure(target, base_size = base_size, legend = legend, mode = mode,
+                        transparent = transparent)
+  out <- list(theme, scale_colour_ink(mode = mode), scale_linetype_figure(),
+              scale_shape_figure(), scale_fill_hatch(mode = mode, transparent = transparent))
   if (points != "none") {
     position <- if (points == "jitter") {
       ggplot2::position_jitter(width = 0.08, height = 0, seed = 1)
     } else {
       ggplot2::position_identity()
     }
-    out <- c(out, list(ggplot2::geom_point(shape = 1, colour = .ip_ink, size = 1.2,
+    out <- c(out, list(ggplot2::geom_point(shape = 1, colour = m$ink, size = 1.2,
                                            position = position)))
   }
   if (means) {
     # Beside jittered points the summary moves right, so they never overlap.
     offset <- if (points == "jitter") .ip_means_offset else 0
-    out <- c(out, list(stat_means(conf.level = conf.level, offset = offset)))
+    out <- c(out, list(stat_means(conf.level = conf.level, offset = offset, mode = mode,
+                                  transparent = transparent)))
   }
-  if (!is.null(omnibus)) out <- c(out, list(stat_omnibus(method = omnibus)))
+  if (!is.null(omnibus)) {
+    out <- c(out, list(stat_omnibus(method = omnibus, mode = mode, transparent = transparent)))
+  }
   if (!is.null(compare)) {
     out <- c(out, list(stat_compare(method = compare, comparisons = comparisons,
-                                    reference = reference, adjust = adjust, label = label)))
+                                    reference = reference, adjust = adjust, label = label,
+                                    mode = mode, transparent = transparent)))
   }
-  if (!is.null(correlation)) out <- c(out, list(stat_correlation(method = correlation)))
+  if (!is.null(correlation)) {
+    out <- c(out, list(stat_correlation(method = correlation, mode = mode,
+                                        transparent = transparent)))
+  }
   structure(out, class = "list")
 }
