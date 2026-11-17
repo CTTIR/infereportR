@@ -6,16 +6,17 @@
 \usage{
 char_figure(
   x,
-  style = c("bw", "c64"),
+  style = c("bw", "c64", "c64bw"),
   width = NULL,
   height = NULL,
   charset = "ascii",
   case = NULL,
   family = NULL,
-  width_mm = 134,
-  cell_ratio = 2,
+  width_mm = NULL,
+  cell_ratio = 1.75,
   char_width = 0.6,
-  ready = NULL
+  ready = NULL,
+  slot = NULL
 )
 }
 \arguments{
@@ -23,54 +24,82 @@ char_figure(
 object. With a chargrid, \code{width}, \code{height}, \code{charset} and \code{case} must not be
 given (error of class \code{inferplotR_invalid_input}).}
 
-\item{style}{\code{"bw"} (default) or \code{"c64"}.}
+\item{style}{\code{"bw"} (default), \code{"c64"} or \code{"c64bw"}.}
 
-\item{width, height}{Grid size in characters for \code{\link[=char_grid]{char_grid()}}; \code{NULL} uses 64 x
-20 for \code{"bw"} and 40 x 25 for \code{"c64"}.}
+\item{width, height}{Grid size in characters for \code{\link[=char_grid]{char_grid()}}. \code{NULL} uses
+64 columns for \code{"bw"} and 40 for the c64 styles (38 in a slot), and 20
+rows for \code{"bw"} and 25 for the c64 styles. With \code{slot}, \code{height} must be
+\code{NULL}: the slot sets the rows.}
 
 \item{charset}{\code{"ascii"} (default) or \code{"unicode"}, passed to \code{\link[=char_grid]{char_grid()}}.}
 
 \item{case}{\code{"asis"} or \code{"upper"}, passed to \code{\link[=char_grid]{char_grid()}}; \code{NULL} uses
-\code{"asis"} for \code{"bw"} and \code{"upper"} for \code{"c64"}.}
+\code{"asis"} for \code{"bw"} and \code{"upper"} for the c64 styles.}
 
 \item{family}{Font family of the glyphs; \code{NULL} uses \code{figure_font("mono")}.}
 
-\item{width_mm}{Width of the grid in millimetres (without the c64 border),
-default 134, the Bleisatz slide text width.}
+\item{width_mm}{Width of the whole figure in millimetres, border included.
+\code{NULL} means the slot width with \code{slot}, else 134 (the Bleisatz slide text
+width). Must be \code{NULL} when \code{slot} is given.}
 
-\item{cell_ratio}{Height of a cell divided by its width, default 2.}
+\item{cell_ratio}{Height of a cell divided by its width, default 1.75 (IBM
+Plex Mono).}
 
 \item{char_width}{Advance width of one glyph of \code{family} in em, default 0.6.}
 
-\item{ready}{Append a \code{READY.} row and a cursor row (\verb{_} for ascii, a full block
-for unicode)? \code{NULL} means \code{TRUE} for \code{"c64"} and \code{FALSE} for \code{"bw"}.}
+\item{ready}{Append a \code{READY.} row and a cursor row? \code{NULL} means \code{TRUE} for
+the c64 styles and \code{FALSE} for \code{"bw"}.}
+
+\item{slot}{\code{NULL} (default) or a preset name of \code{\link[=figure_size]{figure_size()}}: the figure
+then fills that slot exactly (see Size).}
 }
 \value{
-A ggplot with one \code{geom_text()} layer whose data has one row per
-non-blank cell (columns \code{col}, \code{row} and \code{glyph}), \code{coord_fixed()} limits
-that span the grid exactly and \code{theme_void()} with the style's backgrounds.
+A ggplot. Its data (\code{fig$data}) has one row per non-blank cell of the
+grid (columns \code{col}, \code{row} and \code{glyph}), drawn by a \code{geom_text()} layer.
+The cursor is a \code{geom_tile()} layer, and \code{"c64bw"} adds two \code{geom_rect()}
+layers below the text (halftone border, then screen). The coordinates are
+\code{coord_fixed(ratio = cell_ratio)} and the theme is \code{theme_void()} with the
+style's backgrounds.
 }
 \description{
 \code{char_figure()} turns a character grid from \code{\link[=char_grid]{char_grid()}} into a ggplot made
-only of text: one glyph per non-blank cell, laid out on a fixed grid of cells
-that are \code{cell_ratio} times as tall as they are wide. The result can be saved
-with \code{\link[=save_figure]{save_figure()}} for print or slides, at the size \code{\link[=char_size]{char_size()}} computes.
+of text: one glyph per non-blank cell, laid out on a fixed grid of cells that
+are \code{cell_ratio} times as tall as they are wide. The result can be saved with
+\code{\link[=save_figure]{save_figure()}} for print or slides, at the size \code{\link[=char_size]{char_size()}} computes.
 }
 \details{
-Two styles are available:
+Three styles are available:
 \itemize{
-\item \code{"bw"}: black glyphs on white paper and no margin, the 1-bit figure style of
-the package (default grid 64 x 20, labels as they are).
-\item \code{"c64"}: the screen of a Commodore 64 after power-on, light-blue glyphs on a
-blue panel inside a light-blue border of 8 \% of \code{width_mm} on every side
-(default grid 40 x 25, labels in upper case). By default the screen ends
-with \code{READY.} and a cursor, as on the real machine. The two colours are
+\item \code{"bw"}: black glyphs on white paper and no border, the 1-bit figure style
+of the package (default grid 64 x 20, labels as they are).
+\item \code{"c64"}: the screen of a Commodore 64 after power-on, light-blue glyphs on
+a blue screen inside a light-blue border of 6 \% of \code{width_mm} on every
+side (default grid 40 x 25, labels in upper case). The two colours are
 VIC-II "blue" and "light blue" of the Pepto palette by Philip Timmermann.
+This style is for effect only: it is not black and white, so
+\code{\link[=check_figure]{check_figure()}} reports it under \code{two_values}.
+\item \code{"c64bw"}: the C64 screen in two values. The screen is always black with
+white glyphs; the border of 3.2 mm stands in for the lighter border blue
+with a dot halftone (ink dots on paper, 0.75 mm apart, radius 0.18 times
+the spacing). One column and 0.4 rows of padding separate the glyphs from
+the screen edge. The border is drawn in data space, so the screen keeps its
+aspect and the figure fills its slot.
 }
 
-The text size is chosen so that one glyph advance fills one cell:
-\code{(width_mm / ncol) / char_width} mm, where \code{char_width} is the advance width
-of the font in em. The default 0.6 fits IBM Plex Mono and DejaVu Sans Mono.
+The c64 styles end with \code{READY.} and a cursor by default, as on the real
+machine. The cursor is a filled tile of 0.9 x 0.8 cells, not a glyph, since
+IBM Plex Mono has no block element.
+
+\strong{Size.} \code{width_mm} is the width of the whole figure, border included. The
+cell width is \verb{(width_mm - 2 * border) / (ncol + 2 * padding columns)} and the
+text size \verb{cell width / char_width} mm, where \code{char_width} is the advance
+width of the font in em (0.6 for IBM Plex Mono). With \code{slot}, a preset of
+\code{\link[=figure_size]{figure_size()}} such as \code{"slide_side"}, the figure takes the slot's width
+and height: the number of rows (\code{READY.} rows included for the c64 styles)
+is the largest that fits, \verb{floor((slot height - 2 * border - padding rows) / (cell width * cell_ratio))}, and the space left over (less than one row)
+is split above and below the grid (for \code{"c64bw"} the halftone border takes
+it). In a slot, the c64 styles default to 38 columns, which suits
+\code{"slide_half"}.
 
 For the look of the real machine, install the C64 Pro Mono font (Style64; its
 licence does not allow bundling it, so it is not part of this package), make
@@ -95,9 +124,13 @@ save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
 
 # Commodore 64 screen with READY. and cursor
 c64 <- char_figure(p, style = "c64")
-char_size(c64, style = "c64")
+char_size(c64)
+
+# The same screen in two values, filling a half-width slide slot
+half <- char_figure(p, style = "c64bw", slot = "slide_half")
+char_size(half)
 }
 \seealso{
 \code{\link[=char_grid]{char_grid()}} for the grid, \code{\link[=char_size]{char_size()}} for the matching file size,
-\code{\link[=save_figure]{save_figure()}} to save it, \code{check_figure()} for the black-and-white audit.
+\code{\link[=save_figure]{save_figure()}} to save it, \code{\link[=check_figure]{check_figure()}} for the black-and-white audit.
 }
