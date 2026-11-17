@@ -63,3 +63,10 @@ test_that("stat_means validates its arguments", {
   expect_error(stat_means(label = "p"), class = bad)
   expect_error(stat_means(na.rm = NA), class = bad)
 })
+
+test_that("constant aesthetics such as shape are kept", {
+  d <- layer_data_of(ggplot2::ggplot(pg, ggplot2::aes(group, weight, shape = group)) +
+                       stat_means())
+  expect_length(unique(d$shape), 3L)
+  expect_false(anyNA(d$shape))
+})

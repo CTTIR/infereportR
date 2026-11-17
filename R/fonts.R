@@ -14,6 +14,10 @@
 #' otherwise the generic R families `"sans"` or `"mono"`. The function never
 #' fails on a missing font. Fonts are not bundled and nothing is registered.
 #'
+#' IBM Plex ships with TeX Live (`fonts/opentype/ibm/plex`). To make it
+#' available to R through fontconfig, copy the Sans, Sans Condensed and Mono
+#' OTF files to `~/.fonts` and run `fc-cache -f`; detection uses 'systemfonts'.
+#'
 #' The lookup is cached for the session; `reset = TRUE` clears the cache, for
 #' example after installing a font.
 #'
