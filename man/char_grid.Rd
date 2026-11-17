@@ -25,16 +25,19 @@ and \code{coord_sf()} raise an error of class \code{inferplotR_unsupported}.}
 geometric point shapes and block fills.}
 
 \item{case}{\code{"asis"} (default) keeps labels as they are; \code{"upper"} writes every
-string (title, labels, tick labels, legend) in upper case. Glyphs are not
-changed.}
+string (title, labels, tick labels, legend, end labels, text layers) in
+upper case. Glyphs are never changed, so a legend's or end label's \code{o}
+stays \code{o}.}
 }
 \value{
 An object of class \code{inferplotR_chargrid}: a list with \code{chars} (a
 character matrix of \code{height} rows and \code{width} columns, one glyph per cell),
 \code{width}, \code{height}, \code{charset} and \code{legend} (a data frame with columns \code{key}
 (integer), \code{symbol} and \code{label} (character); zero rows when there is no
-series key). \code{print()} writes the grid, \code{format()} and \code{as.character()}
-return its lines.
+series key) and \code{endlabels} (a data frame with columns \code{key} (integer),
+\code{symbol}, \code{label} (character) and \code{row} (integer, the grid row written),
+top to bottom; zero rows without \code{\link[=geom_endlabel]{geom_endlabel()}} layers). \code{print()}
+writes the grid, \code{format()} and \code{as.character()} return its lines.
 }
 \description{
 \code{char_grid()} redraws a single-panel Cartesian ggplot on a monospaced character
@@ -73,6 +76,28 @@ chosen for cells twice as tall as wide; later series use \code{.}, \code{:}, \co
 The grid has, from the top: the title, the y-axis label, the plot rows, the
 x axis, the tick labels, the x-axis label, the legend and the caption. Use
 \code{char_figure()} to turn the grid into a ggplot of text for saving.
+
+\strong{End labels.} Layers made with \code{\link[=geom_endlabel]{geom_endlabel()}} (recognised by their stat,
+\code{StatEndlabel}) are not drawn inside the plot. Each of their rows becomes an
+end label \code{"<point glyph> <label>"} written right of the plot area, where the
+glyph is the point glyph of the series key. The key is read from the layer's
+own key aesthetic (usually inherited from the plot mapping); a layer without
+it is matched by label text against the labels of the key scale; otherwise
+key 1 is used. Labels start on the row of the series' last y value and are
+ordered by that value, highest on top; when two would share a row, the lower
+one is pushed down a row (and the block is pulled back up if it would leave
+the plot rows). The plot area gives up as many columns as the longest end
+label needs plus one blank column, and the legend is not written, since the
+end labels name the same series.
+
+\strong{ASCII output.} With \code{charset = "ascii"} every written string (title,
+axis and tick labels, legend, end labels, text layers, caption) is
+transliterated: greater-or-equal (U+2265) to \code{>=}, less-or-equal (U+2264)
+to \code{<=}, plus-minus (U+00B1) to \verb{+/-}, the multiplication sign (U+00D7) to
+\code{x}, the minus sign (U+2212) and the en dash to \code{-}, the em dash to \verb{--},
+the micro sign (and Greek mu) to \code{u} and Greek rho to \code{rho}. Any other
+non-ASCII character becomes \verb{?}, with one warning of class
+\code{inferplotR_transliterated} per call.
 }
 \examples{
 d <- data.frame(hour = c(0, 2, 4, 8, 12, 24), level = c(9, 14, 19, 17, 13, 10))
