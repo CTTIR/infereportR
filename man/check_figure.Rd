@@ -45,7 +45,11 @@ serif face (matches "serif", "times", "georgia", "garamond",
 \item{\code{two_values}}{(inferplotR) every \code{colour} and \code{fill} value in the
 built layer data, and the colours of drawn theme lines, rectangles and
 text, is black, white, \code{NA}, fully transparent or a grid pattern.
-\code{fail} lists the offending colours as hex codes.}
+This holds in every mode: light (black on white), dark (white on
+black) and the transparent modes, whose backgrounds are empty (\code{NA}).
+\code{fail} lists the offending colours as hex codes. The \code{"c64"} style of
+\code{\link[=char_figure]{char_figure()}} is the one documented exception: its C64 blues fail
+here by design.}
 \item{\code{axis_labels}}{(APA 7) \code{fail} if the x or y label is missing or
 empty; \code{note} if a label of a continuous axis has no unit marker (a
 parenthesis, \verb{\%} or a comma followed by a unit). Discrete axes have no

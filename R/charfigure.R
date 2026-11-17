@@ -22,6 +22,19 @@
 #'   the screen edge. The border is drawn in data space, so the screen keeps its
 #'   aspect and the figure fills its slot.
 #'
+#' **Modes.** `mode` and `transparent` work as in [theme_figure()]:
+#'
+#' * `"bw"` draws ink glyphs on the mode's background: black on white
+#'   (light) or white on black (dark).
+#' * `"c64"` keeps its two C64 colours in light and dark mode.
+#' * `"c64bw"` keeps the black screen with white glyphs in light and dark
+#'   mode; only the halftone border follows the mode (ink dots on paper).
+#' * With `transparent = TRUE` every style is glyphs only: no screen, no
+#'   border and no background. The glyphs and the cursor are in the mode's
+#'   ink for `"bw"` and `"c64bw"`, and in C64 light blue (`#6C5EB5`) for
+#'   `"c64"`. The figure keeps its size, so the four versions of one figure
+#'   are interchangeable (see [save_figure_set()]).
+#'
 #' The c64 styles end with `READY.` and a cursor by default, as on the real
 #' machine. The cursor is a filled tile of 0.9 x 0.8 cells, not a glyph, since
 #' IBM Plex Mono has no block element.
@@ -68,10 +81,13 @@
 #'   the c64 styles and `FALSE` for `"bw"`.
 #' @param slot `NULL` (default) or a preset name of [figure_size()]: the figure
 #'   then fills that slot exactly (see Size).
+#' @param mode `"light"` (default) or `"dark"`; see Modes.
+#' @param transparent If `TRUE`, glyphs only; see Modes.
 #' @return A ggplot. Its data (`fig$data`) has one row per non-blank cell of the
 #'   grid (columns `col`, `row` and `glyph`), drawn by a `geom_text()` layer.
 #'   The cursor is a `geom_tile()` layer, and `"c64bw"` adds two `geom_rect()`
-#'   layers below the text (halftone border, then screen). The coordinates are
+#'   layers below the text (halftone border, then screen) unless
+#'   `transparent = TRUE`. The coordinates are
 #'   `coord_fixed(ratio = cell_ratio)` and the theme is `theme_void()` with the
 #'   style's backgrounds.
 #' @seealso [char_grid()] for the grid, [char_size()] for the matching file size,
@@ -96,11 +112,17 @@
 #' # The same screen in two values, filling a half-width slide slot
 #' half <- char_figure(p, style = "c64bw", slot = "slide_half")
 #' char_size(half)
+#'
+#' # The same for a dark slide, and glyphs only
+#' char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark")
+#' char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark", transparent = TRUE)
 #' @export
 char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height = NULL,
                         charset = "ascii", case = NULL, family = NULL, width_mm = NULL,
-                        cell_ratio = 1.75, char_width = 0.6, ready = NULL, slot = NULL) {
+                        cell_ratio = 1.75, char_width = 0.6, ready = NULL, slot = NULL,
+                        mode = "light", transparent = FALSE) {
   style <- .ip_check_choice(style, .ip_cf_styles, "style")
+  md <- .ip_mode(mode, transparent)
   .ip_cf_check_positive(cell_ratio, "cell_ratio")
   .ip_cf_check_positive(char_width, "char_width")
   if (is.null(ready)) ready <- !identical(style, "bw")
@@ -136,12 +158,12 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
   # char_size() reads the figure's size from here.
   attr(cells, "inferplotR_char_size") <- c(width = geo$width, height = geo$height)
 
-  pal <- .ip_cf_palette(style)
+  pal <- .ip_cf_palette(style, md, transparent)
   size <- geo$cw / char_width
   mapping <- do.call(ggplot2::aes, list(x = as.name("col"), y = call("-", as.name("row")),
                                         label = as.name("glyph")))
   fig <- ggplot2::ggplot(cells, mapping)
-  if (identical(style, "c64bw")) fig <- fig + .ip_cf_c64bw_layers(geo, pal)
+  if (!is.null(pal$screen)) fig <- fig + .ip_cf_c64bw_layers(geo, pal)
   if (ready) fig <- fig + .ip_cf_cursor(nrow(m), pal$ink)
   fig <- fig + ggplot2::geom_text(colour = pal$ink, family = family, size = size)
   fig +
@@ -312,11 +334,15 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
   geo
 }
 
-# Colours of a style. P13: thread mode and transparent into .ip_mode() here; bw
-# and the c64bw border follow the mode, the c64 colours and the c64bw screen
-# do not.
-.ip_cf_palette <- function(style) {
-  md <- .ip_mode()
+# Colours of a style from the resolved mode md. bw and the c64bw border follow
+# the mode, the c64 colours and the c64bw screen do not. Transparent figures
+# are glyphs only: no screen, no border, no panel; the glyphs keep the c64
+# light blue, else take the mode's ink.
+.ip_cf_palette <- function(style, md = .ip_mode(), transparent = FALSE) {
+  if (transparent) {
+    ink <- if (identical(style, "c64")) .ip_c64[["foreground"]] else md$ink
+    return(list(ink = ink, panel = NA_character_, border = NA_character_))
+  }
   switch(style,
     bw = list(ink = md$ink, panel = md$knock, border = md$knock),
     c64 = list(ink = .ip_c64[["foreground"]], panel = .ip_c64[["background"]],

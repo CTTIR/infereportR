@@ -192,6 +192,10 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' @param tip Tip length as a fraction of the panel's y range.
 #' @param text_size Label size in mm (ggplot2 text units); 8 pt by default.
 #' @param family Label font family; `figure_font("sans")` by default.
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); passed by [inferplot()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
 #' @return A ggplot2 layer. The computed data has columns `x`, `xend`, `y`,
 #'   `yend`, `label`, `tip`, `headroom` (`TRUE` for the invisible headroom
@@ -210,8 +214,9 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
                          conf.level = NULL, method_args = list(),
                          label = c("p", "estimate_ci", "estimate_ci_p", "stars"),
                          first = 0.10, step = 0.20, tip = 0.02, text_size = NULL,
-                         family = NULL,
+                         family = NULL, mode = "light", transparent = FALSE,
                          na.rm = FALSE, inherit.aes = TRUE) {
+  m <- .ip_mode(mode, transparent)
   method <- .ip_check_method(if (missing(method)) NULL else method, "compare")
   comparisons <- .ip_check_comparisons(comparisons)
   reference <- .ip_check_optional_string(reference, "reference")
@@ -236,7 +241,7 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
                    adjust = adjust, family_id = family_id, alternative = alternative,
                    conf.level = conf.level, method_args = method_args, label_type = label,
                    first = first, step = step, tip_length = tip, na.rm = na.rm),
-              .ip_text_params(dots, text_size, family), dots)
+              .ip_text_params(dots, text_size, family, m$ink), dots)
   layer <- ggplot2::layer(stat = StatCompare, data = data, mapping = mapping,
                           geom = GeomBracket, position = "identity", show.legend = FALSE,
                           inherit.aes = inherit.aes, params = params)

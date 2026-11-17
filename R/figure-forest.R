@@ -47,22 +47,6 @@
   }
 )
 
-# Theme pieces that carry the mode: ink for lines and text, knock for the
-# backgrounds (NA when transparent).
-# P13: replace with theme_figure(mode = , transparent = ) once it takes them.
-.ip_mode_theme <- function(m) {
-  ggplot2::theme(
-    line = ggplot2::element_line(colour = m$ink),
-    text = ggplot2::element_text(colour = m$ink),
-    axis.line = ggplot2::element_line(colour = m$ink),
-    axis.ticks = ggplot2::element_line(colour = m$ink),
-    axis.text = ggplot2::element_text(colour = m$ink),
-    axis.title = ggplot2::element_text(colour = m$ink),
-    plot.background = ggplot2::element_rect(fill = m$knock, colour = NA),
-    panel.background = ggplot2::element_rect(fill = m$knock, colour = NA)
-  )
-}
-
 .ip_method_id <- function(result) {
   meta <- tryCatch(infercalcR::result_metadata(result), error = function(e) NULL)
   id <- meta$method_id
@@ -282,13 +266,11 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
       linewidth = .ip_lw(.ip_rule_hair), colour = ink, inherit.aes = FALSE)
   }
   ylim <- c(0.4, (if (is.null(header)) top else header_y) + 0.5)
-  # P13: theme_figure() gains mode/transparent; .ip_mode_theme() then goes.
   p +
     ggplot2::scale_size_area(max_size = 2.4, guide = "none") +
     ggplot2::coord_cartesian(xlim = xr, ylim = ylim, expand = FALSE, clip = "off") +
     ggplot2::labs(x = xlab, y = NULL) +
-    theme_figure("slide", base_size = base_size) +
-    .ip_mode_theme(m) +
+    theme_figure("slide", base_size = base_size, mode = mode, transparent = transparent) +
     ggplot2::theme(axis.line.y = ggplot2::element_blank(),
                    axis.ticks.y = ggplot2::element_blank(),
                    axis.text.y = ggplot2::element_blank(),

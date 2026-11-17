@@ -22,6 +22,8 @@ stat_compare(
   tip = 0.02,
   text_size = NULL,
   family = NULL,
+  mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   inherit.aes = TRUE
 )
@@ -70,6 +72,12 @@ slide size).}
 \item{text_size}{Label size in mm (ggplot2 text units); 8 pt by default.}
 
 \item{family}{Label font family; \code{figure_font("sans")} by default.}
+
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }

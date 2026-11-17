@@ -18,6 +18,8 @@ inferplot(
   conf.level = 0.95,
   legend = "inside",
   base_size = 9,
+  mode = "light",
+  transparent = FALSE,
   ...
 )
 }
@@ -53,6 +55,12 @@ intervals (\code{\link[=stat_means]{stat_means()}}).}
 
 \item{base_size}{Base font size in points, as in \code{\link[=theme_figure]{theme_figure()}}.}
 
+\item{mode}{\code{"light"} (default, black on white) or \code{"dark"} (white on
+black), as in \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, no background is drawn, as in
+\code{\link[=theme_figure]{theme_figure()}}.}
+
 \item{...}{Must be empty; any other argument is an error of class
 \code{inferplotR_invalid_input}.}
 }
@@ -71,11 +79,12 @@ hand (see the examples).
 \details{
 The list holds, in this order:
 \enumerate{
-\item \code{theme_figure(target, base_size = base_size, legend = legend)};
+\item \code{theme_figure(target, base_size = base_size, legend = legend, mode = mode, transparent = transparent)};
 \item \code{\link[=scale_colour_ink]{scale_colour_ink()}}, \code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}}
 and \code{\link[=scale_fill_hatch]{scale_fill_hatch()}};
-\item unless \code{points = "none"}, the raw observations as open black circles
-(\code{geom_point(shape = 1, colour = "black", size = 1.2)}), jittered
+\item unless \code{points = "none"}, the raw observations as open circles in the
+ink colour (\code{geom_point(shape = 1, colour = "black", size = 1.2)} in
+light mode), jittered
 horizontally with \code{position_jitter(width = 0.08, height = 0, seed = 1)}
 for \code{points = "jitter"} (meant for a discrete x; the fixed seed keeps the
 figure reproducible) or unmoved for \code{points = "plain"} (a continuous x);
@@ -86,6 +95,11 @@ never overlap) and 0 otherwise;
 \item if \code{compare} is set, \code{stat_compare(method = compare, comparisons = comparisons, reference = reference, adjust = adjust, label = label)};
 \item if \code{correlation} is set, \code{stat_correlation(method = correlation)}.
 }
+
+\code{mode} and \code{transparent} are passed to every component that draws (the
+theme, \code{\link[=scale_colour_ink]{scale_colour_ink()}}, \code{\link[=scale_fill_hatch]{scale_fill_hatch()}}, the points and every
+layer), so one argument switches the whole figure between light, dark and
+transparent; see \code{\link[=save_figure_set]{save_figure_set()}} to write all four versions.
 
 No test is ever added unless its procedure is named: \code{compare}, \code{omnibus}
 and \code{correlation} take 'infercalcR' method ids and default to \code{NULL}. With
@@ -120,6 +134,11 @@ ggplot(PlantGrowth, aes(group, weight)) +
   labs(x = "Group", y = "Dried weight (g)")
 
 inference_results(p)
+
+# White on black for a dark slide:
+ggplot(PlantGrowth, aes(group, weight)) +
+  inferplot("slide", mode = "dark") +
+  labs(x = "Group", y = "Dried weight (g)")
 }
 \seealso{
 \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=stat_means]{stat_means()}}, \code{\link[=stat_compare]{stat_compare()}},

@@ -197,7 +197,10 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #'   no label.
 #' @param unit `NULL` or a single string appended to the estimate, such as
 #'   `"mmol/l"`.
-#' @param mode `"light"` (black ink) or `"dark"` (white ink).
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); accepted by every layer of the package.
 #' @param na.rm Kept for the layer interface; incomplete pairs are always
 #'   dropped.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`, `id`,
@@ -223,14 +226,14 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 stat_paired <- function(mapping = NULL, data = NULL, ..., method, conf.level = NULL,
                         alternative = NULL, method_args = list(),
                         label = c("estimate_ci_p", "none"), unit = NULL, mode = "light",
-                        na.rm = FALSE, inherit.aes = TRUE) {
+                        transparent = FALSE, na.rm = FALSE, inherit.aes = TRUE) {
   method <- .ip_check_method(if (missing(method)) NULL else method, "paired")
   conf.level <- .ip_check_conf_level(conf.level)
   alternative <- .ip_check_alternative(alternative)
   .ip_check_method_args(method_args)
   label <- .ip_check_choice(label, c("estimate_ci_p", "none"), "label")
   unit <- .ip_check_optional_string(unit, "unit")
-  ink <- .ip_mode(mode)$ink
+  ink <- .ip_mode(mode, transparent)$ink
   .ip_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, alternative = alternative, conf.level = conf.level,

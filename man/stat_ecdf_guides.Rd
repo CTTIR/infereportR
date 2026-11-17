@@ -12,6 +12,7 @@ stat_ecdf_guides(
   guide_label = "median",
   curve_labels = NULL,
   mode = "light",
+  transparent = FALSE,
   inherit.aes = TRUE
 )
 }
@@ -29,7 +30,11 @@ the grouping of the \code{stat_ecdf()} layer.}
 \item{curve_labels}{\code{NULL} (no curve labels) or one cumulative proportion
 per group.}
 
-\item{mode}{\code{"light"} (black ink) or \code{"dark"} (white ink).}
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); accepted by every layer of the package.}
 }
 \value{
 A ggplot2 layer. Its computed data has the columns \code{x}, \code{y},

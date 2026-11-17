@@ -137,6 +137,10 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' @param text_size Label size in mm (ggplot2 text units); 8 pt (the in-plot
 #'   label size) by default.
 #' @param family Label font family; `figure_font("sans")` by default.
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); passed by [inferplot()] with `mode`.
 #' @return A ggplot2 layer; with `fit = TRUE`, a list of two layers (fit,
 #'   then label) that `+` adds together. The computed data carries
 #'   `.ip_result` and `.ip_result_id`.
@@ -150,7 +154,9 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 stat_correlation <- function(mapping = NULL, data = NULL, ..., method, alternative = NULL,
                              conf.level = NULL, method_args = list(), label_x = -Inf,
                              label_y = Inf, hjust = 0, vjust = 1, fit = FALSE,
-                             text_size = NULL, family = NULL, inherit.aes = TRUE) {
+                             text_size = NULL, family = NULL, mode = "light",
+                             transparent = FALSE, inherit.aes = TRUE) {
+  m <- .ip_mode(mode, transparent)
   method <- .ip_check_method(if (missing(method)) NULL else method, "correlation")
   alternative <- .ip_check_alternative(alternative)
   conf.level <- .ip_check_conf_level(conf.level)
@@ -164,13 +170,14 @@ stat_correlation <- function(mapping = NULL, data = NULL, ..., method, alternati
   params <- c(list(method = method, alternative = alternative, conf.level = conf.level,
                    method_args = method_args, label_x = label_x, label_y = label_y,
                    hjust = hjust, vjust = vjust),
-              .ip_text_params(dots, text_size, family), dots)
+              .ip_text_params(dots, text_size, family, m$ink), dots)
   text <- ggplot2::layer(stat = StatCorrelation, data = data, mapping = mapping,
                          geom = "text", position = "identity", show.legend = FALSE,
                          inherit.aes = inherit.aes, params = params)
   if (!fit) return(text)
   line <- ggplot2::layer(stat = StatCorrelationFit, data = data, mapping = mapping,
                          geom = .ip_geom_fit, position = "identity", show.legend = FALSE,
-                         inherit.aes = inherit.aes, params = list(conf.level = conf.level))
+                         inherit.aes = inherit.aes,
+                         params = list(conf.level = conf.level, colour = m$ink))
   list(line, text)
 }

@@ -4,7 +4,13 @@
 \alias{hatch_pattern}
 \title{Hatch pattern fill}
 \usage{
-hatch_pattern(type, spacing = .ip_hatch_spacing, linewidth = 0.4)
+hatch_pattern(
+  type,
+  spacing = .ip_hatch_spacing,
+  linewidth = 0.4,
+  mode = "light",
+  transparent = FALSE
+)
 }
 \arguments{
 \item{type}{One of \code{"solid"}, \code{"open"}, \code{"hatch"}, \code{"dots"},
@@ -15,16 +21,23 @@ The default of 1.4 mm reads well at slide size; paper figures may pass
 \code{spacing = 1.6}.}
 
 \item{linewidth}{Width of the hatch lines in points, between 0.1 and 2.}
+
+\item{mode}{\code{"light"} (default, black on white) or \code{"dark"} (white on
+black).}
+
+\item{transparent}{If \code{TRUE}, patterns have no background and \code{"open"} is
+\code{NA}.}
 }
 \value{
-For \code{"solid"} and \code{"open"}, a single colour string. Otherwise a
+For \code{"solid"} and \code{"open"}, a single colour string (\code{NA} for
+\code{"open"} when transparent). Otherwise a
 grid pattern object (class \code{GridTilingPattern}, inheriting \code{GridPattern})
 usable as a \code{fill} value.
 }
 \description{
-Returns a fill value for black-and-white figures. \code{"solid"} gives black ink
-and \code{"open"} gives white paper; every other type gives a repeating
-\code{\link[grid:pattern]{grid::pattern()}} tile drawn in black on white:
+Returns a fill value for black-and-white figures. \code{"solid"} gives the ink
+colour and \code{"open"} the background; every other type gives a repeating
+\code{\link[grid:pattern]{grid::pattern()}} tile of ink marks on the background:
 }
 \details{
 \itemize{
@@ -40,6 +53,11 @@ distance between dot centres), so a pattern keeps its density whatever the
 size of the filled shape. The default spacing of 1.4 mm suits slides;
 figures for print may pass \code{spacing = 1.6}.
 
+The colours follow the mode of \code{\link[=theme_figure]{theme_figure()}}: black ink on white in
+\code{mode = "light"}, white ink on black in \code{mode = "dark"}. With
+\code{transparent = TRUE} the tile has no background grob (\code{\link[grid:nullGrob]{grid::nullGrob()}})
+and \code{"open"} gives \code{NA}, so only the marks are drawn.
+
 Pattern fills need R 4.1.0 or later and a graphics device that supports
 patterns, such as \code{\link[grDevices:cairo_pdf]{grDevices::cairo_pdf()}}, \code{\link[grDevices:svg]{grDevices::svg()}}, \code{\link[grDevices:pdf]{grDevices::pdf()}}
 or the 'ragg' devices (\code{ragg::agg_png()}). Other devices draw no fill or
@@ -47,6 +65,7 @@ warn.
 }
 \examples{
 hatch_pattern("solid")
+hatch_pattern("open", mode = "dark", transparent = TRUE)
 p <- hatch_pattern("crosshatch", spacing = 2)
 class(p)
 

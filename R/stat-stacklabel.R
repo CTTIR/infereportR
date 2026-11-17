@@ -64,7 +64,10 @@ StatStacklabel <- ggplot2::ggproto("StatStacklabel", ggplot2::Stat,
 #' @param size Text size in mm (ggplot2 units); 8 pt by default.
 #' @param family Font family; IBM Plex Sans Condensed when installed, else
 #'   the figure font.
-#' @param mode `"light"` (black ink) or `"dark"` (white ink).
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); accepted by every layer of the package.
 #' @return A ggplot2 layer.
 #' @seealso [scale_fill_hatch()]
 #' @examples
@@ -84,13 +87,14 @@ StatStacklabel <- ggplot2::ggproto("StatStacklabel", ggplot2::Stat,
 #' @export
 stat_stacklabel <- function(mapping = NULL, data = NULL, ..., side = c("right", "left"),
                             offset = 0.38, position = c("fill", "stack"), size = NULL,
-                            family = NULL, mode = "light", inherit.aes = TRUE) {
+                            family = NULL, mode = "light", transparent = FALSE,
+                            inherit.aes = TRUE) {
   side <- .ip_check_choice(side, c("right", "left"), "side")
   .ip_check_number(offset, "offset")
   position <- .ip_check_choice(position, c("fill", "stack"), "position")
   size <- .ip_check_optional_number(size, "size", min = 0)
   family <- .ip_check_optional_string(family, "family")
-  ink <- .ip_mode(mode)$ink
+  ink <- .ip_mode(mode, transparent)$ink
   pos <- switch(position,
     fill = ggplot2::position_fill(vjust = 0.5),
     stack = ggplot2::position_stack(vjust = 0.5)

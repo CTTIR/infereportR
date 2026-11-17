@@ -4,6 +4,8 @@
 
 .ip_ink <- "#000000"
 .ip_paper <- "#FFFFFF"
+# The background of transparent exports (save_figure(transparent = TRUE)).
+.ip_transparent <- "transparent"
 # VIC-II "blue" and "light blue" from the Pepto palette.
 .ip_c64 <- c(background = "#352879", foreground = "#6C5EB5")
 

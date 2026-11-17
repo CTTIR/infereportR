@@ -24,21 +24,26 @@
   )
 }
 
-.ip_hatch_tile <- function(type, spacing, linewidth) {
+# Marks in ink; the tile background is the mode's knock, or no grob at all
+# when transparent, so the shape behind the pattern shows through.
+.ip_hatch_tile <- function(type, spacing, linewidth, m = .ip_mode()) {
   diagonal <- type %in% c("hatch", "backhatch", "crosshatch")
   # A diagonal tile of side spacing * sqrt(2) puts the lines spacing mm apart.
   tile <- if (diagonal) spacing * sqrt(2) else spacing
   u <- function(f) .ip_tile_unit(f, tile)
   side <- grid::unit(tile, "mm")
-  background <- grid::rectGrob(u(0.5), u(0.5), side, side,
-                               gp = grid::gpar(col = NA, fill = .ip_paper))
+  background <- if (is.na(m$knock)) {
+    grid::nullGrob()
+  } else {
+    grid::rectGrob(u(0.5), u(0.5), side, side, gp = grid::gpar(col = NA, fill = m$knock))
+  }
   if (identical(type, "dots")) {
     marks <- grid::circleGrob(u(0.5), u(0.5), r = grid::unit(0.18 * tile, "mm"),
-                              gp = grid::gpar(col = NA, fill = .ip_ink))
+                              gp = grid::gpar(col = NA, fill = m$ink))
   } else {
     s <- .ip_hatch_segments(type)
     marks <- grid::segmentsGrob(u(s$x0), u(s$y0), u(s$x1), u(s$y1),
-                                gp = grid::gpar(col = .ip_ink, fill = NA,
+                                gp = grid::gpar(col = m$ink, fill = NA,
                                                 lwd = linewidth * 96 / 72.27,
                                                 lineend = "square"))
   }
@@ -48,9 +53,9 @@
 
 #' Hatch pattern fill
 #'
-#' Returns a fill value for black-and-white figures. `"solid"` gives black ink
-#' and `"open"` gives white paper; every other type gives a repeating
-#' [grid::pattern()] tile drawn in black on white:
+#' Returns a fill value for black-and-white figures. `"solid"` gives the ink
+#' colour and `"open"` the background; every other type gives a repeating
+#' [grid::pattern()] tile of ink marks on the background:
 #'
 #' * `"hatch"`: diagonal lines rising to the right;
 #' * `"backhatch"`: diagonal lines falling to the right;
@@ -63,6 +68,11 @@
 #' size of the filled shape. The default spacing of 1.4 mm suits slides;
 #' figures for print may pass `spacing = 1.6`.
 #'
+#' The colours follow the mode of [theme_figure()]: black ink on white in
+#' `mode = "light"`, white ink on black in `mode = "dark"`. With
+#' `transparent = TRUE` the tile has no background grob ([grid::nullGrob()])
+#' and `"open"` gives `NA`, so only the marks are drawn.
+#'
 #' Pattern fills need R 4.1.0 or later and a graphics device that supports
 #' patterns, such as [grDevices::cairo_pdf()], [grDevices::svg()], [grDevices::pdf()]
 #' or the 'ragg' devices (`ragg::agg_png()`). Other devices draw no fill or
@@ -74,12 +84,18 @@
 #'   The default of 1.4 mm reads well at slide size; paper figures may pass
 #'   `spacing = 1.6`.
 #' @param linewidth Width of the hatch lines in points, between 0.1 and 2.
-#' @return For `"solid"` and `"open"`, a single colour string. Otherwise a
+#' @param mode `"light"` (default, black on white) or `"dark"` (white on
+#'   black).
+#' @param transparent If `TRUE`, patterns have no background and `"open"` is
+#'   `NA`.
+#' @return For `"solid"` and `"open"`, a single colour string (`NA` for
+#'   `"open"` when transparent). Otherwise a
 #'   grid pattern object (class `GridTilingPattern`, inheriting `GridPattern`)
 #'   usable as a `fill` value.
 #' @seealso [scale_fill_hatch()] uses these patterns as a discrete fill scale.
 #' @examples
 #' hatch_pattern("solid")
+#' hatch_pattern("open", mode = "dark", transparent = TRUE)
 #' p <- hatch_pattern("crosshatch", spacing = 2)
 #' class(p)
 #'
@@ -92,15 +108,17 @@
 #'   unlink(file)
 #' }
 #' @export
-hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4) {
+hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4,
+                          mode = "light", transparent = FALSE) {
   if (missing(type)) .ip_abort("type must be given")
+  m <- .ip_mode(mode, transparent)
   type <- .ip_check_choice(type, .ip_hatch_types, "type")
   .ip_check_number(spacing, "spacing", min = 0.5, max = 10)
   .ip_check_number(linewidth, "linewidth", min = 0.1, max = 2)
   switch(type,
-    solid = .ip_ink,
-    open = .ip_paper,
-    .ip_hatch_tile(type, spacing, linewidth)
+    solid = m$ink,
+    open = m$knock,
+    .ip_hatch_tile(type, spacing, linewidth, m)
   )
 }
 
@@ -119,7 +137,8 @@ hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4) {
 #' Pattern fills need R 4.1.0 or later and a pattern-capable graphics device,
 #' such as [grDevices::cairo_pdf()], [grDevices::svg()] or the 'ragg' devices
 #' (`ragg::agg_png()`). Give the bars an ink outline (`colour = "black"` in the
-#' geom) so that `"open"` bars stay visible. The default `spacing` is 1.4 mm
+#' geom, `"white"` in dark mode) so that `"open"` bars stay visible. `mode`
+#' and `transparent` are passed to [hatch_pattern()]. The default `spacing` is 1.4 mm
 #' for slides; paper figures may pass `spacing = 1.6`.
 #'
 #' @inheritParams scale_linetype_figure
@@ -143,7 +162,7 @@ hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4) {
 #' }
 #' @export
 scale_fill_hatch <- function(..., patterns = .ip_hatches, spacing = .ip_hatch_spacing,
-                             linewidth = 0.4) {
+                             linewidth = 0.4, mode = "light", transparent = FALSE) {
   if (!is.character(patterns) || !length(patterns) || anyNA(patterns) ||
       !all(patterns %in% .ip_hatch_types)) {
     .ip_abort(sprintf("patterns must be a non-empty character vector of %s",
@@ -151,7 +170,9 @@ scale_fill_hatch <- function(..., patterns = .ip_hatches, spacing = .ip_hatch_sp
   }
   .ip_check_number(spacing, "spacing", min = 0.5, max = 10)
   .ip_check_number(linewidth, "linewidth", min = 0.1, max = 2)
-  fills <- lapply(patterns, hatch_pattern, spacing = spacing, linewidth = linewidth)
+  .ip_mode(mode, transparent)
+  fills <- lapply(patterns, hatch_pattern, spacing = spacing, linewidth = linewidth,
+                  mode = mode, transparent = transparent)
   ggplot2::discrete_scale(aesthetics = "fill",
                           palette = .ip_palette(fills, "fill patterns"), ...)
 }
