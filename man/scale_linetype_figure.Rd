@@ -18,7 +18,7 @@ A ggplot2 discrete scale object for the \code{linetype} aesthetic.
 }
 \description{
 A discrete line type scale that distinguishes groups by dash pattern
-instead of colour. The default sequence has six line types: \code{"solid"},
+instead of color. The default sequence has six line types: \code{"solid"},
 \code{"22"} (dashed), \code{"13"} (dotted), \code{"1343"} (dot-dash), \code{"73"} (long dash)
 and \code{"2262"} (long dash-dash).
 }

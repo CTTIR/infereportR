@@ -13,6 +13,9 @@ stat_means(
   method = "t_mean_one_sample",
   conf.level = 0.95,
   label = c("none", "estimate", "estimate_ci"),
+  offset = 0,
+  mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -34,10 +37,20 @@ supported.}
 \item{label}{\code{"none"} (default), \code{"estimate"} or \code{"estimate_ci"}: the text
 placed in the \code{label} column, for geoms that draw it.}
 
+\item{offset}{Shift in x units for a discrete x scale (0 by default);
+ignored for continuous x.}
+
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
+
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }
 \value{
-A ggplot2 layer. The computed data has columns \code{x}, \code{y} (the mean),
+A ggplot2 layer. The computed data has columns \code{x} (shifted by
+\code{offset}), \code{y} (the mean),
 \code{ymin}, \code{ymax}, \code{n}, \code{label}, \code{.ip_result} (the 'infercalcR' result) and
 \code{.ip_result_id}.
 }
@@ -49,6 +62,13 @@ as a test; labels, when requested, are 'infereportR' display strings. Each
 panel is its own analysis, so facets work.
 }
 \details{
+With the default \code{"pointrange"} geom the mean is a filled point (2.1 mm)
+and the interval a 1.1 pt line; \code{size}, \code{linewidth}, \code{shape} and \code{stroke}
+passed in \code{...} (or mapped) take precedence. On a discrete x scale,
+\code{offset} shifts the drawing to the right of the x position, so the summary
+does not cover jittered raw points (\code{\link[=inferplot]{inferplot()}} uses 0.28 with
+\code{points = "jitter"}); it moves geometry only, not the numbers.
+
 Rows with non-finite x or y are dropped before the call, as ggplot2 does
 for drawing. A group with fewer than two observations has no interval:
 its row is kept with the status reported by 'infercalcR' and nothing is

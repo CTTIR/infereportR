@@ -31,7 +31,7 @@
 #' Line type scale for black-and-white figures
 #'
 #' A discrete line type scale that distinguishes groups by dash pattern
-#' instead of colour. The default sequence has six line types: `"solid"`,
+#' instead of color. The default sequence has six line types: `"solid"`,
 #' `"22"` (dashed), `"13"` (dotted), `"1343"` (dot-dash), `"73"` (long dash)
 #' and `"2262"` (long dash-dash).
 #'
@@ -65,7 +65,7 @@ scale_linetype_figure <- function(..., values = NULL) {
 #' Point shape scale for black-and-white figures
 #'
 #' A discrete shape scale that distinguishes groups by point shape instead of
-#' colour. The default sequence has eight shapes that alternate between filled
+#' color. The default sequence has eight shapes that alternate between filled
 #' and open: `16, 1, 15, 0, 17, 2, 18, 5` (circle, square, triangle, diamond).
 #'
 #' The scale never recycles: if the data have more groups than there are
@@ -93,9 +93,10 @@ scale_shape_figure <- function(..., values = NULL) {
                           palette = .ip_palette(values, "shapes"), ...)
 }
 
-#' Ink-only colour scale
+#' Ink-only color scale
 #'
-#' A discrete colour scale that maps every level to black ink. The groups and
+#' A discrete color scale that maps every level to the ink color: black in
+#' light mode, white in dark mode (see [theme_figure()]). The groups and
 #' the legend survive, so the scale is meant to be combined with
 #' [scale_linetype_figure()] or [scale_shape_figure()], which then carry the
 #' distinction between groups. `scale_color_ink()` is an alias.
@@ -103,6 +104,7 @@ scale_shape_figure <- function(..., values = NULL) {
 #' @inheritParams scale_linetype_figure
 #' @param aesthetics Character vector of aesthetics the scale applies to;
 #'   `"colour"` by default. Use `c("colour", "fill")` to set both.
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink).
 #' @return A ggplot2 discrete scale object.
 #' @seealso [scale_linetype_figure()], [scale_shape_figure()].
 #' @examples
@@ -114,13 +116,14 @@ scale_shape_figure <- function(..., values = NULL) {
 #'   scale_linetype_figure(name = "Group") +
 #'   scale_shape_figure(name = "Group")
 #' @export
-scale_colour_ink <- function(..., aesthetics = "colour") {
+scale_colour_ink <- function(..., aesthetics = "colour", mode = "light") {
+  ink <- .ip_mode(mode)$ink
   if (!is.character(aesthetics) || !length(aesthetics) || anyNA(aesthetics) ||
       !all(nzchar(aesthetics))) {
     .ip_abort("aesthetics must be a non-empty character vector without NA")
   }
   ggplot2::discrete_scale(aesthetics = aesthetics,
-                          palette = function(n) rep(.ip_ink, n), ...)
+                          palette = function(n) rep(ink, n), ...)
 }
 
 #' @rdname scale_colour_ink

@@ -8,9 +8,11 @@ geom_endlabel(
   mapping = NULL,
   data = NULL,
   ...,
-  hjust = -0.15,
+  hjust = 0,
   size = NULL,
   family = NULL,
+  mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -25,19 +27,26 @@ layer requires \code{x}, \code{y} and \code{label}.}
 
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{ggplot2::layer()}} as fixed
 aesthetics or parameters, for example \code{vjust} or \code{fontface}. \code{colour} is
-fixed to the ink colour and cannot be changed.}
+fixed to the ink color and cannot be changed.}
 
-\item{hjust}{Horizontal justification of the label; the default \code{-0.15}
-places the text just right of the last point.}
+\item{hjust}{Horizontal justification of the label relative to its anchor,
+which lies 2.5 mm right of the last point. The default \code{0} left-justifies
+the text there.}
 
 \item{size}{Text size in mm (the ggplot2 unit of \code{size}). \code{NULL} means
-9 pt, that is \code{9 / ggplot2::.pt}.}
+8 pt, that is \code{8 / ggplot2::.pt}.}
 
 \item{family}{Font family. \code{NULL} means \code{figure_font("sans")}.}
 
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{Accepted for a uniform interface (text has no
+background); must be \code{TRUE} or \code{FALSE}.}
+
 \item{na.rm}{If \code{FALSE} (the default), rows with missing or non-finite
 values are removed with a warning, as in every ggplot2 layer; if \code{TRUE},
-silently. Either way a group is labelled at its last finite point.}
+silently. Either way a group is labeled at its last finite point.}
 
 \item{show.legend}{Should this layer be included in the legends? Defaults to
 \code{FALSE}, since the labels replace the legend.}
@@ -51,18 +60,25 @@ plot with \code{+}.
 }
 \description{
 Labels each group at its last point, the point with the largest finite \code{x},
-so that lines can be identified without a legend or colour. The layer uses
-the stat \code{StatEndlabel} and the geom \link[ggplot2:GeomText]{ggplot2::GeomText}; the text is always
-drawn in the ink colour.
+so that lines can be identified without a legend or color. The layer uses
+the stat \link{StatEndlabel} and the geom \link{GeomEndlabel}; the text is always
+drawn in the ink color of \code{mode} (black in light, white in dark mode), at
+8 pt by default.
 }
 \details{
-End labels sit to the right of the data and are clipped by the panel unless
-the plot leaves room for them. Either switch clipping off and widen the right
-plot margin (\code{ggplot2::coord_cartesian(clip = "off")} plus
-\code{ggplot2::theme(plot.margin = ...)}), or add extra expansion to the x scale
-(\code{ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.05, 0.3)))}).
-Use \code{show.legend = FALSE} (the default) and drop the legend of the line
-layer, since the labels replace it.
+Labels never overlap. When the plot is drawn, \code{GeomEndlabel} sorts the labels
+of a panel by their y position and pushes them apart until neighbors are at
+least 1.15 text heights apart (the height of \code{"Ag"} in the label's font),
+then shifts the group back so that its mean position is unchanged. Each label
+starts 2.5 mm to the right of its point.
+
+End labels sit to the right of the data, so they extend beyond the panel and
+are clipped unless the plot leaves room for them. Switch clipping off with
+\code{ggplot2::coord_cartesian(clip = "off")} and widen the right plot margin with
+\code{ggplot2::theme(plot.margin = ...)}: about 17 mm for a label such as
+\code{"ISS >= 25"} at 8 pt, that is the label width plus the 2.5 mm nudge. Keep
+\code{show.legend = FALSE} (the default) and drop the legend of the line layer,
+since the labels replace it.
 }
 \examples{
 d <- data.frame(
@@ -74,7 +90,7 @@ p <- ggplot2::ggplot(d, ggplot2::aes(time, score, group = arm, label = arm)) +
   ggplot2::geom_line(ggplot2::aes(linetype = arm), show.legend = FALSE) +
   geom_endlabel() +
   ggplot2::coord_cartesian(clip = "off") +
-  ggplot2::theme(plot.margin = ggplot2::margin(5.5, 60, 5.5, 5.5))
+  ggplot2::theme(plot.margin = ggplot2::margin(2, 17, 2, 2, unit = "mm"))
 p
 }
 \seealso{

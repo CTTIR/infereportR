@@ -10,7 +10,8 @@ test_that("stat_compare equals the manual infercalcR family", {
   expect_equal(got$estimate, want$estimate)
   expect_identical(got$row_id, c("trt1-ctrl", "trt2-ctrl"))
   expect_identical(got$variable_id, rep("weight", 2))
-  expect_identical(d$label, infereportR::report_table(fam, p = "adjusted")$p_display)
+  expect_identical(d$label[!d$headroom],
+                   infereportR::report_table(fam, p = "adjusted")$p_display)
   expect_no_warning(draws_silently(p))
 })
 
@@ -35,32 +36,70 @@ test_that("the procedure and the adjustment must be explicit", {
                                                                 reference = "ctrl")),
                class = bad)
   d <- layer_data_of(base_plot() + stat_compare(method = welch, adjust = "none"), 2L)
-  expect_identical(nrow(d), 3L)
+  expect_identical(sum(!d$headroom), 3L)
   r <- infercalcR::result_data(d$.ip_result[[1]])
   expect_identical(r$row_id, c("trt1-ctrl", "trt2-ctrl", "trt2-trt1"))
   expect_true(all(is.na(r$p.adjusted)))
 })
 
-test_that("brackets stack above the data inside the y range", {
-  d <- layer_data_of(base_plot() + stat_compare(method = welch, adjust = "bonferroni"), 2L)
+test_that("brackets stack at first + (i - 1) * step with one headroom row", {
+  p <- base_plot() + stat_compare(method = welch, adjust = "bonferroni")
+  d <- layer_data_of(p, 2L)
   top <- max(pg$weight)
   rng <- diff(range(pg$weight))
-  expect_equal(d$y, top + seq_len(3) * 0.09 * rng)
-  expect_equal(d$yend, d$y)
-  expect_equal(d$tip, rep(0.02 * rng, 3))
-  expect_identical(as.numeric(d$x), c(1, 1, 2))
-  expect_identical(as.numeric(d$xend), c(2, 3, 3))
-  yr <- ggplot2::ggplot_build(base_plot() + stat_compare(method = welch, adjust = "holm"))$
-    layout$panel_params[[1]]$y.range
-  expect_true(max(d$y) < yr[2])
+  bars <- d[!d$headroom, ]
+  expect_identical(nrow(bars), 3L)
+  expect_equal(bars$y, top + (.ip_bracket_first + (0:2) * .ip_bracket_step) * rng)
+  expect_equal(bars$yend, bars$y)
+  expect_equal(bars$tip, rep(0.02 * rng, 3))
+  expect_identical(as.numeric(bars$x), c(1, 1, 2))
+  expect_identical(as.numeric(bars$xend), c(2, 3, 3))
+  room <- d[d$headroom, ]
+  expect_identical(nrow(room), 1L)
+  expect_equal(room$y, top + (.ip_bracket_first + 3 * .ip_bracket_step) * rng)
+  yr <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y.range
+  expect_true(room$y <= yr[2])
+  expect_false("ymax" %in% names(d))
+  expect_no_warning(draws_silently(p))
+})
+
+test_that("first and step defaults are the tokens and stay adjustable", {
+  f <- formals(stat_compare)
+  expect_identical(c(f$first, f$step), c(.ip_bracket_first, .ip_bracket_step))
+  d <- layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
+                                                adjust = "holm", first = 0.05, step = 0.1), 2L)
+  top <- max(pg$weight)
+  rng <- diff(range(pg$weight))
+  expect_equal(d$y, top + c(0.05, 0.15, 0.25) * rng)
+  expect_identical(d$headroom, c(FALSE, FALSE, TRUE))
+  expect_error(stat_compare(method = welch, adjust = "none", first = -0.1),
+               class = "inferplotR_invalid_input")
+})
+
+test_that("bracket labels default to the in-plot label size", {
+  d <- layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
+                                                adjust = "holm"), 2L)
+  expect_equal(unique(d$size) * ggplot2::.pt, .ip_label_size_pt)
+  d2 <- layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
+                                                 adjust = "holm", text_size = 3), 2L)
+  expect_equal(unique(d2$size), 3)
+})
+
+test_that("each panel gets its own headroom row", {
+  p <- ggplot2::ggplot(pg_facets, ggplot2::aes(group, weight)) + ggplot2::facet_wrap(~panel) +
+    stat_compare(method = welch, reference = "ctrl", adjust = "holm")
+  d <- layer_data_of(p)
+  expect_identical(as.integer(table(d$PANEL[d$headroom])), c(1L, 1L))
+  expect_no_warning(draws_silently(p))
 })
 
 test_that("label types use infereportR strings and never 'ns'", {
   fam <- manual_family()
   shown <- infereportR::report_table(fam, p = "adjusted")
   lab <- function(type) {
-    layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
-                                             adjust = "holm", label = type), 2L)$label
+    d <- layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
+                                                  adjust = "holm", label = type), 2L)
+    d$label[!d$headroom]
   }
   expect_identical(lab("estimate_ci"), paste(shown$estimate_display, shown$interval_display))
   expect_identical(lab("estimate_ci_p"), paste0(shown$estimate_display, " ",
@@ -133,4 +172,17 @@ test_that("precomputed results draw with infereportR::stat_inference", {
   p <- base_plot() +
     infereportR::stat_inference(fam, positions = pos, groups = levels(pg$group))
   expect_no_warning(draws_silently(p))
+})
+
+test_that("headroom sets the invisible row in steps above the top bracket", {
+  rng <- diff(range(pg$weight))
+  top <- max(pg$weight)
+  d <- layer_data_of(base_plot() + stat_compare(method = welch, adjust = "holm",
+                                                headroom = 2), 2L)
+  expect_equal(d$y[d$headroom], top + (.ip_bracket_first + 4 * .ip_bracket_step) * rng)
+  expect_identical(sum(!d$headroom), 3L)
+  expect_error(stat_compare(method = welch, adjust = "holm", headroom = 0.5),
+               class = "inferplotR_invalid_input")
+  expect_error(stat_compare(method = welch, adjust = "holm", headroom = NA),
+               class = "inferplotR_invalid_input")
 })

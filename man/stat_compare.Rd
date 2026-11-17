@@ -17,10 +17,14 @@ stat_compare(
   conf.level = NULL,
   method_args = list(),
   label = c("p", "estimate_ci", "estimate_ci_p", "stars"),
-  step = 0.09,
+  first = 0.1,
+  step = 0.2,
   tip = 0.02,
+  headroom = 1,
   text_size = NULL,
   family = NULL,
+  mode = "light",
+  transparent = FALSE,
   na.rm = FALSE,
   inherit.aes = TRUE
 )
@@ -57,24 +61,41 @@ set; otherwise the 'infercalcR' defaults apply.}
 \code{"stars"} (\verb{***} < 0.001, \verb{**} < 0.01, \code{*} < 0.05, otherwise the p
 display string).}
 
-\item{step, tip}{Bracket spacing and tip length as fractions of the panel's
-y range.}
+\item{first}{Height of the first bracket above the highest value, as a
+fraction of the panel's y range (0.10 by default).}
 
-\item{text_size}{Label size in mm (ggplot2 text units); 9 pt by default.}
+\item{step}{Distance between stacked brackets, as a fraction of the
+panel's y range (0.20 by default; leaves room for one label line at
+slide size).}
+
+\item{tip}{Tip length as a fraction of the panel's y range.}
+
+\item{headroom}{Room above the top bracket, in steps (1 by default). With
+2, a label at the panel top (such as the \code{\link[=stat_omnibus]{stat_omnibus()}} label that
+\code{\link[=inferplot]{inferplot()}} adds) sits one step above the top bracket label instead of
+on it.}
+
+\item{text_size}{Label size in mm (ggplot2 text units); 8 pt by default.}
 
 \item{family}{Label font family; \code{figure_font("sans")} by default.}
+
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink); match
+the mode of \code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{transparent}{If \code{TRUE}, the layer draws no background fill (open
+marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }
 \value{
 A ggplot2 layer. The computed data has columns \code{x}, \code{xend}, \code{y},
-\code{yend}, \code{label}, \code{tip}, \code{.ip_result} (the family result) and
-\code{.ip_result_id}.
+\code{yend}, \code{label}, \code{tip}, \code{headroom} (\code{TRUE} for the invisible headroom
+row), \code{.ip_result} (the family result) and \code{.ip_result_id}.
 }
 \description{
 Compares x groups pairwise with an explicitly named two-sample procedure
 of 'infercalcR', adjusts the comparison family as declared, and draws one
-bracket per comparison, labelled with 'infereportR' display strings. Each
+bracket per comparison, labeled with 'infereportR' display strings. Each
 panel is its own family, so facets work.
 }
 \details{
@@ -91,9 +112,11 @@ created; with \code{reference} or all pairs, when the plot is built, where
 ggplot2 reports it with the inferplotR condition as parent. Rows with
 non-finite x or y are dropped before the call.
 
-Bracket i (in pair order) sits at \code{top + i * step * range} of the panel's
-finite y values, with tips of \code{tip * range}. The y scale is trained on the
-brackets, so they are never clipped.
+Bracket i (in pair order) sits at \code{top + (first + (i - 1) * step) * range}
+of the panel's finite y values, with tips of \code{tip * range}. One invisible
+headroom row per panel, at \code{top + (first + (k - 1 + headroom) * step) * range} for k brackets, trains the y scale so the label of the top bracket
+is never clipped; it is marked \code{headroom = TRUE} in the layer data and not
+drawn.
 }
 \examples{
 library(ggplot2)

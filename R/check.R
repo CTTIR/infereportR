@@ -14,7 +14,7 @@
 #' \describe{
 #'   \item{`text_size`}{(APA 7) every theme text element that will be drawn
 #'     (axis text and titles, legend text and title when a legend is drawn,
-#'     strip text when facetted, title, subtitle and caption when set) and
+#'     strip text when faceted, title, subtitle and caption when set) and
 #'     every text label layer ([ggplot2::geom_text()],
 #'     [ggplot2::geom_label()], the brackets of [stat_compare()]) resolves to
 #'     8-14 pt. `fail` lists the offenders.}
@@ -22,9 +22,13 @@
 #'     serif face (matches "serif", "times", "georgia", "garamond",
 #'     "palatino" or "cambria" but not "sans").}
 #'   \item{`two_values`}{(inferplotR) every `colour` and `fill` value in the
-#'     built layer data, and the colours of drawn theme lines, rectangles and
+#'     built layer data, and the colors of drawn theme lines, rectangles and
 #'     text, is black, white, `NA`, fully transparent or a grid pattern.
-#'     `fail` lists the offending colours as hex codes.}
+#'     This holds in every mode: light (black on white), dark (white on
+#'     black) and the transparent modes, whose backgrounds are empty (`NA`).
+#'     `fail` lists the offending colors as hex codes. The `"c64"` style of
+#'     [char_figure()] is the one documented exception: its C64 blues fail
+#'     here by design.}
 #'   \item{`axis_labels`}{(APA 7) `fail` if the x or y label is missing or
 #'     empty; `note` if a label of a continuous axis has no unit marker (a
 #'     parenthesis, `%` or a comma followed by a unit). Discrete axes have no

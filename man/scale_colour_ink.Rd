@@ -3,11 +3,11 @@
 \name{scale_colour_ink}
 \alias{scale_colour_ink}
 \alias{scale_color_ink}
-\title{Ink-only colour scale}
+\title{Ink-only color scale}
 \usage{
-scale_colour_ink(..., aesthetics = "colour")
+scale_colour_ink(..., aesthetics = "colour", mode = "light")
 
-scale_color_ink(..., aesthetics = "colour")
+scale_color_ink(..., aesthetics = "colour", mode = "light")
 }
 \arguments{
 \item{...}{Arguments passed on to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}}, for example
@@ -15,12 +15,15 @@ scale_color_ink(..., aesthetics = "colour")
 
 \item{aesthetics}{Character vector of aesthetics the scale applies to;
 \code{"colour"} by default. Use \code{c("colour", "fill")} to set both.}
+
+\item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink).}
 }
 \value{
 A ggplot2 discrete scale object.
 }
 \description{
-A discrete colour scale that maps every level to black ink. The groups and
+A discrete color scale that maps every level to the ink color: black in
+light mode, white in dark mode (see \code{\link[=theme_figure]{theme_figure()}}). The groups and
 the legend survive, so the scale is meant to be combined with
 \code{\link[=scale_linetype_figure]{scale_linetype_figure()}} or \code{\link[=scale_shape_figure]{scale_shape_figure()}}, which then carry the
 distinction between groups. \code{scale_color_ink()} is an alias.

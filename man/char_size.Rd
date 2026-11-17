@@ -4,50 +4,68 @@
 \alias{char_size}
 \title{File size for a character figure}
 \usage{
-char_size(x, width_mm = 134, cell_ratio = 2, style = c("bw", "c64"))
+char_size(
+  x,
+  width_mm = NULL,
+  cell_ratio = 1.75,
+  style = c("bw", "c64", "c64bw"),
+  slot = NULL,
+  ready = NULL
+)
 }
 \arguments{
 \item{x}{A ggplot, an \code{inferplotR_chargrid} or a \code{\link[=char_figure]{char_figure()}} result.}
 
-\item{width_mm}{Width of the grid in millimetres (without the c64 border),
-default 134.}
+\item{width_mm}{Width of the whole figure in millimeters, border included.
+\code{NULL} means the slot width with \code{slot}, else 134 (the Bleisatz slide text
+width). Must be \code{NULL} when \code{slot} is given.}
 
-\item{cell_ratio}{Height of a cell divided by its width, default 2.}
+\item{cell_ratio}{Height of a cell divided by its width, default 1.75 (IBM
+Plex Mono).}
 
-\item{style}{\code{"bw"} (default) or \code{"c64"}.}
+\item{style}{\code{"bw"} (default), \code{"c64"} or \code{"c64bw"}.}
+
+\item{slot}{\code{NULL} (default) or a preset name of \code{\link[=figure_size]{figure_size()}}: the figure
+then fills that slot exactly (see Size).}
+
+\item{ready}{Append a \code{READY.} row and a cursor row? \code{NULL} means \code{TRUE} for
+the c64 styles and \code{FALSE} for \code{"bw"}.}
 }
 \value{
-A list with \code{width} and \code{height} (numbers, millimetres) and
+A list with \code{width} and \code{height} (numbers, millimeters) and
 \code{units = "mm"}, ready for \code{save_figure(width = , height = )}.
 }
 \description{
 \code{char_size()} gives the width and height at which a \code{\link[=char_figure]{char_figure()}} is saved
-without distortion: the grid fills \code{width_mm}, each cell is
-\code{width_mm / ncol} wide and \code{cell_ratio} times as tall. For \code{"c64"} the border
-of 8 \% of \code{width_mm} is added on all four sides.
+without distortion. It follows the geometry of \code{\link[=char_figure]{char_figure()}}: \code{width_mm}
+is the whole width, border included; each cell is
+\verb{(width_mm - 2 * border) / (ncol + 2 * padding columns)} wide and
+\code{cell_ratio} times as tall; the height is the rows (with any \code{READY.} rows)
+plus the padding rows times the cell height, plus the border above and
+below. With \code{slot}, the size is the slot's.
 }
 \details{
 The grid size is read from \code{x}:
 \itemize{
-\item an \code{inferplotR_chargrid}: its \code{width} and \code{height};
+\item a \code{\link[=char_figure]{char_figure()}} result: its own size, as drawn (the other arguments are
+ignored);
+\item an \code{inferplotR_chargrid}: its \code{width} and \code{height}, plus the \code{READY.} rows
+when \code{ready} is \code{TRUE};
 \item a ggplot: the grid \code{\link[=char_grid]{char_grid()}} would draw with the defaults of
-\code{\link[=char_figure]{char_figure()}} for \code{style} (64 x 20 for \code{"bw"}, 40 x 25 for \code{"c64"});
-\item a \code{\link[=char_figure]{char_figure()}} result: the coordinate limits of the figure, which already
-include any \code{READY.} rows.
+\code{\link[=char_figure]{char_figure()}} for \code{style} and \code{slot}.
 }
 
-For a chargrid or a ggplot with \code{style = "c64"}, the two \code{READY.} rows that
-\code{\link[=char_figure]{char_figure()}} appends by default are counted. Pass the same \code{width_mm},
-\code{cell_ratio} and \code{style} as to \code{\link[=char_figure]{char_figure()}}.
+Pass the same \code{style}, \code{width_mm}, \code{cell_ratio}, \code{slot} and \code{ready} as to
+\code{\link[=char_figure]{char_figure()}}.
 }
 \examples{
 p <- ggplot2::ggplot(data.frame(x = 1:5, y = c(2, 4, 3, 5, 4)),
                      ggplot2::aes(x, y)) + ggplot2::geom_line()
 char_size(p)
 char_size(p, style = "c64")
+char_size(p, style = "c64bw", slot = "slide_half")
 char_size(char_grid(p, width = 32, height = 10), width_mm = 86)
 }
 \seealso{
-\code{\link[=char_figure]{char_figure()}}, \code{\link[=save_figure]{save_figure()}}, \code{\link[=figure_size]{figure_size()}} for the fixed
-presets.
+\code{\link[=char_figure]{char_figure()}}, \code{\link[=save_figure]{save_figure()}}, \code{\link[=figure_size]{figure_size()}} for the presets.
 }

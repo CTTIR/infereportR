@@ -63,8 +63,13 @@ StatOmnibus <- ggplot2::ggproto("StatOmnibus", ggplot2::Stat,
 #' @param label_x,label_y Label position in data units; `-Inf`/`Inf` mean the
 #'   panel edges (top left by default).
 #' @param hjust,vjust Label justification.
-#' @param text_size Label size in mm (ggplot2 text units); 9 pt by default.
+#' @param text_size Label size in mm (ggplot2 text units); 8 pt (the in-plot
+#'   label size) by default.
 #' @param family Label font family; `figure_font("sans")` by default.
+#' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
+#'   the mode of [theme_figure()].
+#' @param transparent If `TRUE`, the layer draws no background fill (open
+#'   marks stay empty); passed by [inferplot()] with `mode`.
 #' @return A ggplot2 layer drawing one label per panel. The computed data has
 #'   columns `x`, `y`, `label`, `.ip_result` and `.ip_result_id`.
 #' @seealso [stat_compare()], [inference_results()]
@@ -76,7 +81,9 @@ StatOmnibus <- ggplot2::ggproto("StatOmnibus", ggplot2::Stat,
 #' @export
 stat_omnibus <- function(mapping = NULL, data = NULL, ..., method, method_args = list(),
                          label_x = -Inf, label_y = Inf, hjust = 0, vjust = 1,
-                         text_size = NULL, family = NULL, inherit.aes = TRUE) {
+                         text_size = NULL, family = NULL, mode = "light",
+                         transparent = FALSE, inherit.aes = TRUE) {
+  m <- .ip_mode(mode, transparent)
   method <- .ip_check_method(if (missing(method)) NULL else method, "omnibus")
   .ip_check_method_args(method_args)
   .ip_check_position(label_x, "label_x")
@@ -86,7 +93,7 @@ stat_omnibus <- function(mapping = NULL, data = NULL, ..., method, method_args =
   dots <- list(...)
   params <- c(list(method = method, method_args = method_args, label_x = label_x,
                    label_y = label_y, hjust = hjust, vjust = vjust),
-              .ip_text_params(dots, text_size, family), dots)
+              .ip_text_params(dots, text_size, family, m$ink), dots)
   ggplot2::layer(stat = StatOmnibus, data = data, mapping = mapping, geom = "text",
                  position = "identity", show.legend = FALSE, inherit.aes = inherit.aes,
                  params = params)

@@ -70,3 +70,35 @@ test_that("constant aesthetics such as shape are kept", {
   expect_length(unique(d$shape), 3L)
   expect_false(anyNA(d$shape))
 })
+
+test_that("offset shifts the drawing on a discrete x only", {
+  base <- ggplot2::ggplot(pg, ggplot2::aes(group, weight))
+  d0 <- layer_data_of(base + stat_means())
+  d <- layer_data_of(base + stat_means(offset = .ip_means_offset))
+  expect_equal(as.numeric(d$x), as.numeric(d0$x) + .ip_means_offset)
+  expect_equal(d$y, d0$y)
+  expect_identical(d$.ip_result_id, d0$.ip_result_id)
+  expect_identical(formals(stat_means)$offset, 0)
+  cont <- data.frame(x = rep(1:2, each = 5), y = c(1:5, 3:7))
+  dc <- layer_data_of(ggplot2::ggplot(cont, ggplot2::aes(x, y, group = x)) +
+                        stat_means(offset = 0.3))
+  expect_equal(dc$x, c(1, 2))
+  expect_error(stat_means(offset = NA), class = "inferplotR_invalid_input")
+  expect_error(stat_means(offset = c(1, 2)), class = "inferplotR_invalid_input")
+  expect_no_warning(draws_silently(base + ggplot2::geom_point() +
+                                     stat_means(offset = .ip_means_offset)))
+})
+
+test_that("means draw as a filled 2.1 mm point with a 1.1 pt interval", {
+  base <- ggplot2::ggplot(pg, ggplot2::aes(group, weight))
+  d <- layer_data_of(base + stat_means())
+  expect_equal(unique(d$size) * 4, 2.1)
+  expect_equal(unique(d$linewidth), .ip_lw(.ip_rule_heavy))
+  expect_identical(unique(d$shape), 19)
+  user <- layer_data_of(base + stat_means(size = 1, linewidth = 0.2, shape = 15))
+  expect_identical(unique(user$size), 1)
+  expect_identical(unique(user$linewidth), 0.2)
+  expect_identical(unique(user$shape), 15)
+  other <- layer_data_of(base + stat_means(geom = "point"))
+  expect_false(isTRUE(all.equal(unique(other$size) * 4, 2.1)))
+})

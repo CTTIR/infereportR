@@ -35,7 +35,7 @@ The six checks, always in this order:
 \describe{
 \item{\code{text_size}}{(APA 7) every theme text element that will be drawn
 (axis text and titles, legend text and title when a legend is drawn,
-strip text when facetted, title, subtitle and caption when set) and
+strip text when faceted, title, subtitle and caption when set) and
 every text label layer (\code{\link[ggplot2:geom_text]{ggplot2::geom_text()}},
 \code{\link[ggplot2:geom_label]{ggplot2::geom_label()}}, the brackets of \code{\link[=stat_compare]{stat_compare()}}) resolves to
 8-14 pt. \code{fail} lists the offenders.}
@@ -43,9 +43,13 @@ every text label layer (\code{\link[ggplot2:geom_text]{ggplot2::geom_text()}},
 serif face (matches "serif", "times", "georgia", "garamond",
 "palatino" or "cambria" but not "sans").}
 \item{\code{two_values}}{(inferplotR) every \code{colour} and \code{fill} value in the
-built layer data, and the colours of drawn theme lines, rectangles and
+built layer data, and the colors of drawn theme lines, rectangles and
 text, is black, white, \code{NA}, fully transparent or a grid pattern.
-\code{fail} lists the offending colours as hex codes.}
+This holds in every mode: light (black on white), dark (white on
+black) and the transparent modes, whose backgrounds are empty (\code{NA}).
+\code{fail} lists the offending colors as hex codes. The \code{"c64"} style of
+\code{\link[=char_figure]{char_figure()}} is the one documented exception: its C64 blues fail
+here by design.}
 \item{\code{axis_labels}}{(APA 7) \code{fail} if the x or y label is missing or
 empty; \code{note} if a label of a continuous axis has no unit marker (a
 parenthesis, \verb{\%} or a comma followed by a unit). Discrete axes have no

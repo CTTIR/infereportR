@@ -6,7 +6,9 @@
 \alias{inferplotR-package}
 \title{inferplotR: Black-and-White Figures with Inference Layers for 'ggplot2'}
 \description{
-Extends 'ggplot2' with a black-and-white figure theme for papers following the APA style rules and for slides, scales that replace colour with line types, point shapes and hatch patterns, direct labels and size presets. Its inference layers run explicitly named procedures through 'infercalcR', label them with display strings from 'infereportR' and keep the full results retrievable from the figure. A character mode redraws plots on a monospaced text grid in the style of 1980s home computers.
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
+Extends 'ggplot2' with a black-and-white figure theme for papers following the APA style rules and for slides, scales that replace color with line types, point shapes and hatch patterns, direct labels and size presets. Its inference layers run explicitly named procedures through 'infercalcR', label them with display strings from 'infereportR' and keep the full results retrievable from the figure. A character mode redraws plots on a monospaced text grid in the style of 1980s home computers.
 }
 \seealso{
 Useful links:

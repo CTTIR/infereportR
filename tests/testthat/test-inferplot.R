@@ -97,10 +97,33 @@ test_that("the bundle equals the components added one by one", {
     ggplot2::geom_point(shape = 1, colour = .ip_ink, size = 1.2,
                         position = ggplot2::position_jitter(width = 0.08, height = 0,
                                                             seed = 1)) +
-    stat_means(conf.level = 0.95) +
+    stat_means(conf.level = 0.95, offset = .ip_means_offset) +
     stat_omnibus(method = "anova_one_way") +
-    stat_compare(method = welch, reference = "ctrl", adjust = "holm", label = "p")
+    stat_compare(method = welch, reference = "ctrl", adjust = "holm", label = "p",
+                 headroom = 2)
   expect_equal(ggplot2::ggplot_build(bundle)$data, ggplot2::ggplot_build(by_hand)$data)
+})
+
+test_that("with omnibus and compare, the omnibus label gets its own headroom step", {
+  rng <- diff(range(pg$weight))
+  top <- max(pg$weight)
+  room <- function(p) {
+    d <- ggplot2::ggplot_build(p)$data
+    cmp <- d[[which(vapply(d, function(x) "headroom" %in% names(x), logical(1)))]]
+    list(bar = max(cmp$y[!cmp$headroom]), room = cmp$y[cmp$headroom],
+         yr = ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y.range)
+  }
+  both <- room(pg_plot() + inferplot(compare = welch, reference = "ctrl", adjust = "holm",
+                                     omnibus = "anova_one_way"))
+  only <- room(pg_plot() + inferplot(compare = welch, reference = "ctrl", adjust = "holm"))
+  step <- .ip_bracket_step * rng
+  expect_equal(only$room - only$bar, step)
+  expect_equal(both$room - both$bar, 2 * step)
+  expect_equal(both$bar, only$bar)
+  expect_true(both$yr[2] - both$bar >= 2 * step)
+  expect_no_warning(draws_silently(pg_plot() + inferplot(compare = welch, reference = "ctrl",
+                                                         adjust = "holm",
+                                                         omnibus = "anova_one_way")))
 })
 
 test_that("jittered points are reproducible", {
@@ -108,4 +131,21 @@ test_that("jittered points are reproducible", {
   b <- layer_data_of(pg_plot() + inferplot(means = FALSE))
   expect_identical(a$x, b$x)
   expect_false(isTRUE(all.equal(a$x, round(a$x))))
+})
+
+test_that("means sit beside jittered points and on plain ones", {
+  jit <- ggplot2::ggplot_build(pg_plot() + inferplot())
+  pts <- jit$data[[1]]
+  mns <- jit$data[[2]]
+  expect_equal(as.numeric(mns$x), 1:3 + .ip_means_offset)
+  # No raw point reaches the column of its mean.
+  for (g in 1:3) {
+    xs <- pts$x[round(pts$x) == g]
+    expect_true(max(xs) < mns$x[g] - 0.1)
+  }
+  plain <- layer_data_of(pg_plot() + inferplot(points = "plain"), 2L)
+  expect_equal(as.numeric(plain$x), 1:3)
+  none <- layer_data_of(pg_plot() + inferplot(points = "none"))
+  expect_equal(as.numeric(none$x), 1:3)
+  expect_no_warning(draws_silently(pg_plot() + inferplot()))
 })

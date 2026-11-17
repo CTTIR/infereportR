@@ -70,13 +70,14 @@
   !is.null(scale) && isTRUE(scale$is_discrete())
 }
 
-# Text parameters for label layers: ink, 9 pt and the figure font unless set.
-.ip_text_params <- function(dots, text_size, family) {
+# Text parameters for label layers: the mode's ink, the in-plot label size
+# (8 pt) and the figure font unless set.
+.ip_text_params <- function(dots, text_size, family, ink = .ip_ink) {
   text_size <- .ip_check_optional_number(text_size, "text_size", min = 0)
   family <- .ip_check_optional_string(family, "family")
-  params <- list(size = if (is.null(text_size)) .ip_base_size / ggplot2::.pt else text_size,
+  params <- list(size = if (is.null(text_size)) .ip_label_size_pt / ggplot2::.pt else text_size,
                  family = if (is.null(family)) figure_font("sans") else family)
-  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- .ip_ink
+  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
   params
 }
 
