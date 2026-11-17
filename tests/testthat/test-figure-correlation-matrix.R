@@ -1,4 +1,4 @@
-markers_frame <- function() as.data.frame(gallery_markers())
+markers_frame <- function() as.data.frame(.ip_gallery_data()$mk)
 
 test_that("figure_correlation_matrix reproduces the Spearman oracle (figure 08)", {
   mk <- markers_frame()
