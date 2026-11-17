@@ -1,7 +1,7 @@
 Package: inferplotR
 Type: Package
 Title: Black-and-White Figures with Inference Layers for 'ggplot2'
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: person("R.", "Heller", , "raban.heller@uni-ulm.de",
     role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-8006-9742"))
 Description: Extends 'ggplot2' with a black-and-white figure theme for papers
