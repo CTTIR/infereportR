@@ -173,7 +173,7 @@ test_that("a figure without READY rows is sized from its own limits", {
 })
 
 test_that("a figure saved at char_size() is written", {
-  skip_if_not(capabilities("cairo"))
+  skip_if_not(cairo_pdf_works(), "cairo_pdf() writes no file here")
   p <- cf_plot()
   s <- char_size(p)
   tmp_pdf <- withr::local_tempfile(fileext = ".pdf")

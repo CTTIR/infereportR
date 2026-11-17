@@ -25,7 +25,7 @@ test_that("figure_size rejects unknown presets", {
 })
 
 test_that("save_figure writes pdf", {
-  skip_if_not(capabilities("cairo"))
+  skip_if_not(cairo_pdf_works(), "cairo_pdf() writes no file here")
   f <- withr::local_tempfile(fileext = ".pdf")
   expect_invisible(out <- save_figure(small_plot(), f))
   expect_identical(out, f)
@@ -40,7 +40,7 @@ test_that("save_figure writes png and svg", {
   expect_gt(file.size(f_png), 0)
   expect_equal(png_width(f_png), 85 / 25.4 * 100, tolerance = 1.5 / 335)
 
-  skip_if_not(capabilities("cairo"))
+  skip_if_not(cairo_pdf_works(), "cairo_pdf() writes no file here")
   f_svg <- withr::local_tempfile(fileext = ".SVG")
   expect_invisible(save_figure(small_plot(), f_svg, preset = "slide_half"))
   expect_gt(file.size(f_svg), 0)

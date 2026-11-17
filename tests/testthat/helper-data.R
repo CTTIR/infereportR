@@ -29,3 +29,18 @@ draws_silently <- function(p) {
   on.exit(grDevices::dev.off(), add = TRUE)
   ggplot2::ggplotGrob(p)
 }
+
+# capabilities("cairo") can be TRUE while cairo_pdf() writes nothing (seen on
+# macOS runners without XQuartz); probe the device instead of trusting the flag.
+cairo_pdf_works <- function() {
+  if (!isTRUE(capabilities("cairo"))) return(FALSE)
+  f <- tempfile(fileext = ".pdf")
+  on.exit(unlink(f), add = TRUE)
+  ok <- tryCatch({
+    grDevices::cairo_pdf(f, width = 1, height = 1)
+    grid::grid.newpage()
+    grDevices::dev.off()
+    TRUE
+  }, error = function(e) FALSE, warning = function(w) FALSE)
+  ok && file.exists(f) && file.size(f) > 0
+}

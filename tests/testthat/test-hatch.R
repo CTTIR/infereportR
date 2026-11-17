@@ -61,7 +61,7 @@ test_that("scale_fill_hatch fills a 3-bar plot with a list column", {
 })
 
 test_that("a hatched plot renders to PDF with cairo", {
-  skip_if_not(capabilities("cairo"))
+  skip_if_not(cairo_pdf_works(), "cairo_pdf() writes no file here")
   file <- withr::local_tempfile(fileext = ".pdf")
   grDevices::cairo_pdf(file, width = 3, height = 2.5)
   dev <- grDevices::dev.cur()
