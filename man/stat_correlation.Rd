@@ -44,7 +44,8 @@ panel edges (top left by default).}
 
 \item{fit}{If \code{TRUE}, also draw the fitted line and its confidence band.}
 
-\item{text_size}{Label size in mm (ggplot2 text units); 9 pt by default.}
+\item{text_size}{Label size in mm (ggplot2 text units); 8 pt (the in-plot
+label size) by default.}
 
 \item{family}{Label font family; \code{figure_font("sans")} by default.}
 }
@@ -56,8 +57,11 @@ then label) that \code{+} adds together. The computed data carries
 \description{
 Runs one explicitly named correlation procedure of 'infercalcR' per panel
 and writes its 'infereportR' display strings as a label: the coefficient
-(prefixed \verb{r = }, \verb{rho = } or \verb{tau = }), its interval and the p-value. Each
-panel is its own analysis. Rows with non-finite x or y are dropped first.
+(prefixed \verb{r = }, \verb{rho = } or \verb{tau = }), its interval and the p-value. When
+'infercalcR' reports no interval (Spearman and Kendall in 'infercalcR'
+0.1.0), the label leaves the interval out; \code{\link[=figure_report]{figure_report()}} still has the
+full 'infereportR' strings. Each panel is its own analysis. Rows with
+non-finite x or y are dropped first.
 }
 \details{
 With \code{fit = TRUE} a second layer draws the fitted mean line of a linear

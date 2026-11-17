@@ -16,7 +16,10 @@
 #'    horizontally with `position_jitter(width = 0.08, height = 0, seed = 1)`
 #'    for `points = "jitter"` (meant for a discrete x; the fixed seed keeps the
 #'    figure reproducible) or unmoved for `points = "plain"` (a continuous x);
-#' 4. if `means = TRUE`, `stat_means(conf.level = conf.level)`;
+#' 4. if `means = TRUE`, `stat_means(conf.level = conf.level, offset =
+#'    offset)`, where `offset` is 0.28 x units for `points = "jitter"` (the
+#'    mean and its interval sit right of the jittered observations, so they
+#'    never overlap) and 0 otherwise;
 #' 5. if `omnibus` is set, `stat_omnibus(method = omnibus)`;
 #' 6. if `compare` is set, `stat_compare(method = compare, comparisons =
 #'    comparisons, reference = reference, adjust = adjust, label = label)`;
@@ -128,7 +131,11 @@ inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons 
     out <- c(out, list(ggplot2::geom_point(shape = 1, colour = .ip_ink, size = 1.2,
                                            position = position)))
   }
-  if (means) out <- c(out, list(stat_means(conf.level = conf.level)))
+  if (means) {
+    # Beside jittered points the summary moves right, so they never overlap.
+    offset <- if (points == "jitter") .ip_means_offset else 0
+    out <- c(out, list(stat_means(conf.level = conf.level, offset = offset)))
+  }
   if (!is.null(omnibus)) out <- c(out, list(stat_omnibus(method = omnibus)))
   if (!is.null(compare)) {
     out <- c(out, list(stat_compare(method = compare, comparisons = comparisons,

@@ -7,10 +7,12 @@ GeomBracket <- ggplot2::ggproto("GeomBracket", ggplot2::Geom,
   optional_aes = "tip",
   # Quosures, evaluated at draw time, so the tokens need not exist at collation.
   default_aes = ggplot2::aes(colour = .ip_ink, linewidth = .ip_lw(.ip_rule_hair),
-                             size = .ip_base_size / ggplot2::.pt, family = "", tip = 0,
+                             size = .ip_label_size_pt / ggplot2::.pt, family = "", tip = 0,
                              alpha = NA),
   draw_key = ggplot2::draw_key_blank,
   draw_panel = function(data, panel_params, coord) {
+    # Headroom rows (stat_compare()) only train the y scale.
+    if (!is.null(data$headroom)) data <- data[!(data$headroom %in% TRUE), , drop = FALSE]
     if (!nrow(data)) return(grid::nullGrob())
     tip <- if (is.null(data$tip)) rep(0, nrow(data)) else data$tip
     tip[!is.finite(tip)] <- 0

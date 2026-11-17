@@ -52,3 +52,28 @@ test_that("stat_correlation needs continuous axes and explicit methods", {
                                        stat_correlation(method = "correlation_pearson")),
                class = "inferplotR_unsupported")
 })
+
+test_that("labels leave out a missing interval; the report keeps it", {
+  for (m in c("correlation_spearman", "correlation_kendall")) {
+    p <- ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+      stat_correlation(method = m)
+    d <- layer_data_of(p, 2L)
+    res <- infercalcR::result_data(d$.ip_result[[1]])
+    expect_true(is.na(res$conf.low) && is.na(res$conf.high))
+    shown <- infereportR::report_table(d$.ip_result[[1]])
+    sym <- .ip_correlation_symbol[[m]]
+    expect_identical(d$label, paste0(sym, shown$estimate_display, ", ", shown$p_display))
+    expect_false(grepl(shown$interval_display, d$label, fixed = TRUE))
+    rep <- figure_report(p)
+    expect_identical(rep$interval_display, shown$interval_display)
+  }
+})
+
+test_that("correlation and omnibus labels default to the in-plot label size", {
+  d <- layer_data_of(ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) + ggplot2::geom_point() +
+                       stat_correlation(method = "correlation_pearson"), 2L)
+  expect_equal(d$size * ggplot2::.pt, .ip_label_size_pt)
+  o <- layer_data_of(ggplot2::ggplot(pg, ggplot2::aes(group, weight)) + ggplot2::geom_point() +
+                       stat_omnibus(method = "anova_one_way"), 2L)
+  expect_equal(o$size * ggplot2::.pt, .ip_label_size_pt)
+})

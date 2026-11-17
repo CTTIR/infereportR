@@ -79,7 +79,9 @@ and \code{\link[=scale_fill_hatch]{scale_fill_hatch()}};
 horizontally with \code{position_jitter(width = 0.08, height = 0, seed = 1)}
 for \code{points = "jitter"} (meant for a discrete x; the fixed seed keeps the
 figure reproducible) or unmoved for \code{points = "plain"} (a continuous x);
-\item if \code{means = TRUE}, \code{stat_means(conf.level = conf.level)};
+\item if \code{means = TRUE}, \code{stat_means(conf.level = conf.level, offset = offset)}, where \code{offset} is 0.28 x units for \code{points = "jitter"} (the
+mean and its interval sit right of the jittered observations, so they
+never overlap) and 0 otherwise;
 \item if \code{omnibus} is set, \code{stat_omnibus(method = omnibus)};
 \item if \code{compare} is set, \code{stat_compare(method = compare, comparisons = comparisons, reference = reference, adjust = adjust, label = label)};
 \item if \code{correlation} is set, \code{stat_correlation(method = correlation)}.
