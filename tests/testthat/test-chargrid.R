@@ -41,6 +41,23 @@ fx_means <- function() {
     ggplot2::labs(x = "Group", y = "Mean (95% CI)")
 }
 
+# Two series that end on the same value, with direct end labels. The label of
+# the upper series uses the greater-or-equal sign, which ascii transliterates.
+fx_endlabels <- function(last = c(10, 10)) {
+  h <- c(0, 2, 4, 6, 8, 12, 24, 48)
+  d <- rbind(
+    data.frame(h = h, y = c(9, 14, 19, 21, 19, 15, 11, last[[1]]), g = "ISS 16-24"),
+    data.frame(h = h, y = c(10, 15, 22, 28, 33, 31, 22, last[[2]]), g = "ISS \u2265 25")
+  )
+  # explicit levels: key order must not depend on the collation of the locale
+  d$g <- factor(d$g, levels = c("ISS \u2265 25", "ISS 16-24"))
+  ggplot2::ggplot(d, ggplot2::aes(h, y, shape = g, linetype = g, label = g)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point() +
+    geom_endlabel() +
+    ggplot2::labs(x = "Hours after admission", y = "C5a (ng/ml)")
+}
+
 plot_cells <- function(x, lay) x$chars[lay$r0:lay$r1, lay$c0:lay$c1]
 
 # Snapshots -------------------------------------------------------------------
@@ -367,4 +384,155 @@ test_that("format, as.character and print agree", {
   expect_output(res <- withVisible(print(x)))
   expect_false(res$visible)
   expect_identical(res$value, x)
+})
+
+# End labels ------------------------------------------------------------------
+
+test_that("fixture (e): end labels right of the plot, one per row", {
+  x <- char_grid(fx_endlabels(), width = 64, height = 19)
+  expect_snapshot(print(x))
+  expect_identical(names(x$endlabels), c("key", "symbol", "label", "row"))
+  expect_identical(x$endlabels$label, c("ISS >= 25", "ISS 16-24"))
+  # both series end at y = 10: same start row, the second is pushed down one
+  expect_identical(diff(x$endlabels$row), 1L)
+  # the end labels replace the legend
+  expect_false(any(grepl("ISS >= 25   ", format(x), fixed = TRUE)))
+})
+
+test_that("end labels carry the series point glyph and sit on reserved columns", {
+  x <- char_grid(fx_endlabels(), width = 64, height = 19)
+  el <- x$endlabels
+  expect_identical(el$symbol, c("*", "o")[el$key])
+  expect_true(all(el$symbol %in% x$chars[, 1:40]))
+  text <- paste(el$symbol, el$label)
+  width <- max(nchar(text)) + 1L
+  c1 <- 64L - 1L - width
+  for (k in seq_len(nrow(el))) {
+    line <- format(x)[[el$row[[k]]]]
+    expect_identical(substr(line, c1 + 2L, c1 + 1L + nchar(text[[k]])), text[[k]])
+    expect_identical(substr(line, c1 + 1L, c1 + 1L), " ")
+  }
+  # nothing of the data is drawn right of the plot columns (tick labels may be)
+  axis <- which(apply(x$chars, 1L, function(r) sum(r == "-") > 20L))
+  others <- setdiff(seq_len(axis - 1L), el$row)
+  expect_true(all(x$chars[others, (c1 + 1L):64L] == " "))
+  # the x axis stops at c1
+  expect_identical(max(which(x$chars[axis, ] %in% c("-", "+"))), c1)
+})
+
+test_that("end labels are ordered by the last y value, highest on top", {
+  low_first <- char_grid(fx_endlabels(c(30, 12)), width = 64, height = 19)
+  expect_identical(low_first$endlabels$label, c("ISS 16-24", "ISS >= 25"))
+  expect_true(all(diff(low_first$endlabels$row) >= 1L))
+  top <- char_grid(fx_endlabels(c(12, 30)), width = 64, height = 19)
+  expect_identical(top$endlabels$label, c("ISS >= 25", "ISS 16-24"))
+  # far apart values keep their own rows
+  expect_true(diff(top$endlabels$row) > 1L)
+})
+
+test_that("end label rows never collide and stay inside the plot rows", {
+  rows <- inferplotR:::.ip_cg_endlabel_rows
+  lay <- list(r0 = 2L, r1 = 10L)
+  expect_identical(rows(c(5, 5, 5), c(1, 3, 2), lay), c(7L, 5L, 6L))
+  expect_identical(rows(c(10, 10, 10), c(3, 2, 1), lay), c(8L, 9L, 10L))
+  expect_identical(rows(c(4, 9), c(2, 1), lay), c(4L, 9L))
+  expect_identical(rows(numeric(), numeric(), lay), integer())
+})
+
+test_that("an end-label layer without the key aesthetic is matched by label", {
+  d <- data.frame(x = rep(1:3, 2), y = c(1, 2, 3, 3, 2, 1), g = rep(c("up", "down"), each = 3))
+  p <- ggplot2::ggplot(d, ggplot2::aes(x, y, shape = g)) +
+    ggplot2::geom_point() +
+    geom_endlabel(ggplot2::aes(x, y, label = g, group = g), inherit.aes = FALSE)
+  x <- char_grid(p, width = 40, height = 12)
+  expect_identical(x$endlabels$label, c("up", "down"))
+  expect_identical(x$endlabels$symbol, c("o", "*"))
+  # no key scale at all: every end uses key 1
+  q <- ggplot2::ggplot(d, ggplot2::aes(x, y, group = g, label = g)) +
+    ggplot2::geom_line() +
+    geom_endlabel()
+  y <- char_grid(q, width = 40, height = 12)
+  expect_identical(y$endlabels$symbol, c("*", "*"))
+  expect_identical(nrow(y$legend), 0L)
+})
+
+test_that("plots without end labels keep their legend and an empty endlabels frame", {
+  x <- char_grid(fx_lines(), width = 64, height = 20)
+  expect_identical(nrow(x$endlabels), 0L)
+  expect_identical(names(x$endlabels), c("key", "symbol", "label", "row"))
+  expect_type(x$endlabels$row, "integer")
+  expect_true(any(grepl("ISS 16-24", format(x)[[20]], fixed = TRUE)))
+})
+
+# ASCII transliteration -------------------------------------------------------
+
+test_that("the transliteration table maps every listed character", {
+  tr <- inferplotR:::.ip_cg_ascii
+  from <- c("\u2265", "\u2264", "\u00b1", "\u00d7", "\u2212", "\u2013", "\u2014",
+            "\u00b5", "\u03bc", "\u03c1")
+  to <- c(">=", "<=", "+/-", "x", "-", "-", "--", "u", "u", "rho")
+  expect_identical(tr(from), to)
+  expect_identical(tr("5 \u00b1 2 \u00b5g, \u03c1 \u2265 0.5"), "5 +/- 2 ug, rho >= 0.5")
+  expect_identical(tr("Caf\u00e9 \u2192 \u03b1"), "Caf? ? ?")
+  expect_identical(tr(c("plain", NA)), c("plain", NA))
+  expect_identical(tr(character()), character())
+  expect_false(inferplotR:::.ip_cg_unknown(from))
+  expect_true(inferplotR:::.ip_cg_unknown(c("ok", "\u03b1")))
+})
+
+test_that("ascii grids transliterate every written string", {
+  p <- fx_endlabels() +
+    ggplot2::geom_text(ggplot2::aes(x = x, y = y, label = lab), inherit.aes = FALSE,
+                       data = data.frame(x = 30, y = 30, lab = "\u0394 \u2264 5")) +
+    ggplot2::labs(title = "C5a \u00b1 SD", y = "C5a (\u00b5g/l)",
+                  x = "Hours \u2014 admission", caption = "\u03c1 \u00d7 2")
+  caught <- list()
+  x <- withCallingHandlers(char_grid(p, width = 64, height = 22), warning = function(w) {
+    caught[[length(caught) + 1L]] <<- w
+    invokeRestart("muffleWarning")
+  })
+  out <- format(x)
+  expect_true(all(vapply(out, function(l) all(utf8ToInt(l) < 128L), logical(1))))
+  expect_identical(trimws(out[[1]]), "C5a +/- SD")
+  expect_true(any(grepl("C5a (ug/l)", out, fixed = TRUE)))
+  expect_true(any(grepl("Hours -- admission", out, fixed = TRUE)))
+  expect_true(any(grepl("? <= 5", out, fixed = TRUE)))
+  expect_true(any(grepl("ISS >= 25", out, fixed = TRUE)))
+  expect_identical(trimws(out[[22]]), "rho x 2")
+  # one warning for the one unknown character (the Greek capital delta)
+  expect_length(caught, 1L)
+  expect_s3_class(caught[[1]], "inferplotR_transliterated")
+})
+
+test_that("unknown characters warn once per call; unicode grids keep them", {
+  p <- fx_bars() + ggplot2::labs(title = "\u03b1 and \u03b2", caption = "\u03b3")
+  caught <- 0L
+  withCallingHandlers(char_grid(p, width = 40, height = 16), inferplotR_transliterated =
+                        function(w) {
+                          caught <<- caught + 1L
+                          invokeRestart("muffleWarning")
+                        })
+  expect_identical(caught, 1L)
+  expect_no_warning(u <- char_grid(p, width = 40, height = 16, charset = "unicode"))
+  expect_identical(trimws(format(u)[[1]]), "\u03b1 and \u03b2")
+  e <- char_grid(fx_endlabels(), width = 64, height = 19, charset = "unicode")
+  expect_true(any(grepl("ISS \u2265 25", format(e), fixed = TRUE)))
+  expect_no_warning(char_grid(fx_endlabels(), width = 64, height = 19))
+})
+
+test_that("case = 'upper' uppercases end labels but never their glyphs", {
+  x <- char_grid(fx_endlabels(), width = 38, height = 15, case = "upper")
+  expect_identical(x$endlabels$symbol, c("*", "o"))
+  expect_identical(x$endlabels$label, c("ISS >= 25", "ISS 16-24"))
+  out <- format(x)
+  expect_true(any(grepl("o ISS 16-24", out, fixed = TRUE)))
+  expect_false(any(grepl("O ISS", out, fixed = TRUE)))
+  expect_true(any(grepl("C5A (NG/ML)", out, fixed = TRUE)))
+  # a legend glyph that is a letter stays lower case too
+  d <- data.frame(x = 1:4, y = 1:4, a = c("p", "p", "q", "q"))
+  g <- char_grid(ggplot2::ggplot(d, ggplot2::aes(x, y, shape = a)) + ggplot2::geom_point(),
+                 width = 30, height = 12, case = "upper")
+  expect_identical(g$legend$symbol, c("*", "o"))
+  expect_identical(g$legend$label, c("P", "Q"))
+  expect_true(any(grepl("o Q", format(g), fixed = TRUE)))
 })

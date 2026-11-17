@@ -92,3 +92,28 @@
                  A             B            C         
                             Group                     
 
+# fixture (e): end labels right of the plot, one per row
+
+    Code
+      print(x)
+    Output
+      C5a (ng/ml)                                                     
+         |                                                            
+         |         *\                                                 
+      30 +        /  \\*\                                             
+         |       *       \\                                           
+         |       |         \\\                                        
+      25 +      |             \\                                      
+         |      *               \*\                                   
+         |      |o                 \\\                                
+      20 +     |o .o                  \\\                             
+         |     .    ..                   \\\                          
+      15 +    *.      .o..                  \\\                       
+         |   |o           .....                \\\                    
+         |   .                 ..o..........      \\\                 
+      10 +  *                               ..........*   * ISS >= 25 
+         |                                                o ISS 16-24 
+         +--+--------+--------+-------+--------+--------+             
+            0        10       20      30       40       50            
+                       Hours after admission                          
+
