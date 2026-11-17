@@ -1,0 +1,13 @@
+bibentry(
+  bibtype = "Manual",
+  title = "{inferplotR}: Black-and-White Figures with Inference Layers for 'ggplot2'",
+  author = person("R.", "Heller"),
+  year = "2026",
+  note = paste("R package version", meta$Version),
+  url = "https://github.com/CTTIR/inferplotR",
+  textVersion = paste0(
+    "Heller R (2026). inferplotR: Black-and-White Figures with Inference ",
+    "Layers for 'ggplot2'. R package version ", meta$Version, ". ",
+    "https://github.com/CTTIR/inferplotR"
+  )
+)

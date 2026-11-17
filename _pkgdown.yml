@@ -23,5 +23,65 @@ home:
   title: inferplotR
   description: Black-and-white ggplot2 figures with inference layers computed by
     infercalcR and labelled by infereportR, an APA audit and a character mode.
-articles: []
-reference: []
+articles:
+- title: Learn inferplotR
+  navbar: null
+  contents:
+  - getting-started
+  - inference-layers
+  - character-mode
+reference:
+- title: Inference layers
+  desc: Layers that run named infercalcR procedures per panel and label them
+    with infereportR display strings.
+  contents:
+  - stat_means
+  - stat_compare
+  - stat_omnibus
+  - stat_correlation
+- title: Bundle
+  desc: Theme, scales, observations and inference layers in one call.
+  contents:
+  - inferplot
+- title: Results
+  desc: The infercalcR results behind a figure, as objects or as one table.
+  contents:
+  - inference_results
+  - figure_report
+- title: Theme
+  desc: The black-and-white theme for papers and slides and its font lookup.
+  contents:
+  - theme_figure
+  - figure_font
+- title: Scales and fills
+  desc: Line types, point shapes, ink and hatch patterns instead of colour.
+  contents:
+  - scale_colour_ink
+  - scale_linetype_figure
+  - scale_shape_figure
+  - scale_fill_hatch
+  - hatch_pattern
+- title: Labels
+  desc: Direct labels instead of a legend.
+  contents:
+  - geom_endlabel
+- title: Export
+  desc: Size presets and saving for journals and slides.
+  contents:
+  - figure_size
+  - save_figure
+- title: APA check
+  desc: Audit a figure against the APA figure rules.
+  contents:
+  - check_figure
+- title: Character mode
+  desc: Redraw a plot on a character grid and render it as a figure.
+  contents:
+  - char_grid
+  - '`chargrid-methods`'
+  - char_figure
+  - char_size
+- title: ggproto objects
+  desc: The ggproto classes behind the layers, for extension developers.
+  contents:
+  - StatEndlabel
