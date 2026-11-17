@@ -6,9 +6,31 @@ vignette: >
   %\VignetteIndexEntry{Getting started with inferplotR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
 ---
 
-<!-- cttir-vignette-logo: block goes here once figures/logo.svg and figures/logo-dark.svg exist -->
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 5, fig.height = 3.5,
@@ -18,7 +40,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 5, fig.height
 inferplotR is a ggplot2 extension for black-and-white figures. This vignette
 covers the parts that do not compute statistics: the theme for papers and
 slides, the scales that replace color, end labels, size presets with export,
-and the APA audit. The inference layers have their own vignette,
+light and dark modes, and the APA audit. The inference layers have their own vignette,
 `vignette("inference-layers", package = "inferplotR")`. All examples use data
 sets that ship with R and run offline.
 
@@ -53,7 +75,11 @@ lines, and `border = TRUE` draws a frame around the panel.
 
 Text uses `figure_font()`: IBM Plex Sans (or Plex Mono for `"mono"`) when the
 font is installed and reported by systemfonts, otherwise R's generic `"sans"` and
-`"mono"` families. Fonts are never bundled or registered. On this machine:
+`"mono"` families. Fonts are never bundled or registered. IBM Plex ships with
+TeX Live (in `fonts/opentype/ibm/plex`). To make it available to R through
+fontconfig, copy the Sans, Sans Condensed and Mono OTF files to `~/.fonts`
+and run `fc-cache -f`; then call `figure_font(reset = TRUE)` or start a new
+session. On this machine:
 
 ```{r font}
 figure_font()
@@ -134,7 +160,7 @@ do.call(rbind, lapply(presets, function(x)
 ```
 
 `save_figure()` writes a plot at a preset or at an explicit size, on a white
-background. The file extension selects the device: `cairo_pdf()` for PDF
+background (or none, with `transparent = TRUE`). The file extension selects the device: `cairo_pdf()` for PDF
 (fonts embedded, patterns supported), the ggsave PNG and TIFF devices (ragg
 when installed) and `svg()` for SVG.
 
@@ -146,6 +172,46 @@ png_file <- save_figure(p_paper + theme_figure("slide"),
                         preset = "slide_half", dpi = 300)
 file.exists(c(pdf_file, png_file))
 ```
+
+## Light, dark and transparent
+
+Every function that draws takes `mode = "light"` (black on white, the default)
+or `"dark"` (white on black) and `transparent = FALSE` or `TRUE`. A transparent
+figure has no background at all: no plot, panel or legend background and no
+paper behind hatch tiles or open markers, only the ink. Pass the same values
+to the theme and to every layer and scale that takes them:
+
+```{r modes, fig.show = "hold", out.width = "48%", fig.width = 3.4, fig.height = 2.8, fig.alt = c("Mean tooth length by dose as bars with solid and open fills, black on white.", "The same chart in dark mode: white outlines and fills on black, the open bars black.")}
+bars <- function(mode = "light", transparent = FALSE) {
+  ggplot(tooth, aes(dose, len, fill = supp)) +
+    geom_col(colour = if (mode == "dark") "white" else "black", width = 0.7,
+             position = position_dodge(width = 0.8)) +
+    scale_fill_hatch(name = "Supplement", labels = c("Orange juice", "Ascorbic acid"),
+                     mode = mode, transparent = transparent) +
+    theme_figure(legend = "bottom", mode = mode, transparent = transparent) +
+    labs(x = "Dose (mg/day)", y = "Mean tooth length (mm)")
+}
+bars("light")
+bars("dark")
+```
+
+Dark figures are meant for slide decks in a dark theme and for inverse
+frames. `save_figure_set()` writes one figure in all four modes, light, dark
+and both transparent, each into its own folder under the same file name. It
+takes a function of `mode` and `transparent`, like `bars()` above:
+
+```{r save-set}
+set <- save_figure_set(bars, "tooth-bars", preset = "slide_half",
+                       dir = file.path(tempdir(), "figures"), png = FALSE)
+set[, c("mode", "format", "width_mm", "height_mm")]
+basename(set$file)
+```
+
+A Bleisatz deck includes the figure as `\includegraphics{tooth-bars}` and
+chooses the folder once, with `\graphicspath{{figures/dark/}}` for a deck in
+`\usetheme[dark]{Bleisatz}`. The figure gallery vignette,
+`vignette("figure-gallery", package = "inferplotR")`, shows the twelve example
+figures of the Bleisatz theme that `figure_gallery()` writes this way.
 
 ## Audit a figure with `check_figure()`
 

@@ -30,10 +30,10 @@ remotes::install_github("CTTIR/infereportR")
 remotes::install_github("CTTIR/inferplotR", build_vignettes = TRUE)
 ```
 
-The documentation site, with the reference and three vignettes, is at
+The documentation site, with the reference and four vignettes, is at
 <https://cttir.github.io/inferplotR/>. "Getting started with inferplotR" covers
-the theme, scales, labels, export and the APA check; "Inference layers" and
-"Character mode" cover the rest.
+the theme, scales, labels, modes, export and the APA check; "Inference layers",
+"Character mode" and "The figure gallery" cover the rest.
 
 ## One line on top of ggplot
 
@@ -85,6 +85,30 @@ panel each row came from, and reports adjusted p-values where an adjustment was
 made. Results computed elsewhere can still be drawn on the same figure with
 `infereportR::stat_inference()`.
 
+## Paired designs and figure builders
+
+- `stat_paired()` draws a paired design as a slopegraph, one line per unit
+  (`id`), and labels the mean change from a paired t or signed-rank procedure.
+- `figure_forest()` draws a forest plot from a named list of infercalcR results.
+- `figure_correlation_matrix()` runs one named correlation per pair of variables
+  and draws circles and values in two values.
+- `stat_stacklabel()` names the categories of stacked bars beside the last bar
+  instead of a legend.
+- `stat_ecdf_guides()` adds median guides and curve labels to `stat_ecdf()`.
+
+```r
+ggplot(transform(sleep, drug = factor(group, labels = c("Drug 1", "Drug 2"))),
+       aes(drug, extra, id = ID)) +
+  stat_paired(method = "t_means_paired", unit = "h") +
+  coord_cartesian(clip = "off") +
+  theme_figure() +
+  theme(plot.margin = margin(2, 21, 2, 2, unit = "mm")) +
+  labs(x = NULL, y = "Extra sleep (h)")
+```
+
+The builders keep their results like the layers, so `inference_results()` and
+`figure_report()` work on them too.
+
 ## Black and white by design
 
 ```r
@@ -110,7 +134,9 @@ save_figure(q + theme_figure("slide", legend = "none") +
   APA figure rules: all text between 8 and 14 pt, one font family, the legend
   inside the panel. `"slide"` matches the Bleisatz Beamer theme: 1-bit, 1 mm
   margins and IBM Plex when it is installed. There is no gray anywhere; grid
-  lines, when requested, are dotted black lines.
+  lines, when requested, are dotted black lines. IBM Plex ships with TeX Live
+  (`fonts/opentype/ibm/plex`); for R, copy the Sans, Sans Condensed and Mono
+  OTF files to `~/.fonts` and run `fc-cache -f` (see `?figure_font`).
 - `scale_linetype_figure()`, `scale_shape_figure()` and `scale_colour_ink()`
   tell groups apart by line type and point shape instead of color.
   `scale_fill_hatch()` and `hatch_pattern()` fill areas with solid, open,
@@ -119,8 +145,36 @@ save_figure(q + theme_figure("slide", legend = "none") +
 - `geom_endlabel()` labels each line at its last point instead of a legend.
 - `figure_size()` holds size presets: journal single and double columns (85 and
   174 mm wide) and the Bleisatz slots `slide_full`, `slide_side` and
-  `slide_half` (134, 86 and 64 mm wide). `save_figure()` writes PDF (with
-  `cairo_pdf()`), PNG, SVG or TIFF at a preset or at an explicit size.
+  `slide_half` (134, 86 and 64 mm wide, 44 mm high). `save_figure()` writes PDF
+  (with `cairo_pdf()`), PNG, SVG or TIFF at a preset or at an explicit size.
+
+## Modes
+
+Every function that draws takes `mode = "light"` (black on white) or `"dark"`
+(white on black) and `transparent = TRUE` for no background at all. Only the
+two values change; pass the mode to the theme and to every layer.
+
+- `save_figure_set()` writes one figure in light, dark and both transparent
+  modes into `figures/<mode>/`, with the same file name in every folder, so
+  `\graphicspath{{figures/dark/}}` switches a whole `\usetheme[dark]{Bleisatz}`
+  deck.
+- `figure_gallery()` writes the twelve Bleisatz example figures this way:
+  `Rscript -e 'inferplotR::figure_gallery("figures")'`.
+
+```r
+build <- function(mode, transparent) {
+  ggplot(chicks, aes(Time, weight, linetype = Diet, label = Diet)) +
+    geom_line(colour = if (mode == "dark") "white" else "black", show.legend = FALSE) +
+    geom_endlabel(mode = mode, transparent = transparent) +
+    scale_linetype_figure() +
+    coord_cartesian(clip = "off") +
+    theme_figure("slide", legend = "none", mode = mode, transparent = transparent) +
+    theme(plot.margin = margin(1, 16, 1, 1, unit = "mm")) +
+    labs(x = "Days since birth", y = "Mean weight (g)")
+}
+save_figure_set(build, "chicks", preset = "slide_side",
+                dir = file.path(tempdir(), "figures"), png = FALSE)
+```
 
 ## APA check
 
@@ -175,12 +229,15 @@ Mean weight (g)
 ```
 
 `charset = "unicode"` draws box-drawing lines and block fills, and
-`case = "upper"` writes all text in capitals. `char_figure()` turns the grid
-back into a ggplot of glyphs, either 1-bit black on white or, with
-`style = "c64"`, as the screen of a Commodore 64 after power-on: light blue
-characters on a blue screen inside a light blue border, ending with `READY.`
-and a cursor. `char_size()` gives the file size at which the glyphs line up,
-for `save_figure()`.
+`case = "upper"` writes all text in capitals. End labels of `geom_endlabel()`
+are written right of the plot, and the ASCII grid transliterates characters
+such as `≥` to `>=`. `char_figure()` turns the grid back into a ggplot of
+glyphs, either 1-bit black on white or, with `style = "c64"`, as the screen of
+a Commodore 64 after power-on: light blue characters on a blue screen inside a
+light blue border, ending with `READY.` and a cursor. `style = "c64bw"` keeps
+that screen in two values, with a dot-halftone border. With `slot`, the figure
+fills a slide slot; otherwise `char_size()` gives the file size at which the
+glyphs line up, for `save_figure()`.
 
 ## Verification
 
@@ -211,7 +268,10 @@ The tests show that:
 - `check_figure()` passes conforming figures and names the offenders in
   non-conforming ones;
 - character grids are deterministic (snapshot tests of fixed plots), and
-  `char_figure()` and `char_size()` agree on the grid size in both styles.
+  `char_figure()` and `char_size()` agree on the grid size in every style;
+- every figure is drawn in two values in each mode, and `figure_gallery()`
+  reproduces every number of the Bleisatz example figures at the exact slot
+  sizes.
 
 ## Acknowledgments and sources
 
@@ -224,7 +284,9 @@ and cite here.
 The text-size, font, legend, axis and title rules of the theme and of
 `check_figure()` follow the APA Style page on figures [1]. The slide target
 shares its 1-bit tokens (rules, hairlines, text width) with the Bleisatz Beamer
-theme [7]. Text uses IBM Plex [5] when it is installed; no font is bundled. The
+theme [7]; the slots, modes and twelve gallery figures follow the Bleisatz
+example figures [10]. Text uses IBM Plex [5] when it is installed; no font is
+bundled. The
 two colors of the C64 style are the VIC-II "blue" and "light blue" of the
 Pepto palette by Philip Timmermann [4].
 
@@ -263,3 +325,4 @@ APA rules and renders character mode as a figure.
 7. CTTIR. *Bleisatz* Beamer theme, the slide counterpart whose tokens this package shares.
 8. Heller R. *infercalcR* and *infereportR*, R packages. <https://github.com/CTTIR/infercalcR>, <https://github.com/CTTIR/infereportR>.
 9. ggplot2 authors. *Extending ggplot2*. Vignette of the ggplot2 package: `vignette("extending-ggplot2", package = "ggplot2")`.
+10. CTTIR (2026). *Bleisatz example figures*. Twelve example figures of the Bleisatz Beamer theme in light, dark and transparent modes, the visual reference of this package.

@@ -6,9 +6,31 @@ vignette: >
   %\VignetteIndexEntry{Character mode}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
 ---
 
-<!-- cttir-vignette-logo: block goes here once figures/logo.svg and figures/logo-dark.svg exist -->
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
@@ -18,8 +40,8 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
 Character mode redraws a ggplot on a grid of monospaced characters, the way
 home computers of the 1980s drew charts on a text screen. The grid prints as
 text in the console, and `char_figure()` turns it back into a ggplot of glyphs
-that can be saved as a figure, in black and white or in the colors of a
-Commodore 64 screen.
+that can be saved as a figure, in black and white, in the colors of a
+Commodore 64 screen or as that screen in two values.
 
 ```{r packages}
 library(ggplot2)
@@ -70,12 +92,35 @@ q <- ggplot(diets, aes(Time, weight, linetype = Diet)) +
 char_grid(q, width = 56, height = 14)
 ```
 
+### End labels
+
+A `geom_endlabel()` layer is not drawn inside the grid. Each series gets an end
+label right of the plot area instead, written as its point glyph and its label
+and ordered by the series' last value, highest on top. Two labels never share
+a row: the lower one moves down. The plot area gives up the columns the labels
+need, and the legend is left out, since the end labels name the same series.
+
+```{r endlabels, comment = ""}
+labeled <- transform(diets, Diet = paste("Diet", Diet))
+e <- ggplot(labeled, aes(Time, weight, shape = Diet, label = Diet)) +
+  geom_line(aes(group = Diet)) +
+  geom_point() +
+  geom_endlabel() +
+  labs(x = "Days since birth", y = "Mean weight (g)")
+
+char_grid(e, width = 56, height = 14)
+```
+
 ## Character sets and case
 
 `charset = "unicode"` uses box-drawing glyphs for lines, geometric shapes for
 points and block glyphs for fills; `"ascii"` (the default) stays within
 printable ASCII. `case = "upper"` writes every string in upper case, as on
 machines without lower-case letters; the glyphs of the data do not change.
+With `"ascii"`, every string is transliterated to ASCII as well: `≥` becomes
+`>=`, `≤` `<=`, `±` `+/-`, `×` `x`, the minus sign and the en dash `-`, the em
+dash `--`, `µ` `u` and `ρ` `rho`. Any other non-ASCII character becomes `?`,
+with one warning of class `inferplotR_transliterated`.
 
 ```{r unicode, comment = ""}
 tooth <- aggregate(len ~ dose, data = ToothGrowth, FUN = mean)
@@ -107,7 +152,8 @@ char_figure(p)
 
 The `"c64"` style imitates the screen of a Commodore 64 after power-on: light
 blue glyphs on a blue screen inside a light blue border, a 40 x 25 grid, labels
-in upper case and, by default, `READY.` with a cursor below the chart. The two
+in upper case and, by default, `READY.` with a cursor below the chart. The
+cursor is a filled tile rather than a block glyph, which IBM Plex Mono lacks. The two
 colors are the VIC-II "blue" (`#352879`) and "light blue" (`#6C5EB5`) of the
 Pepto palette by Philip Timmermann. They are the only colors in the package.
 
@@ -115,12 +161,21 @@ Pepto palette by Philip Timmermann. They are the only colors in the package.
 char_figure(p, style = "c64")
 ```
 
+The c64 style is for effect only: it is not black and white, and
+`check_figure()` reports it under `two_values`. The `"c64bw"` style keeps the
+look in two values. The screen is always black with white glyphs, and the
+border stands in for the lighter border blue with a dot halftone, ink dots on
+paper 0.75 mm apart. In dark mode only the border changes, to white dots on
+black.
+
 ## Sizing and saving
 
 Glyphs only line up if the figure is saved at the size of the grid.
-`char_size()` computes it: the grid fills `width_mm` (134 mm, the Bleisatz text
-width, by default), each cell is `width_mm / ncol` wide and `cell_ratio` times as
-tall, and the c64 border adds 8 % of `width_mm` on every side.
+`char_size()` computes it: the figure is `width_mm` wide (134 mm, the Bleisatz
+text width, by default), border included, each cell is as wide as the space
+inside the border divided by the number of columns and `cell_ratio` (1.75)
+times as tall. The c64 border takes 6 % of `width_mm` on every side, the
+`c64bw` border 3.2 mm.
 
 ```{r size}
 char_size(p)
@@ -138,6 +193,30 @@ out <- save_figure(fig, file.path(tempdir(), "chicks-char.png"),
                    width = size$width, height = size$height, dpi = 300)
 file.exists(out)
 ```
+
+### Filling a slide slot
+
+With `slot`, a size preset of `figure_size()`, the figure takes the slot's
+width and height. The number of rows is then the largest that fits the slot
+height, `READY.` included, and what is left over (less than a row) is split
+above and below the grid. In a slot, the c64 styles default to 38 columns,
+which suits `"slide_half"`. Here is the `"c64bw"` style in a half-width slot, in
+light and dark mode:
+
+```{r c64bw, fig.show = "hold", out.width = "48%", fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, fig.alt = c("The chick weight chart as white upper-case characters on a black screen inside a border of black dots on white, ending with READY. and a cursor tile.", "The same screen in dark mode: the border is now white dots on black.")}
+char_figure(p, style = "c64bw", slot = "slide_half")
+char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark")
+```
+
+```{r slot-size}
+char_size(p, style = "c64bw", slot = "slide_half")
+```
+
+With `transparent = TRUE` every style draws glyphs only, without screen,
+border or background, at the same size, so the transparent file can replace
+the opaque one on a frame with a background of its own.
+
+### Text size
 
 The text size is chosen so that one glyph advance fills one cell:
 `(width_mm / ncol) / char_width` mm, where `char_width` is the advance width of

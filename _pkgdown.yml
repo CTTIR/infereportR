@@ -22,7 +22,7 @@ home:
     - authors
   title: inferplotR
   description: Black-and-white ggplot2 figures with inference layers computed by
-    infercalcR and labelled by infereportR, an APA audit and a character mode.
+    infercalcR and labeled by infereportR, an APA audit and a character mode.
 articles:
 - title: Learn inferplotR
   navbar: null
@@ -30,6 +30,7 @@ articles:
   - getting-started
   - inference-layers
   - character-mode
+  - figure-gallery
 reference:
 - title: Inference layers
   desc: Layers that run named infercalcR procedures per panel and label them
@@ -39,10 +40,16 @@ reference:
   - stat_compare
   - stat_omnibus
   - stat_correlation
+  - stat_paired
 - title: Bundle
   desc: Theme, scales, observations and inference layers in one call.
   contents:
   - inferplot
+- title: Figure builders
+  desc: Complete figures built from infercalcR results.
+  contents:
+  - figure_forest
+  - figure_correlation_matrix
 - title: Results
   desc: The infercalcR results behind a figure, as objects or as one table.
   contents:
@@ -54,7 +61,7 @@ reference:
   - theme_figure
   - figure_font
 - title: Scales and fills
-  desc: Line types, point shapes, ink and hatch patterns instead of colour.
+  desc: Line types, point shapes, ink and hatch patterns instead of color.
   contents:
   - scale_colour_ink
   - scale_linetype_figure
@@ -62,14 +69,22 @@ reference:
   - scale_fill_hatch
   - hatch_pattern
 - title: Labels
-  desc: Direct labels instead of a legend.
+  desc: Direct labels and guides instead of a legend.
   contents:
   - geom_endlabel
+  - stat_stacklabel
+  - stat_ecdf_guides
 - title: Export
-  desc: Size presets and saving for journals and slides.
+  desc: Size presets and saving for journals and slides, in light, dark and
+    transparent modes.
   contents:
   - figure_size
   - save_figure
+  - save_figure_set
+- title: Gallery
+  desc: The twelve Bleisatz example figures, rebuilt with the package API.
+  contents:
+  - figure_gallery
 - title: APA check
   desc: Audit a figure against the APA figure rules.
   contents:
@@ -84,4 +99,4 @@ reference:
 - title: ggproto objects
   desc: The ggproto classes behind the layers, for extension developers.
   contents:
-  - StatEndlabel
+  - '`inferplotR-ggproto`'
