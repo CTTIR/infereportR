@@ -18,6 +18,7 @@ Depends: R (>= 4.1.0)
 Imports: ggplot2 (>= 3.5.0), infercalcR (>= 0.1.0), infereportR (>= 0.1.0),
     grid, grDevices, stats, utils
 Suggests: knitr, rmarkdown, ragg, systemfonts, testthat (>= 3.1.7), withr
+VignetteBuilder: knitr
 Remotes: CTTIR/infercalcR, CTTIR/infereportR
 URL: https://github.com/CTTIR/inferplotR,
     https://cttir.github.io/inferplotR/
