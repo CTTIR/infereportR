@@ -7,6 +7,8 @@ test_that("figure_font returns a single family name", {
 })
 
 test_that("figure_font falls back to generic families and caches", {
+  # Reset after the mocks are gone, so no mocked family stays in the cache.
+  withr::defer(figure_font(reset = TRUE))
   local_mocked_bindings(.ip_has_font = function(family) FALSE)
   expect_identical(figure_font("sans", reset = TRUE), "sans")
   expect_identical(figure_font("mono"), "mono")
@@ -14,7 +16,6 @@ test_that("figure_font falls back to generic families and caches", {
   expect_identical(figure_font("sans"), "sans")
   expect_identical(figure_font("sans", reset = TRUE), "IBM Plex Sans")
   expect_identical(figure_font("mono"), "IBM Plex Mono")
-  figure_font(reset = TRUE)
 })
 
 test_that("figure_font validates its arguments", {

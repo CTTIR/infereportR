@@ -19,14 +19,9 @@ fx_bars <- function() {
     ggplot2::labs(x = NULL, y = "MODS, %")
 }
 
-# A list-valued fill palette (two colours and a tiling pattern) so that keys
-# are matched element-wise with identical().
-fx_list_fill <- function() {
-  tile <- grid::pattern(grid::linesGrob(), width = grid::unit(2, "mm"),
-                        height = grid::unit(2, "mm"), extend = "repeat")
-  ggplot2::discrete_scale(aesthetics = "fill",
-                          palette = function(n) list("#000000", "#FFFFFF", tile)[seq_len(n)])
-}
+# scale_fill_hatch() returns a list palette (ink, paper, grid patterns), so
+# keys are matched element-wise with identical().
+fx_list_fill <- function() scale_fill_hatch()
 
 fx_hatch_bars <- function() {
   d <- data.frame(g = c("Control", "Low dose", "High dose"), v = c(14, 22, 31))
