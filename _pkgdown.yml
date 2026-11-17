@@ -1,0 +1,27 @@
+url: https://cttir.github.io/inferplotR/
+template:
+  includes:
+    in_header: |
+      <meta name="theme-color" content="#1565c0">
+      <script defer data-domain="cttir.github.io/inferplotr" src="https://analytics.hellebo.de/js/script.file-downloads.outbound-links.js"></script>
+  package: themakR
+  math-rendering: mathml
+  bslib:
+    base_font: system-ui
+    heading_font: system-ui
+    code_font: monospace
+destination: docs
+development:
+  mode: auto
+home:
+  sidebar:
+    structure:
+    - links
+    - license
+    - citation
+    - authors
+  title: inferplotR
+  description: Black-and-white ggplot2 figures with inference layers computed by
+    infercalcR and labelled by infereportR, an APA audit and a character mode.
+articles: []
+reference: []

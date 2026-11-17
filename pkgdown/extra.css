@@ -1,0 +1,6 @@
+/* pkgdown supplies heading logos. The README and standalone vignettes keep
+   their embedded logos; only the website suppresses the duplicates. */
+.template-article .cttir-vignette-logo,
+.template-home .cttir-readme-logo {
+  display: none;
+}
