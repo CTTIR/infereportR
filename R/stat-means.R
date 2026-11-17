@@ -8,7 +8,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
     .ip_compute_layer(self, data, params, layout)
   },
   compute_panel = function(data, scales, method = "t_mean_one_sample", conf.level = 0.95,
-                           label_type = "none") {
+                           label_type = "none", offset = 0) {
     panel <- data$PANEL[1L]
     data <- .ip_finite_xy(data)
     if (!nrow(data)) return(.ip_means_empty())
@@ -34,7 +34,9 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
         estimate = shown$estimate_display,
         estimate_ci = paste(shown$estimate_display, shown$interval_display)
       )
-      out <- data.frame(x = keys$x[i], y = res$estimate, ymin = res$conf.low,
+      # The offset moves the drawing only; levels and ids use the true x.
+      shift <- if (discrete) offset else 0
+      out <- data.frame(x = keys$x[i] + shift, y = res$estimate, ymin = res$conf.low,
                         ymax = res$conf.high, n = res$n, label = text,
                         group = keys$group[i], PANEL = panel, stringsAsFactors = FALSE)
       # Keep aesthetics that are constant within the group (shape, linetype,
@@ -47,6 +49,21 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
     })
     do.call(rbind, rows)
   }
+)
+
+# Mean point diameter in mm (ggplot2 size units) and GeomPointrange's fixed
+# point factor in ggplot2 4.x (the point is drawn at size * 4).
+.ip_means_point <- 2.1
+.ip_pointrange_fatten <- 4
+
+# The pointrange geom of stat_means(): a filled point of 2.1 mm (stroke 0.5,
+# as geom_point() draws it) and the interval as a heavy rule (1.1 pt). These
+# are default aesthetics, so anything the user sets or maps wins.
+.ip_geom_means <- ggplot2::ggproto("GeomInferplotMeans", ggplot2::GeomPointrange,
+  default_aes = ggplot2::aes(
+    colour = .ip_ink, size = .ip_means_point / .ip_pointrange_fatten,
+    linewidth = .ip_lw(.ip_rule_heavy), linetype = 1, shape = 19, fill = NA,
+    alpha = NA, stroke = 0.5)
 )
 
 .ip_means_empty <- function() {
@@ -86,6 +103,13 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' as a test; labels, when requested, are 'infereportR' display strings. Each
 #' panel is its own analysis, so facets work.
 #'
+#' With the default `"pointrange"` geom the mean is a filled point (2.1 mm)
+#' and the interval a 1.1 pt line; `size`, `linewidth`, `shape` and `stroke`
+#' passed in `...` (or mapped) take precedence. On a discrete x scale,
+#' `offset` shifts the drawing to the right of the x position, so the summary
+#' does not cover jittered raw points ([inferplot()] uses 0.28 with
+#' `points = "jitter"`); it moves geometry only, not the numbers.
+#'
 #' Rows with non-finite x or y are dropped before the call, as ggplot2 does
 #' for drawing. A group with fewer than two observations has no interval:
 #' its row is kept with the status reported by 'infercalcR' and nothing is
@@ -100,8 +124,11 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' @param conf.level Confidence level of the intervals.
 #' @param label `"none"` (default), `"estimate"` or `"estimate_ci"`: the text
 #'   placed in the `label` column, for geoms that draw it.
+#' @param offset Shift in x units for a discrete x scale (0 by default);
+#'   ignored for continuous x.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
-#' @return A ggplot2 layer. The computed data has columns `x`, `y` (the mean),
+#' @return A ggplot2 layer. The computed data has columns `x` (shifted by
+#'   `offset`), `y` (the mean),
 #'   `ymin`, `ymax`, `n`, `label`, `.ip_result` (the 'infercalcR' result) and
 #'   `.ip_result_id`.
 #' @seealso [inference_results()], [figure_report()], [stat_compare()]
@@ -114,16 +141,19 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 stat_means <- function(mapping = NULL, data = NULL, geom = "pointrange",
                        position = "identity", ..., method = "t_mean_one_sample",
                        conf.level = 0.95, label = c("none", "estimate", "estimate_ci"),
-                       na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+                       offset = 0, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
   method <- .ip_check_method(method, "means")
   conf.level <- .ip_check_conf_level(conf.level)
   if (is.null(conf.level)) .ip_abort("conf.level must be a single number between 0 and 1")
   label <- .ip_check_choice(label, c("none", "estimate", "estimate_ci"), "label")
+  .ip_check_number(offset, "offset")
   .ip_check_flag(na.rm, "na.rm")
   dots <- list(...)
-  params <- c(list(method = method, conf.level = conf.level, label_type = label, na.rm = na.rm),
+  params <- c(list(method = method, conf.level = conf.level, label_type = label,
+                   offset = offset, na.rm = na.rm),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- .ip_ink
+  if (identical(geom, "pointrange")) geom <- .ip_geom_means
   ggplot2::layer(stat = StatMeans, data = data, mapping = mapping, geom = geom,
                  position = position, show.legend = show.legend, inherit.aes = inherit.aes,
                  params = params)

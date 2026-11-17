@@ -63,7 +63,8 @@ StatOmnibus <- ggplot2::ggproto("StatOmnibus", ggplot2::Stat,
 #' @param label_x,label_y Label position in data units; `-Inf`/`Inf` mean the
 #'   panel edges (top left by default).
 #' @param hjust,vjust Label justification.
-#' @param text_size Label size in mm (ggplot2 text units); 9 pt by default.
+#' @param text_size Label size in mm (ggplot2 text units); 8 pt (the in-plot
+#'   label size) by default.
 #' @param family Label font family; `figure_font("sans")` by default.
 #' @return A ggplot2 layer drawing one label per panel. The computed data has
 #'   columns `x`, `y`, `label`, `.ip_result` and `.ip_result_id`.

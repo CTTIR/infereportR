@@ -35,7 +35,8 @@ panel edges (top left by default).}
 
 \item{hjust, vjust}{Label justification.}
 
-\item{text_size}{Label size in mm (ggplot2 text units); 9 pt by default.}
+\item{text_size}{Label size in mm (ggplot2 text units); 8 pt (the in-plot
+label size) by default.}
 
 \item{family}{Label font family; \code{figure_font("sans")} by default.}
 }

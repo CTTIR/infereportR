@@ -1,6 +1,17 @@
 .ip_correlation_symbol <- c(correlation_pearson = "r = ", correlation_spearman = "rho = ",
                             correlation_kendall = "tau = ")
 
+# The figure label: symbol, estimate, interval and p. Without an interval
+# (Spearman and Kendall in infercalcR 0.1.0 report none) the interval part is
+# left out; figure_report() keeps infereportR's full strings.
+.ip_correlation_label <- function(method, shown, res) {
+  has_interval <- !is.null(res$conf.low) && !is.null(res$conf.high) &&
+    is.finite(res$conf.low) && is.finite(res$conf.high)
+  interval <- if (has_interval) paste0(" ", shown$interval_display) else ""
+  paste0(.ip_correlation_symbol[[method]], shown$estimate_display, interval, ", ",
+         shown$p_display)
+}
+
 #' @rdname inferplotR-ggproto
 #' @format NULL
 #' @usage NULL
@@ -26,8 +37,7 @@ StatCorrelation <- ggplot2::ggproto("StatCorrelation", ggplot2::Stat,
                        "infercalcR::run_inference()")
     shown <- .ip_display(result)
     shown <- shown[1L, , drop = FALSE]
-    text <- paste0(.ip_correlation_symbol[[method]], shown$estimate_display, " ",
-                   shown$interval_display, ", ", shown$p_display)
+    text <- .ip_correlation_label(method, shown, infercalcR::result_data(result)[1L, ])
     out <- data.frame(x = label_x, y = label_y, label = text, group = 1L, PANEL = panel,
                       stringsAsFactors = FALSE)
     .ip_attach_result(out, result, id)
@@ -98,8 +108,11 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #'
 #' Runs one explicitly named correlation procedure of 'infercalcR' per panel
 #' and writes its 'infereportR' display strings as a label: the coefficient
-#' (prefixed `r = `, `rho = ` or `tau = `), its interval and the p-value. Each
-#' panel is its own analysis. Rows with non-finite x or y are dropped first.
+#' (prefixed `r = `, `rho = ` or `tau = `), its interval and the p-value. When
+#' 'infercalcR' reports no interval (Spearman and Kendall in 'infercalcR'
+#' 0.1.0), the label leaves the interval out; [figure_report()] still has the
+#' full 'infereportR' strings. Each panel is its own analysis. Rows with
+#' non-finite x or y are dropped first.
 #'
 #' With `fit = TRUE` a second layer draws the fitted mean line of a linear
 #' prediction model from 'infercalcR' (`prediction_model_linear`) with its
@@ -121,7 +134,8 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #'   panel edges (top left by default).
 #' @param hjust,vjust Label justification.
 #' @param fit If `TRUE`, also draw the fitted line and its confidence band.
-#' @param text_size Label size in mm (ggplot2 text units); 9 pt by default.
+#' @param text_size Label size in mm (ggplot2 text units); 8 pt (the in-plot
+#'   label size) by default.
 #' @param family Label font family; `figure_font("sans")` by default.
 #' @return A ggplot2 layer; with `fit = TRUE`, a list of two layers (fit,
 #'   then label) that `+` adds together. The computed data carries
