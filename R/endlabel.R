@@ -7,10 +7,16 @@
 #' * `StatEndlabel`, the stat of [geom_endlabel()]: per group, it keeps the
 #'   rows with finite `x` and `y` and returns the one with the largest `x`
 #'   (the first one on ties). A group without finite rows yields no row.
+#' * `GeomBracket` draws a comparison bracket (a bar with two downward tips)
+#'   and its label; used by [stat_compare()].
+#' * `StatMeans`, `StatCompare`, `StatOmnibus`, `StatCorrelation` and
+#'   `StatCorrelationFit` run explicitly named 'infercalcR' procedures per
+#'   panel and label them with 'infereportR' display strings.
 #'
 #' @format NULL
 #' @usage NULL
-#' @seealso [geom_endlabel()], [ggplot2::Stat]
+#' @seealso [geom_endlabel()], [stat_means()], [stat_compare()], [stat_omnibus()],
+#'   [stat_correlation()], [ggplot2::Stat]
 #' @rdname inferplotR-ggproto
 #' @export
 StatEndlabel <- ggplot2::ggproto(
