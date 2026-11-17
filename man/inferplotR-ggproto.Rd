@@ -2,7 +2,8 @@
 % Please edit documentation in R/endlabel.R, R/geom-bracket.R,
 %   R/stat-compare.R, R/stat-correlation.R, R/stat-ecdf-guides.R,
 %   R/stat-means.R, R/stat-omnibus.R, R/stat-paired.R, R/stat-stacklabel.R
-\name{StatEndlabel}
+\name{inferplotR-ggproto}
+\alias{inferplotR-ggproto}
 \alias{StatEndlabel}
 \alias{GeomEndlabel}
 \alias{GeomBracket}
@@ -35,9 +36,17 @@ and its label; used by \code{\link[=stat_compare]{stat_compare()}}.
 \item \code{StatMeans}, \code{StatCompare}, \code{StatOmnibus}, \code{StatCorrelation} and
 \code{StatCorrelationFit} run explicitly named 'infercalcR' procedures per
 panel and label them with 'infereportR' display strings.
+\item \code{StatPaired} and \code{GeomPaired}, the stat and geom of \code{\link[=stat_paired]{stat_paired()}}: the
+paired 'infercalcR' result per panel, one line per unit, the mean line
+and its label.
+\item \code{StatStacklabel}, the stat of \code{\link[=stat_stacklabel]{stat_stacklabel()}}: keeps the rows of the
+last (or first) x position and labels them with their fill level.
+\item \code{StatEcdfGuides} and \code{GeomEcdfGuides}, the stat and geom of
+\code{\link[=stat_ecdf_guides]{stat_ecdf_guides()}}: dotted quantile guides and curve labels.
 }
 }
 \seealso{
 \code{\link[=geom_endlabel]{geom_endlabel()}}, \code{\link[=stat_means]{stat_means()}}, \code{\link[=stat_compare]{stat_compare()}}, \code{\link[=stat_omnibus]{stat_omnibus()}},
-\code{\link[=stat_correlation]{stat_correlation()}}, \link[ggplot2:Stat]{ggplot2::Stat}
+\code{\link[=stat_correlation]{stat_correlation()}}, \code{\link[=stat_paired]{stat_paired()}}, \code{\link[=stat_stacklabel]{stat_stacklabel()}},
+\code{\link[=stat_ecdf_guides]{stat_ecdf_guides()}}, \link[ggplot2:Stat]{ggplot2::Stat}
 }

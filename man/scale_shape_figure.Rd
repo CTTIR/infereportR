@@ -18,7 +18,7 @@ A ggplot2 discrete scale object for the \code{shape} aesthetic.
 }
 \description{
 A discrete shape scale that distinguishes groups by point shape instead of
-colour. The default sequence has eight shapes that alternate between filled
+color. The default sequence has eight shapes that alternate between filled
 and open: \verb{16, 1, 15, 0, 17, 2, 18, 5} (circle, square, triangle, diamond).
 }
 \details{

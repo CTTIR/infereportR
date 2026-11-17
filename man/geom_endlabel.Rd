@@ -27,7 +27,7 @@ layer requires \code{x}, \code{y} and \code{label}.}
 
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{ggplot2::layer()}} as fixed
 aesthetics or parameters, for example \code{vjust} or \code{fontface}. \code{colour} is
-fixed to the ink colour and cannot be changed.}
+fixed to the ink color and cannot be changed.}
 
 \item{hjust}{Horizontal justification of the label relative to its anchor,
 which lies 2.5 mm right of the last point. The default \code{0} left-justifies
@@ -46,7 +46,7 @@ background); must be \code{TRUE} or \code{FALSE}.}
 
 \item{na.rm}{If \code{FALSE} (the default), rows with missing or non-finite
 values are removed with a warning, as in every ggplot2 layer; if \code{TRUE},
-silently. Either way a group is labelled at its last finite point.}
+silently. Either way a group is labeled at its last finite point.}
 
 \item{show.legend}{Should this layer be included in the legends? Defaults to
 \code{FALSE}, since the labels replace the legend.}
@@ -60,14 +60,14 @@ plot with \code{+}.
 }
 \description{
 Labels each group at its last point, the point with the largest finite \code{x},
-so that lines can be identified without a legend or colour. The layer uses
+so that lines can be identified without a legend or color. The layer uses
 the stat \link{StatEndlabel} and the geom \link{GeomEndlabel}; the text is always
-drawn in the ink colour of \code{mode} (black in light, white in dark mode), at
+drawn in the ink color of \code{mode} (black in light, white in dark mode), at
 8 pt by default.
 }
 \details{
 Labels never overlap. When the plot is drawn, \code{GeomEndlabel} sorts the labels
-of a panel by their y position and pushes them apart until neighbours are at
+of a panel by their y position and pushes them apart until neighbors are at
 least 1.15 text heights apart (the height of \code{"Ag"} in the label's font),
 then shifts the group back so that its mean position is unchanged. Each label
 starts 2.5 mm to the right of its point.

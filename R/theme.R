@@ -3,7 +3,7 @@
 #' A complete 'ggplot2' theme for figures in APA-style papers and on Bleisatz
 #' slides. It is built on [ggplot2::theme_classic()] and then modified so that
 #' the figure is strictly black and white: all text and lines are black, all
-#' backgrounds are white without an outline, and there is no grey anywhere.
+#' backgrounds are white without an outline, and there is no gray anywhere.
 #'
 #' Every text element resolves to between 8 and 14 pt at the default
 #' `base_size = 9`: axis text, axis titles, legend text and title, strip text
@@ -16,7 +16,7 @@
 #'
 #' Axis lines are 0.5 pt, ticks are 0.4 pt hairlines of 1.1 mm drawn outside
 #' the panel. Major grid lines, when requested, are black 0.4 pt dotted lines
-#' (linetype `"13"`), so no grey is needed; minor grid lines are never drawn.
+#' (linetype `"13"`), so no gray is needed; minor grid lines are never drawn.
 #' Strip text is bold and flush left, without a strip background. Title,
 #' subtitle and caption are flush left and aligned to the whole plot.
 #'
@@ -27,7 +27,7 @@
 #'
 #' The theme only styles non-data elements. In 'ggplot2' versions with a
 #' `geom` theme element, its ink, paper and accent are also set to the mode's
-#' ink and background so that default geom colours stay black and white.
+#' ink and background so that default geom colors stay black and white.
 #'
 #' **Modes.** `mode = "light"` (default) draws black ink on white paper,
 #' `mode = "dark"` white ink on black, for dark Bleisatz slides

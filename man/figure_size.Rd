@@ -17,7 +17,7 @@ A list with the numeric elements \code{width} and \code{height} and the
 string \code{units = "mm"}.
 }
 \description{
-Returns the width and height of a named size preset in millimetres. The
+Returns the width and height of a named size preset in millimeters. The
 journal presets are common single- and double-column widths; APA style
 itself prescribes no physical figure widths, so check the target journal's
 author guidelines. The slide presets match the slots of the Bleisatz slide

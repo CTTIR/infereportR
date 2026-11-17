@@ -173,3 +173,16 @@ test_that("precomputed results draw with infereportR::stat_inference", {
     infereportR::stat_inference(fam, positions = pos, groups = levels(pg$group))
   expect_no_warning(draws_silently(p))
 })
+
+test_that("headroom sets the invisible row in steps above the top bracket", {
+  rng <- diff(range(pg$weight))
+  top <- max(pg$weight)
+  d <- layer_data_of(base_plot() + stat_compare(method = welch, adjust = "holm",
+                                                headroom = 2), 2L)
+  expect_equal(d$y[d$headroom], top + (.ip_bracket_first + 4 * .ip_bracket_step) * rng)
+  expect_identical(sum(!d$headroom), 3L)
+  expect_error(stat_compare(method = welch, adjust = "holm", headroom = 0.5),
+               class = "inferplotR_invalid_input")
+  expect_error(stat_compare(method = welch, adjust = "holm", headroom = NA),
+               class = "inferplotR_invalid_input")
+})

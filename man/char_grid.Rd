@@ -77,7 +77,7 @@ The grid has, from the top: the title, the y-axis label, the plot rows, the
 x axis, the tick labels, the x-axis label, the legend and the caption. Use
 \code{char_figure()} to turn the grid into a ggplot of text for saving.
 
-\strong{End labels.} Layers made with \code{\link[=geom_endlabel]{geom_endlabel()}} (recognised by their stat,
+\strong{End labels.} Layers made with \code{\link[=geom_endlabel]{geom_endlabel()}} (recognized by their stat,
 \code{StatEndlabel}) are not drawn inside the plot. Each of their rows becomes an
 end label \code{"<point glyph> <label>"} written right of the plot area, where the
 glyph is the point glyph of the series key. The key is read from the layer's

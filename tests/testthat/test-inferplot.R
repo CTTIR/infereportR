@@ -99,8 +99,31 @@ test_that("the bundle equals the components added one by one", {
                                                             seed = 1)) +
     stat_means(conf.level = 0.95, offset = .ip_means_offset) +
     stat_omnibus(method = "anova_one_way") +
-    stat_compare(method = welch, reference = "ctrl", adjust = "holm", label = "p")
+    stat_compare(method = welch, reference = "ctrl", adjust = "holm", label = "p",
+                 headroom = 2)
   expect_equal(ggplot2::ggplot_build(bundle)$data, ggplot2::ggplot_build(by_hand)$data)
+})
+
+test_that("with omnibus and compare, the omnibus label gets its own headroom step", {
+  rng <- diff(range(pg$weight))
+  top <- max(pg$weight)
+  room <- function(p) {
+    d <- ggplot2::ggplot_build(p)$data
+    cmp <- d[[which(vapply(d, function(x) "headroom" %in% names(x), logical(1)))]]
+    list(bar = max(cmp$y[!cmp$headroom]), room = cmp$y[cmp$headroom],
+         yr = ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y.range)
+  }
+  both <- room(pg_plot() + inferplot(compare = welch, reference = "ctrl", adjust = "holm",
+                                     omnibus = "anova_one_way"))
+  only <- room(pg_plot() + inferplot(compare = welch, reference = "ctrl", adjust = "holm"))
+  step <- .ip_bracket_step * rng
+  expect_equal(only$room - only$bar, step)
+  expect_equal(both$room - both$bar, 2 * step)
+  expect_equal(both$bar, only$bar)
+  expect_true(both$yr[2] - both$bar >= 2 * step)
+  expect_no_warning(draws_silently(pg_plot() + inferplot(compare = welch, reference = "ctrl",
+                                                         adjust = "holm",
+                                                         omnibus = "anova_one_way")))
 })
 
 test_that("jittered points are reproducible", {

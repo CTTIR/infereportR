@@ -20,6 +20,7 @@ stat_compare(
   first = 0.1,
   step = 0.2,
   tip = 0.02,
+  headroom = 1,
   text_size = NULL,
   family = NULL,
   mode = "light",
@@ -69,6 +70,11 @@ slide size).}
 
 \item{tip}{Tip length as a fraction of the panel's y range.}
 
+\item{headroom}{Room above the top bracket, in steps (1 by default). With
+2, a label at the panel top (such as the \code{\link[=stat_omnibus]{stat_omnibus()}} label that
+\code{\link[=inferplot]{inferplot()}} adds) sits one step above the top bracket label instead of
+on it.}
+
 \item{text_size}{Label size in mm (ggplot2 text units); 8 pt by default.}
 
 \item{family}{Label font family; \code{figure_font("sans")} by default.}
@@ -89,7 +95,7 @@ row), \code{.ip_result} (the family result) and \code{.ip_result_id}.
 \description{
 Compares x groups pairwise with an explicitly named two-sample procedure
 of 'infercalcR', adjusts the comparison family as declared, and draws one
-bracket per comparison, labelled with 'infereportR' display strings. Each
+bracket per comparison, labeled with 'infereportR' display strings. Each
 panel is its own family, so facets work.
 }
 \details{
@@ -108,9 +114,9 @@ non-finite x or y are dropped before the call.
 
 Bracket i (in pair order) sits at \code{top + (first + (i - 1) * step) * range}
 of the panel's finite y values, with tips of \code{tip * range}. One invisible
-headroom row per panel, at \code{top + (first + k * step) * range} for k
-brackets, trains the y scale so the label of the top bracket is never
-clipped; it is marked \code{headroom = TRUE} in the layer data and not drawn.
+headroom row per panel, at \code{top + (first + (k - 1 + headroom) * step) * range} for k brackets, trains the y scale so the label of the top bracket
+is never clipped; it is marked \code{headroom = TRUE} in the layer data and not
+drawn.
 }
 \examples{
 library(ggplot2)

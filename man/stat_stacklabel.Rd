@@ -27,7 +27,7 @@ and \code{fill}.}
 \item{side}{\code{"right"} (labels right of the last bar, \code{hjust = 0}) or
 \code{"left"} (left of the first bar, \code{hjust = 1}).}
 
-\item{offset}{Distance from the bar centre in x units; 0.38 by default.}
+\item{offset}{Distance from the bar center in x units; 0.38 by default.}
 
 \item{position}{\code{"fill"} (default) or \code{"stack"}, matching the bars.}
 
@@ -52,7 +52,7 @@ bar, instead of a legend. The stat keeps the rows at the last
 each category, sets \code{label} to the fill level name and shifts x by
 \code{offset}. The layer is positioned with
 \code{ggplot2::position_fill(vjust = 0.5)} or
-\code{ggplot2::position_stack(vjust = 0.5)}, so each label sits at the centre
+\code{ggplot2::position_stack(vjust = 0.5)}, so each label sits at the center
 of its segment exactly as the bars stack.
 }
 \details{
