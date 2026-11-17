@@ -40,7 +40,7 @@ rows for \code{"bw"} and 25 for the c64 styles. With \code{slot}, \code{height} 
 
 \item{family}{Font family of the glyphs; \code{NULL} uses \code{figure_font("mono")}.}
 
-\item{width_mm}{Width of the whole figure in millimetres, border included.
+\item{width_mm}{Width of the whole figure in millimeters, border included.
 \code{NULL} means the slot width with \code{slot}, else 134 (the Bleisatz slide text
 width). Must be \code{NULL} when \code{slot} is given.}
 
@@ -81,7 +81,7 @@ Three styles are available:
 of the package (default grid 64 x 20, labels as they are).
 \item \code{"c64"}: the screen of a Commodore 64 after power-on, light-blue glyphs on
 a blue screen inside a light-blue border of 6 \% of \code{width_mm} on every
-side (default grid 40 x 25, labels in upper case). The two colours are
+side (default grid 40 x 25, labels in upper case). The two colors are
 VIC-II "blue" and "light blue" of the Pepto palette by Philip Timmermann.
 This style is for effect only: it is not black and white, so
 \code{\link[=check_figure]{check_figure()}} reports it under \code{two_values}.
@@ -97,7 +97,7 @@ aspect and the figure fills its slot.
 \itemize{
 \item \code{"bw"} draws ink glyphs on the mode's background: black on white
 (light) or white on black (dark).
-\item \code{"c64"} keeps its two C64 colours in light and dark mode.
+\item \code{"c64"} keeps its two C64 colors in light and dark mode.
 \item \code{"c64bw"} keeps the black screen with white glyphs in light and dark
 mode; only the halftone border follows the mode (ink dots on paper).
 \item With \code{transparent = TRUE} every style is glyphs only: no screen, no
@@ -123,7 +123,7 @@ it). In a slot, the c64 styles default to 38 columns, which suits
 \code{"slide_half"}.
 
 For the look of the real machine, install the C64 Pro Mono font (Style64; its
-licence does not allow bundling it, so it is not part of this package), make
+license does not allow bundling it, so it is not part of this package), make
 it known to the graphics device (for example through the 'systemfonts'
 package for 'ragg' devices) and call
 \code{char_figure(p, style = "c64", family = "C64 Pro Mono", char_width = 1, cell_ratio = 1)}.

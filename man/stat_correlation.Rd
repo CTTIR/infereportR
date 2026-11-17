@@ -16,6 +16,7 @@ stat_correlation(
   label_y = Inf,
   hjust = 0,
   vjust = 1,
+  label = c("estimate_ci_p", "estimate_ci_p_n"),
   fit = FALSE,
   text_size = NULL,
   family = NULL,
@@ -43,6 +44,10 @@ the level of the fitted band.}
 panel edges (top left by default).}
 
 \item{hjust, vjust}{Label justification.}
+
+\item{label}{\code{"estimate_ci_p"} (default) writes one line, symbol, estimate,
+interval and p; \code{"estimate_ci_p_n"} writes two lines, symbol, estimate
+and interval, then p and n.}
 
 \item{fit}{If \code{TRUE}, also draw the fitted line and its confidence band.}
 
@@ -72,6 +77,17 @@ full 'infereportR' strings. Each panel is its own analysis. Rows with
 non-finite x or y are dropped first.
 }
 \details{
+\code{label = "estimate_ci_p_n"} sets the label on two lines and adds the number
+of pairs, for example \code{"r = 0.705 [0.574, 0.801]"} over
+\code{"p < 0.001, n = 80"}. n is \code{result_data()$n} of the 'infercalcR' result,
+written by \code{\link[infereportR:format_estimate]{infereportR::format_estimate()}}.
+
+Sample size: 'infercalcR' 0.1.0 needs at least 4 complete pairs per panel
+for each correlation, and the fitted line of \code{fit = TRUE}
+(\code{prediction_model_linear}) needs at least 20 per panel. With fewer,
+building the plot fails with an error of class
+\code{inferplotR_calculation_failed}.
+
 With \code{fit = TRUE} a second layer draws the fitted mean line of a linear
 prediction model from 'infercalcR' (\code{prediction_model_linear}) with its
 pointwise confidence band from \code{\link[infercalcR:predict_inference]{infercalcR::predict_inference()}}
@@ -84,6 +100,11 @@ library(ggplot2)
 ggplot(mtcars, aes(wt, mpg)) +
   geom_point(shape = 1) +
   stat_correlation(method = "correlation_pearson", fit = TRUE)
+
+# Two lines with the number of pairs.
+ggplot(mtcars, aes(wt, mpg)) +
+  geom_point(shape = 1) +
+  stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n")
 }
 \seealso{
 \code{\link[=stat_compare]{stat_compare()}}, \code{\link[=inference_results]{inference_results()}}

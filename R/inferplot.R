@@ -13,7 +13,7 @@
 #' 2. [scale_colour_ink()], [scale_linetype_figure()], [scale_shape_figure()]
 #'    and [scale_fill_hatch()];
 #' 3. unless `points = "none"`, the raw observations as open circles in the
-#'    ink colour (`geom_point(shape = 1, colour = "black", size = 1.2)` in
+#'    ink color (`geom_point(shape = 1, colour = "black", size = 1.2)` in
 #'    light mode), jittered
 #'    horizontally with `position_jitter(width = 0.08, height = 0, seed = 1)`
 #'    for `points = "jitter"` (meant for a discrete x; the fixed seed keeps the
@@ -24,7 +24,9 @@
 #'    never overlap) and 0 otherwise;
 #' 5. if `omnibus` is set, `stat_omnibus(method = omnibus)`;
 #' 6. if `compare` is set, `stat_compare(method = compare, comparisons =
-#'    comparisons, reference = reference, adjust = adjust, label = label)`;
+#'    comparisons, reference = reference, adjust = adjust, label = label)`,
+#'    with `headroom = 2` when `omnibus` is also set, so the omnibus label at
+#'    the panel top sits above the top bracket label;
 #' 7. if `correlation` is set, `stat_correlation(method = correlation)`.
 #'
 #' `mode` and `transparent` are passed to every component that draws (the
@@ -160,9 +162,13 @@ inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons 
     out <- c(out, list(stat_omnibus(method = omnibus, mode = mode, transparent = transparent)))
   }
   if (!is.null(compare)) {
+    # With an omnibus label at the panel top, one more step of headroom keeps
+    # it clear of the top bracket label.
+    headroom <- if (is.null(omnibus)) 1 else 2
     out <- c(out, list(stat_compare(method = compare, comparisons = comparisons,
                                     reference = reference, adjust = adjust, label = label,
-                                    mode = mode, transparent = transparent)))
+                                    headroom = headroom, mode = mode,
+                                    transparent = transparent)))
   }
   if (!is.null(correlation)) {
     out <- c(out, list(stat_correlation(method = correlation, mode = mode,

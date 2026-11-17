@@ -36,8 +36,11 @@ test_that("tile geometry follows the specification", {
 
 test_that("default spacing is the 1.4 mm slide token", {
   expect_identical(.ip_hatch_spacing, 1.4)
-  expect_identical(formals(hatch_pattern)$spacing, quote(.ip_hatch_spacing))
-  expect_identical(formals(scale_fill_hatch)$spacing, quote(.ip_hatch_spacing))
+  # The defaults are written as literals so the usage is readable; they must
+  # stay equal to the tokens.
+  expect_identical(eval(formals(hatch_pattern)$spacing), .ip_hatch_spacing)
+  expect_identical(eval(formals(scale_fill_hatch)$spacing), .ip_hatch_spacing)
+  expect_identical(eval(formals(scale_fill_hatch)$patterns), .ip_hatches)
   mm <- function(p) grid::convertUnit(p$width, "mm", valueOnly = TRUE)
   expect_equal(mm(hatch_pattern("horizontal")), 1.4)
   expect_equal(mm(hatch_pattern("hatch")), 1.4 * sqrt(2))

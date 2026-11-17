@@ -26,7 +26,7 @@
   if (isTRUE(l10n_info()[["UTF-8"]])) "\u00d7" else "x"
 }
 
-#' Correlation matrix without colour
+#' Correlation matrix without color
 #'
 #' Runs one explicitly named correlation procedure of 'infercalcR' for every
 #' pair of variables and draws the matrix in two values. Above the diagonal,
@@ -40,7 +40,7 @@
 #' its complete cases with `id = seq_len(n)` and one
 #' [infercalcR::run_inference()] call. A pair whose result is not `ok`
 #' (including a call that 'infercalcR' refuses, such as a constant variable
-#' or too few cases; Pearson needs at least 20) is drawn as a cross at the
+#' or fewer than 4 complete cases) is drawn as a cross at the
 #' circle position and its value cell stays empty; the status and reason are
 #' in [figure_report()].
 #'

@@ -35,7 +35,7 @@
 #' x axis, the tick labels, the x-axis label, the legend and the caption. Use
 #' `char_figure()` to turn the grid into a ggplot of text for saving.
 #'
-#' **End labels.** Layers made with [geom_endlabel()] (recognised by their stat,
+#' **End labels.** Layers made with [geom_endlabel()] (recognized by their stat,
 #' `StatEndlabel`) are not drawn inside the plot. Each of their rows becomes an
 #' end label `"<point glyph> <label>"` written right of the plot area, where the
 #' glyph is the point glyph of the series key. The key is read from the layer's

@@ -3,7 +3,7 @@
 \name{scale_colour_ink}
 \alias{scale_colour_ink}
 \alias{scale_color_ink}
-\title{Ink-only colour scale}
+\title{Ink-only color scale}
 \usage{
 scale_colour_ink(..., aesthetics = "colour", mode = "light")
 
@@ -22,7 +22,7 @@ scale_color_ink(..., aesthetics = "colour", mode = "light")
 A ggplot2 discrete scale object.
 }
 \description{
-A discrete colour scale that maps every level to the ink colour: black in
+A discrete color scale that maps every level to the ink color: black in
 light mode, white in dark mode (see \code{\link[=theme_figure]{theme_figure()}}). The groups and
 the legend survive, so the scale is meant to be combined with
 \code{\link[=scale_linetype_figure]{scale_linetype_figure()}} or \code{\link[=scale_shape_figure]{scale_shape_figure()}}, which then carry the

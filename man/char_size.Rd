@@ -16,7 +16,7 @@ char_size(
 \arguments{
 \item{x}{A ggplot, an \code{inferplotR_chargrid} or a \code{\link[=char_figure]{char_figure()}} result.}
 
-\item{width_mm}{Width of the whole figure in millimetres, border included.
+\item{width_mm}{Width of the whole figure in millimeters, border included.
 \code{NULL} means the slot width with \code{slot}, else 134 (the Bleisatz slide text
 width). Must be \code{NULL} when \code{slot} is given.}
 
@@ -32,7 +32,7 @@ then fills that slot exactly (see Size).}
 the c64 styles and \code{FALSE} for \code{"bw"}.}
 }
 \value{
-A list with \code{width} and \code{height} (numbers, millimetres) and
+A list with \code{width} and \code{height} (numbers, millimeters) and
 \code{units = "mm"}, ready for \code{save_figure(width = , height = )}.
 }
 \description{

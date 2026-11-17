@@ -54,7 +54,7 @@
 #' Hatch pattern fill
 #'
 #' Returns a fill value for black-and-white figures. `"solid"` gives the ink
-#' colour and `"open"` the background; every other type gives a repeating
+#' color and `"open"` the background; every other type gives a repeating
 #' [grid::pattern()] tile of ink marks on the background:
 #'
 #' * `"hatch"`: diagonal lines rising to the right;
@@ -63,12 +63,12 @@
 #' * `"dots"`: a regular grid of filled dots;
 #' * `"horizontal"` and `"vertical"`: straight lines.
 #'
-#' `spacing` is the perpendicular distance between neighbouring lines (or the
-#' distance between dot centres), so a pattern keeps its density whatever the
+#' `spacing` is the perpendicular distance between neighboring lines (or the
+#' distance between dot centers), so a pattern keeps its density whatever the
 #' size of the filled shape. The default spacing of 1.4 mm suits slides;
 #' figures for print may pass `spacing = 1.6`.
 #'
-#' The colours follow the mode of [theme_figure()]: black ink on white in
+#' The colors follow the mode of [theme_figure()]: black ink on white in
 #' `mode = "light"`, white ink on black in `mode = "dark"`. With
 #' `transparent = TRUE` the tile has no background grob ([grid::nullGrob()])
 #' and `"open"` gives `NA`, so only the marks are drawn.
@@ -80,7 +80,7 @@
 #'
 #' @param type One of `"solid"`, `"open"`, `"hatch"`, `"dots"`,
 #'   `"crosshatch"`, `"backhatch"`, `"horizontal"` or `"vertical"`.
-#' @param spacing Distance between lines in millimetres, between 0.5 and 10.
+#' @param spacing Distance between lines in millimeters, between 0.5 and 10.
 #'   The default of 1.4 mm reads well at slide size; paper figures may pass
 #'   `spacing = 1.6`.
 #' @param linewidth Width of the hatch lines in points, between 0.1 and 2.
@@ -88,7 +88,7 @@
 #'   black).
 #' @param transparent If `TRUE`, patterns have no background and `"open"` is
 #'   `NA`.
-#' @return For `"solid"` and `"open"`, a single colour string (`NA` for
+#' @return For `"solid"` and `"open"`, a single color string (`NA` for
 #'   `"open"` when transparent). Otherwise a
 #'   grid pattern object (class `GridTilingPattern`, inheriting `GridPattern`)
 #'   usable as a `fill` value.
@@ -108,7 +108,7 @@
 #'   unlink(file)
 #' }
 #' @export
-hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4,
+hatch_pattern <- function(type, spacing = 1.4, linewidth = 0.4,
                           mode = "light", transparent = FALSE) {
   if (missing(type)) .ip_abort("type must be given")
   m <- .ip_mode(mode, transparent)
@@ -125,11 +125,11 @@ hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4,
 #' Hatch fill scale
 #'
 #' A discrete fill scale that distinguishes groups by black-and-white hatch
-#' patterns instead of colour. The default sequence is `"solid"`, `"open"`,
+#' patterns instead of color. The default sequence is `"solid"`, `"open"`,
 #' `"hatch"`, `"dots"`, `"crosshatch"` and `"backhatch"`; `"horizontal"` and
 #' `"vertical"` are also available. Each pattern is built with
 #' [hatch_pattern()], and the palette returns a list, so the built `fill`
-#' column is a list of colours and patterns. Legend keys show the patterns.
+#' column is a list of colors and patterns. Legend keys show the patterns.
 #'
 #' The scale never recycles: if the data have more groups than `patterns`,
 #' building the plot fails with an error of class `inferplotR_too_many_groups`.
@@ -142,7 +142,8 @@ hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4,
 #' for slides; paper figures may pass `spacing = 1.6`.
 #'
 #' @inheritParams scale_linetype_figure
-#' @param patterns Character vector of pattern types, used in order.
+#' @param patterns Character vector of pattern types, used in order. The
+#'   default is the six-pattern sequence above.
 #' @inheritParams hatch_pattern
 #' @return A ggplot2 discrete scale object for the `fill` aesthetic.
 #' @seealso [hatch_pattern()], [scale_linetype_figure()], [scale_shape_figure()].
@@ -161,8 +162,10 @@ hatch_pattern <- function(type, spacing = .ip_hatch_spacing, linewidth = 0.4,
 #'   unlink(file)
 #' }
 #' @export
-scale_fill_hatch <- function(..., patterns = .ip_hatches, spacing = .ip_hatch_spacing,
-                             linewidth = 0.4, mode = "light", transparent = FALSE) {
+scale_fill_hatch <- function(..., patterns = c("solid", "open", "hatch", "dots", "crosshatch",
+                                              "backhatch"),
+                             spacing = 1.4, linewidth = 0.4, mode = "light",
+                             transparent = FALSE) {
   if (!is.character(patterns) || !length(patterns) || anyNA(patterns) ||
       !all(patterns %in% .ip_hatch_types)) {
     .ip_abort(sprintf("patterns must be a non-empty character vector of %s",

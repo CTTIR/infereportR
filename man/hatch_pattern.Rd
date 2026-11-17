@@ -6,7 +6,7 @@
 \usage{
 hatch_pattern(
   type,
-  spacing = .ip_hatch_spacing,
+  spacing = 1.4,
   linewidth = 0.4,
   mode = "light",
   transparent = FALSE
@@ -16,7 +16,7 @@ hatch_pattern(
 \item{type}{One of \code{"solid"}, \code{"open"}, \code{"hatch"}, \code{"dots"},
 \code{"crosshatch"}, \code{"backhatch"}, \code{"horizontal"} or \code{"vertical"}.}
 
-\item{spacing}{Distance between lines in millimetres, between 0.5 and 10.
+\item{spacing}{Distance between lines in millimeters, between 0.5 and 10.
 The default of 1.4 mm reads well at slide size; paper figures may pass
 \code{spacing = 1.6}.}
 
@@ -29,14 +29,14 @@ black).}
 \code{NA}.}
 }
 \value{
-For \code{"solid"} and \code{"open"}, a single colour string (\code{NA} for
+For \code{"solid"} and \code{"open"}, a single color string (\code{NA} for
 \code{"open"} when transparent). Otherwise a
 grid pattern object (class \code{GridTilingPattern}, inheriting \code{GridPattern})
 usable as a \code{fill} value.
 }
 \description{
 Returns a fill value for black-and-white figures. \code{"solid"} gives the ink
-colour and \code{"open"} the background; every other type gives a repeating
+color and \code{"open"} the background; every other type gives a repeating
 \code{\link[grid:pattern]{grid::pattern()}} tile of ink marks on the background:
 }
 \details{
@@ -48,12 +48,12 @@ colour and \code{"open"} the background; every other type gives a repeating
 \item \code{"horizontal"} and \code{"vertical"}: straight lines.
 }
 
-\code{spacing} is the perpendicular distance between neighbouring lines (or the
-distance between dot centres), so a pattern keeps its density whatever the
+\code{spacing} is the perpendicular distance between neighboring lines (or the
+distance between dot centers), so a pattern keeps its density whatever the
 size of the filled shape. The default spacing of 1.4 mm suits slides;
 figures for print may pass \code{spacing = 1.6}.
 
-The colours follow the mode of \code{\link[=theme_figure]{theme_figure()}}: black ink on white in
+The colors follow the mode of \code{\link[=theme_figure]{theme_figure()}}: black ink on white in
 \code{mode = "light"}, white ink on black in \code{mode = "dark"}. With
 \code{transparent = TRUE} the tile has no background grob (\code{\link[grid:nullGrob]{grid::nullGrob()}})
 and \code{"open"} gives \code{NA}, so only the marks are drawn.

@@ -88,3 +88,35 @@ test_that("figure_forest checks its input", {
   expect_length(inference_results(p), 2L)
   expect_no_warning(draws_silently(p))
 })
+
+test_that("figure_forest(xlim) sets the axis range and keeps the text columns outside", {
+  res <- gallery_forest_results()
+  p <- figure_forest(res, xlim = c(-30, 60))
+  b <- ggplot2::ggplot_build(p)
+  xr <- b$layout$panel_params[[1]]$x.range
+  expect_equal(xr, c(-30, 60))
+  expect_lt(max(unique(b$data[[5]]$x)), -30)
+  expect_lt(unique(b$data[[4]]$x), unique(b$data[[5]]$x))
+  expect_gt(unique(b$data[[6]]$x), 60)
+  expect_true(unique(b$data[[8]]$xend) > 60)
+  expect_no_warning(draws_silently(p))
+  # Without xlim the range follows the data, so it differs.
+  auto <- ggplot2::ggplot_build(figure_forest(res))$layout$panel_params[[1]]$x.range
+  expect_false(isTRUE(all.equal(auto, c(-30, 60))))
+  # A narrow range cuts intervals at the limits and hides what lies outside.
+  q <- figure_forest(res, xlim = c(15, 30))
+  bq <- ggplot2::ggplot_build(q)
+  # The null line (0) lies outside, so the CI segments are the first layer.
+  expect_false(inherits(q$layers[[1]]$geom, "GeomVline"))
+  seg <- bq$data[[1]]
+  expect_true(all(seg$x >= 15 & seg$xend <= 30, na.rm = TRUE))
+  marks <- bq$data[[2]]
+  expect_true(all(is.na(marks$x) | (marks$x >= 15 & marks$x <= 30)))
+  expect_true(anyNA(marks$x))
+  expect_length(inference_results(q), 7L)
+  expect_false(any(vapply(bq$data, function(d) "xintercept" %in% names(d), logical(1))))
+  expect_no_warning(draws_silently(q))
+  for (bad in list(1, c(2, 1), c(0, Inf), c("a", "b"), c(NA, 1))) {
+    expect_error(figure_forest(res, xlim = bad), class = "inferplotR_invalid_input")
+  }
+})

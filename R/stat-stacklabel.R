@@ -42,7 +42,7 @@ StatStacklabel <- ggplot2::ggproto("StatStacklabel", ggplot2::Stat,
 #' each category, sets `label` to the fill level name and shifts x by
 #' `offset`. The layer is positioned with
 #' `ggplot2::position_fill(vjust = 0.5)` or
-#' `ggplot2::position_stack(vjust = 0.5)`, so each label sits at the centre
+#' `ggplot2::position_stack(vjust = 0.5)`, so each label sits at the center
 #' of its segment exactly as the bars stack.
 #'
 #' The bars and the labels must use the same kind of stacking: bars drawn
@@ -59,7 +59,7 @@ StatStacklabel <- ggplot2::ggproto("StatStacklabel", ggplot2::Stat,
 #' @param ... Further parameters passed to [ggplot2::geom_text()].
 #' @param side `"right"` (labels right of the last bar, `hjust = 0`) or
 #'   `"left"` (left of the first bar, `hjust = 1`).
-#' @param offset Distance from the bar centre in x units; 0.38 by default.
+#' @param offset Distance from the bar center in x units; 0.38 by default.
 #' @param position `"fill"` (default) or `"stack"`, matching the bars.
 #' @param size Text size in mm (ggplot2 units); 8 pt by default.
 #' @param family Font family; IBM Plex Sans Condensed when installed, else

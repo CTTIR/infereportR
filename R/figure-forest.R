@@ -97,6 +97,11 @@
 #' @param null_value `NULL` (default: the common `null.value` of the
 #'   results) or a number; `NA` draws no null line.
 #' @param xlab The x-axis title; `NULL` for none.
+#' @param xlim `NULL` (default: every estimate, interval and the null value,
+#'   with 4 % room) or two increasing finite numbers, the range of the x axis.
+#'   The text columns are laid out outside this range. Interval lines are
+#'   cut at the limits, and markers and a null line outside them are not
+#'   drawn.
 #' @param header Three column headings, or `NULL` for no header row.
 #' @param overall Index of the overall row (drawn on top in bold), or `NULL`
 #'   for none.
@@ -121,7 +126,7 @@
 #'               header = c("Contrast", "n", "Difference [95% CI]"))
 #' @export
 figure_forest <- function(results, labels = names(results), n = NULL, row = NULL,
-                          null_value = NULL, xlab = NULL,
+                          null_value = NULL, xlab = NULL, xlim = NULL,
                           header = c("Subgroup", "n", "Difference [95% CI]"), overall = 1L,
                           mode = "light", transparent = FALSE, base_size = 9,
                           slot = "slide_full") {
@@ -147,6 +152,10 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
     .ip_abort("null_value must be NULL or a single number (NA for no line)")
   }
   xlab <- .ip_check_optional_string(xlab, "xlab")
+  if (!is.null(xlim) && (!is.numeric(xlim) || length(xlim) != 2L || !all(is.finite(xlim)) ||
+                         xlim[1] >= xlim[2])) {
+    .ip_abort("xlim must be NULL or two increasing finite numbers")
+  }
   if (!is.null(header) && (!is.character(header) || length(header) != 3L || anyNA(header))) {
     .ip_abort("header must be NULL or three strings")
   }
@@ -194,17 +203,33 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
   fd$face <- ifelse(seq_len(k) %in% overall, 2L, 1L)
   header_y <- top + 1.1
 
-  # Axis range: every interval and the null value, with 4 % room.
+  # Axis range: xlim, else every interval and the null value, with 4 % room.
   span <- range(c(fd$low, fd$high, fd$estimate, null_value), finite = TRUE)
   if (!all(is.finite(span))) .ip_abort("the results have no finite estimate or interval")
-  if (diff(span) == 0) span <- span + c(-1, 1)
-  xr <- span + c(-1, 1) * 0.04 * diff(span)
+  if (is.null(xlim)) {
+    if (diff(span) == 0) span <- span + c(-1, 1)
+    xr <- span + c(-1, 1) * 0.04 * diff(span)
+  } else {
+    xr <- as.numeric(xlim)
+    # clip = "off" lets marks outside the axis range run into the text
+    # columns: cut the intervals at the limits and hide what lies outside.
+    fd$low <- pmax(fd$low, xr[1])
+    fd$high <- pmin(fd$high, xr[2])
+    outside <- !is.na(fd$estimate) & (fd$estimate < xr[1] | fd$estimate > xr[2])
+    fd$estimate[outside] <- NA_real_
+    gone <- !is.na(fd$low) & !is.na(fd$high) & fd$low > fd$high
+    fd$low[gone] <- NA_real_
+    fd$high[gone] <- NA_real_
+    if (is.finite(null_value) && (null_value < xr[1] || null_value > xr[2])) {
+      null_value <- NA_real_
+    }
+  }
 
   # Text columns, measured in the figure font at the label size.
   sans <- figure_font("sans")
   cond <- .ip_condensed_family()
   fs <- .ip_label_size_pt
-  n_text <- format(fd$n, trim = TRUE)
+  n_text <- .ip_format_n(fd$n)
   w <- function(s, family = sans, face = 1L) {
     if (!length(s)) return(0)
     max(.ip_text_width_mm(s, family, fs, face))

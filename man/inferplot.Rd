@@ -83,7 +83,7 @@ The list holds, in this order:
 \item \code{\link[=scale_colour_ink]{scale_colour_ink()}}, \code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}}
 and \code{\link[=scale_fill_hatch]{scale_fill_hatch()}};
 \item unless \code{points = "none"}, the raw observations as open circles in the
-ink colour (\code{geom_point(shape = 1, colour = "black", size = 1.2)} in
+ink color (\code{geom_point(shape = 1, colour = "black", size = 1.2)} in
 light mode), jittered
 horizontally with \code{position_jitter(width = 0.08, height = 0, seed = 1)}
 for \code{points = "jitter"} (meant for a discrete x; the fixed seed keeps the
@@ -92,7 +92,9 @@ figure reproducible) or unmoved for \code{points = "plain"} (a continuous x);
 mean and its interval sit right of the jittered observations, so they
 never overlap) and 0 otherwise;
 \item if \code{omnibus} is set, \code{stat_omnibus(method = omnibus)};
-\item if \code{compare} is set, \code{stat_compare(method = compare, comparisons = comparisons, reference = reference, adjust = adjust, label = label)};
+\item if \code{compare} is set, \code{stat_compare(method = compare, comparisons = comparisons, reference = reference, adjust = adjust, label = label)},
+with \code{headroom = 2} when \code{omnibus} is also set, so the omnibus label at
+the panel top sits above the top bracket label;
 \item if \code{correlation} is set, \code{stat_correlation(method = correlation)}.
 }
 

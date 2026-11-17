@@ -51,7 +51,7 @@
 #' written with [save_figure()] at the size of `preset`: a PDF (Cairo, fonts
 #' embedded) and, with `png = TRUE`, a PNG ('ragg' when installed) at `dpi`.
 #' The light and dark modes are saved on the mode's paper (white or black),
-#' so space a figure leaves free, as with `coord_fixed()`, has the colour of
+#' so space a figure leaves free, as with `coord_fixed()`, has the color of
 #' its background. The transparent modes are saved with `transparent = TRUE`, so their PNG
 #' files keep an alpha channel and their PDF files have no page background.
 #'

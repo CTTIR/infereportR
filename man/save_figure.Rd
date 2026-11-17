@@ -24,12 +24,12 @@ save_figure(
 \item{preset}{Size preset, see \code{\link[=figure_size]{figure_size()}}. Defaults to
 \code{"journal_column"} (85 x 70 mm).}
 
-\item{width, height}{Width and height in millimetres. Each one given
+\item{width, height}{Width and height in millimeters. Each one given
 overrides the corresponding value of the preset.}
 
 \item{dpi}{Resolution in dots per inch for PNG and TIFF output.}
 
-\item{bg}{Background colour. \code{NULL} means white paper, or no background
+\item{bg}{Background color. \code{NULL} means white paper, or no background
 with \code{transparent = TRUE}; \code{bg} and \code{transparent = TRUE} are exclusive.}
 
 \item{transparent}{If \code{TRUE}, the device background is transparent.}

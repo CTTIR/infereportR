@@ -1,6 +1,6 @@
 #' Figure size presets
 #'
-#' Returns the width and height of a named size preset in millimetres. The
+#' Returns the width and height of a named size preset in millimeters. The
 #' journal presets are common single- and double-column widths; APA style
 #' itself prescribes no physical figure widths, so check the target journal's
 #' author guidelines. The slide presets match the slots of the Bleisatz slide
@@ -72,10 +72,10 @@ figure_size <- function(preset = c("journal_column", "journal_page", "slide_full
 #'   `tiff`, in any case) selects the device.
 #' @param preset Size preset, see [figure_size()]. Defaults to
 #'   `"journal_column"` (85 x 70 mm).
-#' @param width,height Width and height in millimetres. Each one given
+#' @param width,height Width and height in millimeters. Each one given
 #'   overrides the corresponding value of the preset.
 #' @param dpi Resolution in dots per inch for PNG and TIFF output.
-#' @param bg Background colour. `NULL` means white paper, or no background
+#' @param bg Background color. `NULL` means white paper, or no background
 #'   with `transparent = TRUE`; `bg` and `transparent = TRUE` are exclusive.
 #' @param transparent If `TRUE`, the device background is transparent.
 #' @return `file`, invisibly.

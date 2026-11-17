@@ -62,7 +62,7 @@ layers and builders of the package, or \code{\link[=char_figure]{char_figure()}}
 written with \code{\link[=save_figure]{save_figure()}} at the size of \code{preset}: a PDF (Cairo, fonts
 embedded) and, with \code{png = TRUE}, a PNG ('ragg' when installed) at \code{dpi}.
 The light and dark modes are saved on the mode's paper (white or black),
-so space a figure leaves free, as with \code{coord_fixed()}, has the colour of
+so space a figure leaves free, as with \code{coord_fixed()}, has the color of
 its background. The transparent modes are saved with \code{transparent = TRUE}, so their PNG
 files keep an alpha channel and their PDF files have no page background.
 

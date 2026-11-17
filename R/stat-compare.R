@@ -10,7 +10,8 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
   compute_panel = function(data, scales, method, comparisons = NULL, reference = NULL,
                            adjust = NULL, family_id = NULL, alternative = NULL,
                            conf.level = NULL, method_args = list(), label_type = "p",
-                           first = 0.10, step = 0.20, tip_length = 0.02, y_label = "y") {
+                           first = 0.10, step = 0.20, tip_length = 0.02, headroom_steps = 1,
+                           y_label = "y") {
     if (!.ip_is_discrete(scales$x)) {
       .ip_abort("stat_compare() needs a discrete x scale", code = "unsupported")
     }
@@ -60,9 +61,10 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
       label = .ip_compare_labels(shown, label_type),
       tip = rep(tip_length * rng, k), headroom = rep(FALSE, k),
       group = seq_len(k), PANEL = panel, stringsAsFactors = FALSE)
-    # One invisible row one step above the top bracket trains the y scale, so
-    # the label of the top bracket is never clipped. GeomBracket skips it.
-    room <- top + (first + k * step) * rng
+    # One invisible row `headroom_steps` steps above the top bracket trains the
+    # y scale, so the label of the top bracket is never clipped. GeomBracket
+    # skips it.
+    room <- top + (first + (k - 1 + headroom_steps) * step) * rng
     out <- rbind(out, data.frame(
       x = lefts[[1L]], xend = lefts[[1L]], y = room, yend = room, label = "", tip = 0,
       headroom = TRUE, group = k + 1L, PANEL = panel, stringsAsFactors = FALSE))
@@ -141,7 +143,7 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #'
 #' Compares x groups pairwise with an explicitly named two-sample procedure
 #' of 'infercalcR', adjusts the comparison family as declared, and draws one
-#' bracket per comparison, labelled with 'infereportR' display strings. Each
+#' bracket per comparison, labeled with 'infereportR' display strings. Each
 #' panel is its own family, so facets work.
 #'
 #' For a pair `c(A, B)` the estimand is B minus A: the values of B are passed
@@ -159,9 +161,10 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #'
 #' Bracket i (in pair order) sits at `top + (first + (i - 1) * step) * range`
 #' of the panel's finite y values, with tips of `tip * range`. One invisible
-#' headroom row per panel, at `top + (first + k * step) * range` for k
-#' brackets, trains the y scale so the label of the top bracket is never
-#' clipped; it is marked `headroom = TRUE` in the layer data and not drawn.
+#' headroom row per panel, at `top + (first + (k - 1 + headroom) * step) *
+#' range` for k brackets, trains the y scale so the label of the top bracket
+#' is never clipped; it is marked `headroom = TRUE` in the layer data and not
+#' drawn.
 #'
 #' @param mapping,data,inherit.aes As in [ggplot2::layer()].
 #' @param ... Further parameters passed to the geom, such as `linewidth`.
@@ -190,6 +193,10 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #'   panel's y range (0.20 by default; leaves room for one label line at
 #'   slide size).
 #' @param tip Tip length as a fraction of the panel's y range.
+#' @param headroom Room above the top bracket, in steps (1 by default). With
+#'   2, a label at the panel top (such as the [stat_omnibus()] label that
+#'   [inferplot()] adds) sits one step above the top bracket label instead of
+#'   on it.
 #' @param text_size Label size in mm (ggplot2 text units); 8 pt by default.
 #' @param family Label font family; `figure_font("sans")` by default.
 #' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
@@ -213,7 +220,7 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
                          reference = NULL, adjust, family_id = NULL, alternative = NULL,
                          conf.level = NULL, method_args = list(),
                          label = c("p", "estimate_ci", "estimate_ci_p", "stars"),
-                         first = 0.10, step = 0.20, tip = 0.02, text_size = NULL,
+                         first = 0.10, step = 0.20, tip = 0.02, headroom = 1, text_size = NULL,
                          family = NULL, mode = "light", transparent = FALSE,
                          na.rm = FALSE, inherit.aes = TRUE) {
   m <- .ip_mode(mode, transparent)
@@ -235,12 +242,14 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
   .ip_check_number(first, "first", min = 0)
   .ip_check_number(step, "step", min = 0)
   .ip_check_number(tip, "tip", min = 0)
+  .ip_check_number(headroom, "headroom", min = 1)
   .ip_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, comparisons = comparisons, reference = reference,
                    adjust = adjust, family_id = family_id, alternative = alternative,
                    conf.level = conf.level, method_args = method_args, label_type = label,
-                   first = first, step = step, tip_length = tip, na.rm = na.rm),
+                   first = first, step = step, tip_length = tip, headroom_steps = headroom,
+                   na.rm = na.rm),
               .ip_text_params(dots, text_size, family, m$ink), dots)
   layer <- ggplot2::layer(stat = StatCompare, data = data, mapping = mapping,
                           geom = GeomBracket, position = "identity", show.legend = FALSE,

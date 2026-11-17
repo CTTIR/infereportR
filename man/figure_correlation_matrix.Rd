@@ -2,7 +2,7 @@
 % Please edit documentation in R/figure-correlation-matrix.R
 \name{figure_correlation_matrix}
 \alias{figure_correlation_matrix}
-\title{Correlation matrix without colour}
+\title{Correlation matrix without color}
 \usage{
 figure_correlation_matrix(
   data,
@@ -51,7 +51,7 @@ Pairs are taken in the order of \code{utils::combn(vars, 2)}. Each pair uses
 its complete cases with \code{id = seq_len(n)} and one
 \code{\link[infercalcR:run_inference]{infercalcR::run_inference()}} call. A pair whose result is not \code{ok}
 (including a call that 'infercalcR' refuses, such as a constant variable
-or too few cases; Pearson needs at least 20) is drawn as a cross at the
+or fewer than 4 complete cases) is drawn as a cross at the
 circle position and its value cell stays empty; the status and reason are
 in \code{\link[=figure_report]{figure_report()}}.
 

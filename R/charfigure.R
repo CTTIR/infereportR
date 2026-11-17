@@ -11,7 +11,7 @@
 #'   of the package (default grid 64 x 20, labels as they are).
 #' * `"c64"`: the screen of a Commodore 64 after power-on, light-blue glyphs on
 #'   a blue screen inside a light-blue border of 6 % of `width_mm` on every
-#'   side (default grid 40 x 25, labels in upper case). The two colours are
+#'   side (default grid 40 x 25, labels in upper case). The two colors are
 #'   VIC-II "blue" and "light blue" of the Pepto palette by Philip Timmermann.
 #'   This style is for effect only: it is not black and white, so
 #'   [check_figure()] reports it under `two_values`.
@@ -26,7 +26,7 @@
 #'
 #' * `"bw"` draws ink glyphs on the mode's background: black on white
 #'   (light) or white on black (dark).
-#' * `"c64"` keeps its two C64 colours in light and dark mode.
+#' * `"c64"` keeps its two C64 colors in light and dark mode.
 #' * `"c64bw"` keeps the black screen with white glyphs in light and dark
 #'   mode; only the halftone border follows the mode (ink dots on paper).
 #' * With `transparent = TRUE` every style is glyphs only: no screen, no
@@ -52,7 +52,7 @@
 #' `"slide_half"`.
 #'
 #' For the look of the real machine, install the C64 Pro Mono font (Style64; its
-#' licence does not allow bundling it, so it is not part of this package), make
+#' license does not allow bundling it, so it is not part of this package), make
 #' it known to the graphics device (for example through the 'systemfonts'
 #' package for 'ragg' devices) and call
 #' `char_figure(p, style = "c64", family = "C64 Pro Mono", char_width = 1, cell_ratio = 1)`.
@@ -71,7 +71,7 @@
 #' @param case `"asis"` or `"upper"`, passed to [char_grid()]; `NULL` uses
 #'   `"asis"` for `"bw"` and `"upper"` for the c64 styles.
 #' @param family Font family of the glyphs; `NULL` uses `figure_font("mono")`.
-#' @param width_mm Width of the whole figure in millimetres, border included.
+#' @param width_mm Width of the whole figure in millimeters, border included.
 #'   `NULL` means the slot width with `slot`, else 134 (the Bleisatz slide text
 #'   width). Must be `NULL` when `slot` is given.
 #' @param cell_ratio Height of a cell divided by its width, default 1.75 (IBM
@@ -201,7 +201,7 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
 #'
 #' @param x A ggplot, an `inferplotR_chargrid` or a [char_figure()] result.
 #' @inheritParams char_figure
-#' @return A list with `width` and `height` (numbers, millimetres) and
+#' @return A list with `width` and `height` (numbers, millimeters) and
 #'   `units = "mm"`, ready for `save_figure(width = , height = )`.
 #' @seealso [char_figure()], [save_figure()], [figure_size()] for the presets.
 #' @examples
