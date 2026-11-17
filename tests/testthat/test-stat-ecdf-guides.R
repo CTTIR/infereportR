@@ -1,5 +1,5 @@
 ecdf_plot <- function(...) {
-  cohort <- gallery_cohort()
+  cohort <- .ip_gallery_data()$cohort
   ttp <- data.frame(severity = cohort$severity, peak = cohort$peak)
   ggplot2::ggplot(ttp, ggplot2::aes(peak, linetype = severity)) +
     ggplot2::stat_ecdf(geom = "step", pad = FALSE) +
@@ -13,7 +13,7 @@ test_that("drop lines sit at the type-1 medians of the gallery (figure 05)", {
   p <- ecdf_plot(curve_labels = c(0.85, 0.35))
   d <- layer_data_of(p, 2L)
   drop <- d[d$part == "drop", ]
-  cohort <- gallery_cohort()
+  cohort <- .ip_gallery_data()$cohort
   want <- vapply(levels(cohort$severity), function(g) {
     stats::quantile(cohort$peak[cohort$severity == g], 0.5, type = 1, names = FALSE)
   }, numeric(1))

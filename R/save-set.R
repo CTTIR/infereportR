@@ -50,7 +50,9 @@
 #' layers and builders of the package, or [char_figure()]. Each figure is
 #' written with [save_figure()] at the size of `preset`: a PDF (Cairo, fonts
 #' embedded) and, with `png = TRUE`, a PNG ('ragg' when installed) at `dpi`.
-#' The transparent modes are saved with `transparent = TRUE`, so their PNG
+#' The light and dark modes are saved on the mode's paper (white or black),
+#' so space a figure leaves free, as with `coord_fixed()`, has the colour of
+#' its background. The transparent modes are saved with `transparent = TRUE`, so their PNG
 #' files keep an alpha channel and their PDF files have no page background.
 #'
 #' Nothing is written outside `dir`: `name` must be a plain file name, and the
@@ -123,7 +125,13 @@ save_figure_set <- function(build, name, preset, dir = "figures",
     dir.create(path, recursive = TRUE, showWarnings = FALSE)
     files <- file.path(path, paste0(name, ".", formats))
     for (f in files) {
-      save_figure(plot, f, preset = preset, dpi = dpi, transparent = args$transparent)
+      # The device background is the mode's paper, so space a figure leaves
+      # free (coord_fixed) matches its plot background in dark mode too.
+      if (args$transparent) {
+        save_figure(plot, f, preset = preset, dpi = dpi, transparent = TRUE)
+      } else {
+        save_figure(plot, f, preset = preset, dpi = dpi, bg = .ip_mode(args$mode)$paper)
+      }
     }
     data.frame(mode = folder, file = files, format = formats, width_mm = size$width,
                height_mm = size$height, stringsAsFactors = FALSE)

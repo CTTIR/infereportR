@@ -1,4 +1,4 @@
-lactate_long <- function(pl = gallery_lactate()) {
+lactate_long <- function(pl = .ip_gallery_data()$pl) {
   data.frame(id = rep(pl$id, 2), value = c(pl$admission, pl$h24),
              time = factor(rep(c("Admission", "24 h"), each = nrow(pl)),
                            levels = c("Admission", "24 h")))
@@ -17,7 +17,7 @@ test_that("stat_paired reproduces the gallery oracle (figure 09), after minus be
   res <- inference_results(p)
   expect_length(res, 1L)
   rd <- infercalcR::result_data(res[[1]])
-  pl <- gallery_lactate()
+  pl <- .ip_gallery_data()$pl
   expect_equal(rd$estimate, mean(pl$h24 - pl$admission))
   expect_lt(rd$estimate, 0)
   shown <- infereportR::report_table(res[[1]])

@@ -1,8 +1,7 @@
 gallery_forest_results <- function() {
-  g <- gallery_forest_data()
-  fp <- g$fp
+  fp <- .ip_gallery_data()$fp
   spec <- infercalcR::method_spec("t_means_two_independent_welch")
-  lapply(g$subsets, function(s) {
+  lapply(.ip_gallery_subsets(fp), function(s) {
     infercalcR::run_inference(spec, x = fp$il6[s & fp$late == 1], y = fp$il6[s & fp$late == 0])
   })
 }
