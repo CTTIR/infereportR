@@ -23,3 +23,4 @@
 ^.*\.prompt\.md$
 ^\.env.*$
 ^data$
+^.*Rplots\.pdf$
