@@ -1,0 +1,246 @@
+---
+title: "Character mode"
+author: "Raban Heller"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Character mode}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
+---
+
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
+  dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png")
+```
+
+Character mode redraws a ggplot on a grid of monospaced characters, the way
+home computers of the 1980s drew charts on a text screen. The grid prints as
+text in the console, and `char_figure()` turns it back into a ggplot of glyphs
+that can be saved as a figure, in black and white, in the colors of a
+Commodore 64 screen or as that screen in two values.
+
+```{r packages}
+library(ggplot2)
+library(inferplotR)
+```
+
+## A plot on a text grid
+
+`char_grid()` takes a single-panel Cartesian ggplot, builds it and draws its
+layers into a character matrix. The output is deterministic: the same plot
+and arguments always give the same grid.
+
+```{r grid, comment = ""}
+chicks <- aggregate(weight ~ Time, data = ChickWeight, FUN = mean)
+p <- ggplot(chicks, aes(Time, weight)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Chick weight", x = "Days since birth", y = "Mean weight (g)")
+
+char_grid(p, width = 56, height = 16)
+```
+
+From the top, the grid holds the title, the y-axis label, the plot rows, the x
+axis with a `+` at every break, the tick labels, the x-axis label, the legend
+and the caption. The first series draws lines with slope glyphs chosen for
+cells twice as tall as wide.
+
+Supported layers are rectangles (bars, columns, tiles), ribbons and areas,
+smooths (the line only), paths and lines, segments, error bars and ranges,
+reference lines, points and text. Other layers, such as box plots and violins,
+are skipped with one warning of class `inferplotR_skipped_layer`. Facets and
+flipped, polar or transformed coordinates are errors of class
+`inferplotR_unsupported`.
+
+### Several series
+
+Series are told apart by glyph, never by color. The key comes from the first
+discrete scale among `fill`, `colour`, `shape` and `linetype` with at least two
+breaks, and the legend under the grid shows each series' glyph:
+
+```{r series, comment = ""}
+diets <- aggregate(weight ~ Diet + Time, data = ChickWeight, FUN = mean,
+                   subset = Diet %in% c("1", "4"))
+q <- ggplot(diets, aes(Time, weight, linetype = Diet)) +
+  geom_line() +
+  labs(x = "Days since birth", y = "Mean weight (g)", linetype = "Diet")
+
+char_grid(q, width = 56, height = 14)
+```
+
+### End labels
+
+A `geom_endlabel()` layer is not drawn inside the grid. Each series gets an end
+label right of the plot area instead, written as its point glyph and its label
+and ordered by the series' last value, highest on top. Two labels never share
+a row: the lower one moves down. The plot area gives up the columns the labels
+need, and the legend is left out, since the end labels name the same series.
+
+```{r endlabels, comment = ""}
+labeled <- transform(diets, Diet = paste("Diet", Diet))
+e <- ggplot(labeled, aes(Time, weight, shape = Diet, label = Diet)) +
+  geom_line(aes(group = Diet)) +
+  geom_point() +
+  geom_endlabel() +
+  labs(x = "Days since birth", y = "Mean weight (g)")
+
+char_grid(e, width = 56, height = 14)
+```
+
+## Character sets and case
+
+`charset = "unicode"` uses box-drawing glyphs for lines, geometric shapes for
+points and block glyphs for fills; `"ascii"` (the default) stays within
+printable ASCII. `case = "upper"` writes every string in upper case, as on
+machines without lower-case letters; the glyphs of the data do not change.
+With `"ascii"`, every string is transliterated to ASCII as well: `≥` becomes
+`>=`, `≤` `<=`, `±` `+/-`, `×` `x`, the minus sign and the en dash `-`, the em
+dash `--`, `µ` `u` and `ρ` `rho`. Any other non-ASCII character becomes `?`,
+with one warning of class `inferplotR_transliterated`.
+
+```{r unicode, comment = ""}
+tooth <- aggregate(len ~ dose, data = ToothGrowth, FUN = mean)
+bars <- ggplot(tooth, aes(factor(dose), len)) +
+  geom_col(width = 0.5) +
+  labs(x = "Dose (mg/day)", y = "Mean tooth length (mm)")
+
+char_grid(bars, width = 40, height = 12, charset = "unicode", case = "upper")
+```
+
+A grid prints with `print()`; `format()` and `as.character()` return its lines,
+and the object also holds the character matrix (`chars`) and the legend table.
+
+```{r lines}
+g <- char_grid(p, width = 56, height = 16)
+dim(g$chars)
+nchar(as.character(g))[1:3]
+```
+
+## A grid as a figure
+
+`char_figure()` draws a grid as a ggplot made only of text, one glyph per
+non-blank cell. The `"bw"` style is black on white without a margin, the 1-bit
+style of the package, with a 64 x 20 grid by default.
+
+```{r bw, fig.width = 5.3, fig.height = 3.4, fig.alt = "The chick weight chart drawn as black monospaced characters on white: asterisks and slope glyphs for the line, plus signs on the axes."}
+char_figure(p)
+```
+
+The `"c64"` style imitates the screen of a Commodore 64 after power-on: light
+blue glyphs on a blue screen inside a light blue border, a 40 x 25 grid, labels
+in upper case and, by default, `READY.` with a cursor below the chart. The
+cursor is a filled tile rather than a block glyph, which IBM Plex Mono lacks. The two
+colors are the VIC-II "blue" (`#352879`) and "light blue" (`#6C5EB5`) of the
+Pepto palette by Philip Timmermann. They are the only colors in the package.
+
+```{r c64, fig.width = 5, fig.height = 6.5, fig.alt = "The chick weight chart in upper case on a blue screen with a light blue border, ending with READY. and a cursor, like a Commodore 64."}
+char_figure(p, style = "c64")
+```
+
+The c64 style is for effect only: it is not black and white, and
+`check_figure()` reports it under `two_values`. The `"c64bw"` style keeps the
+look in two values. The screen is always black with white glyphs, and the
+border stands in for the lighter border blue with a dot halftone, ink dots on
+paper 0.75 mm apart. In dark mode only the border changes, to white dots on
+black.
+
+## Sizing and saving
+
+Glyphs only line up if the figure is saved at the size of the grid.
+`char_size()` computes it: the figure is `width_mm` wide (134 mm, the Bleisatz
+text width, by default), border included, each cell is as wide as the space
+inside the border divided by the number of columns and `cell_ratio` (1.75)
+times as tall. The c64 border takes 6 % of `width_mm` on every side, the
+`c64bw` border 3.2 mm.
+
+```{r size}
+char_size(p)
+char_size(p, style = "c64")
+char_size(p, width_mm = 86)
+```
+
+Pass the size to `save_figure()`, and the same `width_mm`, `cell_ratio` and
+`style` to `char_figure()` and `char_size()`:
+
+```{r save}
+fig <- char_figure(p, width_mm = 86)
+size <- char_size(fig, width_mm = 86)
+out <- save_figure(fig, file.path(tempdir(), "chicks-char.png"),
+                   width = size$width, height = size$height, dpi = 300)
+file.exists(out)
+```
+
+### Filling a slide slot
+
+With `slot`, a size preset of `figure_size()`, the figure takes the slot's
+width and height. The number of rows is then the largest that fits the slot
+height, `READY.` included, and what is left over (less than a row) is split
+above and below the grid. In a slot, the c64 styles default to 38 columns,
+which suits `"slide_half"`. Here is the `"c64bw"` style in a half-width slot, in
+light and dark mode:
+
+```{r c64bw, fig.show = "hold", out.width = "48%", fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, fig.alt = c("The chick weight chart as white upper-case characters on a black screen inside a border of black dots on white, ending with READY. and a cursor tile.", "The same screen in dark mode: the border is now white dots on black.")}
+char_figure(p, style = "c64bw", slot = "slide_half")
+char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark")
+```
+
+```{r slot-size}
+char_size(p, style = "c64bw", slot = "slide_half")
+```
+
+With `transparent = TRUE` every style draws glyphs only, without screen,
+border or background, at the same size, so the transparent file can replace
+the opaque one on a frame with a background of its own.
+
+### Text size
+
+The text size is chosen so that one glyph advance fills one cell:
+`(width_mm / ncol) / char_width` mm, where `char_width` is the advance width of
+the font in em. The default 0.6 fits IBM Plex Mono and DejaVu Sans Mono.
+
+## The C64 font
+
+The figures above use `figure_font("mono")`: IBM Plex Mono when it is installed,
+otherwise R's generic `"mono"` family. For the look of the real machine, install
+the C64 Pro Mono font by Style64. Its license does not allow it to be bundled, so
+it is not part of this package. Make it known to the graphics device (for
+example through systemfonts for the ragg devices), then use square cells one em
+wide:
+
+```{r c64-font, eval = FALSE}
+c64 <- char_figure(p, style = "c64", family = "C64 Pro Mono",
+                   char_width = 1, cell_ratio = 1)
+size <- char_size(c64, style = "c64", cell_ratio = 1)
+save_figure(c64, "chicks-c64.png", width = size$width, height = size$height)
+```
+
+## Sources
+
+The C64 colors are the Pepto palette of the VIC-II chip by Philip Timmermann,
+as shipped with the VICE emulator in `pepto-pal.vpl`. IBM Plex is released
+under the SIL Open Font License (<https://github.com/IBM/plex>). See the README
+for the full list of sources.

@@ -1,0 +1,29 @@
+Package: inferplotR
+Type: Package
+Title: Black-and-White Figures with Inference Layers for 'ggplot2'
+Version: 0.1.0
+Authors@R: person("R.", "Heller", , "raban.heller@uni-ulm.de",
+    role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-8006-9742"))
+Description: Extends 'ggplot2' with a black-and-white figure theme for papers
+    following the APA style rules and for slides, scales that replace color
+    with line types, point shapes and hatch patterns, direct labels and size
+    presets. Its inference layers run explicitly named procedures through
+    'infercalcR', label them with display strings from 'infereportR' and keep
+    the full results retrievable from the figure. A character mode redraws
+    plots on a monospaced text grid in the style of 1980s home computers.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: en-US
+Depends: R (>= 4.1.0)
+Imports: ggplot2 (>= 3.5.0), infercalcR (>= 0.1.0), infereportR (>= 0.1.0),
+    grid, grDevices, stats, utils
+Suggests: knitr, rmarkdown, ragg, systemfonts, testthat (>= 3.1.7), withr
+VignetteBuilder: knitr
+Remotes: CTTIR/infercalcR, CTTIR/infereportR
+URL: https://github.com/CTTIR/inferplotR,
+    https://cttir.github.io/inferplotR/
+BugReports: https://github.com/CTTIR/inferplotR/issues
+Config/testthat/edition: 3
+Config/Needs/website: CTTIR/themakR
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.1
