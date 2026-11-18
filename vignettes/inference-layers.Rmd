@@ -226,7 +226,7 @@ figure_correlation_matrix(mtcars, vars = c("mpg", "wt", "hp", "qsec"),
 ```
 
 Both builders keep their results like the layers do, so `inference_results()`
-and `figure_report()` work on them.
+and `figure_table()` work on them.
 
 ## Explicit procedures and declared adjustments
 
@@ -306,15 +306,15 @@ infercalcR::result_data(oj)[, c("row_id", "estimate", "p.value", "p.adjusted")]
 cat(report_text(oj, p = "adjusted"), sep = "\n\n")
 ```
 
-## One table: `figure_report()`
+## One table: `figure_table()`
 
-`figure_report()` passes every result through `report_table()` and
+`figure_table()` passes every result through `report_table()` and
 binds the rows, with the layer and panel each one came from. By default
 (`p = "auto"`) it reports adjusted p-values where a result has an adjustment and
 raw ones elsewhere.
 
 ```{r figure-report}
-tab <- figure_report(facetted)
+tab <- figure_table(facetted)
 tab[tab$figure_layer == 3, c("figure_panel", "contrast", "estimate_display",
                              "interval_display", "p_display")]
 ```

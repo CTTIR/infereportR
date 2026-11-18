@@ -53,7 +53,7 @@ its complete cases with \code{id = seq_len(n)} and one
 (including a call that 'infercalcR' refuses, such as a constant variable
 or fewer than 4 complete cases) is drawn as a cross at the
 circle position and its value cell stays empty; the status and reason are
-in \code{\link[=figure_report]{figure_report()}}.
+in \code{\link[=figure_table]{figure_table()}}.
 
 Accepted method ids: \code{"correlation_pearson"}, \code{"correlation_spearman"},
 \code{"correlation_kendall"}.

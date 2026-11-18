@@ -36,7 +36,7 @@ test_that("figure_forest reproduces the 7 gallery rows (figure 06)", {
   expect_true(all(marks$y[1] > marks$y[-1]))
   expect_identical(order(-marks$y[-1]), 1:6)
   expect_length(inference_results(p), 7L)
-  expect_identical(nrow(figure_report(p)), 7L)
+  expect_identical(nrow(figure_table(p)), 7L)
   expect_identical(b$data[[1]]$xintercept, 0)
 })
 

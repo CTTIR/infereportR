@@ -126,6 +126,6 @@ ggplot(PlantGrowth, aes(group, weight)) +
                adjust = "holm")
 }
 \seealso{
-\code{\link[=stat_omnibus]{stat_omnibus()}}, \code{\link[=inference_results]{inference_results()}}, \code{\link[=figure_report]{figure_report()}},
+\code{\link[=stat_omnibus]{stat_omnibus()}}, \code{\link[=inference_results]{inference_results()}}, \code{\link[=figure_table]{figure_table()}},
 \code{\link[infercalcR:adjust_inference]{infercalcR::adjust_inference()}}
 }

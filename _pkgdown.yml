@@ -81,7 +81,7 @@ reference:
   desc: The infercalcR results behind a figure, as objects or as one table.
   contents:
   - inference_results
-  - figure_report
+  - figure_table
 - title: Figure theme
   desc: The black-and-white theme for papers and slides and its font lookup.
   contents:

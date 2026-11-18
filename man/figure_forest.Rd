@@ -62,7 +62,7 @@ for; \code{"slide_full"} (134 mm) by default. Save the figure at that width.}
 }
 \value{
 A ggplot. Its marker layer carries \code{.ir_result}, so
-\code{\link[=inference_results]{inference_results()}} returns the results and \code{\link[=figure_report]{figure_report()}} reports
+\code{\link[=inference_results]{inference_results()}} returns the results and \code{\link[=figure_table]{figure_table()}} reports
 them.
 }
 \description{

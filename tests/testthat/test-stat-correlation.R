@@ -64,7 +64,7 @@ test_that("labels leave out a missing interval; the report keeps it", {
     sym <- .ir_correlation_symbol[[m]]
     expect_identical(d$label, paste0(sym, shown$estimate_display, ", ", shown$p_display))
     expect_false(grepl(shown$interval_display, d$label, fixed = TRUE))
-    rep <- figure_report(p)
+    rep <- figure_table(p)
     expect_identical(rep$interval_display, shown$interval_display)
   }
 })

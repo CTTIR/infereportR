@@ -216,7 +216,7 @@ fig <- ggplot(PlantGrowth, aes(group, weight)) +
     adjust = "holm", omnibus = "anova_one_way") +
   labs(x = "Group", y = "Dried weight (g)")
 fig
-figure_report(fig)[, c("figure_layer", "contrast", "estimate_display", "p_display")]
+figure_table(fig)[, c("figure_layer", "contrast", "estimate_display", "p_display")]
 ```
 
 Four vignettes cover the figure layer:

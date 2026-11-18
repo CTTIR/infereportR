@@ -205,10 +205,10 @@ computed
 
 It is the family built above: for a pair of `ctrl` and `trt1` the estimand is
 `trt1` minus `ctrl`, the row identifiers are the same, and so are the adjusted
-p-values. `figure_report()` reads them back from the figure:
+p-values. `figure_table()` reads them back from the figure:
 
 ```{r brackets-computed-report}
-shown <- figure_report(computed)
+shown <- figure_table(computed)
 shown[, c("row_id", "contrast", "p_display")]
 identical(shown$p_display, report_table(family, p = "adjusted")$p_display)
 ```

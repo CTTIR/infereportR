@@ -205,7 +205,7 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #'   dropped.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`, `id`,
 #'   `part` (`"unit"`, `"mean"` or `"label"`), `label`, `.ir_result` and
-#'   `.ir_result_id`, so [inference_results()] and [figure_report()] return
+#'   `.ir_result_id`, so [inference_results()] and [figure_table()] return
 #'   the paired result.
 #' @seealso [stat_compare()] for independent groups, [inference_results()]
 #' @examples

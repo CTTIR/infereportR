@@ -135,7 +135,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #'   `offset`), `y` (the mean),
 #'   `ymin`, `ymax`, `n`, `label`, `.ir_result` (the 'infercalcR' result) and
 #'   `.ir_result_id`.
-#' @seealso [inference_results()], [figure_report()], [stat_compare()]
+#' @seealso [inference_results()], [figure_table()], [stat_compare()]
 #' @examples
 #' library(ggplot2)
 #' ggplot(PlantGrowth, aes(group, weight)) +

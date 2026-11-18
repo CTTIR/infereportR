@@ -72,7 +72,7 @@ Runs one explicitly named correlation procedure of 'infercalcR' per panel
 and writes its display strings from \code{\link[=report_table]{report_table()}} as a label: the coefficient
 (prefixed \code{"r = "}, \code{"rho = "} or \code{"tau = "}), its interval and the p-value. When
 'infercalcR' reports no interval (Spearman and Kendall in 'infercalcR'
-0.1.0), the label leaves the interval out; \code{\link[=figure_report]{figure_report()}} still has the
+0.1.0), the label leaves the interval out; \code{\link[=figure_table]{figure_table()}} still has the
 full \code{\link[=report_table]{report_table()}} strings. Each panel is its own analysis. Rows with
 non-finite x or y are dropped first.
 }

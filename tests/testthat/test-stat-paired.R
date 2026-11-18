@@ -69,7 +69,7 @@ test_that("stat_paired runs the signed-rank method and reports infercalcR failur
   p <- paired_plot(method = "signed_rank_wilcoxon", method_args = list(exact = FALSE))
   d <- layer_data_of(p)
   expect_true(startsWith(d$label[d$part == "label"], "Pseudomedian change\n"))
-  expect_identical(figure_report(p)$method_id, "signed_rank_wilcoxon")
+  expect_identical(figure_table(p)$method_id, "signed_rank_wilcoxon")
   expect_error(stat_paired(method = "t_means_paired", method_args = list(x = 1)),
                class = "infereportR_invalid_input")
 })

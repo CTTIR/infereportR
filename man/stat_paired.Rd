@@ -53,7 +53,7 @@ dropped.}
 \value{
 A ggplot2 layer. Its computed data has the columns \code{x}, \code{y}, \code{id},
 \code{part} (\code{"unit"}, \code{"mean"} or \code{"label"}), \code{label}, \code{.ir_result} and
-\code{.ir_result_id}, so \code{\link[=inference_results]{inference_results()}} and \code{\link[=figure_report]{figure_report()}} return
+\code{.ir_result_id}, so \code{\link[=inference_results]{inference_results()}} and \code{\link[=figure_table]{figure_table()}} return
 the paired result.
 }
 \description{

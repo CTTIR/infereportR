@@ -207,7 +207,7 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' @return A ggplot2 layer. The computed data has columns `x`, `xend`, `y`,
 #'   `yend`, `label`, `tip`, `headroom` (`TRUE` for the invisible headroom
 #'   row), `.ir_result` (the family result) and `.ir_result_id`.
-#' @seealso [stat_omnibus()], [inference_results()], [figure_report()],
+#' @seealso [stat_omnibus()], [inference_results()], [figure_table()],
 #'   [infercalcR::adjust_inference()]
 #' @examples
 #' library(ggplot2)

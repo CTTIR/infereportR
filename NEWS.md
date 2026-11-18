@@ -5,7 +5,7 @@
 * The figure package inferplotR 0.1.0 is merged into infereportR, with its
   history. Its exported functions keep their names, except the bundle
   `inferplot()`, which is now `report_figure()` (same arguments) to match the
-  `report_*` family. Its conditions are `infereportR_<code>` errors and
+  `report_*` family, and `figure_report()`, which is now `figure_table()`. Its conditions are `infereportR_<code>` errors and
   warnings (with the classes `infereportR_error` and `infereportR_warning`),
   and its result ids start with `"infereportR:"`. The separate repository
   CTTIR/inferplotR is retired.
@@ -41,7 +41,7 @@
   `stat_stacklabel()` and `stat_ecdf_guides()` label stacked bars and
   empirical distribution functions instead of a legend.
 * Results: `inference_results()` returns the infercalcR results behind a
-  figure and `figure_report()` binds their `report_table()` rows into one
+  figure and `figure_table()` (`figure_report()` in inferplotR) binds their `report_table()` rows into one
   table with the layer and panel of each row.
 * Theme, scales and labels: `theme_figure()` for APA papers and Bleisatz
   slides with all text between 8 and 14 pt and `figure_font()` for IBM Plex;

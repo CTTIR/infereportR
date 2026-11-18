@@ -36,7 +36,7 @@
 # A stat that attaches the builder's results to its rows: the row index
 # arrives as the `ip_row` aesthetic, the results as a parameter. This is how
 # a builder figure carries `.ir_result`, so inference_results() and
-# figure_report() work on it.
+# figure_table() work on it.
 .ir_stat_results <- ggplot2::ggproto("StatFigureResults", ggplot2::Stat,
   required_aes = c("ip_row"),
   compute_panel = function(data, scales, results, ids) {
@@ -111,7 +111,7 @@
 #' @param slot A preset of [figure_size()] whose width the figure is laid out
 #'   for; `"slide_full"` (134 mm) by default. Save the figure at that width.
 #' @return A ggplot. Its marker layer carries `.ir_result`, so
-#'   [inference_results()] returns the results and [figure_report()] reports
+#'   [inference_results()] returns the results and [figure_table()] reports
 #'   them.
 #' @seealso [figure_correlation_matrix()], [inference_results()]
 #' @importFrom ggplot2 .data

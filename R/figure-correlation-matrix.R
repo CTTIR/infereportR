@@ -6,7 +6,7 @@
 # One correlation. When infercalcR stops instead of returning a status (for
 # example a constant variable or too few complete cases), the pair is kept as
 # an infercalcR result with status "undefined" and infercalcR's message as the
-# reason, so the cell shows a cross and figure_report() says why.
+# reason, so the cell shows a cross and figure_table() says why.
 .ir_matrix_run <- function(spec, frame, id) {
   attempt <- tryCatch(infercalcR::run_inference(spec, data = frame, result_id = id),
                       error = function(e) e)
@@ -42,7 +42,7 @@
 #' (including a call that 'infercalcR' refuses, such as a constant variable
 #' or fewer than 4 complete cases) is drawn as a cross at the
 #' circle position and its value cell stays empty; the status and reason are
-#' in [figure_report()].
+#' in [figure_table()].
 #'
 #' Accepted method ids: `"correlation_pearson"`, `"correlation_spearman"`,
 #' `"correlation_kendall"`.

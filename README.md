@@ -156,7 +156,7 @@ names(inference_results(p))
 #> [4] "infereportR:omnibus:anova_one_way:panel1"
 #> [5] "infereportR:compare:t_means_two_independent_welch:panel1"
 
-figure_report(p)[, c("figure_layer", "contrast", "estimate_display", "p_display")]
+figure_table(p)[, c("figure_layer", "contrast", "estimate_display", "p_display")]
 #>   figure_layer        contrast estimate_display p_display
 #> 1            2            <NA>             5.03 p < 0.001
 #> 2            2            <NA>             4.66 p < 0.001
@@ -167,7 +167,7 @@ figure_report(p)[, c("figure_layer", "contrast", "estimate_display", "p_display"
 ```
 
 `inference_results()` returns the infercalcR result objects, so they can be
-validated or passed to `report_text()`. `figure_report()` binds their
+validated or passed to `report_text()`. `figure_table()` binds their
 `report_table()` rows into one table, with the layer and panel each row came
 from, and reports adjusted p-values where an adjustment was made. Results
 computed elsewhere can still be drawn on the same figure with
@@ -195,7 +195,7 @@ ggplot(transform(sleep, drug = factor(group, labels = c("Drug 1", "Drug 2"))),
 ```
 
 The builders keep their results like the layers, so `inference_results()` and
-`figure_report()` work on them too.
+`figure_table()` work on them too.
 
 ### Black and white by design
 
@@ -359,7 +359,7 @@ These tests show that:
 - procedures and adjustments must be explicit, and errors have classes and keep
   the infercalcR condition as parent;
 - facets give one analysis per panel, and `inference_results()` and
-  `figure_report()` return what the layers computed;
+  `figure_table()` return what the layers computed;
 - the theme resolves all text to 8 to 14 pt and uses only black and white; the
   scales follow the specified sequences and refuse to recycle; hatched plots
   render to PDF and PNG; the size presets have the specified sizes;

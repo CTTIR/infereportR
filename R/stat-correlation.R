@@ -13,7 +13,7 @@
 # The figure label: symbol, estimate, interval and p; "estimate_ci_p_n" breaks
 # the line before p and appends n. Without an interval (Spearman and Kendall
 # in infercalcR 0.1.0 report none) the interval part is left out;
-# figure_report() keeps the full report_table() strings.
+# figure_table() keeps the full report_table() strings.
 .ir_correlation_label <- function(method, shown, res, style = "estimate_ci_p") {
   has_interval <- !is.null(res$conf.low) && !is.null(res$conf.high) &&
     is.finite(res$conf.low) && is.finite(res$conf.high)
@@ -125,7 +125,7 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' and writes its display strings from [report_table()] as a label: the coefficient
 #' (prefixed `"r = "`, `"rho = "` or `"tau = "`), its interval and the p-value. When
 #' 'infercalcR' reports no interval (Spearman and Kendall in 'infercalcR'
-#' 0.1.0), the label leaves the interval out; [figure_report()] still has the
+#' 0.1.0), the label leaves the interval out; [figure_table()] still has the
 #' full [report_table()] strings. Each panel is its own analysis. Rows with
 #' non-finite x or y are dropped first.
 #'

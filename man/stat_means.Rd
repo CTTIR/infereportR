@@ -81,5 +81,5 @@ ggplot(PlantGrowth, aes(group, weight)) +
   stat_means()
 }
 \seealso{
-\code{\link[=inference_results]{inference_results()}}, \code{\link[=figure_report]{figure_report()}}, \code{\link[=stat_compare]{stat_compare()}}
+\code{\link[=inference_results]{inference_results()}}, \code{\link[=figure_table]{figure_table()}}, \code{\link[=stat_compare]{stat_compare()}}
 }

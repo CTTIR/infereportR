@@ -37,7 +37,7 @@ test_that("a pair without a result draws a cross and keeps its status", {
   crosses <- b$data[[2]]
   expect_identical(nrow(crosses), 2L)
   expect_true(all(crosses$label %in% c("\u00d7", "x")))
-  rep <- figure_report(p)
+  rep <- figure_table(p)
   expect_identical(nrow(rep), 3L)
   expect_identical(sum(rep$status != "ok"), 2L)
   expect_identical(b$data[[4]]$label, c("A", "B", "K"))

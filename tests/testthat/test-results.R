@@ -45,7 +45,7 @@ test_that("identical layers give one result", {
 test_that("plots without inference layers give empty, type-stable results", {
   p <- ggplot2::ggplot(pg, ggplot2::aes(group, weight)) + ggplot2::geom_point()
   expect_identical(inference_results(p), list())
-  fr <- figure_report(p)
+  fr <- figure_table(p)
   expect_s3_class(fr, "data.frame")
   expect_identical(nrow(fr), 0L)
   r <- infercalcR::run_inference(infercalcR::method_spec(welch), x = 1:4, y = 2:6)
@@ -55,20 +55,20 @@ test_that("plots without inference layers give empty, type-stable results", {
   expect_type(fr$figure_panel, "character")
 })
 
-test_that("figure_report binds report_table rows", {
+test_that("figure_table binds report_table rows", {
   p <- ggplot2::ggplot(pg, ggplot2::aes(group, weight)) +
     ggplot2::geom_point() +
     stat_means() +
     stat_compare(method = welch, reference = "ctrl", adjust = "holm")
-  fr <- figure_report(p)
+  fr <- figure_table(p)
   expect_identical(nrow(fr), 3L + 2L)
   expect_identical(fr$figure_layer, c(2L, 2L, 2L, 3L, 3L))
   fam <- fr[fr$figure_layer == 3L, ]
   expect_identical(fam$p_display,
                    report_table(manual_family(), p = "adjusted")$p_display)
-  raw <- figure_report(p, p = "raw")
+  raw <- figure_table(p, p = "raw")
   expect_identical(raw$p_selection[raw$figure_layer == 3L], rep("raw", 2))
-  expect_error(figure_report(p, p = "x"), class = "infereportR_invalid_input")
-  expect_error(figure_report(1), class = "infereportR_invalid_input")
-  expect_error(figure_report(p, p = "adjusted"), class = "infereportR_calculation_failed")
+  expect_error(figure_table(p, p = "x"), class = "infereportR_invalid_input")
+  expect_error(figure_table(1), class = "infereportR_invalid_input")
+  expect_error(figure_table(p, p = "adjusted"), class = "infereportR_calculation_failed")
 })

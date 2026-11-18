@@ -39,7 +39,7 @@ test_that(".ir_gallery_data() returns the nine simulated tables", {
 
 test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the oracle", {
   p <- .ir_gallery_02(.ir_gallery_data())
-  rep <- figure_report(p)
+  rep <- figure_table(p)
   means <- rep[rep$method_id == "t_mean_one_sample", ]
   groups <- c("ISS < 16", "ISS 16-24", "ISS \u2265 25")
   expect_identical(nrow(means), 3L)
@@ -58,7 +58,7 @@ test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the 
 
 test_that("figure 04 reproduces the correlation of the oracle", {
   p <- .ir_gallery_04(.ir_gallery_data())
-  rep <- figure_report(p)
+  rep <- figure_table(p)
   res <- inference_results(p)
   expect_identical(nrow(rep), 1L)
   got <- paste0("r = ", rep$estimate_display, " ", rep$interval_display, " | ",
@@ -127,7 +127,7 @@ test_that("figures 08 and 09 reproduce the matrix and the paired result of the o
     expect_near(infercalcR::result_data(res[[k]])$estimate, as.numeric(want[1]), 1e-6)
     expect_identical(values$label[k], want[2])
   }
-  rep9 <- figure_report(.ir_gallery_09(d))
+  rep9 <- figure_table(.ir_gallery_09(d))
   expect_identical(paste(rep9$estimate_display, rep9$interval_display, rep9$p_display),
                    gallery_value("09", "paired"))
 })

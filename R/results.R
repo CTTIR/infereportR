@@ -35,7 +35,7 @@
 #'   ids (`"infereportR:<stat>:<method>:panel<PANEL>"`, plus the x level for
 #'   [stat_means()]), in layer then panel order and without duplicates. A plot
 #'   without inference layers gives `list()`.
-#' @seealso [figure_report()], [infercalcR::result_data()],
+#' @seealso [figure_table()], [infercalcR::result_data()],
 #'   [report_text()]
 #' @examples
 #' library(ggplot2)
@@ -76,15 +76,16 @@ inference_results <- function(plot) {
 #'   `figure_panel` (character), followed by the columns of
 #'   [report_table()]. Without results, a 0-row data.frame with
 #'   the same columns.
-#' @seealso [inference_results()]
+#' @seealso [inference_results()]; [report_figure()] draws a figure, while
+#'   `figure_table()` tabulates the results of one that is already drawn.
 #' @examples
 #' library(ggplot2)
 #' p <- ggplot(PlantGrowth, aes(group, weight)) +
 #'   stat_compare(method = "t_means_two_independent_welch", reference = "ctrl",
 #'                adjust = "holm")
-#' figure_report(p)[, c("contrast", "estimate_display", "p_display")]
+#' figure_table(p)[, c("contrast", "estimate_display", "p_display")]
 #' @export
-figure_report <- function(plot, p = c("auto", "raw", "adjusted"), digits = 3L,
+figure_table <- function(plot, p = c("auto", "raw", "adjusted"), digits = 3L,
                           p_digits = 3L) {
   .ir_check_plot(plot)
   p <- .ir_check_choice(p, c("auto", "raw", "adjusted"), "p")

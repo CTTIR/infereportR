@@ -30,6 +30,6 @@ names(res)
 infercalcR::result_data(res[[1]])[, c("statistic", "df", "p.value")]
 }
 \seealso{
-\code{\link[=figure_report]{figure_report()}}, \code{\link[infercalcR:result_data]{infercalcR::result_data()}},
+\code{\link[=figure_table]{figure_table()}}, \code{\link[infercalcR:result_data]{infercalcR::result_data()}},
 \code{\link[=report_text]{report_text()}}
 }
