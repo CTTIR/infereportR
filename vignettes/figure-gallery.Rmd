@@ -9,7 +9,6 @@ vignette: >
 resource_files:
   - figures/logo.svg
   - figures/logo-dark.svg
-  - figures/gallery/light/*.png
   - figures/gallery/dark/*.png
 ---
 
@@ -68,6 +67,89 @@ library(inferplotR)
 | 11 | `11-character-mode-c64` | half | the same in Commodore 64 colors, with `READY.` | `char_figure(style = "c64")` |
 | 12 | `12-character-mode-c64-bw` | half | the C64 screen in two values, with a halftone border | `char_figure(style = "c64bw")` |
 
+Each figure below is built and drawn by the package when this vignette is
+rendered, in light mode at the size of its slot. The internal builders that
+`figure_gallery()` calls are used directly, with the gallery's simulated data.
+
+```{r gallery-data}
+gallery_data <- inferplotR:::.ip_gallery_data()
+gallery_figure <- function(i, mode = "light") {
+  inferplotR:::.ip_gallery_builders[[i]](gallery_data, mode = mode, transparent = FALSE)
+}
+```
+
+### 01. Time course with direct labels
+
+```{r gallery-01, echo = FALSE, fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "64%", fig.cap = "Lines are labeled at their ends; there is no legend to decode. Line type and marker shape separate the groups, never color.", fig.alt = "Time course with direct labels, light mode."}
+gallery_figure(1)
+```
+
+### 02. Raw data, mean and 95% CI
+
+```{r gallery-02, echo = FALSE, fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "64%", fig.cap = "Every observation is shown (open circles), with the mean and 95% CI beside it. Comparisons with ISS < 16: Welch t-tests, Holm-adjusted p.", fig.alt = "Raw data, mean and 95% CI, light mode."}
+gallery_figure(2)
+```
+
+### 03. Stacked bars with hatch fills
+
+```{r gallery-03, echo = FALSE, fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "64%", fig.cap = "Open, hatched and solid fills replace color. Categories are named beside the last bar instead of in a legend.", fig.alt = "Stacked bars with hatch fills, light mode."}
+gallery_figure(3)
+```
+
+### 04. Scatter plot with correlation
+
+```{r gallery-04, echo = FALSE, fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "48%", fig.cap = "Pearson correlation of log IL-6 with ISS, with its 95% CI from infercalcR. The log axis is labeled in original units.", fig.alt = "Scatter plot with correlation, light mode."}
+gallery_figure(4)
+```
+
+### 05. Empirical distribution functions
+
+```{r gallery-05, echo = FALSE, fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "64%", fig.cap = "The empirical distribution function shows every patient, the medians (dotted) and the spread in one figure.", fig.alt = "Empirical distribution functions, light mode."}
+gallery_figure(5)
+```
+
+### 06. Forest plot of subgroups
+
+```{r gallery-06, echo = FALSE, fig.width = 134 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "100%", fig.cap = "Subgroup estimates as differences with 95% CIs (Welch, infercalcR). Marker area is proportional to n; the dotted line is no difference.", fig.alt = "Forest plot of subgroups, light mode."}
+gallery_figure(6)
+```
+
+### 07. Small multiples
+
+```{r gallery-07, echo = FALSE, fig.width = 134 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "100%", fig.cap = "Three markers, one design: identical x axes, free y axes in their own units, lines labeled once in the last panel.", fig.alt = "Small multiples, light mode."}
+gallery_figure(7)
+```
+
+### 08. Correlation matrix
+
+```{r gallery-08, echo = FALSE, fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "64%", fig.cap = "Spearman correlations: above the diagonal, circle area shows the strength, filled is positive and open is negative. The values are mirrored below the diagonal.", fig.alt = "Correlation matrix, light mode."}
+gallery_figure(8)
+```
+
+### 09. Paired slopegraph
+
+```{r gallery-09, echo = FALSE, fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "48%", fig.cap = "Each line is one patient; the thick line is the mean. Paired t-test from infercalcR: mean change with its 95% CI.", fig.alt = "Paired slopegraph, light mode."}
+gallery_figure(9)
+```
+
+### 10. Character mode
+
+```{r gallery-10, echo = FALSE, fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "64%", fig.cap = "The time course from figure 1 redrawn with text characters, as on an 80s home computer.", fig.alt = "Character mode, light mode."}
+gallery_figure(10)
+```
+
+### 11. Character mode, C64 colors
+
+```{r gallery-11, echo = FALSE, fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "48%", fig.cap = "The same plot in C64 colors (Pepto palette) with the READY prompt. For effect only; not for data slides.", fig.alt = "Character mode, C64 colors, light mode."}
+gallery_figure(11)
+```
+
+### 12. Character mode, C64 in two values
+
+```{r gallery-12, echo = FALSE, fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, out.width = "48%", fig.cap = "The C64 screen in two values: black screen, white glyphs, a dot-halftone border for the lighter border blue.", fig.alt = "Character mode, C64 in two values, light mode."}
+gallery_figure(12)
+```
+
 The data are simulated with fixed seeds, so the figures and every number on
 them are the same on every run, and the random state of the R session is left
 as it was. As everywhere in the package, the statistics come from infercalcR
@@ -80,100 +162,39 @@ Rscript -e 'inferplotR::figure_gallery("figures")'
 
 `figure_gallery()` returns a table of the files it wrote. It writes PDF files
 by default; `png = TRUE` adds a 300 dpi PNG beside each PDF. Since the full set
-takes a while to render, this vignette does not run it. The showcase below
-shows its output, and the sections after it build two of the figures directly
-from the API.
+takes a while to render, this vignette does not run it; the figures above are
+drawn by the same builders, and the dark versions are shown below.
 
-## Showcase
+## Dark mode
 
-The twelve figures as `figure_gallery()` draws them, each in light mode (left)
-and dark mode (right) at the size of its Bleisatz slot. The images were
-rendered once with the package at 150 dpi and are shipped with the vignette,
-because drawing all of them would make the vignette slow to build.
+The same twelve figures in dark mode, white on black, for dark Bleisatz decks
+and inverse frames. These images were rendered once with
+`figure_gallery(png = TRUE)` at 150 dpi and are shipped with the vignette, so
+that it does not draw every figure twice.
 
-### 01. Time course with direct labels
+<img src="figures/gallery/dark/01-timecourse-direct-labels.png" alt="Time course with direct labels, dark mode" width="64%" />
 
-<img src="figures/gallery/light/01-timecourse-direct-labels.png" alt="Time course with direct labels, light mode" width="49%" />
-<img src="figures/gallery/dark/01-timecourse-direct-labels.png" alt="Time course with direct labels, dark mode" width="49%" />
+<img src="figures/gallery/dark/02-raw-data-mean-ci.png" alt="Raw data, mean and 95% CI, dark mode" width="64%" />
 
-Lines are labeled at their ends; there is no legend to decode. Line type and marker shape separate the groups, never color.
+<img src="figures/gallery/dark/03-stacked-hatch.png" alt="Stacked bars with hatch fills, dark mode" width="64%" />
 
-### 02. Raw data, mean and 95% CI
+<img src="figures/gallery/dark/04-scatter-correlation.png" alt="Scatter plot with correlation, dark mode" width="48%" />
 
-<img src="figures/gallery/light/02-raw-data-mean-ci.png" alt="Raw data, mean and 95% CI, light mode" width="49%" />
-<img src="figures/gallery/dark/02-raw-data-mean-ci.png" alt="Raw data, mean and 95% CI, dark mode" width="49%" />
+<img src="figures/gallery/dark/05-ecdf-distribution.png" alt="Empirical distribution functions, dark mode" width="64%" />
 
-Every observation is shown (open circles), with the mean and 95% CI beside it. Comparisons with ISS < 16: Welch t-tests, Holm-adjusted p.
+<img src="figures/gallery/dark/06-forest-subgroups.png" alt="Forest plot of subgroups, dark mode" width="100%" />
 
-### 03. Stacked bars with hatch fills
+<img src="figures/gallery/dark/07-small-multiples.png" alt="Small multiples, dark mode" width="100%" />
 
-<img src="figures/gallery/light/03-stacked-hatch.png" alt="Stacked bars with hatch fills, light mode" width="49%" />
-<img src="figures/gallery/dark/03-stacked-hatch.png" alt="Stacked bars with hatch fills, dark mode" width="49%" />
+<img src="figures/gallery/dark/08-correlation-matrix.png" alt="Correlation matrix, dark mode" width="64%" />
 
-Open, hatched and solid fills replace color. Categories are named beside the last bar instead of in a legend.
+<img src="figures/gallery/dark/09-paired-slopegraph.png" alt="Paired slopegraph, dark mode" width="48%" />
 
-### 04. Scatter plot with correlation
+<img src="figures/gallery/dark/10-character-mode.png" alt="Character mode, dark mode" width="64%" />
 
-<img src="figures/gallery/light/04-scatter-correlation.png" alt="Scatter plot with correlation, light mode" width="49%" />
-<img src="figures/gallery/dark/04-scatter-correlation.png" alt="Scatter plot with correlation, dark mode" width="49%" />
+<img src="figures/gallery/dark/11-character-mode-c64.png" alt="Character mode, C64 colors, dark mode" width="48%" />
 
-Pearson correlation of log IL-6 with ISS, with its 95% CI from infercalcR. The log axis is labeled in original units.
-
-### 05. Empirical distribution functions
-
-<img src="figures/gallery/light/05-ecdf-distribution.png" alt="Empirical distribution functions, light mode" width="49%" />
-<img src="figures/gallery/dark/05-ecdf-distribution.png" alt="Empirical distribution functions, dark mode" width="49%" />
-
-The empirical distribution function shows every patient, the medians (dotted) and the spread in one figure.
-
-### 06. Forest plot of subgroups
-
-<img src="figures/gallery/light/06-forest-subgroups.png" alt="Forest plot of subgroups, light mode" width="49%" />
-<img src="figures/gallery/dark/06-forest-subgroups.png" alt="Forest plot of subgroups, dark mode" width="49%" />
-
-Subgroup estimates as differences with 95% CIs (Welch, infercalcR). Marker area is proportional to n; the dotted line is no difference.
-
-### 07. Small multiples
-
-<img src="figures/gallery/light/07-small-multiples.png" alt="Small multiples, light mode" width="49%" />
-<img src="figures/gallery/dark/07-small-multiples.png" alt="Small multiples, dark mode" width="49%" />
-
-Three markers, one design: identical x axes, free y axes in their own units, lines labeled once in the last panel.
-
-### 08. Correlation matrix
-
-<img src="figures/gallery/light/08-correlation-matrix.png" alt="Correlation matrix, light mode" width="49%" />
-<img src="figures/gallery/dark/08-correlation-matrix.png" alt="Correlation matrix, dark mode" width="49%" />
-
-Spearman correlations: above the diagonal, circle area shows the strength, filled is positive and open is negative. The values are mirrored below the diagonal.
-
-### 09. Paired slopegraph
-
-<img src="figures/gallery/light/09-paired-slopegraph.png" alt="Paired slopegraph, light mode" width="49%" />
-<img src="figures/gallery/dark/09-paired-slopegraph.png" alt="Paired slopegraph, dark mode" width="49%" />
-
-Each line is one patient; the thick line is the mean. Paired t-test from infercalcR: mean change with its 95% CI.
-
-### 10. Character mode
-
-<img src="figures/gallery/light/10-character-mode.png" alt="Character mode, light mode" width="49%" />
-<img src="figures/gallery/dark/10-character-mode.png" alt="Character mode, dark mode" width="49%" />
-
-The time course from figure 1 redrawn with text characters, as on an 80s home computer.
-
-### 11. Character mode, C64 colors
-
-<img src="figures/gallery/light/11-character-mode-c64.png" alt="Character mode, C64 colors, light mode" width="49%" />
-<img src="figures/gallery/dark/11-character-mode-c64.png" alt="Character mode, C64 colors, dark mode" width="49%" />
-
-The same plot in C64 colors (Pepto palette) with the READY prompt. For effect only; not for data slides.
-
-### 12. Character mode, C64 in two values
-
-<img src="figures/gallery/light/12-character-mode-c64-bw.png" alt="Character mode, C64 in two values, light mode" width="49%" />
-<img src="figures/gallery/dark/12-character-mode-c64-bw.png" alt="Character mode, C64 in two values, dark mode" width="49%" />
-
-The C64 screen in two values: black screen, white glyphs, a dot-halftone border for the lighter border blue.
+<img src="figures/gallery/dark/12-character-mode-c64-bw.png" alt="Character mode, C64 in two values, dark mode" width="48%" />
 
 ## Slots
 
