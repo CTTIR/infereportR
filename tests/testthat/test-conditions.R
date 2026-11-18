@@ -10,6 +10,11 @@ test_that(".ir_abort raises classed errors and keeps the parent", {
   expect_error(.ir_abort("bad"), class = "infereportR_invalid_input")
 })
 
+test_that(".ir_abort without a parent keeps the 0.1.0 fields", {
+  e <- tryCatch(.ir_abort("bad"), error = function(e) e)
+  expect_identical(names(unclass(e)), c("message", "call"))
+})
+
 test_that(".ir_warn raises classed warnings", {
   w <- tryCatch(.ir_warn("small text", "apa_text_size"), warning = function(w) w)
   expect_s3_class(w, "infereportR_apa_text_size")

@@ -3,10 +3,13 @@
 # functions and the figure layer: every error carries infereportR_<code>
 # (infereportR_invalid_input, infereportR_unsupported, ...) plus
 # infereportR_error; the figure layer passes the underlying condition as
-# `parent`.
+# `parent`. Without a parent the condition has exactly the fields of
+# infereportR 0.1.0 (message and call).
 
 .ir_abort <- function(message, code = "invalid_input", parent = NULL) {
-  stop(structure(list(message = message, call = NULL, parent = parent),
+  fields <- list(message = message, call = NULL)
+  if (!is.null(parent)) fields$parent <- parent
+  stop(structure(fields,
                  class = c(paste0("infereportR_", code), "infereportR_error", "error",
                            "condition")))
 }
