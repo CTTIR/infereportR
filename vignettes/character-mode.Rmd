@@ -172,10 +172,11 @@ black.
 
 Glyphs only line up if the figure is saved at the size of the grid.
 `char_size()` computes it: the figure is `width_mm` wide (134 mm, the Bleisatz
-text width, by default), border included, each cell is as wide as the space
-inside the border divided by the number of columns and `cell_ratio` (1.75)
-times as tall. The c64 border takes 6 % of `width_mm` on every side, the
-`c64bw` border 3.2 mm.
+text width, by default), border included. Each cell is
+`(width_mm - 2 * border) / (ncol + 2 * padding columns)` wide and `cell_ratio`
+(1.75) times as tall. The c64 border takes 6% of `width_mm` on every side and
+has no padding; the `c64bw` border is 3.2 mm, with one column of padding left
+and right and 0.4 rows above and below.
 
 ```{r size}
 char_size(p)

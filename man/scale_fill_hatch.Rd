@@ -48,7 +48,8 @@ The scale never recycles: if the data have more groups than \code{patterns},
 building the plot fails with an error of class \code{infereportR_too_many_groups}.
 
 Pattern fills need R 4.1.0 or later and a pattern-capable graphics device,
-such as \code{\link[grDevices:cairo_pdf]{grDevices::cairo_pdf()}}, \code{\link[grDevices:svg]{grDevices::svg()}} or the 'ragg' devices
+such as \code{\link[grDevices:cairo_pdf]{grDevices::cairo_pdf()}}, \code{\link[grDevices:pdf]{grDevices::pdf()}}, \code{\link[grDevices:svg]{grDevices::svg()}} or the
+'ragg' devices
 (\code{ragg::agg_png()}). Give the bars an ink outline (\code{colour = "black"} in the
 geom, \code{"white"} in dark mode) so that \code{"open"} bars stay visible. \code{mode}
 and \code{transparent} are passed to \code{\link[=hatch_pattern]{hatch_pattern()}}. The default \code{spacing} is 1.4 mm

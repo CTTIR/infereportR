@@ -29,7 +29,7 @@ CRAN incoming feasibility check, the only items are:
 ## Notes
 
 * Pattern fills use grid patterns (R >= 4.1.0) and need a pattern-capable
-  device such as `cairo_pdf()`, `svg()` or 'ragg'; the tests skip a device
-  that is not available.
+  device such as `cairo_pdf()`, `pdf()`, `svg()` or 'ragg'; the tests skip a
+  device that is not available.
 * Examples, tests and vignettes run offline, use data sets shipped with R
   or simulated in the package, and write only to `tempdir()`.

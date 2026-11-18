@@ -179,7 +179,7 @@ computed elsewhere can still be drawn on the same figure with
   (`id`), and labels the mean change from a paired t or signed-rank procedure.
 - `figure_forest()` draws a forest plot from a named list of infercalcR results.
 - `figure_correlation_matrix()` runs one named correlation per pair of variables
-  and draws circles and values in two values.
+  and draws circles and values in black and white.
 - `stat_stacklabel()` names the categories of stacked bars beside the last bar
   instead of a legend.
 - `stat_ecdf_guides()` adds median guides and curve labels to `stat_ecdf()`.
@@ -448,7 +448,7 @@ infereportR is written in R [5], imports infercalcR [6] and extends ggplot2
 6. Heller R. *infercalcR: Statistical Inference and Diagnostic Calculations*. R package. <https://github.com/CTTIR/infercalcR>.
 7. Wickham H (2016). *ggplot2: Elegant Graphics for Data Analysis*. Springer, New York. <https://doi.org/10.1007/978-3-319-24277-4>.
 8. American Psychological Association. *Figures*. APA Style, 7th ed. <https://apastyle.apa.org/style-grammar-guidelines/tables-figures/figures>.
-9. Timmermann P ("Pepto"). VIC-II color analysis (Pepto palette), as shipped with the VICE emulator in `pepto-pal.vpl`: blue `35 28 79`, light blue `6C 5E B5`. <https://sources.debian.org/src/vice/3.9%2Bdfsg-1/data/CBM-II/pepto-pal.vpl>.
+9. Timmermann P ("Pepto"). VIC-II color analysis (Pepto palette), as shipped with the VICE emulator in `pepto-pal.vpl`: blue `35 28 79`, light blue `6C 5E B5`. <https://sources.debian.org/src/vice/3.9%2Bdfsg-1/data/C64/pepto-pal.vpl>.
 10. IBM. *IBM Plex* typeface. SIL Open Font License. <https://github.com/IBM/plex>.
 11. Related work, credited as inspiration only: jtools and papaja (`theme_apa()`), fillpattern and ggpattern (pattern fills), ggsignif and ggpubr (`stat_compare_means()`, comparison brackets), ggstatsplot (statistics in figures), plotcli (`ggplotcli()`, terminal rendering of ggplots).
 12. CTTIR. *Bleisatz* Beamer theme, the slide counterpart whose tokens this package shares.

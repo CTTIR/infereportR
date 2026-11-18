@@ -135,7 +135,8 @@ hatch_pattern <- function(type, spacing = 1.4, linewidth = 0.4,
 #' building the plot fails with an error of class `infereportR_too_many_groups`.
 #'
 #' Pattern fills need R 4.1.0 or later and a pattern-capable graphics device,
-#' such as [grDevices::cairo_pdf()], [grDevices::svg()] or the 'ragg' devices
+#' such as [grDevices::cairo_pdf()], [grDevices::pdf()], [grDevices::svg()] or the
+#' 'ragg' devices
 #' (`ragg::agg_png()`). Give the bars an ink outline (`colour = "black"` in the
 #' geom, `"white"` in dark mode) so that `"open"` bars stay visible. `mode`
 #' and `transparent` are passed to [hatch_pattern()]. The default `spacing` is 1.4 mm
