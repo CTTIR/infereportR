@@ -24,7 +24,7 @@ expect_audit_shape <- function(res) {
 test_that("an report_figure figure with labelled axes and units passes", {
   p <- ggplot2::ggplot(pg_caps, ggplot2::aes(group, weight)) +
     report_figure(compare = welch, reference = "Control", adjust = "holm",
-              omnibus = "anova_one_way") +
+                  omnibus = "anova_one_way") +
     ggplot2::geom_point(ggplot2::aes(shape = group), colour = "black") +
     ggplot2::labs(x = "Treatment", y = "Dried weight (g)", shape = "Group")
   res <- check_figure(p)

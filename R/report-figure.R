@@ -79,7 +79,7 @@
 #' # One line:
 #' p <- ggplot(PlantGrowth, aes(group, weight)) +
 #'   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
-#'             adjust = "holm", omnibus = "anova_one_way") +
+#'                 adjust = "holm", omnibus = "anova_one_way") +
 #'   labs(x = "Group", y = "Dried weight (g)")
 #' p
 #'
@@ -104,10 +104,10 @@
 #'   labs(x = "Group", y = "Dried weight (g)")
 #' @export
 report_figure <- function(target = c("paper", "slide"), compare = NULL, comparisons = NULL,
-                      reference = NULL, adjust = NULL, omnibus = NULL, correlation = NULL,
-                      means = TRUE, points = c("jitter", "plain", "none"), label = "p",
-                      conf.level = 0.95, legend = "inside", base_size = 9, mode = "light",
-                      transparent = FALSE, ...) {
+                          reference = NULL, adjust = NULL, omnibus = NULL, correlation = NULL,
+                          means = TRUE, points = c("jitter", "plain", "none"), label = "p",
+                          conf.level = 0.95, legend = "inside", base_size = 9,
+                          mode = "light", transparent = FALSE, ...) {
   dots <- list(...)
   if (length(dots)) {
     nm <- names(dots)

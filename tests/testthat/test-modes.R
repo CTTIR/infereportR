@@ -90,7 +90,7 @@ hatch_plot <- function(mode, transparent) {
 compare_plot <- function(mode, transparent) {
   ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) +
     report_figure("slide", compare = welch, reference = "ctrl", adjust = "holm",
-              omnibus = "anova_one_way", mode = mode, transparent = transparent) +
+                  omnibus = "anova_one_way", mode = mode, transparent = transparent) +
     ggplot2::labs(x = "Group", y = "Dried weight (g)")
 }
 
@@ -232,7 +232,7 @@ test_that("report_figure passes the mode to every component", {
   expect_true(is.na(ggplot2::calc_element("plot.background", p$theme)$fill))
   q <- ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) +
     report_figure(correlation = "correlation_pearson", means = FALSE, points = "plain",
-              mode = "dark")
+                  mode = "dark")
   for (d in ggplot2::ggplot_build(q)$data) expect_identical(unique(hex(d$colour)), "#FFFFFF")
   fit <- ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) +
     stat_correlation(method = "correlation_pearson", fit = TRUE, mode = "dark")

@@ -118,7 +118,7 @@ library(ggplot2)
 # One line:
 p <- ggplot(PlantGrowth, aes(group, weight)) +
   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
-            adjust = "holm", omnibus = "anova_one_way") +
+                adjust = "holm", omnibus = "anova_one_way") +
   labs(x = "Group", y = "Dried weight (g)")
 p
 

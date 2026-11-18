@@ -131,16 +131,16 @@ library(infereportR)
 
 p <- ggplot(PlantGrowth, aes(group, weight)) +
   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
-            adjust = "holm", omnibus = "anova_one_way") +
+                adjust = "holm", omnibus = "anova_one_way") +
   labs(x = "Group", y = "Dried weight (g)")
 p
 ```
 
-`report_figure()` returns a plain list of ggplot2 components: the figure theme, the
-black-and-white scales, the observations as open circles, the group means with
-95% confidence intervals and the tests you name. Here those are a one-way
-analysis of means and Welch t-tests of each treatment against the control,
-Holm-adjusted as one family. No test is added unless its procedure is named,
+`report_figure()` returns a plain list of ggplot2 components: the figure
+theme, the black-and-white scales, the observations as open circles, the group
+means with 95% confidence intervals and the tests you name. Here those are a
+one-way analysis of means and Welch t-tests of each treatment against the
+control, Holm-adjusted as one family. No test is added unless its procedure is named,
 and with more than one comparison the adjustment must be declared (`"none"` is
 allowed). The same layers are available one by one as `stat_means()`,
 `stat_compare()`, `stat_omnibus()` and `stat_correlation()`. Each panel of a

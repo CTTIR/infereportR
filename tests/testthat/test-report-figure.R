@@ -8,7 +8,7 @@ stat_classes <- function(x) {
 test_that("the full bundle builds, draws and carries every result", {
   skip_if_not_installed("ragg")
   p <- pg_plot() + report_figure(compare = welch, reference = "ctrl", adjust = "holm",
-                             omnibus = "anova_one_way")
+                                 omnibus = "anova_one_way")
   expect_s3_class(ggplot2::ggplot_build(p), "ggplot_built")
   expect_no_warning(draws_silently(p))
   res <- inference_results(p)
@@ -59,7 +59,7 @@ test_that("the adjustment rule of stat_compare applies", {
   expect_error(report_figure(compare = welch, comparisons = pairs), class = bad)
   expect_error(ggplot2::ggplot_build(pg_plot() + report_figure(compare = welch)), class = bad)
   expect_error(ggplot2::ggplot_build(pg_plot() + report_figure(compare = welch,
-                                                           reference = "ctrl")),
+                                                               reference = "ctrl")),
                class = bad)
   ok <- pg_plot() + report_figure(compare = welch, comparisons = pairs, adjust = "none")
   expect_length(inference_results(ok), 4L)
@@ -89,7 +89,7 @@ test_that("invalid arguments are rejected before any layer is built", {
 
 test_that("the bundle equals the components added one by one", {
   bundle <- pg_plot() + report_figure(compare = welch, reference = "ctrl", adjust = "holm",
-                                  omnibus = "anova_one_way")
+                                      omnibus = "anova_one_way")
   by_hand <- pg_plot() +
     theme_figure("paper", base_size = 9, legend = "inside") +
     scale_colour_ink() + scale_linetype_figure() + scale_shape_figure() +
@@ -114,7 +114,7 @@ test_that("with omnibus and compare, the omnibus label gets its own headroom ste
          yr = ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y.range)
   }
   both <- room(pg_plot() + report_figure(compare = welch, reference = "ctrl", adjust = "holm",
-                                     omnibus = "anova_one_way"))
+                                         omnibus = "anova_one_way"))
   only <- room(pg_plot() + report_figure(compare = welch, reference = "ctrl", adjust = "holm"))
   step <- .ir_bracket_step * rng
   expect_equal(only$room - only$bar, step)
@@ -122,8 +122,8 @@ test_that("with omnibus and compare, the omnibus label gets its own headroom ste
   expect_equal(both$bar, only$bar)
   expect_true(both$yr[2] - both$bar >= 2 * step)
   expect_no_warning(draws_silently(pg_plot() + report_figure(compare = welch, reference = "ctrl",
-                                                         adjust = "holm",
-                                                         omnibus = "anova_one_way")))
+                                                             adjust = "holm",
+                                                             omnibus = "anova_one_way")))
 })
 
 test_that("jittered points are reproducible", {

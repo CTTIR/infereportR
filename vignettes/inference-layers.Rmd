@@ -321,22 +321,22 @@ tab[tab$figure_layer == 3, c("figure_panel", "contrast", "estimate_display",
 
 ## The `report_figure()` bundle
 
-`report_figure()` adds the theme, the black-and-white scales, the raw observations,
-the means and the tests you name, in one call. It adds no test unless its
-procedure is named:
+`report_figure()` adds the theme, the black-and-white scales, the raw
+observations, the means and the tests you name, in one call. It adds no test
+unless its procedure is named:
 
 ```{r bundle, fig.alt = "Plant weights with means, a one-way analysis of variance label and two Holm-adjusted comparisons with the control."}
 bundle <- ggplot(PlantGrowth, aes(group, weight)) +
   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
-            adjust = "holm", omnibus = "anova_one_way") +
+                adjust = "holm", omnibus = "anova_one_way") +
   labs(x = "Group", y = "Dried weight (g)")
 bundle
 ```
 
 With `points = "jitter"` (the default) the means are drawn a little to the
-right of the raw observations, so the two never overlap. With an omnibus test,
-`report_figure()` reserves two steps of headroom above the brackets, so the omnibus
-label at the top of the panel clears the top bracket label.
+right of the raw observations, so the two never overlap. With an omnibus
+test, `report_figure()` reserves two steps of headroom above the brackets, so
+the omnibus label at the top of the panel clears the top bracket label.
 
 ## Precomputed results with `stat_inference()`
 

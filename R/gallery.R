@@ -74,8 +74,8 @@
   n <- .ir_gallery_n(table(il6$group))
   ggplot2::ggplot(il6, ggplot2::aes(.data$group, .data$value)) +
     report_figure("slide", compare = "t_means_two_independent_welch",
-              comparisons = list(groups[c(1, 2)], groups[c(1, 3)]), adjust = "holm",
-              legend = "none", mode = mode, transparent = transparent) +
+                  comparisons = list(groups[c(1, 2)], groups[c(1, 3)]), adjust = "holm",
+                  legend = "none", mode = mode, transparent = transparent) +
     ggplot2::scale_x_discrete(labels = paste0(groups, "\nn = ", n),
                               expand = ggplot2::expansion(add = c(0.4, 0.5))) +
     # The comparison layer reserves headroom for the top bracket label.
