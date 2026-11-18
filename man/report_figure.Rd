@@ -122,6 +122,7 @@ p <- ggplot(PlantGrowth, aes(group, weight)) +
   labs(x = "Group", y = "Dried weight (g)")
 p
 
+\donttest{
 # The same figure, part by part:
 q <- ggplot(PlantGrowth, aes(group, weight)) +
   theme_figure("paper", base_size = 9, legend = "inside") +
@@ -135,7 +136,8 @@ q <- ggplot(PlantGrowth, aes(group, weight)) +
                adjust = "holm", label = "p") +
   labs(x = "Group", y = "Dried weight (g)")
 
-inference_results(p)
+names(inference_results(p))
+}
 
 # White on black for a dark slide (print it to draw):
 dark <- ggplot(PlantGrowth, aes(group, weight)) +

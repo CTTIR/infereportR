@@ -79,8 +79,10 @@
 #' @examples
 #' library(ggplot2)
 #' build <- function(mode, transparent) {
+#'   ink <- if (mode == "dark") "white" else "black"
 #'   ggplot(PlantGrowth, aes(group, weight)) +
-#'     report_figure("slide", mode = mode, transparent = transparent) +
+#'     geom_point(shape = 1, colour = ink) +
+#'     theme_figure("slide", mode = mode, transparent = transparent) +
 #'     labs(x = "Group", y = "Dried weight (g)")
 #' }
 #' dir <- file.path(tempdir(), "figures")
