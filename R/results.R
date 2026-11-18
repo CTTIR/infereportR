@@ -40,6 +40,7 @@
 #' @examples
 #' library(ggplot2)
 #' p <- ggplot(PlantGrowth, aes(group, weight)) +
+#'   geom_point(shape = 1) +
 #'   stat_omnibus(method = "anova_one_way")
 #' res <- inference_results(p)
 #' names(res)
