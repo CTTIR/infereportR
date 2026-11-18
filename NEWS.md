@@ -14,7 +14,8 @@
   `annotate_inference()` therefore no longer check for an optional backend.
   ragg, systemfonts, testthat and withr are suggested.
 * The inference layers take their display strings from `report_table()` and
-  `format_estimate()` of the same package; `Remotes` lists infercalcR only.
+  `format_estimate()` of the same package. DESCRIPTION keeps no `Remotes`
+  field, as in 0.1.0; the workflows install infercalcR from GitHub.
 * Three vignettes keep their place ("Getting started with infereportR",
   "Comparison families, adjusted p-values and plot annotations" and
   "Descriptive tables"); four join them: "Figures: theme, scales, labels and
