@@ -1,6 +1,3 @@
-.ir_require <- function(package) {
-  if (!requireNamespace(package, quietly=TRUE)) .ir_abort(paste0("Install the optional '",package,"' package before requesting this feature."),"missing_dependency")
-}
 utils::globalVariables(c(".ir_x", ".ir_xend", ".ir_y", ".ir_yend", ".ir_label"))
 #' Add explicit-coordinate annotation layers for stored inference
 #' @noRd
@@ -11,7 +8,6 @@ stat_inference <- function(x, positions, rows = NULL, label = c("p","estimate_ci
                            unavailable = c("label","error","warn"), tip_length = 0.03,
                            label_offset = 0, text_size = 3.5, colour = "black", linewidth = 0.4,
                            text_hjust = 0.5, text_vjust = -0.4) {
-  .ir_require("ggplot2")
   label <- match.arg(label); p <- match.arg(p); unavailable <- match.arg(unavailable)
   d <- report_table(x, rows, p, digits, p_digits, decimal_mark)
   if (!nrow(d)) .ir_abort("annotations require at least one selected result row")
@@ -91,7 +87,6 @@ stat_inference <- function(x, positions, rows = NULL, label = c("p","estimate_ci
 #' @noRd
 #' @export
 annotate_inference <- function(plot, x, positions, ...) {
-  .ir_require("ggplot2")
   if (!inherits(plot,"ggplot")) .ir_abort("plot must be a ggplot object")
   if (!inherits(plot$coordinates,c("CoordCartesian","CoordFlip"))) .ir_abort("only Cartesian coordinates and coord_flip are supported; use scale transformations for log axes")
   plot + stat_inference(x,positions,...)

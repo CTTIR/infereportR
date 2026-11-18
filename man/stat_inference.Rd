@@ -31,7 +31,7 @@ annotate_inference(plot, x, positions, ...)
 \item{...}{Arguments passed to stat_inference.}
 }
 \value{\code{stat_inference} returns a list of ordinary ggplot layers with inherit.aes=FALSE, plus annotation_data and inference_metadata attributes. \code{annotate_inference} returns the plot with these layers.}
-\details{ggplot2 is optional for package loading and plain reporting. The function never extracts plotting observations or fits a test. Named group order controls only geometry, not the stored scientific contrast sign. Numeric endpoints support explicit dodge positions. Nonsignificant rows remain visible by default. Selection never changes an adjustment family.
+\details{The layers are ordinary ggplot2 layers built from a finished result with explicit positions; to compute the inference inside the layer from the plotted data, use \code{\link{stat_compare}} and the other figure layers. The function never extracts plotting observations or fits a test. Named group order controls only geometry, not the stored scientific contrast sign. Numeric endpoints support explicit dodge positions. Nonsignificant rows remain visible by default. Selection never changes an adjustment family.
 
 Positions are supplied before scale transformations: y_position=100 becomes 2 under scale_y_log10 exactly once. Cartesian and coord_flip paths are supported. Polar and arbitrary nonlinear coordinates, automatic positioning, automatic dodge detection and automatic free-scale placement are not supported. annotate_inference rejects an existing unsupported coordinate system; later-added coordinates cannot be guarded by a list of layers.
 

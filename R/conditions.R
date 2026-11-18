@@ -1,7 +1,7 @@
 # Classed base R conditions, as in the rest of the infer suite. Tests assert
 # the class, never the message text. One .ir_abort() serves the reporting
 # functions and the figure layer: every error carries infereportR_<code>
-# (infereportR_invalid_input, infereportR_missing_dependency, ...) plus
+# (infereportR_invalid_input, infereportR_unsupported, ...) plus
 # infereportR_error; the figure layer passes the underlying condition as
 # `parent`.
 
