@@ -44,8 +44,8 @@
 
 .ir_gallery_presets <- c(side = "slide_side", half = "slide_half", full = "slide_full")
 
-# Counts shown under the x labels, written by infereportR.
-.ir_gallery_n <- function(n) infereportR::format_estimate(as.numeric(n))
+# Counts shown under the x labels, written by format_estimate().
+.ir_gallery_n <- function(n) format_estimate(as.numeric(n))
 
 # 01 Time course with direct labels.
 .ir_gallery_01 <- function(d, mode = "light", transparent = FALSE) {
@@ -265,8 +265,8 @@
 #' gallery, by the same authors), so the figures and every number on them are
 #' the same on every run. The random state of the session is left as it was:
 #' `.Random.seed` is restored afterwards, or removed again if it did not
-#' exist. Statistics come from 'infercalcR' and displayed numbers from
-#' 'infereportR'.
+#' exist. Statistics come from 'infercalcR' and displayed numbers from the
+#' reporting functions ([report_table()], [format_estimate()]).
 #'
 #' The files are written as `dir/<mode>/<name>.pdf` (and `.png` with
 #' `png = TRUE`), the folder convention of [save_figure_set()]. A Bleisatz

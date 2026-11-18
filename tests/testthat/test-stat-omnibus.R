@@ -5,7 +5,7 @@ test_that("stat_omnibus labels a direct anova_one_way run", {
   expect_identical(nrow(d), 1L)
   direct <- infercalcR::run_inference(infercalcR::method_spec("anova_one_way"),
                                       x = pg$weight, group = pg$group)
-  shown <- infereportR::report_table(direct)
+  shown <- report_table(direct)
   expect_true(grepl(shown$statistic_display, d$label, fixed = TRUE))
   expect_true(grepl(shown$p_display, d$label, fixed = TRUE))
   expect_equal(infercalcR::result_data(d$.ir_result[[1]])$statistic,

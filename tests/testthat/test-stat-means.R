@@ -18,7 +18,7 @@ test_that("stat_means numbers equal direct infercalcR runs", {
 test_that("stat_means labels are infereportR strings", {
   d <- layer_data_of(ggplot2::ggplot(pg, ggplot2::aes(group, weight)) +
                        stat_means(label = "estimate_ci"))
-  shown <- infereportR::report_table(d$.ir_result[[1]])
+  shown <- report_table(d$.ir_result[[1]])
   expect_identical(d$label[1], paste(shown$estimate_display, shown$interval_display))
   d0 <- layer_data_of(ggplot2::ggplot(pg, ggplot2::aes(group, weight)) + stat_means())
   expect_identical(d0$label, rep("", 3))
@@ -37,7 +37,7 @@ test_that("a group with one observation keeps its row with a status", {
   expect_true(is.na(out$y[4]))
   r <- out$.ir_result[[4]]
   expect_identical(infercalcR::result_data(r)$status, "undefined")
-  shown <- infereportR::report_table(r)
+  shown <- report_table(r)
   expect_identical(out$label[4], paste(shown$estimate_display, shown$interval_display))
   expect_false(grepl("ns", out$label[4], fixed = TRUE))
   expect_no_warning(draws_silently(p))

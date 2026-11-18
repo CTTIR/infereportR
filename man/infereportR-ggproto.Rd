@@ -17,9 +17,9 @@
 \alias{StatPaired}
 \alias{GeomPaired}
 \alias{StatStacklabel}
-\title{ggproto objects of infereportR}
+\title{ggproto objects of the figure layer}
 \description{
-The ggproto classes behind the layers of infereportR. They are exported so
+The ggproto classes behind the figure layers of infereportR. They are exported so
 that other extensions can build on them; most users call the layer
 functions instead.
 \itemize{
@@ -35,7 +35,7 @@ point.
 and its label; used by \code{\link[=stat_compare]{stat_compare()}}.
 \item \code{StatMeans}, \code{StatCompare}, \code{StatOmnibus}, \code{StatCorrelation} and
 \code{StatCorrelationFit} run explicitly named 'infercalcR' procedures per
-panel and label them with 'infereportR' display strings.
+panel and label them with display strings of \code{\link[=report_table]{report_table()}}.
 \item \code{StatPaired} and \code{GeomPaired}, the stat and geom of \code{\link[=stat_paired]{stat_paired()}}: the
 paired 'infercalcR' result per panel, one line per unit, the mean line
 and its label.

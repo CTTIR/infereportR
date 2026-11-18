@@ -20,7 +20,7 @@
 }
 
 # The label: heading, estimate (with unit), interval and p, each on a line.
-# Every number is an infereportR display string.
+# Every number is a report_table() display string.
 .ir_paired_label <- function(method, shown, unit) {
   estimate <- shown$estimate_display
   if (!is.null(unit)) estimate <- paste(estimate, unit)
@@ -81,7 +81,7 @@ StatPaired <- ggplot2::ggproto("StatPaired", ggplot2::Stat,
     text <- if (label_type == "none") "" else .ir_paired_label(method, shown, unit)
     n <- length(ids)
     # The means are geometry (where the heavy line sits); the printed numbers
-    # come only from infereportR.
+    # come only from report_table().
     means <- c(mean(before), mean(after))
     out <- data.frame(
       x = c(rep(1, n), rep(2, n), 1, 2, 2),
@@ -163,8 +163,8 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #' draws the pairing itself: one thin line per unit (`id`) between the two
 #' levels of x, open points at both ends, the mean of each level joined by a
 #' heavy line with filled points, and a label to the right of the second
-#' level with the change, its interval and the p-value as 'infereportR'
-#' display strings.
+#' level with the change, its interval and the p-value as
+#' display strings of [report_table()].
 #'
 #' x must be discrete with exactly two levels: the first is "before", the
 #' second "after". The estimand is **after minus before**: the layer calls
@@ -178,7 +178,7 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #' tied differences 'infercalcR' needs `method_args = list(exact = FALSE)`).
 #' The label heading is "Mean change" or "Pseudomedian change". The level
 #' means drawn as the heavy line are geometry; every printed number comes
-#' from 'infereportR'.
+#' from [report_table()].
 #'
 #' The label sits 2.5 mm right of the second level and usually extends beyond
 #' the panel: add `coord_cartesian(clip = "off")` and a right plot margin

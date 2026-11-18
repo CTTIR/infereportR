@@ -20,7 +20,7 @@ test_that("stat_paired reproduces the gallery oracle (figure 09), after minus be
   pl <- .ir_gallery_data()$pl
   expect_equal(rd$estimate, mean(pl$h24 - pl$admission))
   expect_lt(rd$estimate, 0)
-  shown <- infereportR::report_table(res[[1]])
+  shown <- report_table(res[[1]])
   expect_identical(paste(shown$estimate_display, shown$interval_display, shown$p_display),
                    gallery_value("09", "paired"))
   label <- d$label[d$part == "label"]

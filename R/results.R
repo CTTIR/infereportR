@@ -36,7 +36,7 @@
 #'   [stat_means()]), in layer then panel order and without duplicates. A plot
 #'   without inference layers gives `list()`.
 #' @seealso [figure_report()], [infercalcR::result_data()],
-#'   [infereportR::report_text()]
+#'   [report_text()]
 #' @examples
 #' library(ggplot2)
 #' p <- ggplot(PlantGrowth, aes(group, weight)) +
@@ -62,7 +62,7 @@ inference_results <- function(plot) {
 
 #' Figure results as one report table
 #'
-#' Calls [infereportR::report_table()] on every result of
+#' Calls [report_table()] on every result of
 #' [inference_results()] and binds the rows, adding the layer and panel each
 #' result came from.
 #'
@@ -71,10 +71,10 @@ inference_results <- function(plot) {
 #'   an adjustment and raw ones otherwise; `"raw"` and `"adjusted"` force one
 #'   kind for every result.
 #' @param digits,p_digits Significant digits for estimates and p-values,
-#'   passed to [infereportR::report_table()].
+#'   passed to [report_table()].
 #' @return A data.frame with the leading columns `figure_layer` (integer) and
 #'   `figure_panel` (character), followed by the columns of
-#'   [infereportR::report_table()]. Without results, a 0-row data.frame with
+#'   [report_table()]. Without results, a 0-row data.frame with
 #'   the same columns.
 #' @seealso [inference_results()]
 #' @examples

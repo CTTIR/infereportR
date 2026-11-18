@@ -5,7 +5,7 @@ pg_facets <- within(PlantGrowth, panel <- rep(rep(c("first", "second"), each = 5
 mt <- data.frame(wt = mtcars$wt, mpg = mtcars$mpg)
 welch <- "t_means_two_independent_welch"
 
-# The family of the infereportR vignette: comparisons against ctrl, holm.
+# The family of the comparison-families vignette: comparisons against ctrl, holm.
 manual_family <- function(pairs = list(c("ctrl", "trt1"), c("ctrl", "trt2")), adjust = "holm",
                           id = "infereportR:compare:t_means_two_independent_welch:panel1") {
   spec <- infercalcR::method_spec(welch)

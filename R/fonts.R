@@ -9,7 +9,7 @@
 
 #' Font family for figures
 #'
-#' Returns the font family that infereportR uses for figure text: IBM Plex Sans
+#' Returns the font family that the figure layer uses for figure text: IBM Plex Sans
 #' or IBM Plex Mono when the font is installed and reported by 'systemfonts',
 #' otherwise the generic R families `"sans"` or `"mono"`. The function never
 #' fails on a missing font. Fonts are not bundled and nothing is registered.

@@ -27,7 +27,7 @@ test_that("inference_results collects results in layer then panel order", {
                       "infereportR:compare:t_means_two_independent_welch:panel2"))
   for (r in res) {
     expect_silent(infercalcR::validate_inference(r))
-    expect_type(infereportR::report_text(r), "character")
+    expect_type(report_text(r), "character")
   }
   first <- pg_facets[pg_facets$panel == "first", ]
   direct <- infercalcR::run_inference(infercalcR::method_spec("anova_one_way"),
@@ -50,7 +50,7 @@ test_that("plots without inference layers give empty, type-stable results", {
   expect_identical(nrow(fr), 0L)
   r <- infercalcR::run_inference(infercalcR::method_spec(welch), x = 1:4, y = 2:6)
   expect_identical(names(fr), c("figure_layer", "figure_panel",
-                                names(infereportR::report_table(r))))
+                                names(report_table(r))))
   expect_type(fr$figure_layer, "integer")
   expect_type(fr$figure_panel, "character")
 })
@@ -65,7 +65,7 @@ test_that("figure_report binds report_table rows", {
   expect_identical(fr$figure_layer, c(2L, 2L, 2L, 3L, 3L))
   fam <- fr[fr$figure_layer == 3L, ]
   expect_identical(fam$p_display,
-                   infereportR::report_table(manual_family(), p = "adjusted")$p_display)
+                   report_table(manual_family(), p = "adjusted")$p_display)
   raw <- figure_report(p, p = "raw")
   expect_identical(raw$p_selection[raw$figure_layer == 3L], rep("raw", 2))
   expect_error(figure_report(p, p = "x"), class = "infereportR_invalid_input")

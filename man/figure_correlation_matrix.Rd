@@ -43,7 +43,7 @@ pair of variables and draws the matrix in two values. Above the diagonal,
 a circle per pair has an area proportional to |estimate| (the scale runs
 from 0 to 1, 6 mm at 1); it is filled for a positive and open for a
 negative estimate. Below the diagonal, the mirrored cell shows the
-'infereportR' \code{estimate_display} at \code{digits} significant digits. The
+\code{\link[=report_table]{report_table()}} \code{estimate_display} at \code{digits} significant digits. The
 diagonal names the variables in condensed bold.
 }
 \details{

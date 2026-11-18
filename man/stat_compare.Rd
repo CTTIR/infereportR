@@ -95,14 +95,14 @@ row), \code{.ir_result} (the family result) and \code{.ir_result_id}.
 \description{
 Compares x groups pairwise with an explicitly named two-sample procedure
 of 'infercalcR', adjusts the comparison family as declared, and draws one
-bracket per comparison, labeled with 'infereportR' display strings. Each
+bracket per comparison, labeled with display strings of \code{\link[=report_table]{report_table()}}. Each
 panel is its own family, so facets work.
 }
 \details{
 For a pair \code{c(A, B)} the estimand is B minus A: the values of B are passed
 as \code{x} and those of A as \code{y}, and the contrast reads "B minus A". The
 pairs of one panel form one 'infercalcR' result (a comparison family) with
-row ids \code{"B-A"}, built like the families in the 'infereportR' vignette
+row ids \code{"B-A"}, built like the families in the comparison-families vignette
 "Comparison families, adjusted p-values and plot annotations".
 
 Nothing is chosen from the data: \code{method} has no default, and \code{adjust}

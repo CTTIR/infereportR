@@ -69,11 +69,11 @@ then label) that \code{+} adds together. The computed data carries
 }
 \description{
 Runs one explicitly named correlation procedure of 'infercalcR' per panel
-and writes its 'infereportR' display strings as a label: the coefficient
-(prefixed \verb{r = }, \verb{rho = } or \verb{tau = }), its interval and the p-value. When
+and writes its display strings from \code{\link[=report_table]{report_table()}} as a label: the coefficient
+(prefixed \code{"r = "}, \code{"rho = "} or \code{"tau = "}), its interval and the p-value. When
 'infercalcR' reports no interval (Spearman and Kendall in 'infercalcR'
 0.1.0), the label leaves the interval out; \code{\link[=figure_report]{figure_report()}} still has the
-full 'infereportR' strings. Each panel is its own analysis. Rows with
+full \code{\link[=report_table]{report_table()}} strings. Each panel is its own analysis. Rows with
 non-finite x or y are dropped first.
 }
 \details{

@@ -56,8 +56,8 @@ All data are simulated with fixed seeds (the simulation of the Bleisatz
 gallery, by the same authors), so the figures and every number on them are
 the same on every run. The random state of the session is left as it was:
 \code{.Random.seed} is restored afterwards, or removed again if it did not
-exist. Statistics come from 'infercalcR' and displayed numbers from
-'infereportR'.
+exist. Statistics come from 'infercalcR' and displayed numbers from the
+reporting functions (\code{\link[=report_table]{report_table()}}, \code{\link[=format_estimate]{format_estimate()}}).
 
 The files are written as \verb{dir/<mode>/<name>.pdf} (and \code{.png} with
 \code{png = TRUE}), the folder convention of \code{\link[=save_figure_set]{save_figure_set()}}. A Bleisatz

@@ -11,7 +11,7 @@ test_that("stat_compare equals the manual infercalcR family", {
   expect_identical(got$row_id, c("trt1-ctrl", "trt2-ctrl"))
   expect_identical(got$variable_id, rep("weight", 2))
   expect_identical(d$label[!d$headroom],
-                   infereportR::report_table(fam, p = "adjusted")$p_display)
+                   report_table(fam, p = "adjusted")$p_display)
   expect_no_warning(draws_silently(p))
 })
 
@@ -95,7 +95,7 @@ test_that("each panel gets its own headroom row", {
 
 test_that("label types use infereportR strings and never 'ns'", {
   fam <- manual_family()
-  shown <- infereportR::report_table(fam, p = "adjusted")
+  shown <- report_table(fam, p = "adjusted")
   lab <- function(type) {
     d <- layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
                                                   adjust = "holm", label = type), 2L)
@@ -165,12 +165,12 @@ test_that("infercalcR failures surface as calculation_failed with a parent", {
   expect_false(is.null(e$parent))
 })
 
-test_that("precomputed results draw with infereportR::stat_inference", {
+test_that("precomputed results draw with stat_inference", {
   fam <- manual_family()
   pos <- data.frame(row_id = c("trt1-ctrl", "trt2-ctrl"), group1 = c("ctrl", "ctrl"),
                     group2 = c("trt1", "trt2"), y_position = c(6.6, 6.9))
   p <- base_plot() +
-    infereportR::stat_inference(fam, positions = pos, groups = levels(pg$group))
+    stat_inference(fam, positions = pos, groups = levels(pg$group))
   expect_no_warning(draws_silently(p))
 })
 

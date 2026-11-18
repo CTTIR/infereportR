@@ -143,13 +143,13 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #'
 #' Compares x groups pairwise with an explicitly named two-sample procedure
 #' of 'infercalcR', adjusts the comparison family as declared, and draws one
-#' bracket per comparison, labeled with 'infereportR' display strings. Each
+#' bracket per comparison, labeled with display strings of [report_table()]. Each
 #' panel is its own family, so facets work.
 #'
 #' For a pair `c(A, B)` the estimand is B minus A: the values of B are passed
 #' as `x` and those of A as `y`, and the contrast reads "B minus A". The
 #' pairs of one panel form one 'infercalcR' result (a comparison family) with
-#' row ids `"B-A"`, built like the families in the 'infereportR' vignette
+#' row ids `"B-A"`, built like the families in the comparison-families vignette
 #' "Comparison families, adjusted p-values and plot annotations".
 #'
 #' Nothing is chosen from the data: `method` has no default, and `adjust`

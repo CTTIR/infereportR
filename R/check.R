@@ -3,7 +3,7 @@
 #' Builds the plot once and reports where it departs from the rules of the
 #' APA Style page on figures (American Psychological Association, *Figures*,
 #' 7th ed., <https://apastyle.apa.org/style-grammar-guidelines/tables-figures/figures>)
-#' and from infereportR's own black-and-white rule. The rules it implements,
+#' and from the package's own black-and-white rule. The rules it implements,
 #' as worded there: "use a sans serif font" of "between 8 and 14 points" for
 #' text in the image; place the legend within the figure's borders, in title
 #' case; label axes clearly and give units of measurement; put the figure

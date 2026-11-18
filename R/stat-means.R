@@ -100,7 +100,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' Adds the mean and its confidence interval for every x position (and
 #' group) of a panel. The numbers come from the one-sample t procedure of
 #' 'infercalcR' (`t_mean_one_sample`), used here as an interval estimate, not
-#' as a test; labels, when requested, are 'infereportR' display strings. Each
+#' as a test; labels, when requested, are display strings of [report_table()]. Each
 #' panel is its own analysis, so facets work.
 #'
 #' With the default `"pointrange"` geom the mean is a filled point (2.1 mm)

@@ -25,8 +25,8 @@ StatOmnibus <- ggplot2::ggproto("StatOmnibus", ggplot2::Stat,
                        "infercalcR::run_inference()")
     shown <- .ir_display(result)
     shown <- shown[1L, , drop = FALSE]
-    # infereportR 0.1.0 has no display string for degrees of freedom, so none is
-    # shown; infereportR does not format numbers itself.
+    # report_table() has no display string for degrees of freedom, so none is
+    # shown; the figure layer does not format numbers itself.
     text <- paste0(shown$estimand, ": ", shown$statistic_display, ", ", shown$p_display)
     out <- data.frame(x = label_x, y = label_y, label = text, group = 1L, PANEL = panel,
                       stringsAsFactors = FALSE)
@@ -46,11 +46,11 @@ StatOmnibus <- ggplot2::ggproto("StatOmnibus", ggplot2::Stat,
 #'
 #' Runs one explicitly named omnibus procedure of 'infercalcR' per panel,
 #' with the y values as outcome and the x positions as groups, and writes its
-#' 'infereportR' display strings as a text label: the estimand, the test
+#' display strings of [report_table()] as a text label: the estimand, the test
 #' statistic and the p-value. Each panel is its own analysis.
 #'
-#' Degrees of freedom are not shown, because 'infereportR' 0.1.0 provides no
-#' display string for them and infereportR does not format numbers itself. The
+#' Degrees of freedom are not shown, because [report_table()] provides no
+#' display string for them and the figure layer does not format numbers itself. The
 #' full result, including `df` and `df.denominator`, is available from
 #' [inference_results()]. Rows with non-finite x or y are dropped first.
 #'

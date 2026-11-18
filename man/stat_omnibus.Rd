@@ -55,12 +55,12 @@ columns \code{x}, \code{y}, \code{label}, \code{.ir_result} and \code{.ir_result
 \description{
 Runs one explicitly named omnibus procedure of 'infercalcR' per panel,
 with the y values as outcome and the x positions as groups, and writes its
-'infereportR' display strings as a text label: the estimand, the test
+display strings of \code{\link[=report_table]{report_table()}} as a text label: the estimand, the test
 statistic and the p-value. Each panel is its own analysis.
 }
 \details{
-Degrees of freedom are not shown, because 'infereportR' 0.1.0 provides no
-display string for them and infereportR does not format numbers itself. The
+Degrees of freedom are not shown, because \code{\link[=report_table]{report_table()}} provides no
+display string for them and the figure layer does not format numbers itself. The
 full result, including \code{df} and \code{df.denominator}, is available from
 \code{\link[=inference_results]{inference_results()}}. Rows with non-finite x or y are dropped first.
 }

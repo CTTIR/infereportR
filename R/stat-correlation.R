@@ -7,13 +7,13 @@
 # Line height of the two-line label, as for the stat_paired() label.
 .ir_correlation_lineheight <- 0.95
 
-# A count as text, written by infereportR (never format() or sprintf()).
-.ir_format_n <- function(n) infereportR::format_estimate(as.numeric(n))
+# A count as text, written by format_estimate() (never format() or sprintf()).
+.ir_format_n <- function(n) format_estimate(as.numeric(n))
 
 # The figure label: symbol, estimate, interval and p; "estimate_ci_p_n" breaks
 # the line before p and appends n. Without an interval (Spearman and Kendall
 # in infercalcR 0.1.0 report none) the interval part is left out;
-# figure_report() keeps infereportR's full strings.
+# figure_report() keeps the full report_table() strings.
 .ir_correlation_label <- function(method, shown, res, style = "estimate_ci_p") {
   has_interval <- !is.null(res$conf.low) && !is.null(res$conf.high) &&
     is.finite(res$conf.low) && is.finite(res$conf.high)
@@ -122,17 +122,17 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' Correlation with an optional fitted line
 #'
 #' Runs one explicitly named correlation procedure of 'infercalcR' per panel
-#' and writes its 'infereportR' display strings as a label: the coefficient
-#' (prefixed `r = `, `rho = ` or `tau = `), its interval and the p-value. When
+#' and writes its display strings from [report_table()] as a label: the coefficient
+#' (prefixed `"r = "`, `"rho = "` or `"tau = "`), its interval and the p-value. When
 #' 'infercalcR' reports no interval (Spearman and Kendall in 'infercalcR'
 #' 0.1.0), the label leaves the interval out; [figure_report()] still has the
-#' full 'infereportR' strings. Each panel is its own analysis. Rows with
+#' full [report_table()] strings. Each panel is its own analysis. Rows with
 #' non-finite x or y are dropped first.
 #'
 #' `label = "estimate_ci_p_n"` sets the label on two lines and adds the number
 #' of pairs, for example `"r = 0.705 [0.574, 0.801]"` over
 #' `"p < 0.001, n = 80"`. n is `result_data()$n` of the 'infercalcR' result,
-#' written by [infereportR::format_estimate()].
+#' written by [format_estimate()].
 #'
 #' Sample size: 'infercalcR' 0.1.0 needs at least 4 complete pairs per panel
 #' for each correlation, and the fitted line of `fit = TRUE`

@@ -1,5 +1,6 @@
-# The single adapter to infercalcR (numbers) and infereportR (display strings).
-# infereportR never computes or formats a statistic itself.
+# The single adapter of the figure layer to infercalcR (numbers) and to the
+# reporting functions of this package (display strings). The figure layer
+# never computes or formats a statistic itself.
 
 .ir_methods <- list(
   means = "t_mean_one_sample",
@@ -41,8 +42,8 @@
 
 .ir_display <- function(result, p = c("raw", "adjusted"), digits = 3L, p_digits = 3L) {
   p <- .ir_check_choice(p, c("raw", "adjusted"), "p")
-  .ir_wrap(infereportR::report_table(result, p = p, digits = digits, p_digits = p_digits),
-           "infereportR::report_table()")
+  .ir_wrap(report_table(result, p = p, digits = digits, p_digits = p_digits),
+           "report_table()")
 }
 
 # Re-raise any condition from the suite packages as calculation_failed, keeping

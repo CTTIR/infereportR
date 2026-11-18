@@ -1,4 +1,4 @@
-# print, format and as.character methods for infereportR objects. This is the
+# print, format and as.character methods for the figure layer's objects. This is the
 # only file in R/ that may write to the console.
 
 #' Print, format or coerce a character grid

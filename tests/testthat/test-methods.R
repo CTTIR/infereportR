@@ -53,7 +53,7 @@ test_that(".ir_display returns infereportR display columns", {
   expect_true(all(c("p_selected", "p_selection", "result_id", "method_id", "variant_id",
                     "estimate_display", "interval_display", "statistic_display",
                     "p_display", "confidence_display") %in% names(d)))
-  expect_identical(d$p_display, infereportR::report_table(r)$p_display)
+  expect_identical(d$p_display, report_table(r)$p_display)
   expect_error(.ir_display(r, p = "other"), class = "infereportR_invalid_input")
   expect_error(.ir_display(list()), class = "infereportR_calculation_failed")
 })

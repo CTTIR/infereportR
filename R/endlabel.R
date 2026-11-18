@@ -1,6 +1,6 @@
-#' @title ggproto objects of infereportR
+#' @title ggproto objects of the figure layer
 #' @description
-#' The ggproto classes behind the layers of infereportR. They are exported so
+#' The ggproto classes behind the figure layers of infereportR. They are exported so
 #' that other extensions can build on them; most users call the layer
 #' functions instead.
 #'
@@ -16,7 +16,7 @@
 #'   and its label; used by [stat_compare()].
 #' * `StatMeans`, `StatCompare`, `StatOmnibus`, `StatCorrelation` and
 #'   `StatCorrelationFit` run explicitly named 'infercalcR' procedures per
-#'   panel and label them with 'infereportR' display strings.
+#'   panel and label them with display strings of [report_table()].
 #' * `StatPaired` and `GeomPaired`, the stat and geom of [stat_paired()]: the
 #'   paired 'infercalcR' result per panel, one line per unit, the mean line
 #'   and its label.

@@ -61,8 +61,8 @@ Runs one explicitly named paired procedure of 'infercalcR' per panel and
 draws the pairing itself: one thin line per unit (\code{id}) between the two
 levels of x, open points at both ends, the mean of each level joined by a
 heavy line with filled points, and a label to the right of the second
-level with the change, its interval and the p-value as 'infereportR'
-display strings.
+level with the change, its interval and the p-value as
+display strings of \code{\link[=report_table]{report_table()}}.
 }
 \details{
 x must be discrete with exactly two levels: the first is "before", the
@@ -76,7 +76,7 @@ t) and \code{"signed_rank_wilcoxon"} (pseudomedian of the differences; with
 tied differences 'infercalcR' needs \code{method_args = list(exact = FALSE)}).
 The label heading is "Mean change" or "Pseudomedian change". The level
 means drawn as the heavy line are geometry; every printed number comes
-from 'infereportR'.
+from \code{\link[=report_table]{report_table()}}.
 
 The label sits 2.5 mm right of the second level and usually extends beyond
 the panel: add \code{coord_cartesian(clip = "off")} and a right plot margin

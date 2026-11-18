@@ -73,7 +73,7 @@
 #' | estimate text. Nothing is computed here: estimates, intervals, null value
 #' and n come from [infercalcR::result_data()], and the right-hand text is
 #' `paste(estimate_display, interval_display)` from
-#' [infereportR::report_table()]. Any 'infercalcR' method whose result has a
+#' [report_table()]. Any 'infercalcR' method whose result has a
 #' contrast row with an estimate and interval can be shown, for example
 #' `"t_means_two_independent_welch"` or `"t_means_paired"`.
 #'
