@@ -3,6 +3,7 @@
 }
 utils::globalVariables(c(".ir_x", ".ir_xend", ".ir_y", ".ir_yend", ".ir_label"))
 #' Add explicit-coordinate annotation layers for stored inference
+#' @noRd
 #' @export
 stat_inference <- function(x, positions, rows = NULL, label = c("p","estimate_ci","estimate_ci_p","stars"),
                            p = c("reported","raw","adjusted"), groups = NULL, facet_vars = NULL,
@@ -87,6 +88,7 @@ stat_inference <- function(x, positions, rows = NULL, label = c("p","estimate_ci
   layers
 }
 #' Guard existing plot coordinates before adding inference layers
+#' @noRd
 #' @export
 annotate_inference <- function(plot, x, positions, ...) {
   .ir_require("ggplot2")

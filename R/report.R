@@ -1,4 +1,5 @@
 #' Tabulate finalized inference values
+#' @noRd
 #' @export
 report_table <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),
                          digits = 3L, p_digits = 3L, decimal_mark = ".") {
@@ -23,6 +24,7 @@ report_table <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),
   d
 }
 #' Retrieve reporting provenance and complete-family metadata
+#' @noRd
 #' @export
 report_metadata <- function(x) {
   metadata <- attr(x, "inference_metadata", exact=TRUE)
@@ -30,6 +32,7 @@ report_metadata <- function(x) {
   metadata
 }
 #' Render deterministic neutral text from finalized results
+#' @noRd
 #' @export
 report_text <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),
                         digits = 3L, p_digits = 3L, decimal_mark = ".",
@@ -69,6 +72,7 @@ report_text <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),
   out
 }
 #' Describe data with explicit denominators and optional supplied inference
+#' @noRd
 #' @export
 report_descriptive <- function(x, variables = NULL, group = NULL, labels = NULL, units = NULL, types = NULL,
                                inference = NULL, mapping = NULL, inference_population = NULL,
