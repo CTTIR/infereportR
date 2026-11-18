@@ -4,7 +4,7 @@
 \name{infereportR-package}
 \alias{infereportR}
 \alias{infereportR-package}
-\title{infereportR: Tables, Text and Plot Annotations for Statistical Results}
+\title{infereportR: Tables, Text and Figures for Statistical Results}
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 

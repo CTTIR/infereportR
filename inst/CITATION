@@ -1,12 +1,12 @@
 bibentry(
   bibtype = "Manual",
-  title = "{infereportR}: Tables, Text and Plot Annotations for Statistical Results",
+  title = "{infereportR}: Tables, Text and Figures for Statistical Results",
   author = person("R.", "Heller"),
   year = "2026",
   note = paste("R package version", meta$Version),
   url = "https://github.com/CTTIR/infereportR",
   textVersion = paste0(
-    "Heller R (2026). infereportR: Tables, Text and Plot Annotations for ",
+    "Heller R (2026). infereportR: Tables, Text and Figures for ",
     "Statistical Results. R package version ", meta$Version, ". ",
     "https://github.com/CTTIR/infereportR"
   )
