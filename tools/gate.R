@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 # Quality gate for the package in the current working directory.
-#   Rscript tools/gate.R quick     docs in sync, source scan, attribution scan, tests
+#   Rscript tools/gate.R quick     docs in sync, source scan, attribution scan, plain test
+#                                  scripts and testthat tests
 #   Rscript tools/gate.R full      quick + R CMD check --as-cran (no incoming checks) = 0/0/0
 #   Rscript tools/gate.R release   full + coverage >= 90 % + CRAN incoming check (known items only)
 # Exit status 0 only if every step passes. Copy to tools/gate.R (tools/ is build-ignored).
@@ -73,6 +74,42 @@ step("attribution-scan (files + commit messages)", !length(hits) && !length(bad_
      c(hits, bad_msgs))
 
 # 4. Tests -------------------------------------------------------------------
+# 4a. The reporting functions are tested by plain scripts (tests/*.R except
+# the testthat runner) against the installed package, as R CMD check runs
+# them: install into a temporary library, then run each script with Rscript
+# from tests/, failing on a non-zero exit status.
+scripts <- setdiff(list.files("tests", pattern = "[.][Rr]$"), "testthat.R")
+gate_lib <- tempfile("gate-lib-")
+dir.create(gate_lib)
+inst <- suppressWarnings(system2(file.path(R.home("bin"), "R"),
+                                 c("CMD", "INSTALL", "--no-multiarch", "-l", shQuote(gate_lib), "."),
+                                 stdout = TRUE, stderr = TRUE))
+script_problems <- character()
+script_notes <- character()
+if (!is.null(attr(inst, "status"))) {
+  script_problems <- c("R CMD INSTALL failed:", utils::tail(inst, 10))
+} else {
+  libs <- paste(c(gate_lib, .libPaths()), collapse = .Platform$path.sep)
+  owd <- setwd("tests")
+  for (script in scripts) {
+    out <- suppressWarnings(system2(file.path(R.home("bin"), "Rscript"), shQuote(script),
+                                    stdout = TRUE, stderr = TRUE,
+                                    env = paste0("R_LIBS=", shQuote(libs))))
+    status <- attr(out, "status")
+    if (!is.null(status) && status != 0L) {
+      script_problems <- c(script_problems, sprintf("%s exited with status %d:", script, status),
+                           utils::tail(out, 10))
+    } else {
+      script_notes <- c(script_notes, paste0(script, ": ", grep("^(PASS|SKIP)", out, value = TRUE)))
+    }
+  }
+  setwd(owd)
+}
+unlink(gate_lib, recursive = TRUE)
+step(sprintf("plain test scripts (%d in tests/)", length(scripts)), !length(script_problems),
+     c(script_problems, script_notes))
+
+# 4b. The figure layer is tested with testthat.
 res <- as.data.frame(testthat::test_local(".", reporter = "silent", stop_on_failure = FALSE))
 n_fail <- sum(res$failed); n_err <- sum(res$error); n_warn <- sum(res$warning)
 step(sprintf("tests (%d expectations, %d skipped)", sum(res$nb), sum(res$skipped)),
