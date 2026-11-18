@@ -33,7 +33,8 @@ stat_omnibus(
 \code{\link[infercalcR:run_inference]{infercalcR::run_inference()}}. The data arguments are set by the layer.}
 
 \item{label_x, label_y}{Label position in data units; \code{-Inf}/\code{Inf} mean the
-panel edges (top left by default).}
+panel edges (top left by default). A label at the left or right edge is
+set 1 mm in from the axis.}
 
 \item{hjust, vjust}{Label justification.}
 

@@ -31,3 +31,16 @@ test_that("other omnibus methods and arguments work", {
   expect_error(stat_omnibus(method = "anova_one_way", text_size = -1), class = bad)
   expect_error(stat_omnibus(method = "anova_one_way", family = 2), class = bad)
 })
+
+test_that("an omnibus label at the panel edge keeps a gap from the axis", {
+  base <- ggplot2::ggplot(pg, ggplot2::aes(group, weight)) + ggplot2::geom_point()
+  edge <- ggplot2::layer_grob(base + stat_omnibus(method = "anova_one_way"), 2L)[[1]]
+  inside <- ggplot2::layer_grob(base + stat_omnibus(method = "anova_one_way", label_x = 2),
+                                2L)[[1]]
+  expect_s3_class(edge, "text")
+  expect_identical(grid::unitType(edge$x), "sum")
+  expect_identical(grid::unitType(inside$x), "native")
+  right <- ggplot2::layer_grob(base + stat_omnibus(method = "anova_one_way", label_x = Inf,
+                                                   hjust = 1), 2L)[[1]]
+  expect_identical(grid::unitType(right$x), "sum")
+})
