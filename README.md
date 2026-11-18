@@ -271,13 +271,13 @@ package's black-and-white rule and returns one row per check:
 
 ```r
 check_figure(ggplot(mtcars, aes(wt, mpg)) + geom_point(colour = "red"))[, 1:3]
-#>            check     source status
-#> 1      text_size      APA 7   pass
-#> 2    font_family      APA 7   pass
+#>            check      source status
+#> 1      text_size       APA 7   pass
+#> 2    font_family       APA 7   pass
 #> 3     two_values infereportR   fail
-#> 4    axis_labels      APA 7   note
-#> 5 embedded_title      APA 7   pass
-#> 6    legend_case      APA 7   pass
+#> 4    axis_labels       APA 7   note
+#> 5 embedded_title       APA 7   pass
+#> 6    legend_case       APA 7   pass
 ```
 
 The `detail` column names the offenders: here the red points, the gray panel
