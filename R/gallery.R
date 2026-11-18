@@ -211,6 +211,9 @@
     ggplot2::geom_line(ggplot2::aes(group = .data$severity)) +
     ggplot2::geom_point() +
     geom_endlabel() +
+    # Breaks of figure 01 without 6: on the narrow character grids of
+    # figures 11 and 12 the default breaks 10 and 20 nearly touch.
+    ggplot2::scale_x_continuous(breaks = c(0, 12, 24, 48)) +
     ggplot2::labs(x = "Hours after admission", y = "C5a (ng/ml)")
 }
 
