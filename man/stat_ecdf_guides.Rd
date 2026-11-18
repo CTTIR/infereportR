@@ -53,7 +53,10 @@ is to be reported as a number, take it from 'infercalcR'.
 With \code{curve_labels}, one cumulative proportion per group in level order,
 each group's name is written beside its curve at that height: left of the
 curve that is leftmost at that height (\code{hjust = 1}), right of the others
-(\code{hjust = 0}), offset by 2.5 \% of the x range. The name is the group's
+(\code{hjust = 0}), offset by 2.5 \% of the x range. The offset is measured from
+the curve at the bottom (left labels) or top (right labels) of the label's
+own height, taken as 0.05 either side, so a steep step does not run into
+the text. The name is the group's
 \code{label}, \code{linetype}, \code{colour}, \code{shape}, \code{fill} or \code{alpha} value, the first
 that is mapped.
 }

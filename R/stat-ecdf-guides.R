@@ -3,6 +3,10 @@
 # Horizontal offset of the curve labels as a fraction of the x range, and of
 # the guide label from the panel's left edge in npc.
 .ir_ecdf_label_offset <- 0.025
+# Half the height of a curve label in cumulative proportion (about 8 pt text
+# in a 44 mm slide panel). A label is placed beside the curve over this band,
+# not only at its own height, so a steep step does not run into the text.
+.ir_ecdf_label_band <- 0.05
 
 .ir_ecdf_empty <- function() {
   data.frame(x = double(), y = double(), part = character(), label = character(),
@@ -53,9 +57,13 @@ StatEcdfGuides <- ggplot2::ggproto("StatEcdfGuides", ggplot2::Stat,
         g <- groups[k]
         h <- curve_labels[k]
         here <- vapply(groups, function(o) q(o, h), numeric(1))
-        # The leftmost curve at this height takes its label on the left.
+        # The leftmost curve at this height takes its label on the left. The
+        # curve rises to the right, so a left label clears it at the bottom
+        # of the label band and a right label at its top.
         leftmost <- here[k] <= min(here)
-        data.frame(x = here[k] + (if (leftmost) -1 else 1) * .ir_ecdf_label_offset * span,
+        edge <- if (leftmost) max(h - .ir_ecdf_label_band, 0.001) else
+          min(h + .ir_ecdf_label_band, 1)
+        data.frame(x = q(g, edge) + (if (leftmost) -1 else 1) * .ir_ecdf_label_offset * span,
                    y = h, part = "curve",
                    label = .ir_ecdf_group_name(data[data$group == g, , drop = FALSE]),
                    hjust = if (leftmost) 1 else 0, group = g, stringsAsFactors = FALSE)
@@ -131,7 +139,10 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
 #' With `curve_labels`, one cumulative proportion per group in level order,
 #' each group's name is written beside its curve at that height: left of the
 #' curve that is leftmost at that height (`hjust = 1`), right of the others
-#' (`hjust = 0`), offset by 2.5 % of the x range. The name is the group's
+#' (`hjust = 0`), offset by 2.5 % of the x range. The offset is measured from
+#' the curve at the bottom (left labels) or top (right labels) of the label's
+#' own height, taken as 0.05 either side, so a steep step does not run into
+#' the text. The name is the group's
 #' `label`, `linetype`, `colour`, `shape`, `fill` or `alpha` value, the first
 #' that is mapped.
 #'

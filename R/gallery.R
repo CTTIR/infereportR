@@ -129,7 +129,7 @@
   ggplot2::ggplot(ttp, ggplot2::aes(.data$peak, linetype = .data$severity)) +
     ggplot2::stat_ecdf(geom = "step", linewidth = .ir_lw(.ir_data_line), colour = m$ink,
                        pad = FALSE) +
-    stat_ecdf_guides(curve_labels = c(0.85, 0.35), mode = mode, transparent = transparent) +
+    stat_ecdf_guides(curve_labels = c(0.85, 0.75), mode = mode, transparent = transparent) +
     scale_linetype_figure() +
     ggplot2::scale_x_continuous(breaks = c(0, 6, 12, 18, 24)) +
     ggplot2::scale_y_continuous(breaks = c(0, 0.5, 1), labels = c("0", "0.5", "1")) +
