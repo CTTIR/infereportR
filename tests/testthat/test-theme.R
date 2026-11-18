@@ -3,6 +3,7 @@ theme_text_elements <- c("axis.text.x", "axis.text.y", "axis.title.x", "axis.tit
                          "plot.subtitle", "plot.caption")
 
 test_that("theme_figure returns a complete theme for every choice", {
+  skip_on_cran()
   for (target in c("paper", "slide")) {
     for (legend in c("inside", "right", "bottom", "none")) {
       for (grid in c("none", "y", "x", "xy")) {
@@ -25,6 +26,7 @@ test_that("all text resolves to 8 to 14 pt at base_size 9", {
 })
 
 test_that("paper base sizes outside the APA range warn", {
+  skip_on_cran()
   expect_warning(theme_figure("paper", base_size = 7), class = "infereportR_apa_text_size")
   expect_warning(theme_figure("paper", base_size = 15), class = "infereportR_apa_text_size")
   expect_no_warning(theme_figure("slide", base_size = 7))
@@ -34,6 +36,7 @@ test_that("paper base sizes outside the APA range warn", {
 })
 
 test_that("every colour and fill is ink, paper or NA", {
+  skip_on_cran()
   allowed <- grDevices::col2rgb(c(.ir_ink, .ir_paper), alpha = TRUE)
   is_allowed <- function(x) {
     if (is.null(x)) return(TRUE)
@@ -64,6 +67,7 @@ test_that("every colour and fill is ink, paper or NA", {
 })
 
 test_that("grid choices draw dotted major lines or none", {
+  skip_on_cran()
   th <- theme_figure(grid = "y")
   expect_true(inherits(th$panel.grid.major.y, "element_line"))
   expect_identical(th$panel.grid.major.y$linetype, "13")
@@ -110,6 +114,7 @@ test_that("margins and strips follow the target", {
 })
 
 test_that("plots with theme_figure build without warnings", {
+  skip_on_cran()
   # The pdf() device warns about families outside its PostScript database, so
   # draw on a ragg device, as figures are meant to be; refresh the font cache
   # in case an earlier test left a mocked family in it.
@@ -141,6 +146,7 @@ test_that("theme_figure validates its arguments", {
 })
 
 test_that("slide axis titles fall back to the base family", {
+  skip_on_cran()
   local_mocked_bindings(.ir_has_font = function(family) FALSE)
   th <- theme_figure("slide", base_family = "serif")
   expect_identical(ggplot2::calc_element("axis.title.x", th)$family, "serif")

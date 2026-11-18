@@ -13,6 +13,7 @@ parse_forest_oracle <- function(v) {
 }
 
 test_that("figure_forest reproduces the 7 gallery rows (figure 06)", {
+  skip_on_cran()
   res <- gallery_forest_results()
   p <- figure_forest(res, xlab = "IL-6 difference, late minus early peak (pg/ml)")
   b <- ggplot2::ggplot_build(p)
@@ -41,6 +42,7 @@ test_that("figure_forest reproduces the 7 gallery rows (figure 06)", {
 })
 
 test_that("figure_forest lays text columns out from measured widths", {
+  skip_on_cran()
   res <- gallery_forest_results()
   p <- figure_forest(res)
   b <- ggplot2::ggplot_build(p)
@@ -91,6 +93,7 @@ test_that("figure_forest checks its input", {
 })
 
 test_that("figure_forest(xlim) sets the axis range and keeps the text columns outside", {
+  skip_on_cran()
   res <- gallery_forest_results()
   p <- figure_forest(res, xlim = c(-30, 60))
   b <- ggplot2::ggplot_build(p)

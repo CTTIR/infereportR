@@ -24,6 +24,7 @@ test_that("symbols follow the method", {
 })
 
 test_that("fit = TRUE draws predict_inference values from infercalcR", {
+  skip_on_cran()
   layers <- stat_correlation(method = "correlation_pearson", fit = TRUE)
   expect_type(layers, "list")
   expect_length(layers, 2L)

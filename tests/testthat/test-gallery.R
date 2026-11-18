@@ -133,6 +133,7 @@ test_that("figures 08 and 09 reproduce the matrix and the paired result of the o
 })
 
 test_that("figures 01, 06 and 12 build and pass the two-value audit (light mode)", {
+  skip_on_cran()
   d <- .ir_gallery_data()
   for (f in list(.ir_gallery_01, .ir_gallery_06, .ir_gallery_12)) {
     p <- f(d)

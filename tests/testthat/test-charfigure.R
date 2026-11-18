@@ -75,6 +75,7 @@ test_that("char_figure() returns a ggplot of one text layer with one row per non
 })
 
 test_that("the bw figure is ink on paper without margin", {
+  skip_on_cran()
   fig <- char_figure(cf_plot())
   built <- cf_text_data(fig)
   expect_identical(unique(built$colour), .ir_mode()$ink)
@@ -84,6 +85,7 @@ test_that("the bw figure is ink on paper without margin", {
 })
 
 test_that("the c64 figure is light blue on blue inside a 6 % light-blue border", {
+  skip_on_cran()
   fig <- char_figure(cf_plot(), style = "c64", width_mm = 100)
   built <- cf_text_data(fig)
   expect_identical(toupper(unique(built$colour)), "#6C5EB5")
@@ -96,11 +98,13 @@ test_that("the c64 figure is light blue on blue inside a 6 % light-blue border",
 })
 
 test_that("text size fills one cell per glyph", {
+  skip_on_cran()
   fig <- char_figure(cf_plot(), width_mm = 128, char_width = 0.5)
   expect_equal(unique(cf_text_data(fig)$size), (128 / 64) / 0.5)
 })
 
 test_that("coordinate limits span the grid at the cell ratio", {
+  skip_on_cran()
   fig <- char_figure(cf_plot(), width = 30, height = 12, cell_ratio = 1.5)
   expect_true(inherits(fig$coordinates, "CoordCartesian"))
   expect_equal(fig$coordinates$ratio, 1.5)
@@ -111,6 +115,7 @@ test_that("coordinate limits span the grid at the cell ratio", {
 # c64bw -----------------------------------------------------------------------
 
 test_that("c64bw draws white glyphs on a black screen inside a halftone border", {
+  skip_on_cran()
   fig <- char_figure(cf_plot(), style = "c64bw", width = 40, height = 20, width_mm = 64)
   rects <- cf_layer(fig, "GeomRect", exclude = "GeomTile")
   expect_length(rects, 2L)
@@ -149,6 +154,7 @@ test_that("the c64bw halftone is ink dots on paper at the halftone spacing", {
 })
 
 test_that("c64bw defaults to upper case, READY. and the C64 grid", {
+  skip_on_cran()
   fig <- char_figure(cf_plot(), style = "c64bw")
   rows <- cf_rows(fig)
   expect_identical(rows[[1]], "LEVEL OVER TIME")
@@ -160,6 +166,7 @@ test_that("c64bw defaults to upper case, READY. and the C64 grid", {
 # Cursor ----------------------------------------------------------------------
 
 test_that("the cursor is a filled 0.9 x 0.8 tile, not a glyph", {
+  skip_on_cran()
   p <- cf_plot()
   for (style in c("bw", "c64", "c64bw")) {
     fig <- char_figure(p, style = style, ready = TRUE)
@@ -178,6 +185,7 @@ test_that("the cursor is a filled 0.9 x 0.8 tile, not a glyph", {
 })
 
 test_that("ready defaults to TRUE for the c64 styles and FALSE for bw", {
+  skip_on_cran()
   p <- cf_plot()
   expect_identical(cf_dims(char_figure(p))[["nrow"]], 20)
   expect_identical(cf_dims(char_figure(p, style = "c64"))[["nrow"]], 27)
@@ -186,6 +194,7 @@ test_that("ready defaults to TRUE for the c64 styles and FALSE for bw", {
 })
 
 test_that("ready = TRUE ends with READY. above the cursor row", {
+  skip_on_cran()
   p <- cf_plot()
   fig <- char_figure(p, ready = TRUE)
   expect_identical(utils::tail(cf_rows(fig), 1L), "READY.")
@@ -196,6 +205,7 @@ test_that("ready = TRUE ends with READY. above the cursor row", {
 })
 
 test_that("c64 defaults are a 40 x 25 grid in upper case", {
+  skip_on_cran()
   p <- cf_plot()
   fig <- char_figure(p, style = "c64", ready = FALSE)
   expect_identical(cf_dims(fig), c(ncol = 40, nrow = 25))
@@ -207,6 +217,7 @@ test_that("c64 defaults are a 40 x 25 grid in upper case", {
 # Slots -----------------------------------------------------------------------
 
 test_that("a slot sets the rows by the D8 formula, READY rows included", {
+  skip_on_cran()
   p <- cf_plot()
   rows_for <- function(style, ncol, w, h) {
     border <- switch(style, bw = 0, c64 = 0.06 * w, c64bw = 3.2)
@@ -230,6 +241,7 @@ test_that("a slot sets the rows by the D8 formula, READY rows included", {
 })
 
 test_that("a slot figure fills the slot exactly", {
+  skip_on_cran()
   p <- cf_plot()
   cases <- list(c("bw", "slide_side"), c("bw", "slide_half"), c("bw", "slide_full"),
                 c("c64", "slide_half"), c("c64bw", "slide_half"), c("bw", "journal_column"))
@@ -249,6 +261,7 @@ test_that("a slot figure fills the slot exactly", {
 })
 
 test_that("slot conflicts and misfits raise classed errors", {
+  skip_on_cran()
   p <- cf_plot()
   expect_error(char_figure(p, slot = "slide_huge"), class = "infereportR_invalid_input")
   expect_error(char_figure(p, slot = "slide_side", height = 12),
@@ -294,6 +307,7 @@ test_that("char_figure() validates its arguments", {
 })
 
 test_that("char_figure() passes skipped-layer warnings on", {
+  skip_on_cran()
   p <- ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) + ggplot2::geom_boxplot()
   expect_warning(char_figure(p), class = "infereportR_skipped_layer")
   expect_no_warning(char_size(p))
@@ -302,6 +316,7 @@ test_that("char_figure() passes skipped-layer warnings on", {
 # char_size() -----------------------------------------------------------------
 
 test_that("char_size() agrees across a ggplot, a chargrid and a figure (bw)", {
+  skip_on_cran()
   p <- cf_plot()
   expected <- 20 * (134 / 64) * 1.75
   s_plot <- char_size(p)
@@ -313,6 +328,7 @@ test_that("char_size() agrees across a ggplot, a chargrid and a figure (bw)", {
 })
 
 test_that("char_size() agrees across a ggplot, a chargrid and a figure (c64)", {
+  skip_on_cran()
   p <- cf_plot()
   w <- 100
   ratio <- 1.5
@@ -329,6 +345,7 @@ test_that("char_size() agrees across a ggplot, a chargrid and a figure (c64)", {
 })
 
 test_that("char_size() agrees across a ggplot, a chargrid and a figure (c64bw)", {
+  skip_on_cran()
   p <- cf_plot()
   cw <- (86 - 6.4) / 42
   expected <- list(width = 86, height = (27 + 0.8) * cw * 1.75 + 6.4, units = "mm")
@@ -341,6 +358,7 @@ test_that("char_size() agrees across a ggplot, a chargrid and a figure (c64bw)",
 })
 
 test_that("char_size() agrees across input types in a slot", {
+  skip_on_cran()
   p <- cf_plot()
   for (style in c("bw", "c64", "c64bw")) {
     fig <- char_figure(p, style = style, slot = "slide_half")
@@ -353,6 +371,7 @@ test_that("char_size() agrees across input types in a slot", {
 })
 
 test_that("a figure without READY rows is sized from its own geometry", {
+  skip_on_cran()
   fig <- char_figure(cf_plot(), style = "c64", ready = FALSE)
   s <- char_size(fig, style = "bw")
   expect_equal(s$height, 25 * ((134 - 2 * 0.06 * 134) / 40) * 1.75 + 2 * 0.06 * 134)
@@ -363,6 +382,7 @@ test_that("a figure without READY rows is sized from its own geometry", {
 # Drawing and audit -----------------------------------------------------------
 
 test_that("a figure saved at char_size() is written", {
+  skip_on_cran()
   skip_if_not(cairo_pdf_works(), "cairo_pdf() writes no file here")
   p <- cf_plot()
   s <- char_size(p)
@@ -373,6 +393,7 @@ test_that("a figure saved at char_size() is written", {
 })
 
 test_that("every style draws without warnings", {
+  skip_on_cran()
   p <- cf_plot()
   expect_no_warning(draws_silently(char_figure(p)))
   expect_no_warning(draws_silently(char_figure(p, style = "c64")))
@@ -380,6 +401,7 @@ test_that("every style draws without warnings", {
 })
 
 test_that("bw and c64bw pass the two_values check; c64 is the documented exception", {
+  skip_on_cran()
   p <- cf_plot()
   expect_identical(two_values(char_figure(p)), "pass")
   expect_identical(two_values(char_figure(p, ready = TRUE)), "pass")

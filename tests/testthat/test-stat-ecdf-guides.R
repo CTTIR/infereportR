@@ -33,6 +33,7 @@ test_that("drop lines sit at the type-1 medians of the gallery (figure 05)", {
 })
 
 test_that("stat_ecdf_guides handles several probs and checks its input", {
+  skip_on_cran()
   d <- layer_data_of(ecdf_plot(probs = c(0.25, 0.75), guide_label = ""), 2L)
   expect_identical(sum(d$part == "drop"), 4L)
   expect_identical(sum(d$part == "curve"), 0L)

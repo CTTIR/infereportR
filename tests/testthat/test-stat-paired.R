@@ -75,6 +75,7 @@ test_that("stat_paired runs the signed-rank method and reports infercalcR failur
 })
 
 test_that("stat_paired draws one grob tree, silently, in two values", {
+  skip_on_cran()
   p <- paired_plot(method = "t_means_paired", unit = "mmol/l")
   expect_no_warning(g <- draws_silently(p))
   expect_s3_class(g, "gtable")

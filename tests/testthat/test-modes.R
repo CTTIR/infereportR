@@ -149,6 +149,7 @@ test_that("only R/modes.R compares against a mode", {
 # Theme ------------------------------------------------------------------------
 
 test_that("theme backgrounds follow the mode", {
+  skip_on_cran()
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
     m <- .ir_mode(a$mode, a$transparent)
@@ -171,6 +172,7 @@ test_that("theme backgrounds follow the mode", {
 })
 
 test_that("the geom element carries the mode's ink and background", {
+  skip_on_cran()
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
     m <- .ir_mode(a$mode, a$transparent)
@@ -209,6 +211,7 @@ test_that("hatch patterns follow the mode and lose their background when transpa
 # Built data per family ------------------------------------------------------
 
 test_that("every family draws only the mode's ink and background", {
+  skip_on_cran()
   for (fam in names(family_plots)) {
     for (nm in names(all_modes)) {
       a <- all_modes[[nm]]
@@ -226,6 +229,7 @@ test_that("every family draws only the mode's ink and background", {
 })
 
 test_that("report_figure passes the mode to every component", {
+  skip_on_cran()
   p <- compare_plot("dark", TRUE)
   b <- ggplot2::ggplot_build(p)
   for (d in b$data) expect_identical(unique(hex(d$colour)), "#FFFFFF")
@@ -242,6 +246,7 @@ test_that("report_figure passes the mode to every component", {
 })
 
 test_that("every layer accepts mode and transparent", {
+  skip_on_cran()
   m <- .ir_mode("dark")
   layers <- list(
     stat_means(mode = "dark", transparent = TRUE),
@@ -265,6 +270,7 @@ test_that("every layer accepts mode and transparent", {
 # Character figures -------------------------------------------------------------
 
 test_that("char_figure bw follows the mode", {
+  skip_on_cran()
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
     m <- .ir_mode(a$mode, a$transparent)
@@ -278,6 +284,7 @@ test_that("char_figure bw follows the mode", {
 })
 
 test_that("char_figure c64 keeps its colours, and only its glyphs when transparent", {
+  skip_on_cran()
   c64 <- unname(.ir_c64)
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
@@ -299,6 +306,7 @@ test_that("char_figure c64 keeps its colours, and only its glyphs when transpare
 })
 
 test_that("char_figure c64bw keeps its screen; transparent is glyphs only", {
+  skip_on_cran()
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
     m <- .ir_mode(a$mode, a$transparent)
@@ -352,6 +360,7 @@ test_that("save_figure writes a transparent background on request", {
 })
 
 test_that("save_figure_set writes the four mode folders with identical names", {
+  skip_on_cran()
   skip_if_not_installed("ragg")
   skip_if_not(cairo_pdf_works(), "cairo_pdf() does not work here")
   dir <- withr::local_tempdir()

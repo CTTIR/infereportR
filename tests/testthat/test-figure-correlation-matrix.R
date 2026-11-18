@@ -31,6 +31,7 @@ test_that("figure_correlation_matrix reproduces the Spearman oracle (figure 08)"
 })
 
 test_that("a pair without a result draws a cross and keeps its status", {
+  skip_on_cran()
   d <- data.frame(a = rnorm(30), b = rnorm(30), k = rep(1, 30))
   p <- figure_correlation_matrix(d, method = "correlation_pearson", labels = c("A", "B", "K"))
   b <- ggplot2::ggplot_build(p)

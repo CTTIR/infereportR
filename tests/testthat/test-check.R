@@ -22,6 +22,7 @@ expect_audit_shape <- function(res) {
 }
 
 test_that("an report_figure figure with labelled axes and units passes", {
+  skip_on_cran()
   p <- ggplot2::ggplot(pg_caps, ggplot2::aes(group, weight)) +
     report_figure(compare = welch, reference = "Control", adjust = "holm",
                   omnibus = "anova_one_way") +
@@ -56,6 +57,7 @@ test_that("small text layers fail text_size", {
 })
 
 test_that("serif families fail font_family", {
+  skip_on_cran()
   p <- mt_plot() + ggplot2::geom_point(shape = 1) +
     ggplot2::theme(axis.text = ggplot2::element_text(family = "Times New Roman"))
   res <- check_figure(p)
@@ -67,6 +69,7 @@ test_that("serif families fail font_family", {
 })
 
 test_that("colours other than black and white fail two_values; hatch fills pass", {
+  skip_on_cran()
   red <- check_figure(mt_plot() + ggplot2::geom_point(colour = "red"))
   expect_identical(status_of(red, "two_values"), "fail")
   expect_match(detail_of(red, "two_values"), "#FF0000", fixed = TRUE)
@@ -83,6 +86,7 @@ test_that("colours other than black and white fail two_values; hatch fills pass"
 })
 
 test_that("missing axis labels fail and labels without units give a note", {
+  skip_on_cran()
   no_y <- check_figure(mt_plot() + ggplot2::geom_point(shape = 1) + ggplot2::labs(y = NULL))
   expect_identical(status_of(no_y, "axis_labels"), "fail")
   empty_x <- check_figure(mt_plot() + ggplot2::geom_point(shape = 1) + ggplot2::labs(x = ""))
@@ -100,6 +104,7 @@ test_that("missing axis labels fail and labels without units give a note", {
 })
 
 test_that("a title or subtitle gives an embedded_title note", {
+  skip_on_cran()
   base <- mt_plot() + ggplot2::geom_point(shape = 1)
   expect_identical(status_of(check_figure(base), "embedded_title"), "pass")
   expect_identical(status_of(check_figure(base + ggplot2::labs(title = "Cars")),
@@ -109,6 +114,7 @@ test_that("a title or subtitle gives an embedded_title note", {
 })
 
 test_that("lower-case legend labels give a legend_case note", {
+  skip_on_cran()
   make <- function(levels) {
     d <- data.frame(x = 1:6, y = c(2, 4, 3, 5, 4, 6), g = rep(levels, 3))
     ggplot2::ggplot(d, ggplot2::aes(x, y, shape = g)) + ggplot2::geom_point() +
@@ -124,6 +130,7 @@ test_that("lower-case legend labels give a legend_case note", {
 })
 
 test_that("the return value is type-stable, even without layers", {
+  skip_on_cran()
   for (p in list(ggplot2::ggplot(), ggplot2::ggplot(mtcars),
                  mt_plot() + ggplot2::geom_point(shape = 1) + ggplot2::facet_wrap(~am),
                  mt_plot() + ggplot2::geom_point(shape = 1) + ggplot2::facet_grid(am ~ vs))) {

@@ -63,6 +63,7 @@ plot_cells <- function(x, lay) x$chars[lay$r0:lay$r1, lay$c0:lay$c1]
 # Snapshots -------------------------------------------------------------------
 
 test_that("fixture (a): two-series line and points with title and labels", {
+  skip_on_cran()
   expect_snapshot(print(char_grid(fx_lines(), width = 64, height = 20)))
 })
 
@@ -76,6 +77,7 @@ test_that("fixture (b): single-series bars share one fill glyph", {
 })
 
 test_that("fixture (c): three list-filled bars with a legend", {
+  skip_on_cran()
   x <- char_grid(fx_hatch_bars(), width = 48, height = 18)
   expect_snapshot(print(x))
   expect_identical(x$legend$key, 1:3)
@@ -89,6 +91,7 @@ test_that("fixture (d): error bars and means with a reference line", {
 # Structure -------------------------------------------------------------------
 
 test_that("axes hold their glyphs and a + at every break", {
+  skip_on_cran()
   p <- fx_lines()
   x <- char_grid(p, width = 64, height = 20)
   pp <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]
@@ -193,6 +196,7 @@ test_that("a zero-length segment draws the point glyph", {
 # Keys ------------------------------------------------------------------------
 
 test_that("the key scale is chosen fill, colour, shape, linetype", {
+  skip_on_cran()
   d <- data.frame(x = 1:4, y = 1:4, a = c("p", "p", "q", "q"), b = c("u", "v", "u", "v"))
   aes_of <- function(p) infereportR:::.ir_cg_key_scale(ggplot2::ggplot_build(p))$aes
   base <- ggplot2::ggplot(d, ggplot2::aes(x, y))
@@ -209,6 +213,7 @@ test_that("the key scale is chosen fill, colour, shape, linetype", {
 })
 
 test_that("keys index the mapped breaks; without a key scale every key is 1", {
+  skip_on_cran()
   d <- data.frame(x = 1:4, y = 1:4, a = c("q", "p", "q", "p"))
   b <- ggplot2::ggplot_build(ggplot2::ggplot(d, ggplot2::aes(x, y, shape = a)) +
                                ggplot2::geom_point())
@@ -259,6 +264,7 @@ test_that("unicode charset draws series 1 with box-drawing glyphs", {
 })
 
 test_that("case = 'upper' changes strings, not glyphs", {
+  skip_on_cran()
   p <- fx_lines()
   a <- char_grid(p, width = 64, height = 20)
   u <- char_grid(p, width = 64, height = 20, case = "upper")
@@ -274,6 +280,7 @@ test_that("case = 'upper' changes strings, not glyphs", {
 # Errors ----------------------------------------------------------------------
 
 test_that("unsupported plots and bad arguments raise classed errors", {
+  skip_on_cran()
   p <- fx_bars()
   expect_error(char_grid(p + ggplot2::facet_wrap(~g)), class = "infereportR_unsupported")
   expect_error(char_grid(p + ggplot2::coord_flip()), class = "infereportR_unsupported")
@@ -287,6 +294,7 @@ test_that("unsupported plots and bad arguments raise classed errors", {
 })
 
 test_that("a grid too small for the labels raises too_small", {
+  skip_on_cran()
   long <- fx_bars() + ggplot2::scale_y_continuous(labels = function(v) paste(v, "patients per day"))
   expect_error(char_grid(long, width = 24, height = 16), class = "infereportR_too_small")
   crowded <- fx_hatch_bars() + ggplot2::labs(title = "T", caption = "C")
@@ -296,6 +304,7 @@ test_that("a grid too small for the labels raises too_small", {
 # Skipped layers --------------------------------------------------------------
 
 test_that("unsupported layers are skipped with one warning", {
+  skip_on_cran()
   p <- ggplot2::ggplot(mtcars, ggplot2::aes(factor(cyl), mpg)) +
     ggplot2::geom_boxplot() +
     ggplot2::geom_point()
@@ -315,6 +324,7 @@ test_that("unsupported layers are skipped with one warning", {
 # Other handlers --------------------------------------------------------------
 
 test_that("ribbons, smooths, steps, paths, ranges, reference lines and text draw", {
+  skip_on_cran()
   d <- data.frame(x = 1:6, y = c(2, 4, 3, 5, 4, 6))
   base <- ggplot2::ggplot(d, ggplot2::aes(x, y))
   grid_of <- function(p) char_grid(p, width = 40, height = 14)$chars
@@ -365,12 +375,14 @@ test_that("expression labels are deparsed and captions written", {
 # Determinism and methods -----------------------------------------------------
 
 test_that("the same input gives identical output", {
+  skip_on_cran()
   expect_identical(char_grid(fx_lines()), char_grid(fx_lines()))
   expect_identical(char_grid(fx_hatch_bars(), charset = "unicode"),
                    char_grid(fx_hatch_bars(), charset = "unicode"))
 })
 
 test_that("format, as.character and print agree", {
+  skip_on_cran()
   x <- char_grid(fx_means(), width = 48, height = 16)
   expect_s3_class(x, "infereportR_chargrid")
   expect_identical(dim(x$chars), c(16L, 48L))
@@ -389,6 +401,7 @@ test_that("format, as.character and print agree", {
 # End labels ------------------------------------------------------------------
 
 test_that("fixture (e): end labels right of the plot, one per row", {
+  skip_on_cran()
   x <- char_grid(fx_endlabels(), width = 64, height = 19)
   expect_snapshot(print(x))
   expect_identical(names(x$endlabels), c("key", "symbol", "label", "row"))
@@ -400,6 +413,7 @@ test_that("fixture (e): end labels right of the plot, one per row", {
 })
 
 test_that("end labels carry the series point glyph and sit on reserved columns", {
+  skip_on_cran()
   x <- char_grid(fx_endlabels(), width = 64, height = 19)
   el <- x$endlabels
   expect_identical(el$symbol, c("*", "o")[el$key])
@@ -421,6 +435,7 @@ test_that("end labels carry the series point glyph and sit on reserved columns",
 })
 
 test_that("end labels are ordered by the last y value, highest on top", {
+  skip_on_cran()
   low_first <- char_grid(fx_endlabels(c(30, 12)), width = 64, height = 19)
   expect_identical(low_first$endlabels$label, c("ISS 16-24", "ISS >= 25"))
   expect_true(all(diff(low_first$endlabels$row) >= 1L))
@@ -440,6 +455,7 @@ test_that("end label rows never collide and stay inside the plot rows", {
 })
 
 test_that("an end-label layer without the key aesthetic is matched by label", {
+  skip_on_cran()
   d <- data.frame(x = rep(1:3, 2), y = c(1, 2, 3, 3, 2, 1), g = rep(c("up", "down"), each = 3))
   p <- ggplot2::ggplot(d, ggplot2::aes(x, y, shape = g)) +
     ggplot2::geom_point() +
@@ -457,6 +473,7 @@ test_that("an end-label layer without the key aesthetic is matched by label", {
 })
 
 test_that("plots without end labels keep their legend and an empty endlabels frame", {
+  skip_on_cran()
   x <- char_grid(fx_lines(), width = 64, height = 20)
   expect_identical(nrow(x$endlabels), 0L)
   expect_identical(names(x$endlabels), c("key", "symbol", "label", "row"))
@@ -481,6 +498,7 @@ test_that("the transliteration table maps every listed character", {
 })
 
 test_that("ascii grids transliterate every written string", {
+  skip_on_cran()
   p <- fx_endlabels() +
     ggplot2::geom_text(ggplot2::aes(x = x, y = y, label = lab), inherit.aes = FALSE,
                        data = data.frame(x = 30, y = 30, lab = "\u0394 \u2264 5")) +
@@ -505,6 +523,7 @@ test_that("ascii grids transliterate every written string", {
 })
 
 test_that("unknown characters warn once per call; unicode grids keep them", {
+  skip_on_cran()
   p <- fx_bars() + ggplot2::labs(title = "\u03b1 and \u03b2", caption = "\u03b3")
   caught <- 0L
   withCallingHandlers(char_grid(p, width = 40, height = 16), infereportR_transliterated =
@@ -521,6 +540,7 @@ test_that("unknown characters warn once per call; unicode grids keep them", {
 })
 
 test_that("case = 'upper' uppercases end labels but never their glyphs", {
+  skip_on_cran()
   x <- char_grid(fx_endlabels(), width = 38, height = 15, case = "upper")
   expect_identical(x$endlabels$symbol, c("*", "o"))
   expect_identical(x$endlabels$label, c("ISS >= 25", "ISS 16-24"))

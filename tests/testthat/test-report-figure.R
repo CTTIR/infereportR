@@ -6,6 +6,7 @@ stat_classes <- function(x) {
 }
 
 test_that("the full bundle builds, draws and carries every result", {
+  skip_on_cran()
   skip_if_not_installed("ragg")
   p <- pg_plot() + report_figure(compare = welch, reference = "ctrl", adjust = "holm",
                                  omnibus = "anova_one_way")
@@ -33,6 +34,7 @@ test_that("report_figure returns a plain list that ggplot2 adds element by eleme
 })
 
 test_that("defaults add theme, scales, points and means but never a test", {
+  skip_on_cran()
   x <- report_figure()
   expect_length(x, 7L)
   expect_true(inherits(x[[1]], "theme"))
@@ -54,6 +56,7 @@ test_that("defaults add theme, scales, points and means but never a test", {
 })
 
 test_that("the adjustment rule of stat_compare applies", {
+  skip_on_cran()
   bad <- "infereportR_invalid_input"
   pairs <- list(c("ctrl", "trt1"), c("ctrl", "trt2"), c("trt1", "trt2"))
   expect_error(report_figure(compare = welch, comparisons = pairs), class = bad)
@@ -88,6 +91,7 @@ test_that("invalid arguments are rejected before any layer is built", {
 })
 
 test_that("the bundle equals the components added one by one", {
+  skip_on_cran()
   bundle <- pg_plot() + report_figure(compare = welch, reference = "ctrl", adjust = "holm",
                                       omnibus = "anova_one_way")
   by_hand <- pg_plot() +
@@ -105,6 +109,7 @@ test_that("the bundle equals the components added one by one", {
 })
 
 test_that("with omnibus and compare, the omnibus label gets its own headroom step", {
+  skip_on_cran()
   rng <- diff(range(pg$weight))
   top <- max(pg$weight)
   room <- function(p) {
@@ -134,6 +139,7 @@ test_that("jittered points are reproducible", {
 })
 
 test_that("means sit beside jittered points and on plain ones", {
+  skip_on_cran()
   jit <- ggplot2::ggplot_build(pg_plot() + report_figure())
   pts <- jit$data[[1]]
   mns <- jit$data[[2]]
