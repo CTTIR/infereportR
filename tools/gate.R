@@ -126,11 +126,32 @@ if (mode %in% c("full", "release")) {
                                       "_R_CHECK_SYSTEM_CLOCK_" = "FALSE"))
   issues <- c(chk$errors, chk$warnings, chk$notes)
   if (mode == "release") {
-    # The only accepted items: CRAN incoming feasibility for a new package whose
-    # suite dependencies are not yet on CRAN.
-    known <- grepl("New submission|not in mainstream repositories|Strong dependencies not in",
-                   issues)
-    issues <- issues[!known]
+    # The CRAN incoming feasibility check reports all its findings as one
+    # entry. Split it into its sub-items (blocks separated by blank lines,
+    # without the Maintainer line) and accept only the two expected ones: a
+    # new submission, and infercalcR as the only strong dependency not yet on
+    # CRAN. Every other sub-item (an unknown DESCRIPTION field such as
+    # Remotes, a missing vignette index, misspellings, ...) fails the gate.
+    incoming_items <- function(entry) {
+      lines <- trimws(strsplit(entry, "\n", fixed = FALSE)[[1L]][-1L])
+      lines <- lines[!grepl("^Maintainer:", lines)]
+      block <- cumsum(!nzchar(lines))
+      items <- vapply(split(lines, block), function(l) paste(l[nzchar(l)], collapse = " "),
+                      character(1L))
+      unname(items[nzchar(items)])
+    }
+    accepted <- function(item) {
+      identical(item, "New submission") ||
+        grepl(paste0("^Strong dependencies not in (mainstream repositories|",
+                     "the CRAN or BioC software repositories): infercalcR$"), item)
+    }
+    is_incoming <- grepl("checking CRAN incoming feasibility", issues, fixed = TRUE)
+    if (any(is_incoming)) {
+      items <- unlist(lapply(issues[is_incoming], incoming_items))
+      if (!length(items)) items <- "CRAN incoming feasibility: entry without sub-items"
+      bad <- items[!vapply(items, accepted, logical(1L))]
+      issues <- c(issues[!is_incoming], if (length(bad)) paste("CRAN incoming:", bad))
+    }
   }
   step(sprintf("R CMD check --as-cran: %d errors, %d warnings, %d notes",
                length(chk$errors), length(chk$warnings), length(chk$notes)),
