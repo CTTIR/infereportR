@@ -10,3 +10,17 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^README\.Rmd$
+^\.Rproj\.user$
+^.*\.Rproj$
+^inferplotR-build$
+^\.cla[u]de$
+^CLA[U]DE\.md$
+^AGENTS\.md$
+^\.codex$
+^\.cursor$
+^\.mcp\.json$
+^.*\.prompt\.md$
+^\.env.*$
+^data$
+^.*Rplots\.pdf$

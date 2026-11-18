@@ -1,0 +1,375 @@
+---
+title: "Inference layers"
+author: "Raban Heller"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Inference layers}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+resource_files:
+  - figures/logo.svg
+  - figures/logo-dark.svg
+---
+
+<!-- cttir-vignette-logo: start -->
+<style>
+.cttir-vignette-logo { float: right; width: 120px; max-width: 30%; margin: 0 0 1rem 1.5rem; }
+.cttir-vignette-logo img { width: 100%; height: auto; border: 0; background: transparent; box-shadow: none; }
+.cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+.cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+  .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+}
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-light { display: block; }
+[data-bs-theme="light"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-light { display: none; }
+[data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
+</style>
+<div class="cttir-vignette-logo">
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+</div>
+<!-- cttir-vignette-logo: end -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 5, fig.height = 3.5,
+  dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png")
+```
+
+The inference layers of inferplotR draw statistics, but they do not compute or
+format them. Every estimate, interval, test statistic, p-value and adjustment
+comes from `infercalcR::run_inference()` and `infercalcR::adjust_inference()`,
+and every number in a label is a display string from
+`infereportR::report_table()`. inferplotR chooses positions, draws the geometry
+and keeps the complete result objects with the figure, so that they can be
+inspected and reported.
+
+```{r packages}
+library(ggplot2)
+library(inferplotR)
+```
+
+## Five layers
+
+All five layers run per panel when the plot is built. Rows with non-finite x or
+y are dropped first, as ggplot2 does for drawing. Like the theme, every layer
+takes `mode = "light"` or `"dark"` and `transparent`; pass the same values as to
+`theme_figure()` so that the ink matches the background.
+
+### Means with confidence intervals
+
+`stat_means()` draws the mean and its confidence interval for every x position.
+The numbers are the estimate and interval of the one-sample t procedure
+(`t_mean_one_sample`), used as an interval estimate, not as a test.
+
+```{r means, fig.alt = "Dried plant weight for three groups: open circles for the plants and a point with a vertical line for each group mean and its 95% confidence interval."}
+base <- ggplot(PlantGrowth, aes(group, weight)) +
+  geom_point(shape = 1, position = position_jitter(width = 0.08, height = 0, seed = 1)) +
+  theme_figure() +
+  labs(x = "Group", y = "Dried weight (g)")
+
+base + stat_means(conf.level = 0.95)
+```
+
+### Pairwise comparisons
+
+`stat_compare()` compares x groups pairwise with a named two-sample procedure,
+adjusts the family of comparisons as declared and draws one bracket per pair.
+For the pair `c(A, B)` the estimand is B minus A. With `reference`, every other
+level is compared with that level; with `comparisons`, exactly the listed pairs;
+with neither, all pairs in level order.
+
+```{r compare, fig.alt = "The plant weights with two brackets above the groups, comparing each treatment with the control; each bracket is labeled with a Holm-adjusted p-value."}
+base +
+  stat_means() +
+  stat_compare(method = "t_means_two_independent_welch", reference = "ctrl",
+               adjust = "holm")
+```
+
+The label is the p-value by default. `label = "estimate_ci"` shows the
+difference with its interval, `"estimate_ci_p"` both, and `"stars"` replaces
+p-values below 0.05 with stars. A p-value of 0.05 or more keeps its display
+string; it is never shown as "ns".
+
+```{r compare-label, fig.width = 6, fig.alt = "The same comparison drawn for one explicit pair, labeled with the mean difference, its confidence interval and the p-value."}
+base +
+  stat_compare(method = "t_means_two_independent_welch",
+               comparisons = list(c("trt1", "trt2")), adjust = "none",
+               label = "estimate_ci_p")
+```
+
+The supported methods are `"t_means_two_independent_welch"`,
+`"t_means_two_independent_student"`, `"rank_sum_mann_whitney"` and
+`"brunner_munzel"`.
+
+The brackets are stacked above the data in fractions of the panel's y range:
+the first sits `first = 0.10` above the highest value, each further one
+`step = 0.20` higher, which leaves room for one label line between them.
+`headroom` (in steps, 1 by default) reserves room above the top bracket, so
+the y scale includes its label and nothing is clipped; with `headroom = 2` a
+label at the top of the panel, such as an omnibus test, clears the top bracket.
+
+### Omnibus tests
+
+`stat_omnibus()` runs one omnibus test per panel, with y as the outcome and the
+x positions as groups, and writes the estimand, test statistic and p-value in
+the top left corner. The methods are `"anova_one_way"`, `"anova_one_way_welch"`
+and `"kruskal_wallis"`. Degrees of freedom are not part of the label, because
+infereportR 0.1.0 has no display string for them; they are in the result.
+
+```{r omnibus, fig.alt = "The plant weights with group means and a text label in the top left corner giving the F statistic and p-value of a one-way analysis of variance."}
+base +
+  stat_means() +
+  stat_omnibus(method = "anova_one_way")
+```
+
+### Correlations
+
+`stat_correlation()` runs one correlation per panel and labels the coefficient,
+its interval and the p-value. The methods are `"correlation_pearson"`,
+`"correlation_spearman"` and `"correlation_kendall"`. With `fit = TRUE` it also
+draws the fitted mean line of infercalcR's linear prediction model
+(`prediction_model_linear`) with its pointwise confidence band from
+`infercalcR::predict_inference(interval = "mean")`, as dotted lines without fill.
+The fit treats every row as an independent unit, and the line is never fitted
+with `lm()` directly. With `fit = TRUE` the function returns two layers, which
+`+` adds together.
+
+```{r correlation, fig.alt = "Fuel economy against weight for 32 cars, with a solid fitted line, two dotted confidence lines and a label giving Pearson's r, its interval and the p-value."}
+ggplot(mtcars, aes(wt, mpg)) +
+  geom_point(shape = 1) +
+  stat_correlation(method = "correlation_pearson", fit = TRUE) +
+  theme_figure() +
+  labs(x = "Weight (1000 lb)", y = "Fuel economy (mpg)")
+```
+
+`label = "estimate_ci_p_n"` writes the label on two lines, the coefficient
+with its interval on the first and the p-value with the number of pairs on
+the second, both formatted by infereportR. infercalcR computes a correlation
+from 4 pairs on; the fitted line of `fit = TRUE` needs at least 20 pairs per
+panel. Spearman and Kendall correlations come without an interval in
+infercalcR 0.1.0, and the label then leaves the interval out.
+
+```{r correlation-two-line, fig.alt = "Fuel economy against weight with a two-line label: Pearson's r with its interval on the first line, the p-value and n = 32 on the second."}
+ggplot(mtcars, aes(wt, mpg)) +
+  geom_point(shape = 1) +
+  stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n",
+                   label_x = Inf, hjust = 1) +
+  theme_figure() +
+  labs(x = "Weight (1000 lb)", y = "Fuel economy (mpg)")
+```
+
+The label layers place their text at the panel edges (`-Inf` and `Inf`). Always
+draw them together with a data layer, such as the points here, so that ggplot2
+has data to train the position scales on.
+
+### Paired designs
+
+`stat_paired()` draws a design with two measurements per unit, such as before
+and after: x is discrete with exactly two levels (first "before", second
+"after"), and the new aesthetic `id` names the unit. The layer runs one paired
+procedure per panel, `"t_means_paired"` or `"signed_rank_wilcoxon"`, on the units
+with both values, so the estimand is after minus before. It draws one thin line
+per unit, open points at both ends, the two level means joined by a heavy line
+and, right of the second level, a label with the change, its interval and the
+p-value. The means are geometry; every printed number is an infereportR
+display string. Here are the two drugs of the sleep data of Student (1908),
+given to the same ten people:
+
+```{r paired, fig.width = 4.2, fig.alt = "Slopegraph of extra sleep under drug 1 and drug 2: one thin line per person, a heavy line joining the two means and a label with the mean change in hours, its confidence interval and the p-value."}
+sleep_long <- transform(sleep, drug = factor(group, labels = c("Drug 1", "Drug 2")))
+
+ggplot(sleep_long, aes(drug, extra, id = ID)) +
+  stat_paired(method = "t_means_paired", unit = "h") +
+  coord_cartesian(clip = "off") +
+  theme_figure() +
+  theme(plot.margin = margin(2, 21, 2, 2, unit = "mm")) +
+  labs(x = NULL, y = "Extra sleep (h)")
+```
+
+The label sits beside the second level and extends beyond the panel, hence
+`clip = "off"` and the wider right margin.
+
+## Figure builders
+
+Two functions build a complete figure from inference results rather than
+adding a layer. `figure_forest()` takes a named list of infercalcR results,
+one contrast each, and draws a forest plot laid out for a slide slot
+(`slot = "slide_full"`, 134 x 44 mm, by default): a label, n and the estimate
+with its interval as text columns, square markers with area proportional to n
+and a dotted line at the null value. Here the tooth growth difference between
+orange juice and ascorbic acid, overall and per dose:
+
+```{r forest, fig.width = 134 / 25.4, fig.height = 44 / 25.4, fig.alt = "Forest plot with four rows, all doses and the three doses, each with n, a square marker with a horizontal confidence interval and the difference with its interval as text; a dotted vertical line marks no difference."}
+welch <- infercalcR::method_spec("t_means_two_independent_welch")
+difference <- function(d) {
+  infercalcR::run_inference(welch, x = d$len[d$supp == "OJ"], y = d$len[d$supp == "VC"])
+}
+by_dose <- lapply(split(ToothGrowth, ToothGrowth$dose), difference)
+results <- c(list("All doses" = difference(ToothGrowth)),
+             setNames(by_dose, paste(names(by_dose), "mg/day")))
+
+figure_forest(results, xlab = "Orange juice minus ascorbic acid (mm)",
+              header = c("Dose", "n", "Difference [95% CI]"))
+```
+
+The first result is the overall row, set in bold above a hairline
+(`overall = 1`). `figure_correlation_matrix()` runs one named correlation
+procedure for every pair of variables and shows the strength as circle area
+above the diagonal (filled for positive, open for negative) and the values
+below it:
+
+```{r matrix, fig.width = 3.4, fig.height = 3.4, fig.alt = "Correlation matrix of four mtcars variables: circles above the diagonal, values below, variable names on the diagonal."}
+figure_correlation_matrix(mtcars, vars = c("mpg", "wt", "hp", "qsec"),
+                          method = "correlation_spearman")
+```
+
+Both builders keep their results like the layers do, so `inference_results()`
+and `figure_report()` work on them.
+
+## Explicit procedures and declared adjustments
+
+The suite never chooses a procedure from the data. `stat_compare()`,
+`stat_omnibus()`, `stat_correlation()`, `stat_paired()` and the two figure
+builders have no default method, so leaving it
+out is an error when the layer is created:
+
+```{r no-method}
+res <- try(stat_compare(reference = "ctrl", adjust = "holm"), silent = TRUE)
+cat(res)
+```
+
+With more than one comparison, the multiplicity adjustment must be declared;
+`adjust = "none"` is allowed and documents the choice. With explicit
+`comparisons`, the layer checks this when it is created:
+
+```{r no-adjust-explicit}
+res <- try(stat_compare(method = "t_means_two_independent_welch",
+                        comparisons = list(c("ctrl", "trt1"), c("ctrl", "trt2"))),
+           silent = TRUE)
+cat(res)
+```
+
+With `reference` or all pairs, the number of comparisons is only known when the
+plot is built. ggplot2 then reports "Problem while computing stat", with the
+inferplotR condition as the cause:
+
+```{r no-adjust-build}
+p <- base + stat_compare(method = "t_means_two_independent_welch")
+res <- try(ggplot_build(p), silent = TRUE)
+cat(res)
+```
+
+The error conditions have classes such as `inferplotR_invalid_input`, so code can
+catch them with `tryCatch()`.
+
+## Facets: one analysis per panel
+
+Every panel is its own analysis: `stat_means()` estimates per panel and x level,
+`stat_compare()` forms one comparison family per panel, and `stat_omnibus()` and
+`stat_correlation()` run once per panel. Here each supplement has its own Holm
+family of three dose comparisons:
+
+```{r facets, fig.width = 6.5, fig.height = 3.5, fig.alt = "Tooth length by vitamin C dose in two panels, orange juice and ascorbic acid; each panel shows means with intervals and three brackets with Holm-adjusted p-values."}
+tooth <- ToothGrowth
+tooth$dose <- factor(tooth$dose)
+tooth$supp <- factor(tooth$supp, labels = c("Orange juice", "Ascorbic acid"))
+
+facetted <- ggplot(tooth, aes(dose, len)) +
+  geom_point(shape = 1, position = position_jitter(width = 0.08, height = 0, seed = 1)) +
+  stat_means() +
+  stat_compare(method = "t_means_two_independent_welch", adjust = "holm") +
+  facet_wrap(~supp) +
+  theme_figure() +
+  labs(x = "Dose (mg/day)", y = "Tooth length (mm)")
+facetted
+```
+
+## The results behind the figure
+
+`inference_results()` builds the plot once and returns every infercalcR result
+its layers computed, named by layer, method and panel:
+
+```{r results}
+results <- inference_results(facetted)
+names(results)
+```
+
+These are ordinary infercalcR result objects. infercalcR and infereportR read
+them as they would read any other result, for example as a sentence for the
+manuscript:
+
+```{r report-text}
+oj <- results[["inferplotR:compare:t_means_two_independent_welch:panel1"]]
+infercalcR::result_data(oj)[, c("row_id", "estimate", "p.value", "p.adjusted")]
+cat(infereportR::report_text(oj, p = "adjusted"), sep = "\n\n")
+```
+
+## One table: `figure_report()`
+
+`figure_report()` passes every result through `infereportR::report_table()` and
+binds the rows, with the layer and panel each one came from. By default
+(`p = "auto"`) it reports adjusted p-values where a result has an adjustment and
+raw ones elsewhere.
+
+```{r figure-report}
+tab <- figure_report(facetted)
+tab[tab$figure_layer == 3, c("figure_panel", "contrast", "estimate_display",
+                             "interval_display", "p_display")]
+```
+
+## The `inferplot()` bundle
+
+`inferplot()` adds the theme, the black-and-white scales, the raw observations,
+the means and the tests you name, in one call. It adds no test unless its
+procedure is named:
+
+```{r bundle, fig.alt = "Plant weights with means, a one-way analysis of variance label and two Holm-adjusted comparisons with the control."}
+bundle <- ggplot(PlantGrowth, aes(group, weight)) +
+  inferplot(compare = "t_means_two_independent_welch", reference = "ctrl",
+            adjust = "holm", omnibus = "anova_one_way") +
+  labs(x = "Group", y = "Dried weight (g)")
+bundle
+```
+
+With `points = "jitter"` (the default) the means are drawn a little to the
+right of the raw observations, so the two never overlap. With an omnibus test,
+`inferplot()` reserves two steps of headroom above the brackets, so the omnibus
+label at the top of the panel clears the top bracket label.
+
+## Precomputed results with `infereportR::stat_inference()`
+
+Results computed elsewhere can be drawn on an inferplotR figure with
+`infereportR::stat_inference()`, which takes a finished result and explicit
+bracket positions. Here infercalcR runs a Brunner-Munzel test of `trt2` against
+`trt1`:
+
+```{r precomputed, fig.alt = "Plant weights with means and one bracket between the two treatment groups, labeled with the p-value of a Brunner-Munzel test computed before plotting."}
+pg <- PlantGrowth
+bm <- infercalcR::run_inference(
+  infercalcR::method_spec("brunner_munzel"),
+  x = pg$weight[pg$group == "trt2"], y = pg$weight[pg$group == "trt1"],
+  result_id = "bm-trt2-trt1")
+row_id <- infercalcR::result_data(bm)$row_id
+positions <- data.frame(row_id = row_id, group1 = "trt1", group2 = "trt2",
+                        y_position = 6.6)
+
+base +
+  stat_means() +
+  infereportR::stat_inference(bm, positions, groups = levels(pg$group),
+                              text_size = 9 / .pt)
+```
+
+The precomputed result is not part of `inference_results()`, which returns only
+what the inferplotR layers computed.
+
+## Sources
+
+The calculations are those of infercalcR and the display strings those of
+infereportR (Heller, <https://github.com/CTTIR/infercalcR>,
+<https://github.com/CTTIR/infereportR>). The ggproto objects follow the public
+ggplot2 extension guide, `vignette("extending-ggplot2", package = "ggplot2")`.
+The sleep data are those of Student (1908), *The probable error of a mean*,
+Biometrika 6(1), 1-25, as shipped with R. See the README for the full list of
+sources.
