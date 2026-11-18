@@ -28,8 +28,8 @@ resource_files:
 [data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
 </style>
 <div class="cttir-vignette-logo">
-  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
-  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
 </div>
 <!-- cttir-vignette-logo: end -->
 
@@ -40,14 +40,14 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
 
 The Bleisatz Beamer theme comes with twelve example figures. Each one teaches
 one rule of the black-and-white system, and each is sized for one slot of a
-Bleisatz frame. `figure_gallery()` rebuilds all twelve with the API of
-inferplotR alone, in up to four modes: light, dark and both of them on a
+Bleisatz frame. `figure_gallery()` rebuilds all twelve with the figure API of
+infereportR alone, in up to four modes: light, dark and both of them on a
 transparent background. This vignette lists the figures, explains slots and
 modes, and shows how a deck switches between the sets.
 
 ```{r packages}
 library(ggplot2)
-library(inferplotR)
+library(infereportR)
 ```
 
 ## The twelve figures
@@ -55,7 +55,7 @@ library(inferplotR)
 | # | File name | Slot | What it shows | Built with |
 |---|---|---|---|---|
 | 01 | `01-timecourse-direct-labels` | side | lines labeled at their ends, no legend | `theme_figure()`, `scale_linetype_figure()`, `scale_shape_figure()`, `geom_endlabel()` |
-| 02 | `02-raw-data-mean-ci` | side | every observation, mean and 95% CI beside it, Holm-adjusted Welch comparisons | `inferplot()` |
+| 02 | `02-raw-data-mean-ci` | side | every observation, mean and 95% CI beside it, Holm-adjusted Welch comparisons | `report_figure()` |
 | 03 | `03-stacked-hatch` | side | open, hatched and solid fills, categories named beside the last bar | `geom_col()`, `scale_fill_hatch()`, `stat_stacklabel()` |
 | 04 | `04-scatter-correlation` | half | Pearson correlation on a log axis, two-line label with n | `stat_correlation(label = "estimate_ci_p_n")` |
 | 05 | `05-ecdf-distribution` | side | empirical distribution functions with median guides | `stat_ecdf()`, `stat_ecdf_guides()` |
@@ -72,9 +72,9 @@ rendered, in light mode at the size of its slot. The internal builders that
 `figure_gallery()` calls are used directly, with the gallery's simulated data.
 
 ```{r gallery-data}
-gallery_data <- inferplotR:::.ip_gallery_data()
+gallery_data <- infereportR:::.ir_gallery_data()
 gallery_figure <- function(i, mode = "light") {
-  inferplotR:::.ip_gallery_builders[[i]](gallery_data, mode = mode, transparent = FALSE)
+  infereportR:::.ir_gallery_builders[[i]](gallery_data, mode = mode, transparent = FALSE)
 }
 ```
 
@@ -153,11 +153,11 @@ gallery_figure(12)
 The data are simulated with fixed seeds, so the figures and every number on
 them are the same on every run, and the random state of the R session is left
 as it was. As everywhere in the package, the statistics come from infercalcR
-and the displayed numbers from infereportR. One line in a shell writes all
+and the displayed numbers from `report_table()`. One line in a shell writes all
 twelve figures in all four modes into a deck's `figures/` folder:
 
 ```sh
-Rscript -e 'inferplotR::figure_gallery("figures")'
+Rscript -e 'infereportR::figure_gallery("figures")'
 ```
 
 `figure_gallery()` returns a table of the files it wrote. It writes PDF files
@@ -325,3 +325,6 @@ The figures, slots and modes follow the Bleisatz example figures (CTTIR,
 Bleisatz Beamer theme. The sleep data are those of Student (1908), *The
 probable error of a mean*, Biometrika 6(1), 1-25, as shipped with R. See the
 README for the full list of sources.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```

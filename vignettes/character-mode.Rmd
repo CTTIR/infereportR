@@ -27,8 +27,8 @@ resource_files:
 [data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
 </style>
 <div class="cttir-vignette-logo">
-  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
-  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
 </div>
 <!-- cttir-vignette-logo: end -->
 
@@ -45,7 +45,7 @@ Commodore 64 screen or as that screen in two values.
 
 ```{r packages}
 library(ggplot2)
-library(inferplotR)
+library(infereportR)
 ```
 
 ## A plot on a text grid
@@ -72,9 +72,9 @@ cells twice as tall as wide.
 Supported layers are rectangles (bars, columns, tiles), ribbons and areas,
 smooths (the line only), paths and lines, segments, error bars and ranges,
 reference lines, points and text. Other layers, such as box plots and violins,
-are skipped with one warning of class `inferplotR_skipped_layer`. Facets and
+are skipped with one warning of class `infereportR_skipped_layer`. Facets and
 flipped, polar or transformed coordinates are errors of class
-`inferplotR_unsupported`.
+`infereportR_unsupported`.
 
 ### Several series
 
@@ -120,7 +120,7 @@ machines without lower-case letters; the glyphs of the data do not change.
 With `"ascii"`, every string is transliterated to ASCII as well: `≥` becomes
 `>=`, `≤` `<=`, `±` `+/-`, `×` `x`, the minus sign and the en dash `-`, the em
 dash `--`, `µ` `u` and `ρ` `rho`. Any other non-ASCII character becomes `?`,
-with one warning of class `inferplotR_transliterated`.
+with one warning of class `infereportR_transliterated`.
 
 ```{r unicode, comment = ""}
 tooth <- aggregate(len ~ dose, data = ToothGrowth, FUN = mean)
@@ -244,3 +244,6 @@ The C64 colors are the Pepto palette of the VIC-II chip by Philip Timmermann,
 as shipped with the VICE emulator in `pepto-pal.vpl`. IBM Plex is released
 under the SIL Open Font License (<https://github.com/IBM/plex>). See the README
 for the full list of sources.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```

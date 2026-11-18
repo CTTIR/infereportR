@@ -34,7 +34,6 @@ resource_files:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-has_ggplot2 <- requireNamespace("ggplot2", quietly = TRUE)
 ```
 
 A study often reports several related comparisons. Whether their p-values are
@@ -154,14 +153,11 @@ cat(report_text(incomplete), sep = "\n")
 
 ## Brackets on a plot
 
-The remaining sections need the optional ggplot2 package; their chunks run
-only when it is installed.
-
 Each bracket is described by one row of a positions data frame. Coordinates are
 in data units. `group1` and `group2` name the endpoints, and `groups` gives the
 order of the groups on the discrete axis.
 
-```{r brackets, eval = has_ggplot2, fig.width = 6, fig.height = 4.5, fig.alt = "Box plots of dried plant weight for ctrl, trt1 and trt2 with three brackets, one per pairwise comparison, each labeled with its Holm-adjusted p-value."}
+```{r brackets, fig.width = 6, fig.height = 4.5, fig.alt = "Box plots of dried plant weight for ctrl, trt1 and trt2 with three brackets, one per pairwise comparison, each labeled with its Holm-adjusted p-value."}
 library(ggplot2)
 
 positions <- data.frame(
@@ -183,7 +179,7 @@ Changing the order of the axis moves the brackets but never reverses a
 contrast. Below, `trt2` is drawn first, and each label still shows the stored
 difference with its original sign, for example `trt2` minus `trt1`:
 
-```{r reordered, eval = has_ggplot2, fig.width = 6, fig.height = 4.5, fig.alt = "The same box plots with the group order trt2, trt1, ctrl; each bracket shows the stored difference and its interval."}
+```{r reordered, fig.width = 6, fig.height = 4.5, fig.alt = "The same box plots with the group order trt2, trt1, ctrl; each bracket shows the stored difference and its interval."}
 reordered <- PlantGrowth
 reordered$group <- factor(reordered$group, levels = c("trt2", "trt1", "ctrl"))
 
@@ -193,6 +189,44 @@ ggplot(reordered, aes(group, weight)) +
     label = "estimate_ci", tip_length = 0.1) +
   labs(x = NULL, y = "Dried weight")
 ```
+
+## The same family computed in the layer
+
+The figure layer of infereportR can also compute the family while the plot is
+built. `stat_compare()` runs the named procedure on the plotted data, forms
+all pairs in level order as one family, adjusts it as declared and places the
+brackets itself:
+
+```{r brackets-computed, fig.width = 6, fig.height = 4.5, fig.alt = "The same box plots with three brackets computed by stat_compare, each labeled with its Holm-adjusted p-value."}
+computed <- base +
+  stat_compare(method = "t_means_two_independent_welch", adjust = "holm")
+computed
+```
+
+It is the family built above: for a pair of `ctrl` and `trt1` the estimand is
+`trt1` minus `ctrl`, the row identifiers are the same, and so are the adjusted
+p-values. `figure_report()` reads them back from the figure:
+
+```{r brackets-computed-report}
+shown <- figure_report(computed)
+shown[, c("row_id", "contrast", "p_display")]
+identical(shown$p_display, report_table(family, p = "adjusted")$p_display)
+```
+
+Which one to use depends on where the result comes from:
+
+- **Computed in the layer** (`stat_compare()`, and `stat_means()`,
+  `stat_omnibus()`, `stat_correlation()` and `stat_paired()`): the figure shows
+  an analysis of exactly the plotted data, one family per panel, with
+  automatic bracket positions. The procedure and the adjustment are still
+  named explicitly, and `inference_results()` returns the results with the
+  figure. See `vignette("inference-layers", package = "infereportR")`.
+- **Precomputed with explicit positions** (`stat_inference()` and
+  `annotate_inference()`): the result is final before the plot exists, for
+  example the result of the analysis script of a manuscript, a family that is
+  larger than what the plot shows, or a method that the figure layers do not
+  run. Nothing is computed while the plot is built, and every position is
+  given in data units.
 
 ## Text labels for omnibus tests
 
@@ -205,7 +239,7 @@ omnibus <- run_inference(method_spec("anova_one_way_welch"),
 report_table(omnibus)[, c("component", "estimand", "statistic_display", "p_display")]
 ```
 
-```{r omnibus-plot, eval = has_ggplot2, fig.width = 6, fig.height = 4.5, fig.alt = "Box plots with the three pairwise brackets and a text label for the Welch one-way analysis of means above them."}
+```{r omnibus-plot, fig.width = 6, fig.height = 4.5, fig.alt = "Box plots with the three pairwise brackets and a text label for the Welch one-way analysis of means above them."}
 pairwise_plot <- base + stat_inference(family, positions, groups = levels(group),
   p = "adjusted", tip_length = 0.1)
 text_position <- data.frame(row_id = result_data(omnibus)$row_id,
@@ -225,7 +259,7 @@ Positions are always given in the original data units. With
 transformed exactly once. For horizontal plots, adjust the text justification
 and leave room for the labels:
 
-```{r flipped, eval = has_ggplot2, fig.width = 6, fig.height = 4, fig.alt = "Horizontal box plots of dried plant weight with the three pairwise brackets and their labels to the right of each bracket."}
+```{r flipped, fig.width = 6, fig.height = 4, fig.alt = "Horizontal box plots of dried plant weight with the three pairwise brackets and their labels to the right of each bracket."}
 pairwise_flipped <- base +
   stat_inference(family, positions, groups = levels(group), p = "adjusted",
     tip_length = 0.1, text_hjust = -0.1, text_vjust = 0.5) +
@@ -267,7 +301,7 @@ These three p-values are not adjusted. The positions repeat the facet key, and
 it must match the stored rows exactly; a missing or conflicting key is an error
 instead of a label copied into every panel:
 
-```{r facets-plot, eval = has_ggplot2, fig.width = 7, fig.height = 3.5, fig.alt = "Box plots of odontoblast length by supplement in three panels, one per dose, each with a bracket between OJ and VC labeled with its p-value."}
+```{r facets-plot, fig.width = 7, fig.height = 3.5, fig.alt = "Box plots of odontoblast length by supplement in three panels, one per dose, each with a bracket between OJ and VC labeled with its p-value."}
 facet_positions <- data.frame(
   row_id = by_dose$row_id, dose = doses,
   group1 = "OJ", group2 = "VC",

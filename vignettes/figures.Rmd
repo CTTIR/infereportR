@@ -1,9 +1,9 @@
 ---
-title: "Getting started with inferplotR"
+title: "Figures: theme, scales, labels and export"
 author: "Raban Heller"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting started with inferplotR}
+  %\VignetteIndexEntry{Figures: theme, scales, labels and export}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 resource_files:
@@ -27,8 +27,8 @@ resource_files:
 [data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
 </style>
 <div class="cttir-vignette-logo">
-  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
-  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
 </div>
 <!-- cttir-vignette-logo: end -->
 
@@ -37,16 +37,17 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 5, fig.height
   dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png")
 ```
 
-inferplotR is a ggplot2 extension for black-and-white figures. This vignette
+The figure layer of infereportR is a ggplot2 extension for black-and-white
+figures. This vignette
 covers the parts that do not compute statistics: the theme for papers and
 slides, the scales that replace color, end labels, size presets with export,
 light and dark modes, and the APA audit. The inference layers have their own vignette,
-`vignette("inference-layers", package = "inferplotR")`. All examples use data
+`vignette("inference-layers", package = "infereportR")`. All examples use data
 sets that ship with R and run offline.
 
 ```{r packages}
 library(ggplot2)
-library(inferplotR)
+library(infereportR)
 ```
 
 ## One theme, two targets
@@ -89,7 +90,7 @@ figure_font()
 
 Groups are told apart by line type, point shape or hatch pattern. The scales
 use fixed sequences and never recycle: more groups than values is an error of
-class `inferplotR_too_many_groups` when the plot is built.
+class `infereportR_too_many_groups` when the plot is built.
 
 - `scale_linetype_figure()`: solid, dashed and dotted patterns, six in total.
 - `scale_shape_figure()`: eight shapes, alternating filled and open.
@@ -210,13 +211,13 @@ basename(set$file)
 A Bleisatz deck includes the figure as `\includegraphics{tooth-bars}` and
 chooses the folder once, with `\graphicspath{{figures/dark/}}` for a deck in
 `\usetheme[dark]{Bleisatz}`. The figure gallery vignette,
-`vignette("figure-gallery", package = "inferplotR")`, shows the twelve example
+`vignette("figure-gallery", package = "infereportR")`, shows the twelve example
 figures of the Bleisatz theme that `figure_gallery()` writes this way.
 
 ## Audit a figure with `check_figure()`
 
 `check_figure()` builds a plot once and reports, in six rows, where it departs
-from the APA figure rules or from inferplotR's black-and-white rule. A default
+from the APA figure rules or from the package's black-and-white rule. A default
 ggplot fails several of them:
 
 ```{r check-bad}
@@ -255,3 +256,6 @@ page on figures (American Psychological Association, *Figures*, 7th ed.,
 The theme and layers are built on ggplot2 (Wickham 2016,
 <https://doi.org/10.1007/978-3-319-24277-4>); hatch patterns use the grid
 patterns of R 4.1.0 and later. See the README for the full list of sources.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```

@@ -70,11 +70,12 @@ ggpubr
 ggsave
 ggsignif
 ggstatsplot
+grDevices
 infercalcR
 infercalcR's
 infereportR
 inferguidR
-inferplotR's
+inferplotR
 integrations
 jtools
 linetype
@@ -103,5 +104,6 @@ testthat
 th
 unexecuted
 untrusted
+withr
 xmax
 xmin

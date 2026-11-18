@@ -27,8 +27,8 @@ resource_files:
 [data-bs-theme="dark"] .cttir-vignette-logo .cttir-vignette-logo-dark { display: block; }
 </style>
 <div class="cttir-vignette-logo">
-  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="inferplotR logo" width="120" height="139" />
-  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="inferplotR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-light" src="figures/logo.svg" alt="infereportR logo" width="120" height="139" />
+  <img class="cttir-vignette-logo-dark" src="figures/logo-dark.svg" alt="infereportR logo" width="120" height="139" />
 </div>
 <!-- cttir-vignette-logo: end -->
 
@@ -37,17 +37,17 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 5, fig.height
   dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png")
 ```
 
-The inference layers of inferplotR draw statistics, but they do not compute or
-format them. Every estimate, interval, test statistic, p-value and adjustment
+The inference layers of infereportR draw statistics, but they do not compute
+them and format them only through the reporting functions. Every estimate, interval, test statistic, p-value and adjustment
 comes from `infercalcR::run_inference()` and `infercalcR::adjust_inference()`,
 and every number in a label is a display string from
-`infereportR::report_table()`. inferplotR chooses positions, draws the geometry
-and keeps the complete result objects with the figure, so that they can be
+`report_table()`. The layers choose positions, draw the geometry
+and keep the complete result objects with the figure, so that they can be
 inspected and reported.
 
 ```{r packages}
 library(ggplot2)
-library(inferplotR)
+library(infereportR)
 ```
 
 ## Five layers
@@ -116,7 +116,7 @@ label at the top of the panel, such as an omnibus test, clears the top bracket.
 x positions as groups, and writes the estimand, test statistic and p-value in
 the top left corner. The methods are `"anova_one_way"`, `"anova_one_way_welch"`
 and `"kruskal_wallis"`. Degrees of freedom are not part of the label, because
-infereportR 0.1.0 has no display string for them; they are in the result.
+`report_table()` has no display string for them; they are in the result.
 
 ```{r omnibus, fig.alt = "The plant weights with group means and a text label in the top left corner giving the F statistic and p-value of a one-way analysis of variance."}
 base +
@@ -146,7 +146,7 @@ ggplot(mtcars, aes(wt, mpg)) +
 
 `label = "estimate_ci_p_n"` writes the label on two lines, the coefficient
 with its interval on the first and the p-value with the number of pairs on
-the second, both formatted by infereportR. infercalcR computes a correlation
+the second, both formatted by `report_table()`. infercalcR computes a correlation
 from 4 pairs on; the fitted line of `fit = TRUE` needs at least 20 pairs per
 panel. Spearman and Kendall correlations come without an interval in
 infercalcR 0.1.0, and the label then leaves the interval out.
@@ -173,7 +173,7 @@ procedure per panel, `"t_means_paired"` or `"signed_rank_wilcoxon"`, on the unit
 with both values, so the estimand is after minus before. It draws one thin line
 per unit, open points at both ends, the two level means joined by a heavy line
 and, right of the second level, a label with the change, its interval and the
-p-value. The means are geometry; every printed number is an infereportR
+p-value. The means are geometry; every printed number is a `report_table()`
 display string. Here are the two drugs of the sleep data of Student (1908),
 given to the same ten people:
 
@@ -253,7 +253,7 @@ cat(res)
 
 With `reference` or all pairs, the number of comparisons is only known when the
 plot is built. ggplot2 then reports "Problem while computing stat", with the
-inferplotR condition as the cause:
+infereportR condition as the cause:
 
 ```{r no-adjust-build}
 p <- base + stat_compare(method = "t_means_two_independent_welch")
@@ -261,7 +261,7 @@ res <- try(ggplot_build(p), silent = TRUE)
 cat(res)
 ```
 
-The error conditions have classes such as `inferplotR_invalid_input`, so code can
+The error conditions have classes such as `infereportR_invalid_input`, so code can
 catch them with `tryCatch()`.
 
 ## Facets: one analysis per panel
@@ -296,19 +296,19 @@ results <- inference_results(facetted)
 names(results)
 ```
 
-These are ordinary infercalcR result objects. infercalcR and infereportR read
-them as they would read any other result, for example as a sentence for the
+These are ordinary infercalcR result objects. infercalcR and the reporting
+functions read them as they would read any other result, for example as a sentence for the
 manuscript:
 
 ```{r report-text}
-oj <- results[["inferplotR:compare:t_means_two_independent_welch:panel1"]]
+oj <- results[["infereportR:compare:t_means_two_independent_welch:panel1"]]
 infercalcR::result_data(oj)[, c("row_id", "estimate", "p.value", "p.adjusted")]
-cat(infereportR::report_text(oj, p = "adjusted"), sep = "\n\n")
+cat(report_text(oj, p = "adjusted"), sep = "\n\n")
 ```
 
 ## One table: `figure_report()`
 
-`figure_report()` passes every result through `infereportR::report_table()` and
+`figure_report()` passes every result through `report_table()` and
 binds the rows, with the layer and panel each one came from. By default
 (`p = "auto"`) it reports adjusted p-values where a result has an adjustment and
 raw ones elsewhere.
@@ -319,15 +319,15 @@ tab[tab$figure_layer == 3, c("figure_panel", "contrast", "estimate_display",
                              "interval_display", "p_display")]
 ```
 
-## The `inferplot()` bundle
+## The `report_figure()` bundle
 
-`inferplot()` adds the theme, the black-and-white scales, the raw observations,
+`report_figure()` adds the theme, the black-and-white scales, the raw observations,
 the means and the tests you name, in one call. It adds no test unless its
 procedure is named:
 
 ```{r bundle, fig.alt = "Plant weights with means, a one-way analysis of variance label and two Holm-adjusted comparisons with the control."}
 bundle <- ggplot(PlantGrowth, aes(group, weight)) +
-  inferplot(compare = "t_means_two_independent_welch", reference = "ctrl",
+  report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
             adjust = "holm", omnibus = "anova_one_way") +
   labs(x = "Group", y = "Dried weight (g)")
 bundle
@@ -335,13 +335,13 @@ bundle
 
 With `points = "jitter"` (the default) the means are drawn a little to the
 right of the raw observations, so the two never overlap. With an omnibus test,
-`inferplot()` reserves two steps of headroom above the brackets, so the omnibus
+`report_figure()` reserves two steps of headroom above the brackets, so the omnibus
 label at the top of the panel clears the top bracket label.
 
-## Precomputed results with `infereportR::stat_inference()`
+## Precomputed results with `stat_inference()`
 
-Results computed elsewhere can be drawn on an inferplotR figure with
-`infereportR::stat_inference()`, which takes a finished result and explicit
+Results computed elsewhere can be drawn on the same figure with
+`stat_inference()`, which takes a finished result and explicit
 bracket positions. Here infercalcR runs a Brunner-Munzel test of `trt2` against
 `trt1`:
 
@@ -357,19 +357,24 @@ positions <- data.frame(row_id = row_id, group1 = "trt1", group2 = "trt2",
 
 base +
   stat_means() +
-  infereportR::stat_inference(bm, positions, groups = levels(pg$group),
-                              text_size = 9 / .pt)
+  stat_inference(bm, positions, groups = levels(pg$group),
+                 text_size = 9 / .pt)
 ```
 
 The precomputed result is not part of `inference_results()`, which returns only
-what the inferplotR layers computed.
+what the inference layers computed.
+`vignette("comparison-families", package = "infereportR")` shows the same
+family drawn both ways and explains when to use which.
 
 ## Sources
 
-The calculations are those of infercalcR and the display strings those of
-infereportR (Heller, <https://github.com/CTTIR/infercalcR>,
-<https://github.com/CTTIR/infereportR>). The ggproto objects follow the public
+The calculations are those of infercalcR (Heller,
+<https://github.com/CTTIR/infercalcR>) and the display strings those of the
+reporting functions of infereportR. The ggproto objects follow the public
 ggplot2 extension guide, `vignette("extending-ggplot2", package = "ggplot2")`.
 The sleep data are those of Student (1908), *The probable error of a mean*,
 Biometrika 6(1), 1-25, as shipped with R. See the README for the full list of
 sources.
+
+```{r acknowledgments, child = "children/_acknowledgments.Rmd"}
+```

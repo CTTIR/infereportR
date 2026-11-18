@@ -34,7 +34,6 @@ resource_files:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-has_ggplot2 <- requireNamespace("ggplot2", quietly = TRUE)
 ```
 
 infereportR presents statistical results that are already finished. It turns
@@ -146,15 +145,15 @@ try(report_text(welch, template = "{mean}"))
 
 ## Annotate a plot
 
-The optional ggplot2 integration draws brackets and labels from the same
-stored result. The chunks in this section run only when ggplot2 is installed.
+The ggplot2 annotation layers draw brackets and labels from the same stored
+result.
 
 A positions data frame states where each annotation goes. It has one row per
 result row, identified by `row_id`, and a `y_position` in data units. Named
 endpoints (`group1`, `group2`) need the order of the groups on the discrete
 axis, given in `groups`.
 
-```{r plot-bracket, eval = has_ggplot2, fig.width = 6, fig.height = 4, fig.alt = "Box plots of dried plant weight for the groups ctrl, trt1 and trt2, with a bracket from ctrl to trt2 labeled with the estimate, its interval and the p-value."}
+```{r plot-bracket, fig.width = 6, fig.height = 4, fig.alt = "Box plots of dried plant weight for the groups ctrl, trt1 and trt2, with a bracket from ctrl to trt2 labeled with the estimate, its interval and the p-value."}
 library(ggplot2)
 
 positions <- data.frame(
@@ -200,6 +199,36 @@ format_p(c(0.0479, 0.0004, 0, NA))
 A p-value below the display threshold, including a stored zero, is shown as
 `p < 0.001` rather than `p = 0`. A missing p-value is shown as unavailable and
 never as nonsignificant. Infinite interval limits stay infinite.
+
+## Figures
+
+infereportR also draws figures. Its figure layer extends ggplot2 with a
+black-and-white theme for papers and slides, scales that replace color, direct
+labels, size presets and inference layers. The inference layers run an
+explicitly named infercalcR procedure on the plotted data, label the result
+with the same display strings as `report_table()` and keep the result with the
+figure. `report_figure()` adds the theme, the scales, the observations, the
+group means with their confidence intervals and the named tests in one call:
+
+```{r figure-bundle, fig.width = 5, fig.height = 3.5, dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png", fig.alt = "Dried plant weight by group in black and white: open circles for the plants, group means with 95% confidence intervals, a one-way analysis of variance label and two brackets with Holm-adjusted Welch comparisons against the control."}
+fig <- ggplot(PlantGrowth, aes(group, weight)) +
+  report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
+    adjust = "holm", omnibus = "anova_one_way") +
+  labs(x = "Group", y = "Dried weight (g)")
+fig
+figure_report(fig)[, c("figure_layer", "contrast", "estimate_display", "p_display")]
+```
+
+Four vignettes cover the figure layer:
+
+- `vignette("figures", package = "infereportR")`: the theme, scales, end
+  labels, size presets, export, modes and the APA check.
+- `vignette("inference-layers", package = "infereportR")`: the inference
+  layers, the figure builders and the results behind a figure.
+- `vignette("character-mode", package = "infereportR")`: plots on a character
+  grid in the style of 1980s home computers.
+- `vignette("figure-gallery", package = "infereportR")`: the twelve Bleisatz
+  example figures in light, dark and transparent modes.
 
 ## Next steps
 
