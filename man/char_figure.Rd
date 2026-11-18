@@ -139,20 +139,15 @@ p <- ggplot2::ggplot(d, ggplot2::aes(hour, level)) +
 
 # 1-bit black and white
 bw <- char_figure(p)
-s <- char_size(p)
+s <- char_size(bw)
 f <- tempfile(fileext = ".png")
 save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
 
-# Commodore 64 screen with READY. and cursor
-c64 <- char_figure(p, style = "c64")
-char_size(c64)
-
-# The same screen in two values, filling a half-width slide slot; print a
-# figure to draw it. Dark and glyph-only versions use mode and transparent.
+# A Commodore 64 screen in two values, filling a half-width slide slot.
+# style = "c64" gives the blue screen; mode = "dark" and transparent = TRUE
+# give the dark-slide and glyph-only versions.
 half <- char_figure(p, style = "c64bw", slot = "slide_half")
 char_size(half)
-dark <- char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark",
-                    transparent = TRUE)
 }
 \seealso{
 \code{\link[=char_grid]{char_grid()}} for the grid, \code{\link[=char_size]{char_size()}} for the matching file size,

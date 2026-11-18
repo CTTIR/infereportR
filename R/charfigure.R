@@ -101,20 +101,15 @@
 #'
 #' # 1-bit black and white
 #' bw <- char_figure(p)
-#' s <- char_size(p)
+#' s <- char_size(bw)
 #' f <- tempfile(fileext = ".png")
 #' save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
 #'
-#' # Commodore 64 screen with READY. and cursor
-#' c64 <- char_figure(p, style = "c64")
-#' char_size(c64)
-#'
-#' # The same screen in two values, filling a half-width slide slot; print a
-#' # figure to draw it. Dark and glyph-only versions use mode and transparent.
+#' # A Commodore 64 screen in two values, filling a half-width slide slot.
+#' # style = "c64" gives the blue screen; mode = "dark" and transparent = TRUE
+#' # give the dark-slide and glyph-only versions.
 #' half <- char_figure(p, style = "c64bw", slot = "slide_half")
 #' char_size(half)
-#' dark <- char_figure(p, style = "c64bw", slot = "slide_half", mode = "dark",
-#'                     transparent = TRUE)
 #' @export
 char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height = NULL,
                         charset = "ascii", case = NULL, family = NULL, width_mm = NULL,
