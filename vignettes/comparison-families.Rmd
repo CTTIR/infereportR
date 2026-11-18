@@ -203,7 +203,7 @@ computed <- base +
 computed
 ```
 
-It is the family built above: for a pair of `ctrl` and `trt1` the estimand is
+It is the family built above: for a pair of `ctrl` and `trt1` the contrast is
 `trt1` minus `ctrl`, the row identifiers are the same, and so are the adjusted
 p-values. `figure_table()` reads them back from the figure:
 
