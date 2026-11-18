@@ -216,12 +216,12 @@ test_that("figure_gallery(png = TRUE) writes PNGs at the requested dpi", {
   skip_if_not_installed("ragg")
   skip_if_not(cairo_pdf_works())
   dir <- withr::local_tempdir()
-  tab <- figure_gallery(dir, modes = "light", png = TRUE, dpi = 20)
+  tab <- figure_gallery(dir, modes = "light", png = TRUE, dpi = 72)
   expect_identical(nrow(tab), 24L)
   png <- tab[tab$format == "png", ]
   expect_true(all(file.exists(png$file)))
   widths <- vapply(png$file, png_width, numeric(1))
-  expect_near(unname(widths), png$width_mm / 25.4 * 20, 1)
+  expect_near(unname(widths), png$width_mm / 25.4 * 72, 1)
 })
 
 # Figure 11 (C64 colors) fails two_values in every mode, light, dark and both
