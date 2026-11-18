@@ -1,31 +1,31 @@
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
 StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
   required_aes = c("x", "y"),
   compute_layer = function(self, data, params, layout) {
-    .ip_compute_layer(self, data, params, layout)
+    .ir_compute_layer(self, data, params, layout)
   },
   compute_panel = function(data, scales, method = "t_mean_one_sample", conf.level = 0.95,
                            label_type = "none", offset = 0) {
     panel <- data$PANEL[1L]
-    data <- .ip_finite_xy(data)
-    if (!nrow(data)) return(.ip_means_empty())
-    discrete <- .ip_is_discrete(scales$x)
+    data <- .ir_finite_xy(data)
+    if (!nrow(data)) return(.ir_means_empty())
+    discrete <- .ir_is_discrete(scales$x)
     limits <- if (discrete) scales$x$get_limits() else NULL
     keys <- unique(data[, c("x", "group")])
     keys <- keys[order(keys$x, keys$group), , drop = FALSE]
     # A group id is appended only when several groups share one x position.
     shared_x <- anyDuplicated(keys$x) > 0L
-    spec <- .ip_spec(method, conf.level = conf.level)
+    spec <- .ir_spec(method, conf.level = conf.level)
     rows <- lapply(seq_len(nrow(keys)), function(i) {
       cell <- data[data$x == keys$x[i] & data$group == keys$group[i], , drop = FALSE]
       level <- if (discrete) as.character(limits[keys$x[i]]) else format(keys$x[i])
       if (shared_x) level <- paste0(level, ":group", keys$group[i])
-      id <- .ip_result_id("means", method, panel, level)
-      result <- .ip_means_run(spec, cell$y, id)
-      shown <- .ip_display(result)
+      id <- .ir_result_id("means", method, panel, level)
+      result <- .ir_means_run(spec, cell$y, id)
+      shown <- .ir_display(result)
       res <- infercalcR::result_data(result)
       res <- res[1L, , drop = FALSE]
       shown <- shown[match(res$row_id, shown$row_id), , drop = FALSE]
@@ -45,7 +45,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
         v <- cell[[nm]]
         if (!is.list(v) && length(unique(v)) == 1L) out[[nm]] <- v[1L]
       }
-      .ip_attach_result(out, result, id)
+      .ir_attach_result(out, result, id)
     })
     do.call(rbind, rows)
   }
@@ -53,25 +53,25 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 
 # Mean point diameter in mm (ggplot2 size units) and GeomPointrange's fixed
 # point factor in ggplot2 4.x (the point is drawn at size * 4).
-.ip_means_point <- 2.1
-.ip_pointrange_fatten <- 4
+.ir_means_point <- 2.1
+.ir_pointrange_fatten <- 4
 
 # The pointrange geom of stat_means(): a filled point of 2.1 mm (stroke 0.5,
 # as geom_point() draws it) and the interval as a heavy rule (1.1 pt). These
 # are default aesthetics, so anything the user sets or maps wins.
-.ip_geom_means <- ggplot2::ggproto("GeomInferplotMeans", ggplot2::GeomPointrange,
+.ir_geom_means <- ggplot2::ggproto("GeomFigureMeans", ggplot2::GeomPointrange,
   default_aes = ggplot2::aes(
-    colour = .ip_ink, size = .ip_means_point / .ip_pointrange_fatten,
-    linewidth = .ip_lw(.ip_rule_heavy), linetype = 1, shape = 19, fill = NA,
+    colour = .ir_ink, size = .ir_means_point / .ir_pointrange_fatten,
+    linewidth = .ir_lw(.ir_rule_heavy), linetype = 1, shape = 19, fill = NA,
     alpha = NA, stroke = 0.5)
 )
 
-.ip_means_empty <- function() {
+.ir_means_empty <- function() {
   out <- data.frame(x = double(), y = double(), ymin = double(), ymax = double(),
                     n = double(), label = character(), group = integer(),
                     stringsAsFactors = FALSE)
-  out$.ip_result <- list()
-  out$.ip_result_id <- character()
+  out$.ir_result <- list()
+  out$.ir_result_id <- character()
   out
 }
 
@@ -79,7 +79,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 # otherwise. Such a group is still recorded, as an infercalcR result whose
 # status is "undefined" and whose reason is infercalcR's own message, so the
 # figure keeps the row and the label shows the status instead of a number.
-.ip_means_run <- function(spec, y, id) {
+.ir_means_run <- function(spec, y, id) {
   if (length(y) < 2L) {
     attempt <- tryCatch(infercalcR::run_inference(spec, x = y, mu0 = 0, result_id = id),
                         error = function(e) e)
@@ -88,11 +88,11 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
                        n = length(y), status = "undefined",
                        reason = paste("infercalcR:", conditionMessage(attempt)),
                        stringsAsFactors = FALSE)
-    return(.ip_wrap(infercalcR::new_inference_result(
+    return(.ir_wrap(infercalcR::new_inference_result(
       rows, list(method_id = spec$method_id, result_id = id)),
       "infercalcR::new_inference_result()"))
   }
-  .ip_run(spec, x = y, mu0 = 0, result_id = id)
+  .ir_run(spec, x = y, mu0 = 0, result_id = id)
 }
 
 #' Means with confidence intervals
@@ -107,7 +107,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' and the interval a 1.1 pt line; `size`, `linewidth`, `shape` and `stroke`
 #' passed in `...` (or mapped) take precedence. On a discrete x scale,
 #' `offset` shifts the drawing to the right of the x position, so the summary
-#' does not cover jittered raw points ([inferplot()] uses 0.28 with
+#' does not cover jittered raw points ([report_figure()] uses 0.28 with
 #' `points = "jitter"`); it moves geometry only, not the numbers.
 #'
 #' Rows with non-finite x or y are dropped before the call, as ggplot2 does
@@ -129,12 +129,12 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
 #'   the mode of [theme_figure()].
 #' @param transparent If `TRUE`, the layer draws no background fill (open
-#'   marks stay empty); passed by [inferplot()] with `mode`.
+#'   marks stay empty); passed by [report_figure()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
 #' @return A ggplot2 layer. The computed data has columns `x` (shifted by
 #'   `offset`), `y` (the mean),
-#'   `ymin`, `ymax`, `n`, `label`, `.ip_result` (the 'infercalcR' result) and
-#'   `.ip_result_id`.
+#'   `ymin`, `ymax`, `n`, `label`, `.ir_result` (the 'infercalcR' result) and
+#'   `.ir_result_id`.
 #' @seealso [inference_results()], [figure_report()], [stat_compare()]
 #' @examples
 #' library(ggplot2)
@@ -147,19 +147,19 @@ stat_means <- function(mapping = NULL, data = NULL, geom = "pointrange",
                        conf.level = 0.95, label = c("none", "estimate", "estimate_ci"),
                        offset = 0, mode = "light", transparent = FALSE, na.rm = FALSE,
                        show.legend = NA, inherit.aes = TRUE) {
-  m <- .ip_mode(mode, transparent)
-  method <- .ip_check_method(method, "means")
-  conf.level <- .ip_check_conf_level(conf.level)
-  if (is.null(conf.level)) .ip_abort("conf.level must be a single number between 0 and 1")
-  label <- .ip_check_choice(label, c("none", "estimate", "estimate_ci"), "label")
-  .ip_check_number(offset, "offset")
-  .ip_check_flag(na.rm, "na.rm")
+  m <- .ir_mode(mode, transparent)
+  method <- .ir_check_method(method, "means")
+  conf.level <- .ir_check_conf_level(conf.level)
+  if (is.null(conf.level)) .ir_abort("conf.level must be a single number between 0 and 1")
+  label <- .ir_check_choice(label, c("none", "estimate", "estimate_ci"), "label")
+  .ir_check_number(offset, "offset")
+  .ir_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, conf.level = conf.level, label_type = label,
                    offset = offset, na.rm = na.rm),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- m$ink
-  if (identical(geom, "pointrange")) geom <- .ip_geom_means
+  if (identical(geom, "pointrange")) geom <- .ir_geom_means
   ggplot2::layer(stat = StatMeans, data = data, mapping = mapping, geom = geom,
                  position = position, show.legend = show.legend, inherit.aes = inherit.aes,
                  params = params)

@@ -1,7 +1,3 @@
-.ir_abort <- function(message, code = "invalid_input") {
-  stop(structure(list(message = message, call = NULL),
-    class = c(paste0("infereportR_", code), "error", "condition")))
-}
 .ir_string <- function(x) is.character(x) && length(x) == 1L && !is.na(x) && nzchar(x)
 .ir_digits <- function(digits, decimal_mark) {
   if (!is.numeric(digits) || length(digits) != 1L || is.na(digits) ||

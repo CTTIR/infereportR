@@ -12,7 +12,7 @@
 #' point inside the image (American Psychological Association, *Figures*,
 #' <https://apastyle.apa.org/style-grammar-guidelines/tables-figures/figures>).
 #' With `target = "paper"`, a `base_size` outside that range therefore gives a
-#' warning of class `inferplotR_apa_text_size`; the theme is still returned.
+#' warning of class `infereportR_apa_text_size`; the theme is still returned.
 #'
 #' Axis lines are 0.5 pt, ticks are 0.4 pt hairlines of 1.1 mm drawn outside
 #' the panel. Major grid lines, when requested, are black 0.4 pt dotted lines
@@ -72,35 +72,35 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
                          legend = c("inside", "right", "bottom", "none"),
                          grid = c("none", "y", "x", "xy"), border = FALSE,
                          mode = "light", transparent = FALSE) {
-  target <- .ip_check_choice(target, c("paper", "slide"), "target")
-  .ip_check_number(base_size, "base_size")
-  if (base_size <= 0) .ip_abort("base_size must be a positive number")
-  if (!is.null(base_family)) .ip_check_string(base_family, "base_family")
-  legend <- .ip_check_choice(legend, c("inside", "right", "bottom", "none"), "legend")
-  grid <- .ip_check_choice(grid, c("none", "y", "x", "xy"), "grid")
-  .ip_check_flag(border, "border")
-  m <- .ip_mode(mode, transparent)
+  target <- .ir_check_choice(target, c("paper", "slide"), "target")
+  .ir_check_number(base_size, "base_size")
+  if (base_size <= 0) .ir_abort("base_size must be a positive number")
+  if (!is.null(base_family)) .ir_check_string(base_family, "base_family")
+  legend <- .ir_check_choice(legend, c("inside", "right", "bottom", "none"), "legend")
+  grid <- .ir_check_choice(grid, c("none", "y", "x", "xy"), "grid")
+  .ir_check_flag(border, "border")
+  m <- .ir_mode(mode, transparent)
   ink <- m$ink
 
-  if (target == "paper" && (base_size < .ip_text_min_pt || base_size > .ip_text_max_pt)) {
-    .ip_warn(sprintf("base_size %s lies outside the APA range of %s to %s pt",
-                     format(base_size), format(.ip_text_min_pt), format(.ip_text_max_pt)),
+  if (target == "paper" && (base_size < .ir_text_min_pt || base_size > .ir_text_max_pt)) {
+    .ir_warn(sprintf("base_size %s lies outside the APA range of %s to %s pt",
+                     format(base_size), format(.ir_text_min_pt), format(.ir_text_max_pt)),
              "apa_text_size")
   }
   if (is.null(base_family)) base_family <- figure_font("sans")
 
   axis_title_family <- base_family
-  if (target == "slide" && isTRUE(.ip_has_font("IBM Plex Sans Condensed"))) {
+  if (target == "slide" && isTRUE(.ir_has_font("IBM Plex Sans Condensed"))) {
     axis_title_family <- "IBM Plex Sans Condensed"
   }
   margin_mm <- if (target == "slide") 1 else 2
 
-  grid_line <- ggplot2::element_line(colour = ink, linewidth = .ip_lw(.ip_rule_hair),
+  grid_line <- ggplot2::element_line(colour = ink, linewidth = .ir_lw(.ir_rule_hair),
                                      linetype = "13")
   grid_x <- if (grid %in% c("x", "xy")) grid_line else ggplot2::element_blank()
   grid_y <- if (grid %in% c("y", "xy")) grid_line else ggplot2::element_blank()
   panel_border <- if (border) {
-    ggplot2::element_rect(fill = NA, colour = ink, linewidth = .ip_lw(.ip_axis_line))
+    ggplot2::element_rect(fill = NA, colour = ink, linewidth = .ir_lw(.ir_axis_line))
   } else {
     ggplot2::element_blank()
   }
@@ -112,16 +112,16 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
   }
 
   base <- ggplot2::theme_classic(base_size = base_size, base_family = base_family,
-                                 base_line_size = .ip_lw(.ip_axis_line),
-                                 base_rect_size = .ip_lw(.ip_axis_line))
+                                 base_line_size = .ir_lw(.ir_axis_line),
+                                 base_rect_size = .ir_lw(.ir_axis_line))
 
   changes <- ggplot2::theme(
     line = ggplot2::element_line(colour = ink),
     rect = ggplot2::element_rect(fill = m$knock, colour = ink),
     text = ggplot2::element_text(family = base_family, colour = ink, size = base_size),
-    axis.line = ggplot2::element_line(colour = ink, linewidth = .ip_lw(.ip_axis_line)),
-    axis.ticks = ggplot2::element_line(colour = ink, linewidth = .ip_lw(.ip_rule_hair)),
-    axis.ticks.length = grid::unit(.ip_tick_length, "mm"),
+    axis.line = ggplot2::element_line(colour = ink, linewidth = .ir_lw(.ir_axis_line)),
+    axis.ticks = ggplot2::element_line(colour = ink, linewidth = .ir_lw(.ir_rule_hair)),
+    axis.ticks.length = grid::unit(.ir_tick_length, "mm"),
     axis.text = ggplot2::element_text(colour = ink, size = ggplot2::rel(1)),
     axis.title = ggplot2::element_text(colour = ink, size = ggplot2::rel(1),
                                        family = axis_title_family),
@@ -152,7 +152,7 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
                                        face = "bold", hjust = 0)
   )
   out <- base + changes + do.call(ggplot2::theme, legend_args)
-  out <- .ip_theme_geom_bw(out, m)
+  out <- .ir_theme_geom_bw(out, m)
   attr(out, "complete") <- TRUE
   out
 }
@@ -161,7 +161,7 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
 # default) colours geoms such as geom_smooth(); set it to the mode's ink, and
 # its paper (the fill of open shapes) to the mode's background.
 # Looked up dynamically so older ggplot2 versions keep working.
-.ip_theme_geom_bw <- function(th, m = .ip_mode()) {
+.ir_theme_geom_bw <- function(th, m = .ir_mode()) {
   ns <- asNamespace("ggplot2")
   if (!exists("element_geom", envir = ns, inherits = FALSE)) return(th)
   element_geom <- get("element_geom", envir = ns, inherits = FALSE)

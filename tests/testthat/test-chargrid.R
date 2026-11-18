@@ -117,19 +117,19 @@ test_that("axes hold their glyphs and a + at every break", {
 })
 
 test_that("layout follows the specified rows and columns", {
-  lay <- inferplotR:::.ip_cg_layout(64, 20, title = TRUE, ylab = TRUE, xlab = TRUE,
+  lay <- infereportR:::.ir_cg_layout(64, 20, title = TRUE, ylab = TRUE, xlab = TRUE,
                                     legend_rows = 1, ytick_width = 2)
   expect_identical(c(lay$r0, lay$r1, lay$ac, lay$c0, lay$c1), c(4L, 16L, 4L, 5L, 63L))
   expect_identical(c(lay$axis_row, lay$tick_row, lay$xlab_row, lay$legend_row),
                    c(17L, 18L, 19L, 20L))
-  bare <- inferplotR:::.ip_cg_layout(30, 10)
+  bare <- infereportR:::.ir_cg_layout(30, 10)
   expect_identical(c(bare$r0, bare$r1), c(1L, 8L))
-  cap <- inferplotR:::.ip_cg_layout(30, 12, caption = TRUE)
+  cap <- infereportR:::.ir_cg_layout(30, 12, caption = TRUE)
   expect_identical(cap$caption_row, 12L)
 })
 
 test_that("legend entries wrap greedily three blanks apart", {
-  wrap <- inferplotR:::.ip_cg_legend_wrap
+  wrap <- infereportR:::.ir_cg_legend_wrap
   expect_identical(wrap(c(5, 5, 5), 40), list(1:3))
   expect_identical(wrap(c(10, 10, 10), 25), list(1:2, 3L))
   expect_identical(wrap(integer(), 40), list())
@@ -146,20 +146,20 @@ test_that("range minimum maps to (r1, c0) and maximum to (r0, c1)", {
     ggplot2::labs(x = NULL, y = NULL)
   x <- char_grid(p, width = 30, height = 12)
   ylab <- as.character(ggplot2::ggplot_build(p)$layout$panel_params[[1]]$y$get_labels())
-  lay <- inferplotR:::.ip_cg_layout(30, 12, ytick_width = max(nchar(ylab[!is.na(ylab)])))
+  lay <- infereportR:::.ir_cg_layout(30, 12, ytick_width = max(nchar(ylab[!is.na(ylab)])))
   expect_identical(x$chars[lay$r1, lay$c0], "*")
   expect_identical(x$chars[lay$r0, lay$c1], "*")
-  map <- inferplotR:::.ip_cg_map(lay, c(0, 10), c(0, 5))
+  map <- infereportR:::.ir_cg_map(lay, c(0, 10), c(0, 5))
   expect_equal(map$col(c(0, 10)), c(lay$c0, lay$c1))
   expect_equal(map$row(c(0, 5)), c(lay$r1, lay$r0))
-  flat <- inferplotR:::.ip_cg_map(lay, c(1, 1), c(1, 1))
+  flat <- infereportR:::.ir_cg_map(lay, c(1, 1), c(1, 1))
   expect_equal(flat$col(1), lay$c0 + floor(0.5 * (lay$pw - 1) + 0.5))
 })
 
 # Slope glyphs and rasteriser -------------------------------------------------
 
 test_that("slope glyphs use the cell-aspect rule", {
-  slope <- inferplotR:::.ip_cg_glyph_slope
+  slope <- infereportR:::.ir_cg_glyph_slope
   expect_identical(slope(5, 0), "-")
   expect_identical(slope(-5, 0), "-")
   expect_identical(slope(0, 3), "|")
@@ -175,11 +175,11 @@ test_that("slope glyphs use the cell-aspect rule", {
 })
 
 test_that("the rasteriser visits every step with half-up rounding", {
-  cells <- inferplotR:::.ip_cg_line(1, 1, 5, 3)
+  cells <- infereportR:::.ir_cg_line(1, 1, 5, 3)
   expect_identical(nrow(cells), 5L)
   expect_identical(cells$c, c(1, 2, 3, 4, 5))
   expect_identical(cells$r, c(1, 2, 2, 3, 3))
-  expect_identical(nrow(inferplotR:::.ip_cg_line(2, 2, 2, 2)), 1L)
+  expect_identical(nrow(infereportR:::.ir_cg_line(2, 2, 2, 2)), 1L)
 })
 
 test_that("a zero-length segment draws the point glyph", {
@@ -194,7 +194,7 @@ test_that("a zero-length segment draws the point glyph", {
 
 test_that("the key scale is chosen fill, colour, shape, linetype", {
   d <- data.frame(x = 1:4, y = 1:4, a = c("p", "p", "q", "q"), b = c("u", "v", "u", "v"))
-  aes_of <- function(p) inferplotR:::.ip_cg_key_scale(ggplot2::ggplot_build(p))$aes
+  aes_of <- function(p) infereportR:::.ir_cg_key_scale(ggplot2::ggplot_build(p))$aes
   base <- ggplot2::ggplot(d, ggplot2::aes(x, y))
   expect_identical(aes_of(base + ggplot2::geom_col(ggplot2::aes(fill = a, colour = b))), "fill")
   expect_identical(aes_of(base + ggplot2::geom_point(ggplot2::aes(colour = a, shape = b))),
@@ -212,13 +212,13 @@ test_that("keys index the mapped breaks; without a key scale every key is 1", {
   d <- data.frame(x = 1:4, y = 1:4, a = c("q", "p", "q", "p"))
   b <- ggplot2::ggplot_build(ggplot2::ggplot(d, ggplot2::aes(x, y, shape = a)) +
                                ggplot2::geom_point())
-  ks <- inferplotR:::.ip_cg_key_scale(b)
-  expect_identical(inferplotR:::.ip_cg_keys(b$data[[1]], ks), c(2L, 1L, 2L, 1L))
+  ks <- infereportR:::.ir_cg_key_scale(b)
+  expect_identical(infereportR:::.ir_cg_keys(b$data[[1]], ks), c(2L, 1L, 2L, 1L))
   b0 <- ggplot2::ggplot_build(ggplot2::ggplot(d, ggplot2::aes(x, y, group = a)) +
                                 ggplot2::geom_point())
-  ks0 <- inferplotR:::.ip_cg_key_scale(b0)
+  ks0 <- infereportR:::.ir_cg_key_scale(b0)
   expect_null(ks0)
-  expect_identical(inferplotR:::.ip_cg_keys(b0$data[[1]], ks0), rep(1L, 4))
+  expect_identical(infereportR:::.ir_cg_keys(b0$data[[1]], ks0), rep(1L, 4))
   x <- char_grid(ggplot2::ggplot(d, ggplot2::aes(x, y, group = a)) + ggplot2::geom_point(),
                  width = 30, height = 12)
   expect_false(any(x$chars == "o"))
@@ -227,10 +227,10 @@ test_that("keys index the mapped breaks; without a key scale every key is 1", {
 
 test_that("list-column keys are matched with identical()", {
   b <- ggplot2::ggplot_build(fx_hatch_bars())
-  ks <- inferplotR:::.ip_cg_key_scale(b)
+  ks <- infereportR:::.ir_cg_key_scale(b)
   expect_true(is.list(b$data[[1]]$fill))
   expect_identical(ks$aes, "fill")
-  keys <- inferplotR:::.ip_cg_keys(b$data[[1]], ks)
+  keys <- infereportR:::.ir_cg_keys(b$data[[1]], ks)
   expect_identical(sort(keys), 1:3)
   arms <- c("Control", "High dose", "Low dose")
   expect_identical(ks$labels[keys], arms[as.integer(b$data[[1]]$x)])
@@ -249,7 +249,7 @@ test_that("legend symbols are the first glyph drawn per key", {
 test_that("unicode charset draws series 1 with box-drawing glyphs", {
   p <- fx_lines()
   x <- char_grid(p, width = 64, height = 20, charset = "unicode")
-  lay <- inferplotR:::.ip_cg_layout(64, 20, title = TRUE, ylab = TRUE, xlab = TRUE,
+  lay <- infereportR:::.ir_cg_layout(64, 20, title = TRUE, ylab = TRUE, xlab = TRUE,
                                     legend_rows = 1, ytick_width = 2)
   body <- plot_cells(x, lay)
   expect_true(any(body %in% c("\u2500", "\u2571", "\u2502", "\u2572")))
@@ -264,7 +264,7 @@ test_that("case = 'upper' changes strings, not glyphs", {
   u <- char_grid(p, width = 64, height = 20, case = "upper")
   expect_identical(paste(u$chars[1, 1:16], collapse = ""), "C5A AFTER INJURY")
   expect_identical(u$legend$label, c("ISS 16-24", "ISS >= 25"))
-  lay <- inferplotR:::.ip_cg_layout(64, 20, title = TRUE, ylab = TRUE, xlab = TRUE,
+  lay <- infereportR:::.ir_cg_layout(64, 20, title = TRUE, ylab = TRUE, xlab = TRUE,
                                     legend_rows = 1, ytick_width = 2)
   expect_identical(plot_cells(u, lay), plot_cells(a, lay))
   expect_identical(u$legend$symbol, a$legend$symbol)
@@ -275,22 +275,22 @@ test_that("case = 'upper' changes strings, not glyphs", {
 
 test_that("unsupported plots and bad arguments raise classed errors", {
   p <- fx_bars()
-  expect_error(char_grid(p + ggplot2::facet_wrap(~g)), class = "inferplotR_unsupported")
-  expect_error(char_grid(p + ggplot2::coord_flip()), class = "inferplotR_unsupported")
-  expect_error(char_grid(p + ggplot2::coord_polar()), class = "inferplotR_unsupported")
-  expect_error(char_grid(p, width = 10), class = "inferplotR_invalid_input")
-  expect_error(char_grid(p, height = 9), class = "inferplotR_invalid_input")
-  expect_error(char_grid(p, width = 30.5), class = "inferplotR_invalid_input")
-  expect_error(char_grid(p, charset = "ebcdic"), class = "inferplotR_invalid_input")
-  expect_error(char_grid(p, case = "lower"), class = "inferplotR_invalid_input")
-  expect_error(char_grid(data.frame(x = 1)), class = "inferplotR_invalid_input")
+  expect_error(char_grid(p + ggplot2::facet_wrap(~g)), class = "infereportR_unsupported")
+  expect_error(char_grid(p + ggplot2::coord_flip()), class = "infereportR_unsupported")
+  expect_error(char_grid(p + ggplot2::coord_polar()), class = "infereportR_unsupported")
+  expect_error(char_grid(p, width = 10), class = "infereportR_invalid_input")
+  expect_error(char_grid(p, height = 9), class = "infereportR_invalid_input")
+  expect_error(char_grid(p, width = 30.5), class = "infereportR_invalid_input")
+  expect_error(char_grid(p, charset = "ebcdic"), class = "infereportR_invalid_input")
+  expect_error(char_grid(p, case = "lower"), class = "infereportR_invalid_input")
+  expect_error(char_grid(data.frame(x = 1)), class = "infereportR_invalid_input")
 })
 
 test_that("a grid too small for the labels raises too_small", {
   long <- fx_bars() + ggplot2::scale_y_continuous(labels = function(v) paste(v, "patients per day"))
-  expect_error(char_grid(long, width = 24, height = 16), class = "inferplotR_too_small")
+  expect_error(char_grid(long, width = 24, height = 16), class = "infereportR_too_small")
   crowded <- fx_hatch_bars() + ggplot2::labs(title = "T", caption = "C")
-  expect_error(char_grid(crowded, width = 24, height = 10), class = "inferplotR_too_small")
+  expect_error(char_grid(crowded, width = 24, height = 10), class = "infereportR_too_small")
 })
 
 # Skipped layers --------------------------------------------------------------
@@ -305,11 +305,11 @@ test_that("unsupported layers are skipped with one warning", {
     invokeRestart("muffleWarning")
   })
   expect_length(caught, 1L)
-  expect_s3_class(caught[[1]], "inferplotR_skipped_layer")
+  expect_s3_class(caught[[1]], "infereportR_skipped_layer")
   expect_true(grepl("GeomBoxplot", conditionMessage(caught[[1]]), fixed = TRUE))
   expect_true(any(x$chars == "*"))
   both <- p + ggplot2::geom_violin()
-  expect_warning(char_grid(both, width = 40, height = 14), class = "inferplotR_skipped_layer")
+  expect_warning(char_grid(both, width = 40, height = 14), class = "infereportR_skipped_layer")
 })
 
 # Other handlers --------------------------------------------------------------
@@ -350,9 +350,9 @@ test_that("ribbons, smooths, steps, paths, ranges, reference lines and text draw
 })
 
 test_that("hjust strings map to numeric justification", {
-  expect_identical(inferplotR:::.ip_cg_hjust(c("left", "right", "center", "0.25")),
+  expect_identical(infereportR:::.ir_cg_hjust(c("left", "right", "center", "0.25")),
                    c(0, 1, 0.5, 0.25))
-  expect_identical(inferplotR:::.ip_cg_hjust(NULL), 0.5)
+  expect_identical(infereportR:::.ir_cg_hjust(NULL), 0.5)
 })
 
 test_that("expression labels are deparsed and captions written", {
@@ -372,7 +372,7 @@ test_that("the same input gives identical output", {
 
 test_that("format, as.character and print agree", {
   x <- char_grid(fx_means(), width = 48, height = 16)
-  expect_s3_class(x, "inferplotR_chargrid")
+  expect_s3_class(x, "infereportR_chargrid")
   expect_identical(dim(x$chars), c(16L, 48L))
   out <- format(x)
   expect_type(out, "character")
@@ -431,7 +431,7 @@ test_that("end labels are ordered by the last y value, highest on top", {
 })
 
 test_that("end label rows never collide and stay inside the plot rows", {
-  rows <- inferplotR:::.ip_cg_endlabel_rows
+  rows <- infereportR:::.ir_cg_endlabel_rows
   lay <- list(r0 = 2L, r1 = 10L)
   expect_identical(rows(c(5, 5, 5), c(1, 3, 2), lay), c(7L, 5L, 6L))
   expect_identical(rows(c(10, 10, 10), c(3, 2, 1), lay), c(8L, 9L, 10L))
@@ -467,7 +467,7 @@ test_that("plots without end labels keep their legend and an empty endlabels fra
 # ASCII transliteration -------------------------------------------------------
 
 test_that("the transliteration table maps every listed character", {
-  tr <- inferplotR:::.ip_cg_ascii
+  tr <- infereportR:::.ir_cg_ascii
   from <- c("\u2265", "\u2264", "\u00b1", "\u00d7", "\u2212", "\u2013", "\u2014",
             "\u00b5", "\u03bc", "\u03c1")
   to <- c(">=", "<=", "+/-", "x", "-", "-", "--", "u", "u", "rho")
@@ -476,8 +476,8 @@ test_that("the transliteration table maps every listed character", {
   expect_identical(tr("Caf\u00e9 \u2192 \u03b1"), "Caf? ? ?")
   expect_identical(tr(c("plain", NA)), c("plain", NA))
   expect_identical(tr(character()), character())
-  expect_false(inferplotR:::.ip_cg_unknown(from))
-  expect_true(inferplotR:::.ip_cg_unknown(c("ok", "\u03b1")))
+  expect_false(infereportR:::.ir_cg_unknown(from))
+  expect_true(infereportR:::.ir_cg_unknown(c("ok", "\u03b1")))
 })
 
 test_that("ascii grids transliterate every written string", {
@@ -501,13 +501,13 @@ test_that("ascii grids transliterate every written string", {
   expect_identical(trimws(out[[22]]), "rho x 2")
   # one warning for the one unknown character (the Greek capital delta)
   expect_length(caught, 1L)
-  expect_s3_class(caught[[1]], "inferplotR_transliterated")
+  expect_s3_class(caught[[1]], "infereportR_transliterated")
 })
 
 test_that("unknown characters warn once per call; unicode grids keep them", {
   p <- fx_bars() + ggplot2::labs(title = "\u03b1 and \u03b2", caption = "\u03b3")
   caught <- 0L
-  withCallingHandlers(char_grid(p, width = 40, height = 16), inferplotR_transliterated =
+  withCallingHandlers(char_grid(p, width = 40, height = 16), infereportR_transliterated =
                         function(w) {
                           caught <<- caught + 1L
                           invokeRestart("muffleWarning")

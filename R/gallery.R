@@ -1,11 +1,11 @@
 # The twelve Bleisatz example figures, rebuilt with the package API
-# (amendment D15, A6). The data come from .ip_gallery_data(); every figure is
+# (amendment D15, A6). The data come from .ir_gallery_data(); every figure is
 # a function of (data, mode, transparent) that returns a ggplot.
 
 # File name, slot and caption of each figure, as in the reference table
 # captions.csv of the Bleisatz gallery. Shipped as an R object (no data files in
 # the package); `name` is the file name without extension.
-.ip_gallery_captions <- data.frame(
+.ir_gallery_captions <- data.frame(
   name = c("01-timecourse-direct-labels", "02-raw-data-mean-ci", "03-stacked-hatch",
            "04-scatter-correlation", "05-ecdf-distribution", "06-forest-subgroups",
            "07-small-multiples", "08-correlation-matrix", "09-paired-slopegraph",
@@ -42,18 +42,18 @@
   stringsAsFactors = FALSE
 )
 
-.ip_gallery_presets <- c(side = "slide_side", half = "slide_half", full = "slide_full")
+.ir_gallery_presets <- c(side = "slide_side", half = "slide_half", full = "slide_full")
 
 # Counts shown under the x labels, written by infereportR.
-.ip_gallery_n <- function(n) infereportR::format_estimate(as.numeric(n))
+.ir_gallery_n <- function(n) infereportR::format_estimate(as.numeric(n))
 
 # 01 Time course with direct labels.
-.ip_gallery_01 <- function(d, mode = "light", transparent = FALSE) {
-  m <- .ip_mode(mode, transparent)
+.ir_gallery_01 <- function(d, mode = "light", transparent = FALSE) {
+  m <- .ir_mode(mode, transparent)
   ggplot2::ggplot(d$med, ggplot2::aes(.data$hours, .data$C5a, linetype = .data$severity,
                                       shape = .data$severity, label = .data$severity)) +
-    ggplot2::geom_line(linewidth = .ip_lw(.ip_data_line), colour = m$ink) +
-    ggplot2::geom_point(size = 1.6, colour = m$ink, fill = m$knock, stroke = .ip_lw(0.6)) +
+    ggplot2::geom_line(linewidth = .ir_lw(.ir_data_line), colour = m$ink) +
+    ggplot2::geom_point(size = 1.6, colour = m$ink, fill = m$knock, stroke = .ir_lw(0.6)) +
     geom_endlabel(mode = mode, transparent = transparent) +
     scale_linetype_figure() +
     scale_shape_figure(values = c(16, 21)) +
@@ -68,12 +68,12 @@
 }
 
 # 02 Raw data, mean and CI, Holm-adjusted Welch comparisons with ISS < 16.
-.ip_gallery_02 <- function(d, mode = "light", transparent = FALSE) {
+.ir_gallery_02 <- function(d, mode = "light", transparent = FALSE) {
   il6 <- d$il6
   groups <- levels(il6$group)
-  n <- .ip_gallery_n(table(il6$group))
+  n <- .ir_gallery_n(table(il6$group))
   ggplot2::ggplot(il6, ggplot2::aes(.data$group, .data$value)) +
-    inferplot("slide", compare = "t_means_two_independent_welch",
+    report_figure("slide", compare = "t_means_two_independent_welch",
               comparisons = list(groups[c(1, 2)], groups[c(1, 3)]), adjust = "holm",
               legend = "none", mode = mode, transparent = transparent) +
     ggplot2::scale_x_discrete(labels = paste0(groups, "\nn = ", n),
@@ -87,14 +87,14 @@
 }
 
 # 03 Stacked percentages with hatch fills, categories named beside the last bar.
-.ip_gallery_03 <- function(d, mode = "light", transparent = FALSE) {
-  m <- .ip_mode(mode, transparent)
+.ir_gallery_03 <- function(d, mode = "light", transparent = FALSE) {
+  m <- .ir_mode(mode, transparent)
   counts <- d$counts
   groups <- levels(counts$group)
-  ntot <- .ip_gallery_n(tapply(counts$n, counts$group, sum))
+  ntot <- .ir_gallery_n(tapply(counts$n, counts$group, sum))
   ggplot2::ggplot(counts, ggplot2::aes(.data$group, .data$n, fill = .data$outcome)) +
     ggplot2::geom_col(position = "fill", width = 0.62, colour = m$ink,
-                      linewidth = .ip_lw(.ip_axis_line)) +
+                      linewidth = .ir_lw(.ir_axis_line)) +
     stat_stacklabel(mode = mode, transparent = transparent) +
     scale_fill_hatch(patterns = c("open", "hatch", "solid"), mode = mode,
                      transparent = transparent) +
@@ -110,10 +110,10 @@
 
 # 04 Scatter with a Pearson correlation of log10 IL-6 (the stat sees the
 # transformed scale) and ISS, labeled on two lines with n.
-.ip_gallery_04 <- function(d, mode = "light", transparent = FALSE) {
-  m <- .ip_mode(mode, transparent)
+.ir_gallery_04 <- function(d, mode = "light", transparent = FALSE) {
+  m <- .ir_mode(mode, transparent)
   ggplot2::ggplot(d$sc, ggplot2::aes(.data$iss, .data$il6)) +
-    ggplot2::geom_point(shape = 1, size = 1.2, colour = m$ink, stroke = .ip_lw(0.5)) +
+    ggplot2::geom_point(shape = 1, size = 1.2, colour = m$ink, stroke = .ir_lw(0.5)) +
     stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n", label_x = 9,
                      mode = mode, transparent = transparent) +
     ggplot2::scale_y_log10(breaks = c(10, 30, 100, 300, 1000), limits = c(10, 1000)) +
@@ -123,11 +123,11 @@
 }
 
 # 05 Empirical distribution functions with median guides and curve labels.
-.ip_gallery_05 <- function(d, mode = "light", transparent = FALSE) {
-  m <- .ip_mode(mode, transparent)
+.ir_gallery_05 <- function(d, mode = "light", transparent = FALSE) {
+  m <- .ir_mode(mode, transparent)
   ttp <- data.frame(severity = d$cohort$severity, peak = d$cohort$peak)
   ggplot2::ggplot(ttp, ggplot2::aes(.data$peak, linetype = .data$severity)) +
-    ggplot2::stat_ecdf(geom = "step", linewidth = .ip_lw(.ip_data_line), colour = m$ink,
+    ggplot2::stat_ecdf(geom = "step", linewidth = .ir_lw(.ir_data_line), colour = m$ink,
                        pad = FALSE) +
     stat_ecdf_guides(curve_labels = c(0.85, 0.35), mode = mode, transparent = transparent) +
     scale_linetype_figure() +
@@ -139,9 +139,9 @@
 }
 
 # 06 Forest plot of seven Welch results (late minus early peak).
-.ip_gallery_06 <- function(d, mode = "light", transparent = FALSE) {
+.ir_gallery_06 <- function(d, mode = "light", transparent = FALSE) {
   fp <- d$fp
-  subsets <- .ip_gallery_subsets(fp)
+  subsets <- .ir_gallery_subsets(fp)
   spec <- infercalcR::method_spec("t_means_two_independent_welch")
   results <- lapply(names(subsets), function(nm) {
     s <- subsets[[nm]]
@@ -156,8 +156,8 @@
 }
 
 # 07 Small multiples: three markers, free y, end labels in the last panel only.
-.ip_gallery_07 <- function(d, mode = "light", transparent = FALSE) {
-  m <- .ip_mode(mode, transparent)
+.ir_gallery_07 <- function(d, mode = "light", transparent = FALSE) {
+  m <- .ir_mode(mode, transparent)
   med <- d$med
   markers <- c("C3a (ng/ml)", "C5a (ng/ml)", "IL-6 (pg/ml)")
   mlong <- rbind(
@@ -168,7 +168,7 @@
   last <- mlong[mlong$marker == markers[3], , drop = FALSE]
   ggplot2::ggplot(mlong, ggplot2::aes(.data$hours, .data$value, linetype = .data$severity,
                                       label = .data$severity)) +
-    ggplot2::geom_line(linewidth = .ip_lw(.ip_data_line), colour = m$ink) +
+    ggplot2::geom_line(linewidth = .ir_lw(.ir_data_line), colour = m$ink) +
     geom_endlabel(data = last, mode = mode, transparent = transparent) +
     ggplot2::facet_wrap(ggplot2::vars(.data$marker), scales = "free_y", nrow = 1) +
     scale_linetype_figure() +
@@ -183,13 +183,13 @@
 }
 
 # 08 Spearman correlation matrix without colour.
-.ip_gallery_08 <- function(d, mode = "light", transparent = FALSE) {
+.ir_gallery_08 <- function(d, mode = "light", transparent = FALSE) {
   figure_correlation_matrix(as.data.frame(d$mk), method = "correlation_spearman",
                             mode = mode, transparent = transparent)
 }
 
 # 09 Paired slopegraph with the paired t-test.
-.ip_gallery_09 <- function(d, mode = "light", transparent = FALSE) {
+.ir_gallery_09 <- function(d, mode = "light", transparent = FALSE) {
   pl <- d$pl
   long <- data.frame(id = rep(pl$id, 2), value = c(pl$admission, pl$h24),
                      time = factor(rep(c("Admission", "24 h"), each = nrow(pl)),
@@ -205,7 +205,7 @@
 }
 
 # The source plot of the character figures: the medians of figure 01.
-.ip_gallery_char_source <- function(d) {
+.ir_gallery_char_source <- function(d) {
   ggplot2::ggplot(d$med, ggplot2::aes(.data$hours, .data$C5a, shape = .data$severity,
                                       label = .data$severity)) +
     ggplot2::geom_line(ggplot2::aes(group = .data$severity)) +
@@ -215,27 +215,27 @@
 }
 
 # 10 Character mode, 1 bit.
-.ip_gallery_10 <- function(d, mode = "light", transparent = FALSE) {
-  char_figure(.ip_gallery_char_source(d), style = "bw", slot = "slide_side", mode = mode,
+.ir_gallery_10 <- function(d, mode = "light", transparent = FALSE) {
+  char_figure(.ir_gallery_char_source(d), style = "bw", slot = "slide_side", mode = mode,
               transparent = transparent)
 }
 
 # 11 Character mode in C64 colours.
-.ip_gallery_11 <- function(d, mode = "light", transparent = FALSE) {
-  char_figure(.ip_gallery_char_source(d), style = "c64", slot = "slide_half", mode = mode,
+.ir_gallery_11 <- function(d, mode = "light", transparent = FALSE) {
+  char_figure(.ir_gallery_char_source(d), style = "c64", slot = "slide_half", mode = mode,
               transparent = transparent)
 }
 
 # 12 The C64 screen in two values.
-.ip_gallery_12 <- function(d, mode = "light", transparent = FALSE) {
-  char_figure(.ip_gallery_char_source(d), style = "c64bw", slot = "slide_half", mode = mode,
+.ir_gallery_12 <- function(d, mode = "light", transparent = FALSE) {
+  char_figure(.ir_gallery_char_source(d), style = "c64bw", slot = "slide_half", mode = mode,
               transparent = transparent)
 }
 
-.ip_gallery_builders <- list(
-  .ip_gallery_01, .ip_gallery_02, .ip_gallery_03, .ip_gallery_04, .ip_gallery_05,
-  .ip_gallery_06, .ip_gallery_07, .ip_gallery_08, .ip_gallery_09, .ip_gallery_10,
-  .ip_gallery_11, .ip_gallery_12
+.ir_gallery_builders <- list(
+  .ir_gallery_01, .ir_gallery_02, .ir_gallery_03, .ir_gallery_04, .ir_gallery_05,
+  .ir_gallery_06, .ir_gallery_07, .ir_gallery_08, .ir_gallery_09, .ir_gallery_10,
+  .ir_gallery_11, .ir_gallery_12
 )
 
 #' The Bleisatz example figures
@@ -249,7 +249,7 @@
 #' | File | Slot | Built with |
 #' |---|---|---|
 #' | `01-timecourse-direct-labels` | side | [theme_figure()], [scale_linetype_figure()], [scale_shape_figure()], [geom_endlabel()] |
-#' | `02-raw-data-mean-ci` | side | [inferplot()] with Welch comparisons against ISS < 16, Holm-adjusted |
+#' | `02-raw-data-mean-ci` | side | [report_figure()] with Welch comparisons against ISS < 16, Holm-adjusted |
 #' | `03-stacked-hatch` | side | `geom_col()`, [scale_fill_hatch()], [stat_stacklabel()] |
 #' | `04-scatter-correlation` | half | [stat_correlation()] (Pearson, two-line label with n) on a log10 y axis |
 #' | `05-ecdf-distribution` | side | `stat_ecdf()`, [stat_ecdf_guides()] |
@@ -271,10 +271,10 @@
 #' The files are written as `dir/<mode>/<name>.pdf` (and `.png` with
 #' `png = TRUE`), the folder convention of [save_figure_set()]. A Bleisatz
 #' deck regenerates its `figures/` folder with
-#' `Rscript -e 'inferplotR::figure_gallery("figures")'`.
+#' `Rscript -e 'infereportR::figure_gallery("figures")'`.
 #'
 #' The captions of the gallery deck are kept in the package as the internal
-#' data frame `inferplotR:::.ip_gallery_captions` (columns `name`, `slot`,
+#' data frame `infereportR:::.ir_gallery_captions` (columns `name`, `slot`,
 #' `width_mm`, `height_mm` and `caption`); no data file is shipped.
 #'
 #' @param dir Directory that holds the mode folders; a temporary directory by
@@ -302,23 +302,23 @@
 figure_gallery <- function(dir = tempdir(),
                            modes = c("light", "dark", "light-transparent", "dark-transparent"),
                            png = FALSE) {
-  .ip_check_string(dir, "dir")
+  .ir_check_string(dir, "dir")
   if (!is.character(modes) || anyNA(modes) || anyDuplicated(modes) ||
-      !all(modes %in% .ip_set_modes)) {
-    .ip_abort(sprintf("modes must be distinct values of %s",
-                      paste0("\"", .ip_set_modes, "\"", collapse = ", ")))
+      !all(modes %in% .ir_set_modes)) {
+    .ir_abort(sprintf("modes must be distinct values of %s",
+                      paste0("\"", .ir_set_modes, "\"", collapse = ", ")))
   }
-  .ip_check_flag(png, "png")
-  if (!length(modes)) return(.ip_set_empty())
-  data <- .ip_gallery_data()
-  rows <- lapply(seq_len(nrow(.ip_gallery_captions)), function(i) {
-    builder <- .ip_gallery_builders[[i]]
+  .ir_check_flag(png, "png")
+  if (!length(modes)) return(.ir_set_empty())
+  data <- .ir_gallery_data()
+  rows <- lapply(seq_len(nrow(.ir_gallery_captions)), function(i) {
+    builder <- .ir_gallery_builders[[i]]
     build <- function(mode, transparent) builder(data, mode = mode, transparent = transparent)
-    save_figure_set(build, .ip_gallery_captions$name[[i]],
-                    preset = .ip_gallery_presets[[.ip_gallery_captions$slot[[i]]]], dir = dir,
+    save_figure_set(build, .ir_gallery_captions$name[[i]],
+                    preset = .ir_gallery_presets[[.ir_gallery_captions$slot[[i]]]], dir = dir,
                     modes = modes, png = png)
   })
-  out <- do.call(rbind, c(list(.ip_set_empty()), rows))
+  out <- do.call(rbind, c(list(.ir_set_empty()), rows))
   rownames(out) <- NULL
   out
 }

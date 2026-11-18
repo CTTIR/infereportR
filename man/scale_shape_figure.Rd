@@ -24,7 +24,7 @@ and open: \verb{16, 1, 15, 0, 17, 2, 18, 5} (circle, square, triangle, diamond).
 \details{
 The scale never recycles: if the data have more groups than there are
 shapes, building the plot fails with an error of class
-\code{inferplotR_too_many_groups}. Use direct labels or facets in that case.
+\code{infereportR_too_many_groups}. Use direct labels or facets in that case.
 }
 \examples{
 d <- data.frame(x = 1:6, y = c(2, 3, 5, 4, 6, 7), g = rep(c("A", "B"), 3))

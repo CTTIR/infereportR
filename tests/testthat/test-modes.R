@@ -72,7 +72,7 @@ line_plot <- function(mode, transparent) {
 }
 
 hatch_plot <- function(mode, transparent) {
-  ink <- .ip_mode(mode)$ink
+  ink <- .ir_mode(mode)$ink
   d <- data.frame(group = factor(rep(c("A", "B", "C"), each = 3)),
                   outcome = factor(rep(c("None", "Single", "Multiple"), 3),
                                    levels = c("None", "Single", "Multiple")),
@@ -89,7 +89,7 @@ hatch_plot <- function(mode, transparent) {
 
 compare_plot <- function(mode, transparent) {
   ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) +
-    inferplot("slide", compare = welch, reference = "ctrl", adjust = "holm",
+    report_figure("slide", compare = welch, reference = "ctrl", adjust = "holm",
               omnibus = "anova_one_way", mode = mode, transparent = transparent) +
     ggplot2::labs(x = "Group", y = "Dried weight (g)")
 }
@@ -121,13 +121,13 @@ cf_source <- function() {
 # Resolver ---------------------------------------------------------------------
 
 test_that("the resolver gives the A2 values for the four modes", {
-  expect_identical(.ip_mode("light"), list(ink = "#000000", paper = "#FFFFFF",
+  expect_identical(.ir_mode("light"), list(ink = "#000000", paper = "#FFFFFF",
                                            knock = "#FFFFFF"))
-  expect_identical(.ip_mode("dark"), list(ink = "#FFFFFF", paper = "#000000",
+  expect_identical(.ir_mode("dark"), list(ink = "#FFFFFF", paper = "#000000",
                                           knock = "#000000"))
-  expect_identical(.ip_mode("light", TRUE), list(ink = "#000000", paper = "#FFFFFF",
+  expect_identical(.ir_mode("light", TRUE), list(ink = "#000000", paper = "#FFFFFF",
                                                  knock = NA_character_))
-  expect_identical(.ip_mode("dark", TRUE), list(ink = "#FFFFFF", paper = "#000000",
+  expect_identical(.ir_mode("dark", TRUE), list(ink = "#FFFFFF", paper = "#000000",
                                                 knock = NA_character_))
 })
 
@@ -151,7 +151,7 @@ test_that("only R/modes.R compares against a mode", {
 test_that("theme backgrounds follow the mode", {
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
-    m <- .ip_mode(a$mode, a$transparent)
+    m <- .ir_mode(a$mode, a$transparent)
     th <- theme_figure(mode = a$mode, transparent = a$transparent)
     for (el in c("plot.background", "panel.background", "legend.background")) {
       fill <- ggplot2::calc_element(el, th)$fill
@@ -166,14 +166,14 @@ test_that("theme backgrounds follow the mode", {
   expect_identical(ggplot2::calc_element("plot.background", dark)$fill, "#000000")
   expect_identical(ggplot2::calc_element("panel.background", dark)$fill, "#000000")
   expect_identical(ggplot2::calc_element("legend.background", dark)$fill, "#000000")
-  expect_error(theme_figure(mode = "grey"), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(transparent = NA), class = "inferplotR_invalid_input")
+  expect_error(theme_figure(mode = "grey"), class = "infereportR_invalid_input")
+  expect_error(theme_figure(transparent = NA), class = "infereportR_invalid_input")
 })
 
 test_that("the geom element carries the mode's ink and background", {
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
-    m <- .ip_mode(a$mode, a$transparent)
+    m <- .ir_mode(a$mode, a$transparent)
     el <- ggplot2::calc_element("geom", theme_figure(mode = a$mode, transparent = a$transparent))
     skip_if(is.null(el), "ggplot2 has no geom theme element")
     expect_identical(el@ink, m$ink)
@@ -187,7 +187,7 @@ test_that("the geom element carries the mode's ink and background", {
 test_that("hatch patterns follow the mode and lose their background when transparent", {
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
-    m <- .ip_mode(a$mode, a$transparent)
+    m <- .ir_mode(a$mode, a$transparent)
     expect_identical(hatch_pattern("solid", mode = a$mode, transparent = a$transparent), m$ink)
     expect_identical(hatch_pattern("open", mode = a$mode, transparent = a$transparent), m$knock)
     for (type in c("hatch", "dots", "crosshatch", "vertical")) {
@@ -202,8 +202,8 @@ test_that("hatch patterns follow the mode and lose their background when transpa
       expect_identical(if (type == "dots") marks$fill else marks$col, m$ink)
     }
   }
-  expect_error(hatch_pattern("hatch", mode = "sepia"), class = "inferplotR_invalid_input")
-  expect_error(scale_fill_hatch(transparent = "yes"), class = "inferplotR_invalid_input")
+  expect_error(hatch_pattern("hatch", mode = "sepia"), class = "infereportR_invalid_input")
+  expect_error(scale_fill_hatch(transparent = "yes"), class = "infereportR_invalid_input")
 })
 
 # Built data per family ------------------------------------------------------
@@ -212,7 +212,7 @@ test_that("every family draws only the mode's ink and background", {
   for (fam in names(family_plots)) {
     for (nm in names(all_modes)) {
       a <- all_modes[[nm]]
-      m <- .ip_mode(a$mode, a$transparent)
+      m <- .ir_mode(a$mode, a$transparent)
       p <- family_plots[[fam]](a$mode, a$transparent)
       b <- expect_mode_colours(p, m)
       for (pat in patterns_of(b)) {
@@ -225,24 +225,24 @@ test_that("every family draws only the mode's ink and background", {
   }
 })
 
-test_that("inferplot passes the mode to every component", {
+test_that("report_figure passes the mode to every component", {
   p <- compare_plot("dark", TRUE)
   b <- ggplot2::ggplot_build(p)
   for (d in b$data) expect_identical(unique(hex(d$colour)), "#FFFFFF")
   expect_true(is.na(ggplot2::calc_element("plot.background", p$theme)$fill))
   q <- ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) +
-    inferplot(correlation = "correlation_pearson", means = FALSE, points = "plain",
+    report_figure(correlation = "correlation_pearson", means = FALSE, points = "plain",
               mode = "dark")
   for (d in ggplot2::ggplot_build(q)$data) expect_identical(unique(hex(d$colour)), "#FFFFFF")
   fit <- ggplot2::ggplot(mt, ggplot2::aes(wt, mpg)) +
     stat_correlation(method = "correlation_pearson", fit = TRUE, mode = "dark")
   expect_identical(unique(hex(layer_data_of(fit, 1)$colour)), "#FFFFFF")
   expect_identical(unique(hex(layer_data_of(fit, 2)$colour)), "#FFFFFF")
-  expect_error(inferplot(mode = "dark", transparent = 1), class = "inferplotR_invalid_input")
+  expect_error(report_figure(mode = "dark", transparent = 1), class = "infereportR_invalid_input")
 })
 
 test_that("every layer accepts mode and transparent", {
-  m <- .ip_mode("dark")
+  m <- .ir_mode("dark")
   layers <- list(
     stat_means(mode = "dark", transparent = TRUE),
     stat_compare(method = welch, reference = "ctrl", adjust = "holm", mode = "dark",
@@ -254,11 +254,11 @@ test_that("every layer accepts mode and transparent", {
       ggplot2::geom_point(colour = m$ink) + l
     expect_identical(unique(hex(layer_data_of(p, 2)$colour)), m$ink)
   }
-  expect_error(stat_means(mode = "grey"), class = "inferplotR_invalid_input")
+  expect_error(stat_means(mode = "grey"), class = "infereportR_invalid_input")
   expect_error(stat_paired(method = "t_means_paired", transparent = NA),
-               class = "inferplotR_invalid_input")
-  expect_error(stat_ecdf_guides(transparent = "no"), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(mode = "dim"), class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
+  expect_error(stat_ecdf_guides(transparent = "no"), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(mode = "dim"), class = "infereportR_invalid_input")
   expect_identical(scale_colour_ink(mode = "dark")$palette(2), rep("#FFFFFF", 2))
 })
 
@@ -267,7 +267,7 @@ test_that("every layer accepts mode and transparent", {
 test_that("char_figure bw follows the mode", {
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
-    m <- .ip_mode(a$mode, a$transparent)
+    m <- .ir_mode(a$mode, a$transparent)
     fig <- char_figure(cf_source(), mode = a$mode, transparent = a$transparent)
     expect_mode_colours(fig, m)
     th <- fig$theme
@@ -278,7 +278,7 @@ test_that("char_figure bw follows the mode", {
 })
 
 test_that("char_figure c64 keeps its colours, and only its glyphs when transparent", {
-  c64 <- unname(.ip_c64)
+  c64 <- unname(.ir_c64)
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
     fig <- char_figure(cf_source(), style = "c64", mode = a$mode, transparent = a$transparent)
@@ -301,7 +301,7 @@ test_that("char_figure c64 keeps its colours, and only its glyphs when transpare
 test_that("char_figure c64bw keeps its screen; transparent is glyphs only", {
   for (nm in names(all_modes)) {
     a <- all_modes[[nm]]
-    m <- .ip_mode(a$mode, a$transparent)
+    m <- .ir_mode(a$mode, a$transparent)
     fig <- char_figure(cf_source(), style = "c64bw", slot = "slide_half", mode = a$mode,
                        transparent = a$transparent)
     rects <- which(vapply(fig$layers, function(l) inherits(l$geom, "GeomRect") &&
@@ -347,8 +347,8 @@ test_that("save_figure writes a transparent background on request", {
   save_figure(p, f, preset = "slide_half", dpi = 100, transparent = TRUE)
   expect_identical(png_colour_type(f)$type, 6L)
   expect_error(save_figure(p, f, bg = "#000000", transparent = TRUE),
-               class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, f, transparent = "yes"), class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
+  expect_error(save_figure(p, f, transparent = "yes"), class = "infereportR_invalid_input")
 })
 
 test_that("save_figure_set writes the four mode folders with identical names", {
@@ -399,11 +399,11 @@ test_that("save_figure_set is type-stable and stays inside dir", {
   for (b in bad) {
     args <- utils::modifyList(list(build = build, name = "fig", preset = "slide_half",
                                    dir = dir), b)
-    expect_error(do.call(save_figure_set, args), class = "inferplotR_invalid_input")
+    expect_error(do.call(save_figure_set, args), class = "infereportR_invalid_input")
   }
-  expect_error(save_figure_set(build, "fig", dir = dir), class = "inferplotR_invalid_input")
+  expect_error(save_figure_set(build, "fig", dir = dir), class = "infereportR_invalid_input")
   expect_error(save_figure_set(function(mode, transparent) 1, "fig", "slide_half", dir = dir,
                                modes = "light"),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   expect_identical(list.files(dir, recursive = TRUE), character())
 })

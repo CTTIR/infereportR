@@ -1,6 +1,6 @@
-#' @title ggproto objects of inferplotR
+#' @title ggproto objects of infereportR
 #' @description
-#' The ggproto classes behind the layers of inferplotR. They are exported so
+#' The ggproto classes behind the layers of infereportR. They are exported so
 #' that other extensions can build on them; most users call the layer
 #' functions instead.
 #'
@@ -30,7 +30,7 @@
 #' @seealso [geom_endlabel()], [stat_means()], [stat_compare()], [stat_omnibus()],
 #'   [stat_correlation()], [stat_paired()], [stat_stacklabel()],
 #'   [stat_ecdf_guides()], [ggplot2::Stat]
-#' @name inferplotR-ggproto
+#' @name infereportR-ggproto
 #' @aliases StatEndlabel
 #' @export
 StatEndlabel <- ggplot2::ggproto(
@@ -46,7 +46,7 @@ StatEndlabel <- ggplot2::ggproto(
 
 # Pushes sorted positions apart to at least `gap` and shifts the result so
 # that the mean position is unchanged. Returns positions in the input order.
-.ip_spread <- function(y, gap) {
+.ir_spread <- function(y, gap) {
   n <- length(y)
   if (n < 2L) return(y)
   o <- order(y)
@@ -59,14 +59,14 @@ StatEndlabel <- ggplot2::ggproto(
 }
 
 # Height of "Ag" in npc of the current viewport, set in the label's font.
-.ip_text_height_npc <- function(fontsize, fontfamily) {
+.ir_text_height_npc <- function(fontsize, fontfamily) {
   grid::pushViewport(grid::viewport(gp = grid::gpar(fontsize = fontsize,
                                                     fontfamily = fontfamily)))
   on.exit(grid::popViewport(), add = TRUE)
   grid::convertHeight(grid::stringHeight("Ag"), "npc", valueOnly = TRUE)
 }
 
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -85,7 +85,7 @@ GeomEndlabel <- ggplot2::ggproto(
       col = ggplot2::alpha(data$colour, data$alpha),
       fontsize = data$size * ggplot2::.pt, fontfamily = family,
       fontface = data$fontface, lineheight = data$lineheight,
-      cl = "inferplotR_endlabel"
+      cl = "infereportR_endlabel"
     )
   }
 )
@@ -93,14 +93,14 @@ GeomEndlabel <- ggplot2::ggproto(
 # The labels are placed when the grob is drawn, because only then is the panel
 # viewport, and with it the text height in npc, known.
 #' @exportS3Method grid::makeContent
-makeContent.inferplotR_endlabel <- function(x) {
+makeContent.infereportR_endlabel <- function(x) {
   heights <- vapply(seq_along(x$y), function(i) {
-    .ip_text_height_npc(x$fontsize[[i]], x$fontfamily[[i]])
+    .ir_text_height_npc(x$fontsize[[i]], x$fontfamily[[i]])
   }, numeric(1))
-  y <- .ip_spread(x$y, .ip_endlabel_gap * max(heights))
+  y <- .ir_spread(x$y, .ir_endlabel_gap * max(heights))
   labels <- grid::textGrob(
     x$label,
-    x = grid::unit(x$x, "npc") + grid::unit(.ip_endlabel_nudge, "mm"),
+    x = grid::unit(x$x, "npc") + grid::unit(.ir_endlabel_nudge, "mm"),
     y = grid::unit(y, "npc"), hjust = x$hjust, vjust = x$vjust, rot = x$angle,
     gp = grid::gpar(col = x$col, fontsize = x$fontsize, fontfamily = x$fontfamily,
                     fontface = x$fontface, lineheight = x$lineheight),
@@ -175,20 +175,20 @@ makeContent.inferplotR_endlabel <- function(x) {
 geom_endlabel <- function(mapping = NULL, data = NULL, ..., hjust = 0, size = NULL,
                           family = NULL, mode = "light", transparent = FALSE, na.rm = FALSE,
                           show.legend = FALSE, inherit.aes = TRUE) {
-  ink <- .ip_mode(mode, transparent)$ink
-  .ip_check_number(hjust, "hjust")
+  ink <- .ir_mode(mode, transparent)$ink
+  .ir_check_number(hjust, "hjust")
   if (is.null(size)) {
-    size <- .ip_label_size_pt / ggplot2::.pt
+    size <- .ir_label_size_pt / ggplot2::.pt
   } else {
-    .ip_check_number(size, "size", min = 0)
-    if (size <= 0) .ip_abort("size must be a positive number")
+    .ir_check_number(size, "size", min = 0)
+    if (size <= 0) .ir_abort("size must be a positive number")
   }
-  if (is.null(family)) family <- figure_font("sans") else .ip_check_string(family, "family")
-  .ip_check_flag(na.rm, "na.rm")
+  if (is.null(family)) family <- figure_font("sans") else .ir_check_string(family, "family")
+  .ir_check_flag(na.rm, "na.rm")
   if (!(is.logical(show.legend) && length(show.legend) == 1L)) {
-    .ip_abort("show.legend must be TRUE, FALSE or NA")
+    .ir_abort("show.legend must be TRUE, FALSE or NA")
   }
-  .ip_check_flag(inherit.aes, "inherit.aes")
+  .ir_check_flag(inherit.aes, "inherit.aes")
   dots <- list(...)
   # The ink colour is the point of the layer, so a user colour is dropped.
   nms <- names(dots)

@@ -1,7 +1,7 @@
 gallery_forest_results <- function() {
-  fp <- .ip_gallery_data()$fp
+  fp <- .ir_gallery_data()$fp
   spec <- infercalcR::method_spec("t_means_two_independent_welch")
-  lapply(.ip_gallery_subsets(fp), function(s) {
+  lapply(.ir_gallery_subsets(fp), function(s) {
     infercalcR::run_inference(spec, x = fp$il6[s & fp$late == 1], y = fp$il6[s & fp$late == 0])
   })
 }
@@ -65,24 +65,24 @@ test_that("figure_forest lays text columns out from measured widths", {
   for (mode in c("light", "dark")) for (tr in c(FALSE, TRUE)) {
     pm <- figure_forest(res, mode = mode, transparent = tr)
     expect_identical(check_figure(pm)$status[check_figure(pm)$check == "two_values"], "pass")
-    expect_identical(unique(ggplot2::layer_data(pm, 3)$colour), .ip_mode(mode)$ink)
+    expect_identical(unique(ggplot2::layer_data(pm, 3)$colour), .ir_mode(mode)$ink)
   }
 })
 
 test_that("figure_forest checks its input", {
   res <- gallery_forest_results()
-  expect_error(figure_forest(list()), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(unname(res)), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(list(a = 1)), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(res, n = 1:2), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(res, overall = 9L), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(res, row = "nope"), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(res, mode = "sepia"), class = "inferplotR_invalid_input")
-  expect_error(figure_forest(res, slot = "poster"), class = "inferplotR_invalid_input")
+  expect_error(figure_forest(list()), class = "infereportR_invalid_input")
+  expect_error(figure_forest(unname(res)), class = "infereportR_invalid_input")
+  expect_error(figure_forest(list(a = 1)), class = "infereportR_invalid_input")
+  expect_error(figure_forest(res, n = 1:2), class = "infereportR_invalid_input")
+  expect_error(figure_forest(res, overall = 9L), class = "infereportR_invalid_input")
+  expect_error(figure_forest(res, row = "nope"), class = "infereportR_invalid_input")
+  expect_error(figure_forest(res, mode = "sepia"), class = "infereportR_invalid_input")
+  expect_error(figure_forest(res, slot = "poster"), class = "infereportR_invalid_input")
   two <- infercalcR::run_inference(infercalcR::method_spec("anova_one_way"),
                                    x = PlantGrowth$weight, group = PlantGrowth$group)
   if (nrow(infercalcR::result_data(two)) != 1L) {
-    expect_error(figure_forest(list(a = two)), class = "inferplotR_invalid_input")
+    expect_error(figure_forest(list(a = two)), class = "infereportR_invalid_input")
   }
   p <- figure_forest(res[2:3], overall = NULL, header = NULL, n = c(10, 20))
   expect_identical(ggplot2::layer_data(p, 5)$label, c("10", "20"))
@@ -118,6 +118,6 @@ test_that("figure_forest(xlim) sets the axis range and keeps the text columns ou
   expect_false(any(vapply(bq$data, function(d) "xintercept" %in% names(d), logical(1))))
   expect_no_warning(draws_silently(q))
   for (bad in list(1, c(2, 1), c(0, Inf), c("a", "b"), c(NA, 1))) {
-    expect_error(figure_forest(res, xlim = bad), class = "inferplotR_invalid_input")
+    expect_error(figure_forest(res, xlim = bad), class = "infereportR_invalid_input")
   }
 })

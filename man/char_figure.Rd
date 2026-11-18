@@ -22,9 +22,9 @@ char_figure(
 )
 }
 \arguments{
-\item{x}{A ggplot, converted with \code{\link[=char_grid]{char_grid()}}, or an \code{inferplotR_chargrid}
+\item{x}{A ggplot, converted with \code{\link[=char_grid]{char_grid()}}, or an \code{infereportR_chargrid}
 object. With a chargrid, \code{width}, \code{height}, \code{charset} and \code{case} must not be
-given (error of class \code{inferplotR_invalid_input}).}
+given (error of class \code{infereportR_invalid_input}).}
 
 \item{style}{\code{"bw"} (default), \code{"c64"} or \code{"c64bw"}.}
 

@@ -1,11 +1,11 @@
-# print, format and as.character methods for inferplotR objects. This is the
+# print, format and as.character methods for infereportR objects. This is the
 # only file in R/ that may write to the console.
 
 #' Print, format or coerce a character grid
 #'
-#' Methods for the `inferplotR_chargrid` objects returned by [char_grid()].
+#' Methods for the `infereportR_chargrid` objects returned by [char_grid()].
 #'
-#' @param x An `inferplotR_chargrid` object.
+#' @param x An `infereportR_chargrid` object.
 #' @param ... Unused; for compatibility with the generics.
 #' @return `format()` and `as.character()` return a character vector of `height`
 #'   lines of `width` characters each. `print()` writes those lines to the console
@@ -22,19 +22,19 @@ NULL
 
 #' @rdname chargrid-methods
 #' @export
-format.inferplotR_chargrid <- function(x, ...) {
+format.infereportR_chargrid <- function(x, ...) {
   unname(apply(x$chars, 1L, paste0, collapse = ""))
 }
 
 #' @rdname chargrid-methods
 #' @export
-as.character.inferplotR_chargrid <- function(x, ...) {
+as.character.infereportR_chargrid <- function(x, ...) {
   format(x)
 }
 
 #' @rdname chargrid-methods
 #' @export
-print.inferplotR_chargrid <- function(x, ...) {
+print.infereportR_chargrid <- function(x, ...) {
   cat(paste0(format(x), "\n"), sep = "")
   invisible(x)
 }

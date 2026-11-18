@@ -3,13 +3,13 @@
 
 # One palette factory for every scale: a fixed sequence that refuses to recycle,
 # because recycled line types or shapes would silently merge groups.
-.ip_palette <- function(values, what) {
+.ir_palette <- function(values, what) {
   force(values)
   force(what)
   max_n <- length(values)
   function(n) {
     if (n > max_n) {
-      .ip_abort(sprintf(
+      .ir_abort(sprintf(
         "%d %s are needed but at most %d are supported; use direct labels or facets instead",
         n, what, max_n), code = "too_many_groups")
     }
@@ -18,12 +18,12 @@
 }
 
 # Validates a user-supplied `values` vector for the linetype and shape scales.
-.ip_check_values <- function(values, arg = "values") {
+.ir_check_values <- function(values, arg = "values") {
   ok <- (is.character(values) || is.numeric(values)) && length(values) >= 1L &&
     !anyNA(values)
   if (ok && is.character(values)) ok <- all(nzchar(values))
   if (!ok) {
-    .ip_abort(sprintf("%s must be a non-empty character or numeric vector without NA", arg))
+    .ir_abort(sprintf("%s must be a non-empty character or numeric vector without NA", arg))
   }
   invisible(values)
 }
@@ -37,7 +37,7 @@
 #'
 #' The scale never recycles: if the data have more groups than there are line
 #' types, building the plot fails with an error of class
-#' `inferplotR_too_many_groups`. Use direct labels or facets in that case.
+#' `infereportR_too_many_groups`. Use direct labels or facets in that case.
 #'
 #' @param ... Arguments passed on to [ggplot2::discrete_scale()], for example
 #'   `name`, `labels`, `breaks` or `guide`.
@@ -54,12 +54,12 @@
 #' @export
 scale_linetype_figure <- function(..., values = NULL) {
   if (is.null(values)) {
-    values <- .ip_linetypes
+    values <- .ir_linetypes
   } else {
-    .ip_check_values(values)
+    .ir_check_values(values)
   }
   ggplot2::discrete_scale(aesthetics = "linetype",
-                          palette = .ip_palette(values, "line types"), ...)
+                          palette = .ir_palette(values, "line types"), ...)
 }
 
 #' Point shape scale for black-and-white figures
@@ -70,7 +70,7 @@ scale_linetype_figure <- function(..., values = NULL) {
 #'
 #' The scale never recycles: if the data have more groups than there are
 #' shapes, building the plot fails with an error of class
-#' `inferplotR_too_many_groups`. Use direct labels or facets in that case.
+#' `infereportR_too_many_groups`. Use direct labels or facets in that case.
 #'
 #' @inheritParams scale_linetype_figure
 #' @param values `NULL` (default) for the built-in sequence, or a numeric or
@@ -85,12 +85,12 @@ scale_linetype_figure <- function(..., values = NULL) {
 #' @export
 scale_shape_figure <- function(..., values = NULL) {
   if (is.null(values)) {
-    values <- .ip_shapes
+    values <- .ir_shapes
   } else {
-    .ip_check_values(values)
+    .ir_check_values(values)
   }
   ggplot2::discrete_scale(aesthetics = "shape",
-                          palette = .ip_palette(values, "shapes"), ...)
+                          palette = .ir_palette(values, "shapes"), ...)
 }
 
 #' Ink-only color scale
@@ -117,10 +117,10 @@ scale_shape_figure <- function(..., values = NULL) {
 #'   scale_shape_figure(name = "Group")
 #' @export
 scale_colour_ink <- function(..., aesthetics = "colour", mode = "light") {
-  ink <- .ip_mode(mode)$ink
+  ink <- .ir_mode(mode)$ink
   if (!is.character(aesthetics) || !length(aesthetics) || anyNA(aesthetics) ||
       !all(nzchar(aesthetics))) {
-    .ip_abort("aesthetics must be a non-empty character vector without NA")
+    .ir_abort("aesthetics must be a non-empty character vector without NA")
   }
   ggplot2::discrete_scale(aesthetics = aesthetics,
                           palette = function(n) rep(ink, n), ...)

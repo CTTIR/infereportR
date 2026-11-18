@@ -1,4 +1,4 @@
-lactate_long <- function(pl = .ip_gallery_data()$pl) {
+lactate_long <- function(pl = .ir_gallery_data()$pl) {
   data.frame(id = rep(pl$id, 2), value = c(pl$admission, pl$h24),
              time = factor(rep(c("Admission", "24 h"), each = nrow(pl)),
                            levels = c("Admission", "24 h")))
@@ -17,7 +17,7 @@ test_that("stat_paired reproduces the gallery oracle (figure 09), after minus be
   res <- inference_results(p)
   expect_length(res, 1L)
   rd <- infercalcR::result_data(res[[1]])
-  pl <- .ip_gallery_data()$pl
+  pl <- .ir_gallery_data()$pl
   expect_equal(rd$estimate, mean(pl$h24 - pl$admission))
   expect_lt(rd$estimate, 0)
   shown <- infereportR::report_table(res[[1]])
@@ -39,18 +39,18 @@ test_that("stat_paired reproduces the gallery oracle (figure 09), after minus be
 })
 
 test_that("stat_paired needs a method, two x levels and drops incomplete ids", {
-  expect_error(stat_paired(), class = "inferplotR_invalid_input")
+  expect_error(stat_paired(), class = "infereportR_invalid_input")
   expect_error(stat_paired(method = "t_means_two_independent_welch"),
-               class = "inferplotR_unsupported")
+               class = "infereportR_unsupported")
   three <- lactate_long()
   three$time <- factor(rep(c("a", "b", "c"), length.out = nrow(three)))
   expect_error(ggplot2::ggplot_build(paired_plot(three, method = "t_means_paired")),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   cont <- lactate_long()
   cont$time <- as.integer(cont$time)
   expect_error(ggplot2::ggplot_build(
     ggplot2::ggplot(cont, ggplot2::aes(time, value, id = id)) +
-      stat_paired(method = "t_means_paired")), class = "inferplotR_invalid_input")
+      stat_paired(method = "t_means_paired")), class = "infereportR_invalid_input")
   d <- lactate_long()
   d$value[d$id == 3 & d$time == "24 h"] <- NA
   d <- d[!(d$id == 5 & d$time == "Admission"), ]
@@ -59,19 +59,19 @@ test_that("stat_paired needs a method, two x levels and drops incomplete ids", {
   expect_equal(infercalcR::result_data(res[[1]])$n, 11)
   dup <- rbind(lactate_long(), lactate_long()[1, ])
   expect_error(ggplot2::ggplot_build(paired_plot(dup, method = "t_means_paired")),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
 })
 
 test_that("stat_paired runs the signed-rank method and reports infercalcR failures", {
   # The gallery data has tied differences: the exact test refuses them.
   expect_error(ggplot2::ggplot_build(paired_plot(method = "signed_rank_wilcoxon")),
-               class = "inferplotR_calculation_failed")
+               class = "infereportR_calculation_failed")
   p <- paired_plot(method = "signed_rank_wilcoxon", method_args = list(exact = FALSE))
   d <- layer_data_of(p)
   expect_true(startsWith(d$label[d$part == "label"], "Pseudomedian change\n"))
   expect_identical(figure_report(p)$method_id, "signed_rank_wilcoxon")
   expect_error(stat_paired(method = "t_means_paired", method_args = list(x = 1)),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
 })
 
 test_that("stat_paired draws one grob tree, silently, in two values", {
@@ -88,5 +88,5 @@ test_that("stat_paired draws one grob tree, silently, in two values", {
   none <- layer_data_of(paired_plot(method = "t_means_paired", label = "none"))
   expect_identical(none$label[none$part == "label"], "")
   dark <- layer_data_of(paired_plot(method = "t_means_paired", mode = "dark"))
-  expect_identical(unique(dark$colour), .ip_mode("dark")$ink)
+  expect_identical(unique(dark$colour), .ir_mode("dark")$ink)
 })

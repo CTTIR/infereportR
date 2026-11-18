@@ -38,7 +38,7 @@ Bleisatz slot (all 44 mm high): \code{"slide_full"} (134 mm), \code{"slide_side"
 \tabular{lll}{
    File \tab Slot \tab Built with \cr
    \code{01-timecourse-direct-labels} \tab side \tab \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}}, \code{\link[=geom_endlabel]{geom_endlabel()}} \cr
-   \code{02-raw-data-mean-ci} \tab side \tab \code{\link[=inferplot]{inferplot()}} with Welch comparisons against ISS < 16, Holm-adjusted \cr
+   \code{02-raw-data-mean-ci} \tab side \tab \code{\link[=report_figure]{report_figure()}} with Welch comparisons against ISS < 16, Holm-adjusted \cr
    \code{03-stacked-hatch} \tab side \tab \code{geom_col()}, \code{\link[=scale_fill_hatch]{scale_fill_hatch()}}, \code{\link[=stat_stacklabel]{stat_stacklabel()}} \cr
    \code{04-scatter-correlation} \tab half \tab \code{\link[=stat_correlation]{stat_correlation()}} (Pearson, two-line label with n) on a log10 y axis \cr
    \code{05-ecdf-distribution} \tab side \tab \code{stat_ecdf()}, \code{\link[=stat_ecdf_guides]{stat_ecdf_guides()}} \cr
@@ -62,10 +62,10 @@ exist. Statistics come from 'infercalcR' and displayed numbers from
 The files are written as \verb{dir/<mode>/<name>.pdf} (and \code{.png} with
 \code{png = TRUE}), the folder convention of \code{\link[=save_figure_set]{save_figure_set()}}. A Bleisatz
 deck regenerates its \verb{figures/} folder with
-\verb{Rscript -e 'inferplotR::figure_gallery("figures")'}.
+\verb{Rscript -e 'infereportR::figure_gallery("figures")'}.
 
 The captions of the gallery deck are kept in the package as the internal
-data frame \code{inferplotR:::.ip_gallery_captions} (columns \code{name}, \code{slot},
+data frame \code{infereportR:::.ir_gallery_captions} (columns \code{name}, \code{slot},
 \code{width_mm}, \code{height_mm} and \code{caption}); no data file is shipped.
 }
 \examples{

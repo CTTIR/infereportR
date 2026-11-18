@@ -35,7 +35,7 @@ every numeric column.}
 }
 \value{
 A ggplot with \code{coord_fixed()}. Its value layer carries
-\code{.ip_result}, so \code{\link[=inference_results]{inference_results()}} returns one result per pair.
+\code{.ir_result}, so \code{\link[=inference_results]{inference_results()}} returns one result per pair.
 }
 \description{
 Runs one explicitly named correlation procedure of 'infercalcR' for every

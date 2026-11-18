@@ -1,19 +1,19 @@
-bad <- "inferplotR_invalid_input"
+bad <- "infereportR_invalid_input"
 
 bar_plot <- function(...) {
   d <- data.frame(g = c("a", "b", "c"), v = c(3, 5, 2))
   ggplot2::ggplot(d, ggplot2::aes(g, v, fill = g)) +
-    ggplot2::geom_col(colour = .ip_ink) +
+    ggplot2::geom_col(colour = .ir_ink) +
     scale_fill_hatch(...)
 }
 
 test_that("solid and open give the two colour tokens", {
-  expect_identical(hatch_pattern("solid"), .ip_ink)
-  expect_identical(hatch_pattern("open"), .ip_paper)
+  expect_identical(hatch_pattern("solid"), .ir_ink)
+  expect_identical(hatch_pattern("open"), .ir_paper)
 })
 
 test_that("every other type is a grid tiling pattern", {
-  for (type in setdiff(.ip_hatch_types, c("solid", "open"))) {
+  for (type in setdiff(.ir_hatch_types, c("solid", "open"))) {
     p <- hatch_pattern(type)
     expect_s3_class(p, "GridPattern")
     expect_s3_class(p, "GridTilingPattern")
@@ -29,18 +29,18 @@ test_that("tile geometry follows the specification", {
   expect_equal(grid::convertUnit(straight$width, "mm", valueOnly = TRUE), 2)
   expect_equal(grid::convertUnit(hatch_pattern("dots", spacing = 3)$height, "mm",
                                  valueOnly = TRUE), 3)
-  segs <- .ip_hatch_segments("crosshatch")
+  segs <- .ir_hatch_segments("crosshatch")
   expect_length(segs$x0, 6L)
-  expect_identical(.ip_hatch_segments("backhatch")$x0, 1 - .ip_hatch_segments("hatch")$x0)
+  expect_identical(.ir_hatch_segments("backhatch")$x0, 1 - .ir_hatch_segments("hatch")$x0)
 })
 
 test_that("default spacing is the 1.4 mm slide token", {
-  expect_identical(.ip_hatch_spacing, 1.4)
+  expect_identical(.ir_hatch_spacing, 1.4)
   # The defaults are written as literals so the usage is readable; they must
   # stay equal to the tokens.
-  expect_identical(eval(formals(hatch_pattern)$spacing), .ip_hatch_spacing)
-  expect_identical(eval(formals(scale_fill_hatch)$spacing), .ip_hatch_spacing)
-  expect_identical(eval(formals(scale_fill_hatch)$patterns), .ip_hatches)
+  expect_identical(eval(formals(hatch_pattern)$spacing), .ir_hatch_spacing)
+  expect_identical(eval(formals(scale_fill_hatch)$spacing), .ir_hatch_spacing)
+  expect_identical(eval(formals(scale_fill_hatch)$patterns), .ir_hatches)
   mm <- function(p) grid::convertUnit(p$width, "mm", valueOnly = TRUE)
   expect_equal(mm(hatch_pattern("horizontal")), 1.4)
   expect_equal(mm(hatch_pattern("hatch")), 1.4 * sqrt(2))
@@ -55,13 +55,13 @@ test_that("scale_fill_hatch palette returns the documented list", {
   fills <- pal(6)
   expect_type(fills, "list")
   expect_length(fills, 6L)
-  expect_identical(fills[[1]], .ip_ink)
-  expect_identical(fills[[2]], .ip_paper)
+  expect_identical(fills[[1]], .ir_ink)
+  expect_identical(fills[[2]], .ir_paper)
   for (i in 3:6) expect_s3_class(fills[[i]], "GridPattern")
-  expect_error(pal(7), class = "inferplotR_too_many_groups")
+  expect_error(pal(7), class = "infereportR_too_many_groups")
   custom <- scale_fill_hatch(patterns = c("vertical", "open"))$palette(2)
   expect_s3_class(custom[[1]], "GridPattern")
-  expect_identical(custom[[2]], .ip_paper)
+  expect_identical(custom[[2]], .ir_paper)
 })
 
 test_that("scale_fill_hatch fills a 3-bar plot with a list column", {
@@ -70,8 +70,8 @@ test_that("scale_fill_hatch fills a 3-bar plot with a list column", {
   fill <- b$data[[1]]$fill
   expect_type(fill, "list")
   expect_length(fill, 3L)
-  expect_identical(fill[[1]], .ip_ink)
-  expect_identical(fill[[2]], .ip_paper)
+  expect_identical(fill[[1]], .ir_ink)
+  expect_identical(fill[[2]], .ir_paper)
   expect_s3_class(fill[[3]], "GridPattern")
   expect_s3_class(ggplot2::ggplotGrob(p), "gtable")
 })
@@ -100,7 +100,7 @@ test_that("a hatched plot renders to PNG with ragg", {
   expect_gt(file.size(file), 1024)
 })
 
-test_that("invalid hatch arguments raise inferplotR_invalid_input", {
+test_that("invalid hatch arguments raise infereportR_invalid_input", {
   expect_error(hatch_pattern("zigzag"), class = bad)
   expect_error(hatch_pattern(), class = bad)
   expect_error(hatch_pattern(c("hatch", "dots")), class = bad)

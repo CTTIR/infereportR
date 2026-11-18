@@ -11,7 +11,7 @@ inference_results(plot)
 }
 \value{
 A named list of 'infercalcR' result objects, named by their result
-ids (\code{"inferplotR:<stat>:<method>:panel<PANEL>"}, plus the x level for
+ids (\code{"infereportR:<stat>:<method>:panel<PANEL>"}, plus the x level for
 \code{\link[=stat_means]{stat_means()}}), in layer then panel order and without duplicates. A plot
 without inference layers gives \code{list()}.
 }
@@ -31,5 +31,5 @@ infercalcR::result_data(res[[1]])[, c("statistic", "df", "p.value")]
 }
 \seealso{
 \code{\link[=figure_report]{figure_report()}}, \code{\link[infercalcR:result_data]{infercalcR::result_data()}},
-\code{\link[infereportR:report_text]{infereportR::report_text()}}
+\code{\link[=report_text]{report_text()}}
 }

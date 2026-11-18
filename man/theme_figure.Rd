@@ -56,7 +56,7 @@ and the caption use \code{rel(1)}, the subtitle \code{rel(1)} and the title
 point inside the image (American Psychological Association, \emph{Figures},
 \url{https://apastyle.apa.org/style-grammar-guidelines/tables-figures/figures}).
 With \code{target = "paper"}, a \code{base_size} outside that range therefore gives a
-warning of class \code{inferplotR_apa_text_size}; the theme is still returned.
+warning of class \code{infereportR_apa_text_size}; the theme is still returned.
 
 Axis lines are 0.5 pt, ticks are 0.4 pt hairlines of 1.1 mm drawn outside
 the panel. Major grid lines, when requested, are black 0.4 pt dotted lines

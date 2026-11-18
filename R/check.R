@@ -3,7 +3,7 @@
 #' Builds the plot once and reports where it departs from the rules of the
 #' APA Style page on figures (American Psychological Association, *Figures*,
 #' 7th ed., <https://apastyle.apa.org/style-grammar-guidelines/tables-figures/figures>)
-#' and from inferplotR's own black-and-white rule. The rules it implements,
+#' and from infereportR's own black-and-white rule. The rules it implements,
 #' as worded there: "use a sans serif font" of "between 8 and 14 points" for
 #' text in the image; place the legend within the figure's borders, in title
 #' case; label axes clearly and give units of measurement; put the figure
@@ -21,7 +21,7 @@
 #'   \item{`font_family`}{(APA 7) `fail` if a resolved family looks like a
 #'     serif face (matches "serif", "times", "georgia", "garamond",
 #'     "palatino" or "cambria" but not "sans").}
-#'   \item{`two_values`}{(inferplotR) every `colour` and `fill` value in the
+#'   \item{`two_values`}{(infereportR) every `colour` and `fill` value in the
 #'     built layer data, and the colors of drawn theme lines, rectangles and
 #'     text, is black, white, `NA`, fully transparent or a grid pattern.
 #'     This holds in every mode: light (black on white), dark (white on
@@ -54,10 +54,10 @@
 #'   same rules in this version: the slide theme shares the paper text range.
 #' @return A `data.frame` with exactly 6 rows (`text_size`, `font_family`,
 #'   `two_values`, `axis_labels`, `embedded_title`, `legend_case`) and the
-#'   character columns `check`, `source` (`"APA 7"` or `"inferplotR"`),
+#'   character columns `check`, `source` (`"APA 7"` or `"infereportR"`),
 #'   `status` (`"pass"`, `"fail"` or `"note"`) and `detail` (`""` when there
 #'   is nothing to report).
-#' @seealso [theme_figure()], [inferplot()], [save_figure()]
+#' @seealso [theme_figure()], [report_figure()], [save_figure()]
 #' @examples
 #' library(ggplot2)
 #' # A default ggplot is not black and white (grey panel, white grid lines,
@@ -73,46 +73,46 @@
 #' check_figure(q)
 #' @export
 check_figure <- function(plot, target = c("paper", "slide")) {
-  .ip_check_plot(plot)
-  target <- .ip_check_choice(target, c("paper", "slide"), "target")
+  .ir_check_plot(plot)
+  target <- .ir_check_choice(target, c("paper", "slide"), "target")
   b <- ggplot2::ggplot_build(plot)
-  theme <- .ip_full_theme(plot)
-  labs <- .ip_plot_labels(plot)
-  legend <- .ip_legends(b, labs, theme)
-  elements <- .ip_drawn_text(b, theme, labs, legend)
-  layers <- .ip_text_layers(plot, b)
+  theme <- .ir_full_theme(plot)
+  labs <- .ir_plot_labels(plot)
+  legend <- .ir_legends(b, labs, theme)
+  elements <- .ir_drawn_text(b, theme, labs, legend)
+  layers <- .ir_text_layers(plot, b)
 
   rows <- list(
-    .ip_check_text_size(theme, elements, layers),
-    .ip_check_font_family(theme, elements, layers),
-    .ip_check_two_values(b, theme, elements, legend),
-    .ip_check_axis_labels(b, labs),
-    .ip_check_title(labs),
-    .ip_check_legend_case(legend)
+    .ir_check_text_size(theme, elements, layers),
+    .ir_check_font_family(theme, elements, layers),
+    .ir_check_two_values(b, theme, elements, legend),
+    .ir_check_axis_labels(b, labs),
+    .ir_check_title(labs),
+    .ir_check_legend_case(legend)
   )
   data.frame(
     check = c("text_size", "font_family", "two_values", "axis_labels", "embedded_title",
               "legend_case"),
-    source = c("APA 7", "APA 7", "inferplotR", "APA 7", "APA 7", "APA 7"),
+    source = c("APA 7", "APA 7", "infereportR", "APA 7", "APA 7", "APA 7"),
     status = vapply(rows, function(r) r[["status"]], character(1)),
     detail = vapply(rows, function(r) r[["detail"]], character(1)),
     stringsAsFactors = FALSE
   )
 }
 
-.ip_result_row <- function(status, offenders = character()) {
+.ir_result_row <- function(status, offenders = character()) {
   list(status = status, detail = paste(offenders, collapse = "; "))
 }
 
 # The plot theme if complete, else completed by the session default theme.
-.ip_full_theme <- function(plot) {
+.ir_full_theme <- function(plot) {
   th <- plot$theme
   if (isTRUE(attr(th, "complete"))) return(th)
   if (is.null(th) || !length(th)) return(ggplot2::theme_get())
   ggplot2::theme_get() + th
 }
 
-.ip_plot_labels <- function(plot) {
+.ir_plot_labels <- function(plot) {
   ns <- asNamespace("ggplot2")
   if (exists("get_labs", envir = ns, inherits = FALSE)) {
     get("get_labs", envir = ns, inherits = FALSE)(plot)
@@ -121,14 +121,14 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   }
 }
 
-.ip_has_text <- function(x) {
+.ir_has_text <- function(x) {
   if (is.null(x) || inherits(x, "waiver")) return(FALSE)
   if (is.character(x)) return(length(x) > 0L && !all(is.na(x)) && any(nzchar(x[!is.na(x)])))
   # Expressions and calls are drawn as plotmath.
   is.language(x) || is.expression(x)
 }
 
-.ip_label_text <- function(x) {
+.ir_label_text <- function(x) {
   if (is.character(x)) return(paste(x[!is.na(x)], collapse = " "))
   paste(deparse(x), collapse = " ")
 }
@@ -136,7 +136,7 @@ check_figure <- function(plot, target = c("paper", "slide")) {
 # The legends that will be drawn: one entry per non-position aesthetic with a
 # guide, with its title and key labels. ggplot2 reports no guide data for an
 # aesthetic whose guide is "none"; a theme legend position "none" hides all.
-.ip_legends <- function(b, labs, theme) {
+.ir_legends <- function(b, labs, theme) {
   if (identical(theme[["legend.position"]], "none")) return(list())
   scales <- b$plot$scales$scales
   aesthetics <- unique(unlist(lapply(scales, function(s) {
@@ -158,13 +158,13 @@ check_figure <- function(plot, target = c("paper", "slide")) {
 }
 
 # Theme text elements that will be drawn, by name.
-.ip_drawn_text <- function(b, theme, labs, legend) {
+.ir_drawn_text <- function(b, theme, labs, legend) {
   names <- c("axis.text.x.bottom", "axis.text.y.left")
-  if (.ip_has_text(labs$x)) names <- c(names, "axis.title.x.bottom")
-  if (.ip_has_text(labs$y)) names <- c(names, "axis.title.y.left")
+  if (.ir_has_text(labs$x)) names <- c(names, "axis.title.x.bottom")
+  if (.ir_has_text(labs$y)) names <- c(names, "axis.title.y.left")
   if (length(legend)) {
     names <- c(names, "legend.text")
-    if (any(vapply(legend, function(l) .ip_has_text(l$title), logical(1)))) {
+    if (any(vapply(legend, function(l) .ir_has_text(l$title), logical(1)))) {
       names <- c(names, "legend.title")
     }
   }
@@ -175,7 +175,7 @@ check_figure <- function(plot, target = c("paper", "slide")) {
     if (length(facet$params$rows)) names <- c(names, "strip.text.y.right")
   }
   for (what in c("title", "subtitle", "caption")) {
-    if (.ip_has_text(labs[[what]])) names <- c(names, paste0("plot.", what))
+    if (.ir_has_text(labs[[what]])) names <- c(names, paste0("plot.", what))
   }
   drawn <- vapply(names, function(n) {
     !inherits(ggplot2::calc_element(n, theme), "element_blank")
@@ -184,7 +184,7 @@ check_figure <- function(plot, target = c("paper", "slide")) {
 }
 
 # Text-drawing layers with their built data.
-.ip_text_layers <- function(plot, b) {
+.ir_text_layers <- function(plot, b) {
   out <- list()
   for (i in seq_along(plot$layers)) {
     geom <- plot$layers[[i]]$geom
@@ -198,17 +198,17 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   out
 }
 
-.ip_fmt_pt <- function(x) paste0(format(signif(x, 3)), " pt")
+.ir_fmt_pt <- function(x) paste0(format(signif(x, 3)), " pt")
 
-.ip_check_text_size <- function(theme, elements, layers) {
+.ir_check_text_size <- function(theme, elements, layers) {
   ok <- function(pt) {
-    pt >= .ip_text_min_pt - 1e-8 & pt <= .ip_text_max_pt + 1e-8
+    pt >= .ir_text_min_pt - 1e-8 & pt <= .ir_text_max_pt + 1e-8
   }
   offenders <- character()
   for (n in elements) {
     size <- ggplot2::calc_element(n, theme)$size
     if (is.numeric(size) && length(size) == 1L && is.finite(size) && !ok(size)) {
-      offenders <- c(offenders, paste(n, .ip_fmt_pt(size)))
+      offenders <- c(offenders, paste(n, .ir_fmt_pt(size)))
     }
   }
   for (l in layers) {
@@ -216,39 +216,39 @@ check_figure <- function(plot, target = c("paper", "slide")) {
     pt <- unique(l$data$size[is.finite(l$data$size)]) * ggplot2::.pt
     bad <- pt[!ok(pt)]
     if (length(bad)) {
-      offenders <- c(offenders, paste(l$name, paste(.ip_fmt_pt(bad), collapse = ", ")))
+      offenders <- c(offenders, paste(l$name, paste(.ir_fmt_pt(bad), collapse = ", ")))
     }
   }
-  .ip_result_row(if (length(offenders)) "fail" else "pass", offenders)
+  .ir_result_row(if (length(offenders)) "fail" else "pass", offenders)
 }
 
-.ip_is_serif <- function(family) {
+.ir_is_serif <- function(family) {
   grepl("serif|times|georgia|garamond|palatino|cambria", family, ignore.case = TRUE) &
     !grepl("sans", family, ignore.case = TRUE)
 }
 
-.ip_check_font_family <- function(theme, elements, layers) {
+.ir_check_font_family <- function(theme, elements, layers) {
   offenders <- character()
   for (n in elements) {
     family <- ggplot2::calc_element(n, theme)$family
     if (is.character(family) && length(family) == 1L && !is.na(family) &&
-        .ip_is_serif(family)) {
+        .ir_is_serif(family)) {
       offenders <- c(offenders, sprintf("%s \"%s\"", n, family))
     }
   }
   for (l in layers) {
     family <- unique(as.character(l$data$family))
-    family <- family[!is.na(family) & .ip_is_serif(family)]
+    family <- family[!is.na(family) & .ir_is_serif(family)]
     if (length(family)) {
       offenders <- c(offenders, sprintf("%s %s", l$name,
                                         paste0("\"", family, "\"", collapse = ", ")))
     }
   }
-  .ip_result_row(if (length(offenders)) "fail" else "pass", offenders)
+  .ir_result_row(if (length(offenders)) "fail" else "pass", offenders)
 }
 
 # Colours that are not black, white, missing or fully transparent, as hex codes.
-.ip_off_colours <- function(values) {
+.ir_off_colours <- function(values) {
   if (is.list(values)) {
     values <- values[!vapply(values, function(v) inherits(v, "GridPattern"), logical(1))]
     atomic <- vapply(values, function(v) is.atomic(v) && length(v) == 1L, logical(1))
@@ -261,8 +261,8 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   if (!length(values)) return(character())
   rgba <- tryCatch(grDevices::col2rgb(values, alpha = TRUE), error = function(e) NULL)
   if (is.null(rgba)) return(as.character(values))
-  ink <- grDevices::col2rgb(.ip_ink, alpha = TRUE)[, 1L]
-  paper <- grDevices::col2rgb(.ip_paper, alpha = TRUE)[, 1L]
+  ink <- grDevices::col2rgb(.ir_ink, alpha = TRUE)[, 1L]
+  paper <- grDevices::col2rgb(.ir_paper, alpha = TRUE)[, 1L]
   keep <- vapply(seq_len(ncol(rgba)), function(j) {
     v <- rgba[, j]
     !(v[[4L]] == 0 || all(v == ink) || all(v == paper))
@@ -276,12 +276,12 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   unique(hex)
 }
 
-.ip_check_two_values <- function(b, theme, elements, legend) {
+.ir_check_two_values <- function(b, theme, elements, legend) {
   offenders <- character()
   for (i in seq_along(b$data)) {
     d <- b$data[[i]]
     for (column in intersect(c("colour", "fill"), names(d))) {
-      off <- .ip_off_colours(d[[column]])
+      off <- .ir_off_colours(d[[column]])
       if (length(off)) {
         offenders <- c(offenders, sprintf("layer %d %s %s", i, column,
                                           paste(off, collapse = ", ")))
@@ -300,53 +300,53 @@ check_figure <- function(plot, target = c("paper", "slide")) {
     if (is.null(el) || inherits(el, "element_blank")) next
     fields <- if (n %in% rects) c("colour", "fill") else "colour"
     for (f in fields) {
-      off <- .ip_off_colours(el[[f]])
+      off <- .ir_off_colours(el[[f]])
       if (length(off)) offenders <- c(offenders, sprintf("%s %s %s", n, f,
                                                          paste(off, collapse = ", ")))
     }
   }
-  .ip_result_row(if (length(offenders)) "fail" else "pass", offenders)
+  .ir_result_row(if (length(offenders)) "fail" else "pass", offenders)
 }
 
-.ip_has_unit <- function(text) {
+.ir_has_unit <- function(text) {
   grepl("\\(.*\\)|%|,\\s*\\S", text, perl = TRUE)
 }
 
-.ip_check_axis_labels <- function(b, labs) {
+.ir_check_axis_labels <- function(b, labs) {
   missing <- character()
   no_unit <- character()
   scales <- list(x = b$layout$panel_scales_x, y = b$layout$panel_scales_y)
   for (a in c("x", "y")) {
-    if (!.ip_has_text(labs[[a]])) {
+    if (!.ir_has_text(labs[[a]])) {
       missing <- c(missing, sprintf("%s label missing", a))
       next
     }
     sc <- scales[[a]]
     discrete <- length(sc) > 0L && isTRUE(sc[[1L]]$is_discrete())
-    text <- .ip_label_text(labs[[a]])
-    if (!discrete && !.ip_has_unit(text)) {
+    text <- .ir_label_text(labs[[a]])
+    if (!discrete && !.ir_has_unit(text)) {
       no_unit <- c(no_unit, sprintf("%s label without unit: \"%s\"", a, text))
     }
   }
-  if (length(missing)) return(.ip_result_row("fail", c(missing, no_unit)))
-  if (length(no_unit)) return(.ip_result_row("note", no_unit))
-  .ip_result_row("pass")
+  if (length(missing)) return(.ir_result_row("fail", c(missing, no_unit)))
+  if (length(no_unit)) return(.ir_result_row("note", no_unit))
+  .ir_result_row("pass")
 }
 
-.ip_check_title <- function(labs) {
-  set <- c("title", "subtitle")[c(.ip_has_text(labs$title), .ip_has_text(labs$subtitle))]
-  if (!length(set)) return(.ip_result_row("pass"))
-  .ip_result_row("note", sprintf(
+.ir_check_title <- function(labs) {
+  set <- c("title", "subtitle")[c(.ir_has_text(labs$title), .ir_has_text(labs$subtitle))]
+  if (!length(set)) return(.ir_result_row("pass"))
+  .ir_result_row("note", sprintf(
     "%s set inside the image; APA places the figure number and title above the figure",
     paste(set, collapse = " and ")))
 }
 
-.ip_check_legend_case <- function(legend) {
+.ir_check_legend_case <- function(legend) {
   offenders <- character()
   for (a in names(legend)) {
     texts <- character()
     title <- legend[[a]]$title
-    if (.ip_has_text(title) && is.character(title)) texts <- c(texts, title)
+    if (.ir_has_text(title) && is.character(title)) texts <- c(texts, title)
     labels <- legend[[a]]$labels
     if (is.character(labels) || is.factor(labels)) texts <- c(texts, as.character(labels))
     texts <- texts[!is.na(texts)]
@@ -356,5 +356,5 @@ check_figure <- function(plot, target = c("paper", "slide")) {
                                         paste0("\"", low, "\"", collapse = ", ")))
     }
   }
-  .ip_result_row(if (length(offenders)) "note" else "pass", offenders)
+  .ir_result_row(if (length(offenders)) "note" else "pass", offenders)
 }

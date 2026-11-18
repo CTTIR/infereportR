@@ -44,15 +44,15 @@ ignored for continuous x.}
 the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, the layer draws no background fill (open
-marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
+marks stay empty); passed by \code{\link[=report_figure]{report_figure()}} with \code{mode}.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }
 \value{
 A ggplot2 layer. The computed data has columns \code{x} (shifted by
 \code{offset}), \code{y} (the mean),
-\code{ymin}, \code{ymax}, \code{n}, \code{label}, \code{.ip_result} (the 'infercalcR' result) and
-\code{.ip_result_id}.
+\code{ymin}, \code{ymax}, \code{n}, \code{label}, \code{.ir_result} (the 'infercalcR' result) and
+\code{.ir_result_id}.
 }
 \description{
 Adds the mean and its confidence interval for every x position (and
@@ -66,7 +66,7 @@ With the default \code{"pointrange"} geom the mean is a filled point (2.1 mm)
 and the interval a 1.1 pt line; \code{size}, \code{linewidth}, \code{shape} and \code{stroke}
 passed in \code{...} (or mapped) take precedence. On a discrete x scale,
 \code{offset} shifts the drawing to the right of the x position, so the summary
-does not cover jittered raw points (\code{\link[=inferplot]{inferplot()}} uses 0.28 with
+does not cover jittered raw points (\code{\link[=report_figure]{report_figure()}} uses 0.28 with
 \code{points = "jitter"}); it moves geometry only, not the numbers.
 
 Rows with non-finite x or y are dropped before the call, as ggplot2 does

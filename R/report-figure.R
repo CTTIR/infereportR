@@ -1,10 +1,10 @@
 #' One-line black-and-white figure with inference layers
 #'
-#' `inferplot()` is added to a ggplot with `+`, like a theme. It returns a
+#' `report_figure()` is added to a ggplot with `+`, like a theme. It returns a
 #' plain list of 'ggplot2' components: the [theme_figure()] theme, the
 #' black-and-white scales, the raw observations and the inference layers you
 #' ask for. 'ggplot2' adds a list element by element, so
-#' `ggplot(...) + inferplot(...)` is exactly the same as adding the parts by
+#' `ggplot(...) + report_figure(...)` is exactly the same as adding the parts by
 #' hand (see the examples).
 #'
 #' The list holds, in this order:
@@ -68,7 +68,7 @@
 #' @param transparent If `TRUE`, no background is drawn, as in
 #'   [theme_figure()].
 #' @param ... Must be empty; any other argument is an error of class
-#'   `inferplotR_invalid_input`.
+#'   `infereportR_invalid_input`.
 #' @return A plain list of 'ggplot2' components (theme, scales and layers) to
 #'   add to a plot with `+`.
 #' @seealso [theme_figure()], [stat_means()], [stat_compare()],
@@ -78,7 +78,7 @@
 #' library(ggplot2)
 #' # One line:
 #' p <- ggplot(PlantGrowth, aes(group, weight)) +
-#'   inferplot(compare = "t_means_two_independent_welch", reference = "ctrl",
+#'   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
 #'             adjust = "holm", omnibus = "anova_one_way") +
 #'   labs(x = "Group", y = "Dried weight (g)")
 #' p
@@ -100,10 +100,10 @@
 #'
 #' # White on black for a dark slide (print it to draw):
 #' dark <- ggplot(PlantGrowth, aes(group, weight)) +
-#'   inferplot("slide", mode = "dark") +
+#'   report_figure("slide", mode = "dark") +
 #'   labs(x = "Group", y = "Dried weight (g)")
 #' @export
-inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons = NULL,
+report_figure <- function(target = c("paper", "slide"), compare = NULL, comparisons = NULL,
                       reference = NULL, adjust = NULL, omnibus = NULL, correlation = NULL,
                       means = TRUE, points = c("jitter", "plain", "none"), label = "p",
                       conf.level = 0.95, legend = "inside", base_size = 9, mode = "light",
@@ -113,27 +113,27 @@ inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons 
     nm <- names(dots)
     nm <- if (is.null(nm)) rep("", length(dots)) else nm
     nm[!nzchar(nm)] <- "<unnamed>"
-    .ip_abort(sprintf("inferplot() has no argument %s",
+    .ir_abort(sprintf("report_figure() has no argument %s",
                       paste0("\"", nm, "\"", collapse = ", ")))
   }
-  target <- .ip_check_choice(target, c("paper", "slide"), "target")
-  points <- .ip_check_choice(points, c("jitter", "plain", "none"), "points")
-  .ip_check_flag(means, "means")
-  conf.level <- .ip_check_conf_level(conf.level)
-  if (is.null(conf.level)) .ip_abort("conf.level must be a single number between 0 and 1")
-  legend <- .ip_check_choice(legend, c("inside", "right", "bottom", "none"), "legend")
-  label <- .ip_check_choice(label, c("p", "estimate_ci", "estimate_ci_p", "stars"), "label")
-  .ip_check_number(base_size, "base_size")
-  if (base_size <= 0) .ip_abort("base_size must be a positive number")
-  m <- .ip_mode(mode, transparent)
-  if (!is.null(compare)) .ip_check_method(compare, "compare", "compare")
-  if (!is.null(omnibus)) .ip_check_method(omnibus, "omnibus", "omnibus")
-  if (!is.null(correlation)) .ip_check_method(correlation, "correlation", "correlation")
+  target <- .ir_check_choice(target, c("paper", "slide"), "target")
+  points <- .ir_check_choice(points, c("jitter", "plain", "none"), "points")
+  .ir_check_flag(means, "means")
+  conf.level <- .ir_check_conf_level(conf.level)
+  if (is.null(conf.level)) .ir_abort("conf.level must be a single number between 0 and 1")
+  legend <- .ir_check_choice(legend, c("inside", "right", "bottom", "none"), "legend")
+  label <- .ir_check_choice(label, c("p", "estimate_ci", "estimate_ci_p", "stars"), "label")
+  .ir_check_number(base_size, "base_size")
+  if (base_size <= 0) .ir_abort("base_size must be a positive number")
+  m <- .ir_mode(mode, transparent)
+  if (!is.null(compare)) .ir_check_method(compare, "compare", "compare")
+  if (!is.null(omnibus)) .ir_check_method(omnibus, "omnibus", "omnibus")
+  if (!is.null(correlation)) .ir_check_method(correlation, "correlation", "correlation")
   if (is.null(compare)) {
     stray <- c("comparisons", "reference", "adjust")[
       !c(is.null(comparisons), is.null(reference), is.null(adjust))]
     if (length(stray)) {
-      .ip_abort(sprintf("%s only apply with compare; name the comparison procedure",
+      .ir_abort(sprintf("%s only apply with compare; name the comparison procedure",
                         paste(stray, collapse = ", ")))
     }
   }
@@ -154,7 +154,7 @@ inferplot <- function(target = c("paper", "slide"), compare = NULL, comparisons 
   }
   if (means) {
     # Beside jittered points the summary moves right, so they never overlap.
-    offset <- if (points == "jitter") .ip_means_offset else 0
+    offset <- if (points == "jitter") .ir_means_offset else 0
     out <- c(out, list(stat_means(conf.level = conf.level, offset = offset, mode = mode,
                                   transparent = transparent)))
   }

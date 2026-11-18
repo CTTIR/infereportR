@@ -4,12 +4,12 @@
 # reference/gallery/make-figures.R, CTTIR's own code (2026-11-17): same seeds,
 # same order of random-number calls. The only edits are namespace prefixes
 # (stats::, utils::) required in package code, \uXXXX escapes for non-ASCII
-# characters, and the seed handling, which .ip_with_seed() keeps local.
+# characters, and the seed handling, which .ir_with_seed() keeps local.
 
 # Evaluate `expr` with the random seed `seed` (default generators) and leave the
 # caller's random state as it was: the old .Random.seed is restored, or removed
 # again when there was none. withr is only suggested, so this is written out.
-.ip_with_seed <- function(seed, expr) {
+.ir_with_seed <- function(seed, expr) {
   env <- globalenv()
   had <- exists(".Random.seed", envir = env, inherits = FALSE)
   old <- if (had) get(".Random.seed", envir = env, inherits = FALSE) else NULL
@@ -27,9 +27,9 @@
 
 # The data of all twelve figures as a named list: cohort, long, med (figures 01,
 # 05, 07, 10-12), il6 (02), counts (03), sc (04), fp (06), mk (08), pl (09).
-.ip_gallery_data <- function() {
+.ir_gallery_data <- function() {
   # ---- Simulated cohort (seeded): polytrauma patients, serial sampling -------
-  cohort_data <- .ip_with_seed(20261117, {
+  cohort_data <- .ir_with_seed(20261117, {
     hours <- c(0, 2, 4, 6, 8, 12, 24, 48)
     curve <- function(h, peak, height, base) base + height * (h / peak) * exp(1 - h / peak)
     cohort <- rbind(
@@ -53,7 +53,7 @@
   })
 
   # ---- 02: IL-6 at admission by severity -------------------------------------
-  il6 <- .ip_with_seed(2, {
+  il6 <- .ir_with_seed(2, {
     il6 <- data.frame(
       group = factor(rep(c("ISS < 16", "ISS 16-24", "ISS \u2265 25"), each = 24),
                      levels = c("ISS < 16", "ISS 16-24", "ISS \u2265 25")),
@@ -72,14 +72,14 @@
   counts$pct <- 100 * counts$n / stats::ave(counts$n, counts$group, FUN = sum)
 
   # ---- 04: IL-6 and ISS -------------------------------------------------------
-  sc <- .ip_with_seed(4, {
+  sc <- .ir_with_seed(4, {
     sc <- data.frame(id = 1:80, iss = round(stats::runif(80, 9, 50)))
     sc$il6 <- exp(log(25) + 0.035 * sc$iss + stats::rnorm(80, 0, 0.45))
     sc
   })
 
   # ---- 06: subgroups ----------------------------------------------------------
-  fp <- .ip_with_seed(6, {
+  fp <- .ir_with_seed(6, {
     fp <- data.frame(id = 1:240,
                      age = sample(c("< 50 years", "\u2265 50 years"), 240, TRUE),
                      sex = sample(c("Male", "Female"), 240, TRUE, prob = c(0.72, 0.28)),
@@ -90,7 +90,7 @@
   })
 
   # ---- 08: five markers -------------------------------------------------------
-  mk <- .ip_with_seed(8, {
+  mk <- .ir_with_seed(8, {
     n8 <- 90
     z <- matrix(stats::rnorm(n8 * 5), n8)
     R <- matrix(c(1, .7, .5, .2, .3,  .7, 1, .6, .3, .4,  .5, .6, 1, .55, .5,
@@ -101,7 +101,7 @@
   })
 
   # ---- 09: lactate, paired ----------------------------------------------------
-  pl <- .ip_with_seed(9, {
+  pl <- .ir_with_seed(9, {
     pl <- data.frame(id = 1:14, admission = round(stats::rnorm(14, 4.4, 1.3), 1))
     pl$h24 <- round(pmax(pl$admission - stats::rnorm(14, 1.6, 0.8), 0.6), 1)
     pl
@@ -113,7 +113,7 @@
 
 # The seven subgroups of figure 06 as logical row selections of `fp`
 # (make-figures.R, verbatim).
-.ip_gallery_subsets <- function(fp) {
+.ir_gallery_subsets <- function(fp) {
   list(
     "All patients" = rep(TRUE, 240),
     "< 50 years" = fp$age == "< 50 years", "\u2265 50 years" = fp$age == "\u2265 50 years",

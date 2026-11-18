@@ -14,7 +14,7 @@ char_size(
 )
 }
 \arguments{
-\item{x}{A ggplot, an \code{inferplotR_chargrid} or a \code{\link[=char_figure]{char_figure()}} result.}
+\item{x}{A ggplot, an \code{infereportR_chargrid} or a \code{\link[=char_figure]{char_figure()}} result.}
 
 \item{width_mm}{Width of the whole figure in millimeters, border included.
 \code{NULL} means the slot width with \code{slot}, else 134 (the Bleisatz slide text
@@ -49,7 +49,7 @@ The grid size is read from \code{x}:
 \itemize{
 \item a \code{\link[=char_figure]{char_figure()}} result: its own size, as drawn (the other arguments are
 ignored);
-\item an \code{inferplotR_chargrid}: its \code{width} and \code{height}, plus the \code{READY.} rows
+\item an \code{infereportR_chargrid}: its \code{width} and \code{height}, plus the \code{READY.} rows
 when \code{ready} is \code{TRUE};
 \item a ggplot: the grid \code{\link[=char_grid]{char_grid()}} would draw with the defaults of
 \code{\link[=char_figure]{char_figure()}} for \code{style} and \code{slot}.

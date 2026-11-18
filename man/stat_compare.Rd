@@ -72,7 +72,7 @@ slide size).}
 
 \item{headroom}{Room above the top bracket, in steps (1 by default). With
 2, a label at the panel top (such as the \code{\link[=stat_omnibus]{stat_omnibus()}} label that
-\code{\link[=inferplot]{inferplot()}} adds) sits one step above the top bracket label instead of
+\code{\link[=report_figure]{report_figure()}} adds) sits one step above the top bracket label instead of
 on it.}
 
 \item{text_size}{Label size in mm (ggplot2 text units); 8 pt by default.}
@@ -83,14 +83,14 @@ on it.}
 the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, the layer draws no background fill (open
-marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
+marks stay empty); passed by \code{\link[=report_figure]{report_figure()}} with \code{mode}.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }
 \value{
 A ggplot2 layer. The computed data has columns \code{x}, \code{xend}, \code{y},
 \code{yend}, \code{label}, \code{tip}, \code{headroom} (\code{TRUE} for the invisible headroom
-row), \code{.ip_result} (the family result) and \code{.ip_result_id}.
+row), \code{.ir_result} (the family result) and \code{.ir_result_id}.
 }
 \description{
 Compares x groups pairwise with an explicitly named two-sample procedure
@@ -109,7 +109,7 @@ Nothing is chosen from the data: \code{method} has no default, and \code{adjust}
 must be declared whenever more than one comparison is drawn (\code{"none"} is
 allowed). With explicit \code{comparisons} this is checked when the layer is
 created; with \code{reference} or all pairs, when the plot is built, where
-ggplot2 reports it with the inferplotR condition as parent. Rows with
+ggplot2 reports it with the infereportR condition as parent. Rows with
 non-finite x or y are dropped before the call.
 
 Bracket i (in pair order) sits at \code{top + (first + (i - 1) * step) * range}

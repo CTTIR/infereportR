@@ -1,32 +1,32 @@
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
 StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
   required_aes = c("x", "y"),
   compute_layer = function(self, data, params, layout) {
-    .ip_compute_layer(self, data, params, layout)
+    .ir_compute_layer(self, data, params, layout)
   },
   compute_panel = function(data, scales, method, comparisons = NULL, reference = NULL,
                            adjust = NULL, family_id = NULL, alternative = NULL,
                            conf.level = NULL, method_args = list(), label_type = "p",
                            first = 0.10, step = 0.20, tip_length = 0.02, headroom_steps = 1,
                            y_label = "y") {
-    if (!.ip_is_discrete(scales$x)) {
-      .ip_abort("stat_compare() needs a discrete x scale", code = "unsupported")
+    if (!.ir_is_discrete(scales$x)) {
+      .ir_abort("stat_compare() needs a discrete x scale", code = "unsupported")
     }
     panel <- data$PANEL[1L]
     levels <- as.character(scales$x$get_limits())
-    pairs <- .ip_compare_pairs(comparisons, reference, levels)
-    .ip_check_adjust(adjust, length(pairs))
-    data <- .ip_finite_xy(data)
-    if (!nrow(data) || !length(pairs)) return(.ip_compare_empty())
-    id <- .ip_result_id("compare", method, panel)
-    spec <- .ip_spec(method, alternative = alternative, conf.level = conf.level)
+    pairs <- .ir_compare_pairs(comparisons, reference, levels)
+    .ir_check_adjust(adjust, length(pairs))
+    data <- .ir_finite_xy(data)
+    if (!nrow(data) || !length(pairs)) return(.ir_compare_empty())
+    id <- .ir_result_id("compare", method, panel)
+    spec <- .ir_spec(method, alternative = alternative, conf.level = conf.level)
     values <- function(level) data$y[data$x == match(level, levels)]
     rows <- lapply(pairs, function(pair) {
       args <- c(list(spec, x = values(pair[[2L]]), y = values(pair[[1L]])), method_args)
-      run <- .ip_wrap(do.call(infercalcR::run_inference, c(args, result_id = id)),
+      run <- .ir_wrap(do.call(infercalcR::run_inference, c(args, result_id = id)),
                       "infercalcR::run_inference()")
       # Each two-sample method reports one row (a contrast or a rank test).
       infercalcR::result_data(run)[1L, , drop = FALSE]
@@ -36,17 +36,17 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
     rows$variable_id <- rep(y_label, nrow(rows))
     rows$contrast <- vapply(pairs, function(p) paste(p[[2L]], "minus", p[[1L]]), character(1))
     rownames(rows) <- NULL
-    result <- .ip_wrap(infercalcR::new_inference_result(rows, list(
+    result <- .ir_wrap(infercalcR::new_inference_result(rows, list(
       method_id = method, result_id = id,
       population = sprintf("figure data, panel %s", as.character(panel)))),
       "infercalcR::new_inference_result()")
     adjusted <- !is.null(adjust) && !identical(adjust, "none")
     if (adjusted) {
-      result <- .ip_wrap(infercalcR::adjust_inference(
+      result <- .ir_wrap(infercalcR::adjust_inference(
         result, method = adjust, family_id = if (is.null(family_id)) id else family_id),
         "infercalcR::adjust_inference()")
     }
-    shown <- .ip_display(result, p = if (adjusted) "adjusted" else "raw")
+    shown <- .ir_display(result, p = if (adjusted) "adjusted" else "raw")
     shown <- shown[match(rows$row_id, shown$row_id), , drop = FALSE]
     finite_y <- data$y
     top <- max(finite_y)
@@ -58,7 +58,7 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
     rights <- vapply(pairs, function(p) match(p[[2L]], levels), integer(1)) + 0
     out <- data.frame(
       x = lefts, xend = rights, y = bar, yend = bar,
-      label = .ip_compare_labels(shown, label_type),
+      label = .ir_compare_labels(shown, label_type),
       tip = rep(tip_length * rng, k), headroom = rep(FALSE, k),
       group = seq_len(k), PANEL = panel, stringsAsFactors = FALSE)
     # One invisible row `headroom_steps` steps above the top bracket trains the
@@ -68,20 +68,20 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
     out <- rbind(out, data.frame(
       x = lefts[[1L]], xend = lefts[[1L]], y = room, yend = room, label = "", tip = 0,
       headroom = TRUE, group = k + 1L, PANEL = panel, stringsAsFactors = FALSE))
-    .ip_attach_result(out, result, id)
+    .ir_attach_result(out, result, id)
   }
 )
 
-.ip_compare_empty <- function() {
+.ir_compare_empty <- function() {
   out <- data.frame(x = double(), xend = double(), y = double(), yend = double(),
                     label = character(), tip = double(), headroom = logical(),
                     group = integer(), stringsAsFactors = FALSE)
-  out$.ip_result <- list()
-  out$.ip_result_id <- character()
+  out$.ir_result <- list()
+  out$.ir_result_id <- character()
   out
 }
 
-.ip_compare_labels <- function(shown, label) {
+.ir_compare_labels <- function(shown, label) {
   switch(label,
     p = shown$p_display,
     estimate_ci = paste(shown$estimate_display, shown$interval_display),
@@ -96,30 +96,30 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
   )
 }
 
-.ip_check_comparisons <- function(comparisons) {
+.ir_check_comparisons <- function(comparisons) {
   if (is.null(comparisons)) return(NULL)
   ok <- is.list(comparisons) && length(comparisons) > 0L &&
     all(vapply(comparisons, function(p) {
       is.character(p) && length(p) == 2L && !anyNA(p) && all(nzchar(p)) && p[[1L]] != p[[2L]]
     }, logical(1)))
   if (!ok) {
-    .ip_abort("comparisons must be a list of pairs of two different x levels")
+    .ir_abort("comparisons must be a list of pairs of two different x levels")
   }
   comparisons
 }
 
-.ip_compare_pairs <- function(comparisons, reference, levels) {
+.ir_compare_pairs <- function(comparisons, reference, levels) {
   if (!is.null(comparisons)) {
     unknown <- setdiff(unlist(comparisons), levels)
     if (length(unknown)) {
-      .ip_abort(sprintf("comparisons name unknown x levels: %s",
+      .ir_abort(sprintf("comparisons name unknown x levels: %s",
                         paste0("\"", unknown, "\"", collapse = ", ")))
     }
     return(comparisons)
   }
   if (!is.null(reference)) {
     if (!reference %in% levels) {
-      .ip_abort(sprintf("reference \"%s\" is not an x level", reference))
+      .ir_abort(sprintf("reference \"%s\" is not an x level", reference))
     }
     return(lapply(setdiff(levels, reference), function(l) c(reference, l)))
   }
@@ -128,15 +128,15 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
   lapply(seq_len(ncol(idx)), function(j) levels[idx[, j]])
 }
 
-.ip_check_adjust <- function(adjust, n_pairs) {
+.ir_check_adjust <- function(adjust, n_pairs) {
   if (is.null(adjust)) {
     if (n_pairs > 1L) {
-      .ip_abort(
+      .ir_abort(
         "adjust is missing: declare the multiplicity adjustment; 'none' is allowed")
     }
     return(NULL)
   }
-  .ip_check_choice(adjust, c("none", stats::p.adjust.methods), "adjust")
+  .ir_check_choice(adjust, c("none", stats::p.adjust.methods), "adjust")
 }
 
 #' Pairwise comparisons with brackets
@@ -156,7 +156,7 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' must be declared whenever more than one comparison is drawn (`"none"` is
 #' allowed). With explicit `comparisons` this is checked when the layer is
 #' created; with `reference` or all pairs, when the plot is built, where
-#' ggplot2 reports it with the inferplotR condition as parent. Rows with
+#' ggplot2 reports it with the infereportR condition as parent. Rows with
 #' non-finite x or y are dropped before the call.
 #'
 #' Bracket i (in pair order) sits at `top + (first + (i - 1) * step) * range`
@@ -195,18 +195,18 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' @param tip Tip length as a fraction of the panel's y range.
 #' @param headroom Room above the top bracket, in steps (1 by default). With
 #'   2, a label at the panel top (such as the [stat_omnibus()] label that
-#'   [inferplot()] adds) sits one step above the top bracket label instead of
+#'   [report_figure()] adds) sits one step above the top bracket label instead of
 #'   on it.
 #' @param text_size Label size in mm (ggplot2 text units); 8 pt by default.
 #' @param family Label font family; `figure_font("sans")` by default.
 #' @param mode `"light"` (default, black ink) or `"dark"` (white ink); match
 #'   the mode of [theme_figure()].
 #' @param transparent If `TRUE`, the layer draws no background fill (open
-#'   marks stay empty); passed by [inferplot()] with `mode`.
+#'   marks stay empty); passed by [report_figure()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
 #' @return A ggplot2 layer. The computed data has columns `x`, `xend`, `y`,
 #'   `yend`, `label`, `tip`, `headroom` (`TRUE` for the invisible headroom
-#'   row), `.ip_result` (the family result) and `.ip_result_id`.
+#'   row), `.ir_result` (the family result) and `.ir_result_id`.
 #' @seealso [stat_omnibus()], [inference_results()], [figure_report()],
 #'   [infercalcR::adjust_inference()]
 #' @examples
@@ -223,36 +223,36 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
                          first = 0.10, step = 0.20, tip = 0.02, headroom = 1, text_size = NULL,
                          family = NULL, mode = "light", transparent = FALSE,
                          na.rm = FALSE, inherit.aes = TRUE) {
-  m <- .ip_mode(mode, transparent)
-  method <- .ip_check_method(if (missing(method)) NULL else method, "compare")
-  comparisons <- .ip_check_comparisons(comparisons)
-  reference <- .ip_check_optional_string(reference, "reference")
+  m <- .ir_mode(mode, transparent)
+  method <- .ir_check_method(if (missing(method)) NULL else method, "compare")
+  comparisons <- .ir_check_comparisons(comparisons)
+  reference <- .ir_check_optional_string(reference, "reference")
   if (!is.null(comparisons) && !is.null(reference)) {
-    .ip_abort("give comparisons or reference, not both")
+    .ir_abort("give comparisons or reference, not both")
   }
   adjust <- if (missing(adjust)) NULL else adjust
   if (!is.null(adjust) || !is.null(comparisons)) {
-    adjust <- .ip_check_adjust(adjust, if (is.null(comparisons)) 1L else length(comparisons))
+    adjust <- .ir_check_adjust(adjust, if (is.null(comparisons)) 1L else length(comparisons))
   }
-  family_id <- .ip_check_optional_string(family_id, "family_id")
-  alternative <- .ip_check_alternative(alternative)
-  conf.level <- .ip_check_conf_level(conf.level)
-  .ip_check_method_args(method_args)
-  label <- .ip_check_choice(label, c("p", "estimate_ci", "estimate_ci_p", "stars"), "label")
-  .ip_check_number(first, "first", min = 0)
-  .ip_check_number(step, "step", min = 0)
-  .ip_check_number(tip, "tip", min = 0)
-  .ip_check_number(headroom, "headroom", min = 1)
-  .ip_check_flag(na.rm, "na.rm")
+  family_id <- .ir_check_optional_string(family_id, "family_id")
+  alternative <- .ir_check_alternative(alternative)
+  conf.level <- .ir_check_conf_level(conf.level)
+  .ir_check_method_args(method_args)
+  label <- .ir_check_choice(label, c("p", "estimate_ci", "estimate_ci_p", "stars"), "label")
+  .ir_check_number(first, "first", min = 0)
+  .ir_check_number(step, "step", min = 0)
+  .ir_check_number(tip, "tip", min = 0)
+  .ir_check_number(headroom, "headroom", min = 1)
+  .ir_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, comparisons = comparisons, reference = reference,
                    adjust = adjust, family_id = family_id, alternative = alternative,
                    conf.level = conf.level, method_args = method_args, label_type = label,
                    first = first, step = step, tip_length = tip, headroom_steps = headroom,
                    na.rm = na.rm),
-              .ip_text_params(dots, text_size, family, m$ink), dots)
+              .ir_text_params(dots, text_size, family, m$ink), dots)
   layer <- ggplot2::layer(stat = StatCompare, data = data, mapping = mapping,
                           geom = GeomBracket, position = "identity", show.legend = FALSE,
                           inherit.aes = inherit.aes, params = params)
-  .ip_labelled_layer(layer)
+  .ir_labelled_layer(layer)
 }

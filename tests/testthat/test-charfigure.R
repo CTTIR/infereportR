@@ -47,9 +47,9 @@ two_values <- function(fig) {
 # Tokens and defaults ---------------------------------------------------------
 
 test_that("the C64 tokens are the Pepto values and the screen is black and white", {
-  expect_identical(toupper(.ip_c64[["background"]]), "#352879")
-  expect_identical(toupper(.ip_c64[["foreground"]]), "#6C5EB5")
-  expect_identical(toupper(unname(.ip_screen)), c("#000000", "#FFFFFF"))
+  expect_identical(toupper(.ir_c64[["background"]]), "#352879")
+  expect_identical(toupper(.ir_c64[["foreground"]]), "#6C5EB5")
+  expect_identical(toupper(unname(.ir_screen)), c("#000000", "#FFFFFF"))
 })
 
 test_that("cell_ratio and char_width default to the IBM Plex Mono values", {
@@ -77,9 +77,9 @@ test_that("char_figure() returns a ggplot of one text layer with one row per non
 test_that("the bw figure is ink on paper without margin", {
   fig <- char_figure(cf_plot())
   built <- cf_text_data(fig)
-  expect_identical(unique(built$colour), .ip_mode()$ink)
-  expect_identical(cf_fill(fig, "panel.background"), .ip_paper)
-  expect_identical(cf_fill(fig, "plot.background"), .ip_paper)
+  expect_identical(unique(built$colour), .ir_mode()$ink)
+  expect_identical(cf_fill(fig, "panel.background"), .ir_paper)
+  expect_identical(cf_fill(fig, "plot.background"), .ir_paper)
   expect_equal(cf_margin_mm(fig), rep(0, 4))
 })
 
@@ -89,7 +89,7 @@ test_that("the c64 figure is light blue on blue inside a 6 % light-blue border",
   expect_identical(toupper(unique(built$colour)), "#6C5EB5")
   expect_identical(toupper(cf_fill(fig, "panel.background")), "#352879")
   expect_identical(toupper(cf_fill(fig, "plot.background")), "#6C5EB5")
-  expect_identical(unique(built$colour), .ip_c64[["foreground"]])
+  expect_identical(unique(built$colour), .ir_c64[["foreground"]])
   expect_equal(cf_margin_mm(fig), rep(6, 4))
   # 40 columns across the width inside the border
   expect_equal(unique(built$size), ((100 - 12) / 40) / 0.6)
@@ -118,9 +118,9 @@ test_that("c64bw draws white glyphs on a black screen inside a halftone border",
   border <- layer_data_of(fig, rects[[1]])
   screen <- layer_data_of(fig, rects[[2]])
   expect_true(inherits(border$fill[[1]], "GridPattern"))
-  expect_identical(screen$fill, .ip_screen[["background"]])
-  expect_identical(unique(cf_text_data(fig)$colour), .ip_screen[["foreground"]])
-  expect_identical(cf_fill(fig, "plot.background"), .ip_mode()$paper)
+  expect_identical(screen$fill, .ir_screen[["background"]])
+  expect_identical(unique(cf_text_data(fig)$colour), .ir_screen[["foreground"]])
+  expect_identical(cf_fill(fig, "plot.background"), .ir_mode()$paper)
   expect_equal(cf_margin_mm(fig), rep(0, 4))
   # the border fills the coordinate limits; the screen sits inside with padding
   lim <- fig$coordinates$limits
@@ -137,12 +137,12 @@ test_that("c64bw draws white glyphs on a black screen inside a halftone border",
 })
 
 test_that("the c64bw halftone is ink dots on paper at the halftone spacing", {
-  md <- .ip_mode()
-  pat <- .ip_cf_halftone(md$ink, md$paper)
+  md <- .ir_mode()
+  pat <- .ir_cf_halftone(md$ink, md$paper)
   expect_s3_class(pat, "GridTilingPattern")
-  expect_equal(grid::convertUnit(pat$width, "mm", valueOnly = TRUE), .ip_halftone_spacing)
+  expect_equal(grid::convertUnit(pat$width, "mm", valueOnly = TRUE), .ir_halftone_spacing)
   expect_equal(grid::convertUnit(pat$height, "mm", valueOnly = TRUE), 0.75)
-  kids <- .ip_cf_halftone_tile(md$ink, md$paper, .ip_halftone_spacing)$children
+  kids <- .ir_cf_halftone_tile(md$ink, md$paper, .ir_halftone_spacing)$children
   expect_identical(kids[[1]]$gp$fill, md$paper)
   expect_identical(kids[[2]]$gp$fill, md$ink)
   expect_equal(grid::convertUnit(kids[[2]]$r, "mm", valueOnly = TRUE), 0.18 * 0.75)
@@ -250,20 +250,20 @@ test_that("a slot figure fills the slot exactly", {
 
 test_that("slot conflicts and misfits raise classed errors", {
   p <- cf_plot()
-  expect_error(char_figure(p, slot = "slide_huge"), class = "inferplotR_invalid_input")
+  expect_error(char_figure(p, slot = "slide_huge"), class = "infereportR_invalid_input")
   expect_error(char_figure(p, slot = "slide_side", height = 12),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   expect_error(char_figure(p, slot = "slide_side", width_mm = 86),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   expect_error(char_size(p, slot = "slide_side", width_mm = 86),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   # 38 c64 columns leave too few rows in the side slot
-  expect_error(char_figure(p, style = "c64", slot = "slide_side"), class = "inferplotR_too_small")
-  expect_error(char_size(p, style = "c64", slot = "slide_side"), class = "inferplotR_too_small")
+  expect_error(char_figure(p, style = "c64", slot = "slide_side"), class = "infereportR_too_small")
+  expect_error(char_size(p, style = "c64", slot = "slide_side"), class = "infereportR_too_small")
   expect_no_error(char_figure(p, style = "c64", width = 60, slot = "slide_side"))
   tall <- char_grid(p, width = 30, height = 40)
-  expect_error(char_figure(tall, slot = "slide_half"), class = "inferplotR_too_small")
-  expect_error(char_size(tall, slot = "slide_half"), class = "inferplotR_too_small")
+  expect_error(char_figure(tall, slot = "slide_half"), class = "infereportR_too_small")
+  expect_error(char_size(tall, slot = "slide_half"), class = "infereportR_too_small")
 })
 
 # Arguments -------------------------------------------------------------------
@@ -272,30 +272,30 @@ test_that("a chargrid is drawn as is and rejects grid arguments", {
   g <- char_grid(cf_plot(), width = 32, height = 12)
   fig <- char_figure(g)
   expect_identical(cf_dims(fig), c(ncol = 32, nrow = 12))
-  expect_error(char_figure(g, width = 40), class = "inferplotR_invalid_input")
-  expect_error(char_figure(g, height = 20), class = "inferplotR_invalid_input")
-  expect_error(char_figure(g, charset = "unicode"), class = "inferplotR_invalid_input")
-  expect_error(char_figure(g, case = "upper"), class = "inferplotR_invalid_input")
+  expect_error(char_figure(g, width = 40), class = "infereportR_invalid_input")
+  expect_error(char_figure(g, height = 20), class = "infereportR_invalid_input")
+  expect_error(char_figure(g, charset = "unicode"), class = "infereportR_invalid_input")
+  expect_error(char_figure(g, case = "upper"), class = "infereportR_invalid_input")
 })
 
 test_that("char_figure() validates its arguments", {
   p <- cf_plot()
-  expect_error(char_figure(1:3), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, style = "amiga"), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, width_mm = 0), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, cell_ratio = -1), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, char_width = NA), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, ready = "yes"), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, family = ""), class = "inferplotR_invalid_input")
-  expect_error(char_figure(p, style = "c64bw", width_mm = 6), class = "inferplotR_too_small")
-  expect_error(char_size(p, width_mm = -5), class = "inferplotR_invalid_input")
-  expect_error(char_size(p, style = "vic20"), class = "inferplotR_invalid_input")
-  expect_error(char_size("x"), class = "inferplotR_invalid_input")
+  expect_error(char_figure(1:3), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, style = "amiga"), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, width_mm = 0), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, cell_ratio = -1), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, char_width = NA), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, ready = "yes"), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, family = ""), class = "infereportR_invalid_input")
+  expect_error(char_figure(p, style = "c64bw", width_mm = 6), class = "infereportR_too_small")
+  expect_error(char_size(p, width_mm = -5), class = "infereportR_invalid_input")
+  expect_error(char_size(p, style = "vic20"), class = "infereportR_invalid_input")
+  expect_error(char_size("x"), class = "infereportR_invalid_input")
 })
 
 test_that("char_figure() passes skipped-layer warnings on", {
   p <- ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) + ggplot2::geom_boxplot()
-  expect_warning(char_figure(p), class = "inferplotR_skipped_layer")
+  expect_warning(char_figure(p), class = "infereportR_skipped_layer")
   expect_no_warning(char_size(p))
 })
 

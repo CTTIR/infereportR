@@ -19,16 +19,16 @@ an adjustment and raw ones otherwise; \code{"raw"} and \code{"adjusted"} force o
 kind for every result.}
 
 \item{digits, p_digits}{Significant digits for estimates and p-values,
-passed to \code{\link[infereportR:report_table]{infereportR::report_table()}}.}
+passed to \code{\link[=report_table]{report_table()}}.}
 }
 \value{
 A data.frame with the leading columns \code{figure_layer} (integer) and
 \code{figure_panel} (character), followed by the columns of
-\code{\link[infereportR:report_table]{infereportR::report_table()}}. Without results, a 0-row data.frame with
+\code{\link[=report_table]{report_table()}}. Without results, a 0-row data.frame with
 the same columns.
 }
 \description{
-Calls \code{\link[infereportR:report_table]{infereportR::report_table()}} on every result of
+Calls \code{\link[=report_table]{report_table()}} on every result of
 \code{\link[=inference_results]{inference_results()}} and binds the rows, adding the layer and panel each
 result came from.
 }

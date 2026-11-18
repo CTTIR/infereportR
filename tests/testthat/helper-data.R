@@ -7,7 +7,7 @@ welch <- "t_means_two_independent_welch"
 
 # The family of the infereportR vignette: comparisons against ctrl, holm.
 manual_family <- function(pairs = list(c("ctrl", "trt1"), c("ctrl", "trt2")), adjust = "holm",
-                          id = "inferplotR:compare:t_means_two_independent_welch:panel1") {
+                          id = "infereportR:compare:t_means_two_independent_welch:panel1") {
   spec <- infercalcR::method_spec(welch)
   rows <- do.call(rbind, lapply(pairs, function(p) {
     infercalcR::result_data(infercalcR::run_inference(

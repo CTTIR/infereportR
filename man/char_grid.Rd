@@ -15,7 +15,7 @@ char_grid(
 \arguments{
 \item{plot}{A ggplot with one panel and \code{coord_cartesian()} (or
 \code{coord_fixed()}). Facets, \code{coord_flip()}, \code{coord_polar()}, \code{coord_trans()}
-and \code{coord_sf()} raise an error of class \code{inferplotR_unsupported}.}
+and \code{coord_sf()} raise an error of class \code{infereportR_unsupported}.}
 
 \item{width}{Grid width in characters, a whole number of at least 24.}
 
@@ -30,7 +30,7 @@ upper case. Glyphs are never changed, so a legend's or end label's \code{o}
 stays \code{o}.}
 }
 \value{
-An object of class \code{inferplotR_chargrid}: a list with \code{chars} (a
+An object of class \code{infereportR_chargrid}: a list with \code{chars} (a
 character matrix of \code{height} rows and \code{width} columns, one glyph per cell),
 \code{width}, \code{height}, \code{charset} and \code{legend} (a data frame with columns \code{key}
 (integer), \code{symbol} and \code{label} (character); zero rows when there is no
@@ -63,7 +63,7 @@ ranges, with caps for error bars and a point for point ranges;
 }
 
 Every other layer (for example \code{geom_boxplot()} or \code{geom_violin()}) is skipped
-with one warning of class \code{inferplotR_skipped_layer} that names the skipped
+with one warning of class \code{infereportR_skipped_layer} that names the skipped
 geom classes. Layers are drawn in order, later layers overwrite earlier ones,
 and the axes are drawn last.
 
@@ -97,7 +97,7 @@ to \code{<=}, plus-minus (U+00B1) to \verb{+/-}, the multiplication sign (U+00D7
 \code{x}, the minus sign (U+2212) and the en dash to \code{-}, the em dash to \verb{--},
 the micro sign (and Greek mu) to \code{u} and Greek rho to \code{rho}. Any other
 non-ASCII character becomes \verb{?}, with one warning of class
-\code{inferplotR_transliterated} per call.
+\code{infereportR_transliterated} per call.
 }
 \examples{
 d <- data.frame(hour = c(0, 2, 4, 8, 12, 24), level = c(9, 14, 19, 17, 13, 10))

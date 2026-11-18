@@ -2,16 +2,16 @@
 
 # Horizontal offset of the curve labels as a fraction of the x range, and of
 # the guide label from the panel's left edge in npc.
-.ip_ecdf_label_offset <- 0.025
+.ir_ecdf_label_offset <- 0.025
 
-.ip_ecdf_empty <- function() {
+.ir_ecdf_empty <- function() {
   data.frame(x = double(), y = double(), part = character(), label = character(),
              hjust = double(), group = integer(), stringsAsFactors = FALSE)
 }
 
 # The name of a group: the first non-positional aesthetic that is constant
 # within the group (a label mapping first), else the group number.
-.ip_ecdf_group_name <- function(cell) {
+.ir_ecdf_group_name <- function(cell) {
   for (nm in c("label", "linetype", "colour", "shape", "fill", "alpha")) {
     v <- cell[[nm]]
     if (!is.null(v) && !is.list(v) && length(unique(v)) == 1L) return(as.character(v[1L]))
@@ -19,7 +19,7 @@
   as.character(cell$group[1L])
 }
 
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -28,13 +28,13 @@ StatEcdfGuides <- ggplot2::ggproto("StatEcdfGuides", ggplot2::Stat,
   compute_panel = function(data, scales, probs = 0.5, guide_label = "median",
                            curve_labels = NULL) {
     data <- data[is.finite(data$x), , drop = FALSE]
-    if (!nrow(data)) return(.ip_ecdf_empty())
+    if (!nrow(data)) return(.ir_ecdf_empty())
     groups <- sort(unique(data$group))
     q <- function(g, p) {
       stats::quantile(data$x[data$group == g], p, type = 1, names = FALSE)
     }
     if (!is.null(curve_labels) && length(curve_labels) != length(groups)) {
-      .ip_abort(sprintf("curve_labels needs one height per group (%d), not %d",
+      .ir_abort(sprintf("curve_labels needs one height per group (%d), not %d",
                         length(groups), length(curve_labels)))
     }
     rows <- list()
@@ -55,9 +55,9 @@ StatEcdfGuides <- ggplot2::ggproto("StatEcdfGuides", ggplot2::Stat,
         here <- vapply(groups, function(o) q(o, h), numeric(1))
         # The leftmost curve at this height takes its label on the left.
         leftmost <- here[k] <= min(here)
-        data.frame(x = here[k] + (if (leftmost) -1 else 1) * .ip_ecdf_label_offset * span,
+        data.frame(x = here[k] + (if (leftmost) -1 else 1) * .ir_ecdf_label_offset * span,
                    y = h, part = "curve",
-                   label = .ip_ecdf_group_name(data[data$group == g, , drop = FALSE]),
+                   label = .ir_ecdf_group_name(data[data$group == g, , drop = FALSE]),
                    hjust = if (leftmost) 1 else 0, group = g, stringsAsFactors = FALSE)
       }))
     }
@@ -68,20 +68,20 @@ StatEcdfGuides <- ggplot2::ggproto("StatEcdfGuides", ggplot2::Stat,
   }
 )
 
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
 GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
   required_aes = c("x", "y"),
-  default_aes = ggplot2::aes(colour = .ip_ink, alpha = NA,
-                             size = .ip_label_size_pt / ggplot2::.pt, family = "",
+  default_aes = ggplot2::aes(colour = .ir_ink, alpha = NA,
+                             size = .ir_label_size_pt / ggplot2::.pt, family = "",
                              guide_family = ""),
   draw_key = ggplot2::draw_key_blank,
   draw_panel = function(data, panel_params, coord) {
     if (!nrow(data)) return(grid::nullGrob())
     ink <- ggplot2::alpha(data$colour[1L], data$alpha[1L])
-    hair <- grid::gpar(col = ink, lwd = .ip_rule_hair * 96 / 72.27, lty = "13",
+    hair <- grid::gpar(col = ink, lwd = .ir_rule_hair * 96 / 72.27, lty = "13",
                        lineend = "butt")
     text_gp <- function(family) {
       if (is.na(family)) family <- ""
@@ -97,7 +97,7 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
       lab <- guide & nzchar(t$label)
       if (any(lab)) {
         grobs$guide_label <- grid::textGrob(
-          t$label[lab], x = .ip_ecdf_label_offset, y = grid::unit(t$y[lab], "native"),
+          t$label[lab], x = .ir_ecdf_label_offset, y = grid::unit(t$y[lab], "native"),
           hjust = 0, vjust = -0.3, default.units = "npc",
           gp = text_gp(data$guide_family[1L]))
       }
@@ -114,7 +114,7 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
                                     default.units = "native",
                                     gp = text_gp(data$family[1L]))
     }
-    do.call(grid::grobTree, c(grobs, list(name = "inferplotR.ecdf_guides")))
+    do.call(grid::grobTree, c(grobs, list(name = "infereportR.ecdf_guides")))
   }
 )
 
@@ -166,20 +166,20 @@ stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
                              transparent = FALSE, inherit.aes = TRUE) {
   if (!is.numeric(probs) || !length(probs) || anyNA(probs) || any(probs <= 0) ||
       any(probs >= 1)) {
-    .ip_abort("probs must be proportions strictly between 0 and 1")
+    .ir_abort("probs must be proportions strictly between 0 and 1")
   }
   if (!is.character(guide_label) || length(guide_label) != 1L || is.na(guide_label)) {
-    .ip_abort("guide_label must be a single string (\"\" for none)")
+    .ir_abort("guide_label must be a single string (\"\" for none)")
   }
   if (!is.null(curve_labels) && (!is.numeric(curve_labels) || !length(curve_labels) ||
                                  anyNA(curve_labels) || any(curve_labels <= 0) ||
                                  any(curve_labels >= 1))) {
-    .ip_abort("curve_labels must be NULL or proportions strictly between 0 and 1")
+    .ir_abort("curve_labels must be NULL or proportions strictly between 0 and 1")
   }
-  ink <- .ip_mode(mode, transparent)$ink
+  ink <- .ir_mode(mode, transparent)$ink
   dots <- list(...)
   params <- c(list(probs = probs, guide_label = guide_label, curve_labels = curve_labels,
-                   family = figure_font("sans"), guide_family = .ip_condensed_family()),
+                   family = figure_font("sans"), guide_family = .ir_condensed_family()),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
   ggplot2::layer(stat = StatEcdfGuides, data = data, mapping = mapping, geom = GeomEcdfGuides,

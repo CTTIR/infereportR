@@ -3,57 +3,57 @@
 
 # Drawing sizes: per-unit lines 0.4 pt, open end points 1.1 mm, the mean line
 # 2 pt with filled points of 2.4 mm.
-.ip_paired_point <- 1.1
-.ip_paired_mean_point <- 2.4
-.ip_paired_mean_line <- 2
-.ip_paired_lineheight <- 0.95
+.ir_paired_point <- 1.1
+.ir_paired_mean_point <- 2.4
+.ir_paired_mean_line <- 2
+.ir_paired_lineheight <- 0.95
 
-.ip_paired_heading <- c(t_means_paired = "Mean change",
+.ir_paired_heading <- c(t_means_paired = "Mean change",
                         signed_rank_wilcoxon = "Pseudomedian change")
 
-.ip_paired_empty <- function() {
+.ir_paired_empty <- function() {
   out <- data.frame(x = double(), y = double(), id = character(), part = character(),
                     label = character(), group = integer(), stringsAsFactors = FALSE)
-  out$.ip_result <- list()
-  out$.ip_result_id <- character()
+  out$.ir_result <- list()
+  out$.ir_result_id <- character()
   out
 }
 
 # The label: heading, estimate (with unit), interval and p, each on a line.
 # Every number is an infereportR display string.
-.ip_paired_label <- function(method, shown, unit) {
+.ir_paired_label <- function(method, shown, unit) {
   estimate <- shown$estimate_display
   if (!is.null(unit)) estimate <- paste(estimate, unit)
-  paste(.ip_paired_heading[[method]], estimate, shown$interval_display, shown$p_display,
+  paste(.ir_paired_heading[[method]], estimate, shown$interval_display, shown$p_display,
         sep = "\n")
 }
 
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
 StatPaired <- ggplot2::ggproto("StatPaired", ggplot2::Stat,
   required_aes = c("x", "y", "id"),
   compute_layer = function(self, data, params, layout) {
-    .ip_compute_layer(self, data, params, layout)
+    .ir_compute_layer(self, data, params, layout)
   },
   compute_panel = function(data, scales, method, alternative = NULL, conf.level = NULL,
                            method_args = list(), label_type = "estimate_ci_p",
                            unit = NULL) {
-    if (!.ip_is_discrete(scales$x)) {
-      .ip_abort("stat_paired() needs a discrete x with exactly two levels")
+    if (!.ir_is_discrete(scales$x)) {
+      .ir_abort("stat_paired() needs a discrete x with exactly two levels")
     }
     levels <- scales$x$get_limits()
     if (length(levels) != 2L) {
-      .ip_abort(sprintf("stat_paired() needs exactly two x levels (before, after), not %d",
+      .ir_abort(sprintf("stat_paired() needs exactly two x levels (before, after), not %d",
                         length(levels)))
     }
     panel <- data$PANEL[1L]
     x <- as.integer(data$x)
-    if (anyNA(data$id)) .ip_abort("the id aesthetic must not contain missing values")
+    if (anyNA(data$id)) .ir_abort("the id aesthetic must not contain missing values")
     key <- paste(x, as.character(data$id), sep = "\r")
     if (anyDuplicated(key)) {
-      .ip_abort("each id may appear only once per x level")
+      .ir_abort("each id may appear only once per x level")
     }
     ok <- is.finite(data$y)
     ids <- unique(as.character(data$id))
@@ -67,18 +67,18 @@ StatPaired <- ggplot2::ggproto("StatPaired", ggplot2::Stat,
     after <- value(2L)
     # Ids with a missing or non-finite value at either level are dropped.
     keep <- is.finite(before) & is.finite(after)
-    if (!any(keep)) return(.ip_paired_empty())
+    if (!any(keep)) return(.ir_paired_empty())
     ids <- ids[keep]
     before <- before[keep]
     after <- after[keep]
-    id <- .ip_result_id("paired", method, panel)
-    spec <- .ip_spec(method, alternative = alternative, conf.level = conf.level)
+    id <- .ir_result_id("paired", method, panel)
+    spec <- .ir_spec(method, alternative = alternative, conf.level = conf.level)
     frame <- data.frame(id = ids, x = after, y = before, stringsAsFactors = FALSE)
-    result <- .ip_wrap(do.call(infercalcR::run_inference,
+    result <- .ir_wrap(do.call(infercalcR::run_inference,
                                c(list(spec, data = frame), method_args, result_id = id)),
                        "infercalcR::run_inference()")
-    shown <- .ip_display(result)[1L, , drop = FALSE]
-    text <- if (label_type == "none") "" else .ip_paired_label(method, shown, unit)
+    shown <- .ir_display(result)[1L, , drop = FALSE]
+    text <- if (label_type == "none") "" else .ir_paired_label(method, shown, unit)
     n <- length(ids)
     # The means are geometry (where the heavy line sits); the printed numbers
     # come only from infereportR.
@@ -93,19 +93,19 @@ StatPaired <- ggplot2::ggproto("StatPaired", ggplot2::Stat,
       PANEL = panel,
       stringsAsFactors = FALSE
     )
-    .ip_attach_result(out, result, id)
+    .ir_attach_result(out, result, id)
   }
 )
 
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
 GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
   required_aes = c("x", "y"),
   non_missing_aes = character(),
-  default_aes = ggplot2::aes(colour = .ip_ink, alpha = NA, stroke = 0.5,
-                             size = .ip_label_size_pt / ggplot2::.pt, family = ""),
+  default_aes = ggplot2::aes(colour = .ir_ink, alpha = NA, stroke = 0.5,
+                             size = .ir_label_size_pt / ggplot2::.pt, family = ""),
   draw_key = ggplot2::draw_key_blank,
   draw_panel = function(data, panel_params, coord) {
     if (!nrow(data)) return(grid::nullGrob())
@@ -122,25 +122,25 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
       grobs$lines <- grid::polylineGrob(
         name = "lines",
         units$x, units$y, id = match(units$id, unique(units$id)), default.units = "native",
-        gp = grid::gpar(col = ink, lwd = .ip_rule_hair * 96 / 72.27, lineend = "butt"))
+        gp = grid::gpar(col = ink, lwd = .ir_rule_hair * 96 / 72.27, lineend = "butt"))
       grobs$points <- grid::pointsGrob(
         name = "points",
         units$x, units$y, pch = 1, default.units = "native",
         gp = grid::gpar(col = ink, fill = NA, lwd = point_lwd,
-                        fontsize = .ip_paired_point * ggplot2::.pt + point_lwd))
+                        fontsize = .ir_paired_point * ggplot2::.pt + point_lwd))
     }
     if (nrow(means)) {
       means <- means[order(means$x), , drop = FALSE]
       grobs$mean_line <- grid::polylineGrob(
         name = "mean_line",
         means$x, means$y, default.units = "native",
-        gp = grid::gpar(col = ink, lwd = .ip_paired_mean_line * 96 / 72.27,
+        gp = grid::gpar(col = ink, lwd = .ir_paired_mean_line * 96 / 72.27,
                         lineend = "round"))
       grobs$mean_points <- grid::pointsGrob(
         name = "mean_points",
         means$x, means$y, pch = 19, default.units = "native",
         gp = grid::gpar(col = ink, fill = ink, lwd = point_lwd,
-                        fontsize = .ip_paired_mean_point * ggplot2::.pt + point_lwd))
+                        fontsize = .ir_paired_mean_point * ggplot2::.pt + point_lwd))
     }
     if (nrow(label) && nzchar(label$label[1L])) {
       family <- label$family[1L]
@@ -148,12 +148,12 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
       grobs$label <- grid::textGrob(
         name = "label",
         label$label[1L],
-        x = grid::unit(label$x[1L], "native") + grid::unit(.ip_endlabel_nudge, "mm"),
+        x = grid::unit(label$x[1L], "native") + grid::unit(.ir_endlabel_nudge, "mm"),
         y = grid::unit(label$y[1L], "native"), hjust = 0, vjust = 0.5,
         gp = grid::gpar(col = ink, fontsize = label$size[1L] * ggplot2::.pt,
-                        fontfamily = family, lineheight = .ip_paired_lineheight))
+                        fontfamily = family, lineheight = .ir_paired_lineheight))
     }
-    do.call(grid::grobTree, c(grobs, list(name = "inferplotR.paired")))
+    do.call(grid::grobTree, c(grobs, list(name = "infereportR.paired")))
   }
 )
 
@@ -204,8 +204,8 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #' @param na.rm Kept for the layer interface; incomplete pairs are always
 #'   dropped.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`, `id`,
-#'   `part` (`"unit"`, `"mean"` or `"label"`), `label`, `.ip_result` and
-#'   `.ip_result_id`, so [inference_results()] and [figure_report()] return
+#'   `part` (`"unit"`, `"mean"` or `"label"`), `label`, `.ir_result` and
+#'   `.ir_result_id`, so [inference_results()] and [figure_report()] return
 #'   the paired result.
 #' @seealso [stat_compare()] for independent groups, [inference_results()]
 #' @examples
@@ -227,14 +227,14 @@ stat_paired <- function(mapping = NULL, data = NULL, ..., method, conf.level = N
                         alternative = NULL, method_args = list(),
                         label = c("estimate_ci_p", "none"), unit = NULL, mode = "light",
                         transparent = FALSE, na.rm = FALSE, inherit.aes = TRUE) {
-  method <- .ip_check_method(if (missing(method)) NULL else method, "paired")
-  conf.level <- .ip_check_conf_level(conf.level)
-  alternative <- .ip_check_alternative(alternative)
-  .ip_check_method_args(method_args)
-  label <- .ip_check_choice(label, c("estimate_ci_p", "none"), "label")
-  unit <- .ip_check_optional_string(unit, "unit")
-  ink <- .ip_mode(mode, transparent)$ink
-  .ip_check_flag(na.rm, "na.rm")
+  method <- .ir_check_method(if (missing(method)) NULL else method, "paired")
+  conf.level <- .ir_check_conf_level(conf.level)
+  alternative <- .ir_check_alternative(alternative)
+  .ir_check_method_args(method_args)
+  label <- .ir_check_choice(label, c("estimate_ci_p", "none"), "label")
+  unit <- .ir_check_optional_string(unit, "unit")
+  ink <- .ir_mode(mode, transparent)$ink
+  .ir_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, alternative = alternative, conf.level = conf.level,
                    method_args = method_args, label_type = label, unit = unit,

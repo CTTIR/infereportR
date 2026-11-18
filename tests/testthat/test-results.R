@@ -4,14 +4,14 @@ test_that("S3 result objects survive ggplot_build", {
   StatProbe <- ggplot2::ggproto("StatProbe", ggplot2::Stat, required_aes = c("x", "y"),
     compute_panel = function(data, scales) {
       out <- data.frame(x = 1, y = 5, label = "probe", group = 1L, PANEL = data$PANEL[1])
-      out$.ip_result <- list(r)
-      out$.ip_result_id <- "probe"
+      out$.ir_result <- list(r)
+      out$.ir_result_id <- "probe"
       out
     })
   p <- ggplot2::ggplot(pg, ggplot2::aes(group, weight)) +
     ggplot2::layer(stat = StatProbe, geom = "text", position = "identity")
   d <- layer_data_of(p)
-  expect_identical(d$.ip_result[[1]], r)
+  expect_identical(d$.ir_result[[1]], r)
   expect_no_warning(draws_silently(p))
 })
 
@@ -21,10 +21,10 @@ test_that("inference_results collects results in layer then panel order", {
     stat_omnibus(method = "anova_one_way") +
     stat_compare(method = welch, reference = "ctrl", adjust = "holm")
   res <- inference_results(p)
-  expect_named(res, c("inferplotR:omnibus:anova_one_way:panel1",
-                      "inferplotR:omnibus:anova_one_way:panel2",
-                      "inferplotR:compare:t_means_two_independent_welch:panel1",
-                      "inferplotR:compare:t_means_two_independent_welch:panel2"))
+  expect_named(res, c("infereportR:omnibus:anova_one_way:panel1",
+                      "infereportR:omnibus:anova_one_way:panel2",
+                      "infereportR:compare:t_means_two_independent_welch:panel1",
+                      "infereportR:compare:t_means_two_independent_welch:panel2"))
   for (r in res) {
     expect_silent(infercalcR::validate_inference(r))
     expect_type(infereportR::report_text(r), "character")
@@ -68,7 +68,7 @@ test_that("figure_report binds report_table rows", {
                    infereportR::report_table(manual_family(), p = "adjusted")$p_display)
   raw <- figure_report(p, p = "raw")
   expect_identical(raw$p_selection[raw$figure_layer == 3L], rep("raw", 2))
-  expect_error(figure_report(p, p = "x"), class = "inferplotR_invalid_input")
-  expect_error(figure_report(1), class = "inferplotR_invalid_input")
-  expect_error(figure_report(p, p = "adjusted"), class = "inferplotR_calculation_failed")
+  expect_error(figure_report(p, p = "x"), class = "infereportR_invalid_input")
+  expect_error(figure_report(1), class = "infereportR_invalid_input")
+  expect_error(figure_report(p, p = "adjusted"), class = "infereportR_calculation_failed")
 })

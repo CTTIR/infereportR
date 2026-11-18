@@ -60,12 +60,12 @@ label size) by default.}
 the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, the layer draws no background fill (open
-marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
+marks stay empty); passed by \code{\link[=report_figure]{report_figure()}} with \code{mode}.}
 }
 \value{
 A ggplot2 layer; with \code{fit = TRUE}, a list of two layers (fit,
 then label) that \code{+} adds together. The computed data carries
-\code{.ip_result} and \code{.ip_result_id}.
+\code{.ir_result} and \code{.ir_result_id}.
 }
 \description{
 Runs one explicitly named correlation procedure of 'infercalcR' per panel
@@ -80,13 +80,13 @@ non-finite x or y are dropped first.
 \code{label = "estimate_ci_p_n"} sets the label on two lines and adds the number
 of pairs, for example \code{"r = 0.705 [0.574, 0.801]"} over
 \code{"p < 0.001, n = 80"}. n is \code{result_data()$n} of the 'infercalcR' result,
-written by \code{\link[infereportR:format_estimate]{infereportR::format_estimate()}}.
+written by \code{\link[=format_estimate]{format_estimate()}}.
 
 Sample size: 'infercalcR' 0.1.0 needs at least 4 complete pairs per panel
 for each correlation, and the fitted line of \code{fit = TRUE}
 (\code{prediction_model_linear}) needs at least 20 per panel. With fewer,
 building the plot fails with an error of class
-\code{inferplotR_calculation_failed}.
+\code{infereportR_calculation_failed}.
 
 With \code{fit = TRUE} a second layer draws the fitted mean line of a linear
 prediction model from 'infercalcR' (\code{prediction_model_linear}) with its

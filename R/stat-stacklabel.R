@@ -1,6 +1,6 @@
 # Category names beside a stacked bar instead of a legend (amendment D12).
 
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -89,20 +89,20 @@ stat_stacklabel <- function(mapping = NULL, data = NULL, ..., side = c("right", 
                             offset = 0.38, position = c("fill", "stack"), size = NULL,
                             family = NULL, mode = "light", transparent = FALSE,
                             inherit.aes = TRUE) {
-  side <- .ip_check_choice(side, c("right", "left"), "side")
-  .ip_check_number(offset, "offset")
-  position <- .ip_check_choice(position, c("fill", "stack"), "position")
-  size <- .ip_check_optional_number(size, "size", min = 0)
-  family <- .ip_check_optional_string(family, "family")
-  ink <- .ip_mode(mode, transparent)$ink
+  side <- .ir_check_choice(side, c("right", "left"), "side")
+  .ir_check_number(offset, "offset")
+  position <- .ir_check_choice(position, c("fill", "stack"), "position")
+  size <- .ir_check_optional_number(size, "size", min = 0)
+  family <- .ir_check_optional_string(family, "family")
+  ink <- .ir_mode(mode, transparent)$ink
   pos <- switch(position,
     fill = ggplot2::position_fill(vjust = 0.5),
     stack = ggplot2::position_stack(vjust = 0.5)
   )
   dots <- list(...)
   params <- c(list(side = side, offset = offset,
-                   size = if (is.null(size)) .ip_label_size_pt / ggplot2::.pt else size,
-                   family = if (is.null(family)) .ip_condensed_family() else family),
+                   size = if (is.null(size)) .ir_label_size_pt / ggplot2::.pt else size,
+                   family = if (is.null(family)) .ir_condensed_family() else family),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
   ggplot2::layer(stat = StatStacklabel, data = data, mapping = mapping, geom = "text",

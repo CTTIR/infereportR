@@ -18,12 +18,12 @@ expect_audit_shape <- function(res) {
   expect_identical(nrow(res), 6L)
   for (col in names(res)) expect_type(res[[col]], "character")
   expect_true(all(res$status %in% c("pass", "fail", "note")))
-  expect_identical(res$source, c("APA 7", "APA 7", "inferplotR", "APA 7", "APA 7", "APA 7"))
+  expect_identical(res$source, c("APA 7", "APA 7", "infereportR", "APA 7", "APA 7", "APA 7"))
 }
 
-test_that("an inferplot figure with labelled axes and units passes", {
+test_that("an report_figure figure with labelled axes and units passes", {
   p <- ggplot2::ggplot(pg_caps, ggplot2::aes(group, weight)) +
-    inferplot(compare = welch, reference = "Control", adjust = "holm",
+    report_figure(compare = welch, reference = "Control", adjust = "holm",
               omnibus = "anova_one_way") +
     ggplot2::geom_point(ggplot2::aes(shape = group), colour = "black") +
     ggplot2::labs(x = "Treatment", y = "Dried weight (g)", shape = "Group")
@@ -135,7 +135,7 @@ test_that("the return value is type-stable, even without layers", {
 })
 
 test_that("invalid input is rejected", {
-  bad <- "inferplotR_invalid_input"
+  bad <- "infereportR_invalid_input"
   expect_error(check_figure(mtcars), class = bad)
   expect_error(check_figure(mt_plot(), target = "poster"), class = bad)
 })

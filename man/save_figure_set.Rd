@@ -57,7 +57,7 @@ such as \verb{\\graphicspath\{\{figures/dark/\}\}} for a deck in
 
 \code{build} is called once per mode, as \code{build(mode = , transparent = )} with
 \code{mode} \code{"light"} or \code{"dark"} and \code{transparent} \code{TRUE} or \code{FALSE}, and must
-return a ggplot. Pass both on to \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=inferplot]{inferplot()}}, the
+return a ggplot. Pass both on to \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=report_figure]{report_figure()}}, the
 layers and builders of the package, or \code{\link[=char_figure]{char_figure()}}. Each figure is
 written with \code{\link[=save_figure]{save_figure()}} at the size of \code{preset}: a PDF (Cairo, fonts
 embedded) and, with \code{png = TRUE}, a PNG ('ragg' when installed) at \code{dpi}.
@@ -74,7 +74,7 @@ first called.
 library(ggplot2)
 build <- function(mode, transparent) {
   ggplot(PlantGrowth, aes(group, weight)) +
-    inferplot("slide", mode = mode, transparent = transparent) +
+    report_figure("slide", mode = mode, transparent = transparent) +
     labs(x = "Group", y = "Dried weight (g)")
 }
 dir <- file.path(tempdir(), "figures")

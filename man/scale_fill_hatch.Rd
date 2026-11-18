@@ -45,7 +45,7 @@ column is a list of colors and patterns. Legend keys show the patterns.
 }
 \details{
 The scale never recycles: if the data have more groups than \code{patterns},
-building the plot fails with an error of class \code{inferplotR_too_many_groups}.
+building the plot fails with an error of class \code{infereportR_too_many_groups}.
 
 Pattern fills need R 4.1.0 or later and a pattern-capable graphics device,
 such as \code{\link[grDevices:cairo_pdf]{grDevices::cairo_pdf()}}, \code{\link[grDevices:svg]{grDevices::svg()}} or the 'ragg' devices

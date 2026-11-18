@@ -61,7 +61,7 @@ Only areas the plot itself leaves empty become transparent, so use it with
 
 PDF and SVG output need an R build with Cairo; PNG and TIFF need it only
 when 'ragg' is not installed. Without it the function fails with an error of
-class \code{inferplotR_device_unsupported}.
+class \code{infereportR_device_unsupported}.
 }
 \examples{
 p <- ggplot2::ggplot(data.frame(x = 1:3, y = c(2, 1, 3)), ggplot2::aes(x, y)) +

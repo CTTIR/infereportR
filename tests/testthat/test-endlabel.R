@@ -55,9 +55,9 @@ test_that("the stat itself drops non-finite rows and breaks ties by first row", 
 
 test_that("the label colour is the ink token", {
   ld <- endlabel_data(two_lines())
-  expect_true(all(ld$colour == .ip_ink))
+  expect_true(all(ld$colour == .ir_ink))
   ld2 <- endlabel_data(two_lines(), colour = "red")
-  expect_true(all(ld2$colour == .ip_ink))
+  expect_true(all(ld2$colour == .ir_ink))
 })
 
 test_that("defaults: hjust, size, family, stat and geom", {
@@ -67,7 +67,7 @@ test_that("defaults: hjust, size, family, stat and geom", {
   expect_s3_class(layer$geom, "GeomText")
   expect_equal(layer$aes_params$hjust, 0)
   expect_equal(layer$aes_params$size, 8 / ggplot2::.pt)
-  expect_equal(layer$aes_params$size, .ip_label_size_pt / ggplot2::.pt)
+  expect_equal(layer$aes_params$size, .ir_label_size_pt / ggplot2::.pt)
   expect_identical(layer$aes_params$family, figure_font("sans"))
   expect_false(layer$show.legend)
   custom <- geom_endlabel(size = 3, family = "serif", hjust = 0.5)
@@ -92,7 +92,7 @@ endlabel_text <- function(d, width = 60, height = 40) {
                                     height = grid::unit(height, "mm")))
   laid <- grid::makeContent(g)
   txt <- grid::getGrob(laid, "labels")
-  h <- .ip_text_height_npc(g$fontsize[[1]], g$fontfamily[[1]])
+  h <- .ir_text_height_npc(g$fontsize[[1]], g$fontfamily[[1]])
   x_mm <- grid::convertX(txt$x, "mm", valueOnly = TRUE)
   grid::popViewport()
   list(grob = g, text = txt, height = h, x_mm = x_mm, width = width)
@@ -104,7 +104,7 @@ test_that("two series ending at the same y get labels at least the gap apart", {
   y <- as.numeric(out$text$y)
   expect_length(y, 2L)
   expect_gt(out$height, 0)
-  expect_gte(abs(diff(y)), .ip_endlabel_gap * out$height - 1e-9)
+  expect_gte(abs(diff(y)), .ir_endlabel_gap * out$height - 1e-9)
   # The pair keeps its mean position.
   expect_equal(mean(y), mean(out$grob$y))
   expect_equal(out$grob$y[[1]], out$grob$y[[2]])
@@ -119,19 +119,19 @@ test_that("labels already far apart stay where they are", {
 test_that("labels start at x + nudge with hjust = 0 in the ink colour", {
   out <- endlabel_text(two_lines())
   expect_equal(out$text$hjust, c(0, 0))
-  expect_equal(out$x_mm, out$grob$x * out$width + .ip_endlabel_nudge)
-  expect_identical(out$text$gp$col, rep(.ip_ink, 2L))
-  expect_equal(out$text$gp$fontsize, rep(.ip_label_size_pt, 2L))
+  expect_equal(out$x_mm, out$grob$x * out$width + .ir_endlabel_nudge)
+  expect_identical(out$text$gp$col, rep(.ir_ink, 2L))
+  expect_equal(out$text$gp$fontsize, rep(.ir_label_size_pt, 2L))
 })
 
-test_that(".ip_spread pushes apart, keeps order and mean", {
-  expect_identical(.ip_spread(0.5, 0.1), 0.5)
+test_that(".ir_spread pushes apart, keeps order and mean", {
+  expect_identical(.ir_spread(0.5, 0.1), 0.5)
   y <- c(0.5, 0.5, 0.52)
-  s <- .ip_spread(y, 0.1)
+  s <- .ir_spread(y, 0.1)
   expect_equal(mean(s), mean(y))
   expect_true(all(diff(sort(s)) >= 0.1 - 1e-12))
   expect_identical(order(s), order(y))
-  expect_equal(.ip_spread(c(0.9, 0.1), 0.1), c(0.9, 0.1))
+  expect_equal(.ir_spread(c(0.9, 0.1), 0.1), c(0.9, 0.1))
 })
 
 test_that("a plot with end labels draws, including an empty panel", {
@@ -154,11 +154,11 @@ test_that("a plot with end labels draws, including an empty panel", {
 })
 
 test_that("bad arguments raise invalid_input", {
-  expect_error(geom_endlabel(hjust = "a"), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(size = -1), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(size = 0), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(family = NA_character_), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(na.rm = NA), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(show.legend = "no"), class = "inferplotR_invalid_input")
-  expect_error(geom_endlabel(inherit.aes = 1), class = "inferplotR_invalid_input")
+  expect_error(geom_endlabel(hjust = "a"), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(size = -1), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(size = 0), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(family = NA_character_), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(na.rm = NA), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(show.legend = "no"), class = "infereportR_invalid_input")
+  expect_error(geom_endlabel(inherit.aes = 1), class = "infereportR_invalid_input")
 })

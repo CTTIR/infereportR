@@ -26,20 +26,20 @@
 #' @export
 figure_size <- function(preset = c("journal_column", "journal_page", "slide_full",
                                    "slide_side", "slide_half")) {
-  preset <- .ip_check_choice(preset, .ip_presets$preset, "preset")
-  row <- .ip_presets[.ip_presets$preset == preset, , drop = FALSE]
+  preset <- .ir_check_choice(preset, .ir_presets$preset, "preset")
+  row <- .ir_presets[.ir_presets$preset == preset, , drop = FALSE]
   list(width = row$width[[1L]], height = row$height[[1L]], units = "mm")
 }
 
 # Wrapped so that tests can simulate a build without Cairo.
-.ip_cairo_available <- function() isTRUE(capabilities("cairo"))
+.ir_cairo_available <- function() isTRUE(capabilities("cairo"))
 
-.ip_ragg_available <- function() requireNamespace("ragg", quietly = TRUE)
+.ir_ragg_available <- function() requireNamespace("ragg", quietly = TRUE)
 
-.ip_check_size <- function(x, arg) {
+.ir_check_size <- function(x, arg) {
   if (is.null(x)) return(invisible(x))
-  .ip_check_number(x, arg, min = 0)
-  if (x <= 0) .ip_abort(sprintf("%s must be a positive number", arg))
+  .ir_check_number(x, arg, min = 0)
+  if (x <= 0) .ir_abort(sprintf("%s must be a positive number", arg))
   invisible(x)
 }
 
@@ -65,7 +65,7 @@ figure_size <- function(preset = c("journal_column", "journal_page", "slide_full
 #'
 #' PDF and SVG output need an R build with Cairo; PNG and TIFF need it only
 #' when 'ragg' is not installed. Without it the function fails with an error of
-#' class `inferplotR_device_unsupported`.
+#' class `infereportR_device_unsupported`.
 #'
 #' @param plot A ggplot object.
 #' @param file Path of the output file. The extension (`pdf`, `png`, `svg` or
@@ -96,30 +96,30 @@ figure_size <- function(preset = c("journal_column", "journal_page", "slide_full
 #' @export
 save_figure <- function(plot, file, preset = "journal_column", width = NULL, height = NULL,
                         dpi = 600, bg = NULL, transparent = FALSE) {
-  .ip_check_plot(plot, "plot")
-  .ip_check_string(file, "file")
+  .ir_check_plot(plot, "plot")
+  .ir_check_string(file, "file")
   formats <- c("pdf", "png", "svg", "tiff")
   ext <- if (grepl("[.][^./\\\\]+$", file)) tolower(sub(".*[.]", "", file)) else ""
   if (!ext %in% formats) {
-    .ip_abort("file must end in .pdf, .png, .svg or .tiff")
+    .ir_abort("file must end in .pdf, .png, .svg or .tiff")
   }
-  size <- figure_size(.ip_check_choice(preset, .ip_presets$preset, "preset"))
-  .ip_check_size(width, "width")
-  .ip_check_size(height, "height")
-  .ip_check_number(dpi, "dpi", min = 0)
-  if (dpi <= 0) .ip_abort("dpi must be a positive number")
-  .ip_check_flag(transparent, "transparent")
+  size <- figure_size(.ir_check_choice(preset, .ir_presets$preset, "preset"))
+  .ir_check_size(width, "width")
+  .ir_check_size(height, "height")
+  .ir_check_number(dpi, "dpi", min = 0)
+  if (dpi <= 0) .ir_abort("dpi must be a positive number")
+  .ir_check_flag(transparent, "transparent")
   if (!is.null(bg)) {
-    .ip_check_string(bg, "bg")
-    if (transparent) .ip_abort("give bg or transparent = TRUE, not both")
+    .ir_check_string(bg, "bg")
+    if (transparent) .ir_abort("give bg or transparent = TRUE, not both")
   }
-  if (is.null(bg)) bg <- if (transparent) .ip_transparent else .ip_paper
+  if (is.null(bg)) bg <- if (transparent) .ir_transparent else .ir_paper
   if (!is.null(width)) size$width <- width
   if (!is.null(height)) size$height <- height
 
-  needs_cairo <- ext %in% c("pdf", "svg") || !.ip_ragg_available()
-  if (needs_cairo && !.ip_cairo_available()) {
-    .ip_abort(sprintf("saving .%s files needs an R build with Cairo support", ext),
+  needs_cairo <- ext %in% c("pdf", "svg") || !.ir_ragg_available()
+  if (needs_cairo && !.ir_cairo_available()) {
+    .ir_abort(sprintf("saving .%s files needs an R build with Cairo support", ext),
               code = "device_unsupported")
   }
   device <- switch(ext,

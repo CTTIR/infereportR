@@ -1,4 +1,4 @@
-markers_frame <- function() as.data.frame(.ip_gallery_data()$mk)
+markers_frame <- function() as.data.frame(.ir_gallery_data()$mk)
 
 test_that("figure_correlation_matrix reproduces the Spearman oracle (figure 08)", {
   mk <- markers_frame()
@@ -51,18 +51,18 @@ test_that("a pair without a result draws a cross and keeps its status", {
 
 test_that("figure_correlation_matrix checks its input", {
   mk <- markers_frame()
-  expect_error(figure_correlation_matrix(mk), class = "inferplotR_invalid_input")
+  expect_error(figure_correlation_matrix(mk), class = "infereportR_invalid_input")
   expect_error(figure_correlation_matrix(mk, method = "t_means_paired"),
-               class = "inferplotR_unsupported")
+               class = "infereportR_unsupported")
   expect_error(figure_correlation_matrix(mk, vars = "C3a", method = "correlation_kendall"),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   expect_error(figure_correlation_matrix(mk, vars = c("C3a", "nope"),
                                          method = "correlation_kendall"),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   expect_error(figure_correlation_matrix(as.matrix(mk), method = "correlation_kendall"),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   expect_error(figure_correlation_matrix(mk, method = "correlation_kendall", labels = "a"),
-               class = "inferplotR_invalid_input")
+               class = "infereportR_invalid_input")
   p <- figure_correlation_matrix(mk, vars = c("C3a", "C5a"), method = "correlation_kendall")
   expect_length(inference_results(p), 1L)
 })

@@ -1,15 +1,15 @@
-bad <- "inferplotR_invalid_input"
-many <- "inferplotR_too_many_groups"
+bad <- "infereportR_invalid_input"
+many <- "infereportR_too_many_groups"
 
-test_that(".ip_palette returns prefixes and refuses to recycle", {
+test_that(".ir_palette returns prefixes and refuses to recycle", {
   for (v in list(c("a", "b", "c"), c(16, 1, 15), list("x", 2, NULL))) {
-    pal <- .ip_palette(v, "things")
+    pal <- .ir_palette(v, "things")
     expect_identical(pal(2), v[1:2])
     expect_identical(pal(3), v)
     expect_length(pal(0), 0L)
     expect_error(pal(4), class = many)
   }
-  expect_type(.ip_palette(list(1, 2), "things")(1), "list")
+  expect_type(.ir_palette(list(1, 2), "things")(1), "list")
 })
 
 test_that("linetype palette gives the documented sequence", {
@@ -31,8 +31,8 @@ test_that("shape palette gives the documented sequence", {
 
 test_that("ink palette maps every level to ink", {
   pal <- scale_colour_ink()$palette
-  expect_identical(pal(3), rep(.ip_ink, 3))
-  expect_identical(pal(20), rep(.ip_ink, 20))
+  expect_identical(pal(3), rep(.ir_ink, 3))
+  expect_identical(pal(20), rep(.ir_ink, 20))
   expect_identical(scale_color_ink, scale_colour_ink)
   expect_identical(scale_colour_ink(aesthetics = c("colour", "fill"))$aesthetics,
                    c("colour", "fill"))
@@ -55,8 +55,8 @@ test_that("ink, linetype and shape scales combine on a 2-group line plot", {
   b <- ggplot2::ggplot_build(p)
   lines <- b$data[[1]]
   points <- b$data[[2]]
-  expect_true(all(lines$colour == .ip_ink))
-  expect_true(all(points$colour == .ip_ink))
+  expect_true(all(lines$colour == .ir_ink))
+  expect_true(all(points$colour == .ir_ink))
   expect_setequal(unique(lines$linetype), c("solid", "22"))
   expect_identical(lines$linetype[lines$group == 1][1], "solid")
   expect_identical(lines$linetype[lines$group == 2][1], "22")
@@ -73,7 +73,7 @@ test_that("too many groups fails at build time with a classed error", {
   expect_error(ggplot2::ggplot_build(p), class = many)
 })
 
-test_that("invalid scale arguments raise inferplotR_invalid_input", {
+test_that("invalid scale arguments raise infereportR_invalid_input", {
   for (v in list(character(), NA_character_, c("solid", NA), "", list("solid"), TRUE)) {
     expect_error(scale_linetype_figure(values = v), class = bad)
     expect_error(scale_shape_figure(values = v), class = bad)

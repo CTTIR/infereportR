@@ -21,7 +21,7 @@
 #' * `GeomText`, `GeomLabel`: the label string, placed by `hjust`.
 #'
 #' Every other layer (for example `geom_boxplot()` or `geom_violin()`) is skipped
-#' with one warning of class `inferplotR_skipped_layer` that names the skipped
+#' with one warning of class `infereportR_skipped_layer` that names the skipped
 #' geom classes. Layers are drawn in order, later layers overwrite earlier ones,
 #' and the axes are drawn last.
 #'
@@ -55,11 +55,11 @@
 #' `x`, the minus sign (U+2212) and the en dash to `-`, the em dash to `--`,
 #' the micro sign (and Greek mu) to `u` and Greek rho to `rho`. Any other
 #' non-ASCII character becomes `?`, with one warning of class
-#' `inferplotR_transliterated` per call.
+#' `infereportR_transliterated` per call.
 #'
 #' @param plot A ggplot with one panel and `coord_cartesian()` (or
 #'   `coord_fixed()`). Facets, `coord_flip()`, `coord_polar()`, `coord_trans()`
-#'   and `coord_sf()` raise an error of class `inferplotR_unsupported`.
+#'   and `coord_sf()` raise an error of class `infereportR_unsupported`.
 #' @param width Grid width in characters, a whole number of at least 24.
 #' @param height Grid height in characters, a whole number of at least 10.
 #' @param charset `"ascii"` (default) or `"unicode"` for box-drawing line glyphs,
@@ -68,7 +68,7 @@
 #'   string (title, labels, tick labels, legend, end labels, text layers) in
 #'   upper case. Glyphs are never changed, so a legend's or end label's `o`
 #'   stays `o`.
-#' @return An object of class `inferplotR_chargrid`: a list with `chars` (a
+#' @return An object of class `infereportR_chargrid`: a list with `chars` (a
 #'   character matrix of `height` rows and `width` columns, one glyph per cell),
 #'   `width`, `height`, `charset` and `legend` (a data frame with columns `key`
 #'   (integer), `symbol` and `label` (character); zero rows when there is no
@@ -88,22 +88,22 @@
 #' @export
 char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "unicode"),
                       case = c("asis", "upper")) {
-  .ip_check_plot(plot)
-  width <- .ip_check_count(width, "width", min = 24)
-  height <- .ip_check_count(height, "height", min = 10)
-  charset <- .ip_check_choice(charset, c("ascii", "unicode"), "charset")
-  case <- .ip_check_choice(case, c("asis", "upper"), "case")
+  .ir_check_plot(plot)
+  width <- .ir_check_count(width, "width", min = 24)
+  height <- .ir_check_count(height, "height", min = 10)
+  charset <- .ir_check_choice(charset, c("ascii", "unicode"), "charset")
+  case <- .ir_check_choice(case, c("asis", "upper"), "case")
 
   b <- ggplot2::ggplot_build(plot)
   if (nrow(b$layout$layout) != 1L) {
-    .ip_abort("plot must have exactly one panel for char_grid(); remove facets",
+    .ir_abort("plot must have exactly one panel for char_grid(); remove facets",
               code = "unsupported")
   }
   coord <- b$layout$coord
   bad_coord <- c("CoordFlip", "CoordTransform", "CoordTrans", "CoordPolar", "CoordRadial",
                  "CoordSf")
   if (!inherits(coord, "CoordCartesian") || inherits(coord, bad_coord)) {
-    .ip_abort("plot must use a plain Cartesian coordinate system for char_grid()",
+    .ir_abort("plot must use a plain Cartesian coordinate system for char_grid()",
               code = "unsupported")
   }
 
@@ -112,26 +112,26 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   # Every written string passes through txt(): ASCII transliteration first (so
   # that toupper() never sees a Greek letter), then the case.
   txt <- function(s) {
-    if (ascii) s <- .ip_cg_ascii(s)
+    if (ascii) s <- .ir_cg_ascii(s)
     if (identical(case, "upper")) toupper(s) else s
   }
-  labs <- .ip_cg_labels(plot)
+  labs <- .ir_cg_labels(plot)
   written <- unlist(labs, use.names = FALSE)
   labs <- lapply(labs, function(s) if (is.null(s)) NULL else txt(s))
-  xb <- .ip_cg_breaks(pp$x)
-  yb <- .ip_cg_breaks(pp$y)
+  xb <- .ir_cg_breaks(pp$x)
+  yb <- .ir_cg_breaks(pp$y)
   written <- c(written, xb$label, yb$label)
   xb$label <- txt(xb$label)
   yb$label <- txt(yb$label)
 
-  ks <- .ip_cg_key_scale(b)
+  ks <- .ir_cg_key_scale(b)
   legend_labels <- if (is.null(ks)) character() else ks$labels
   written <- c(written, legend_labels)
   legend_labels <- txt(legend_labels)
 
   layers <- b$plot$layers
-  glyphs <- .ip_glyphs[[charset]]
-  ends <- .ip_cg_endlabel_data(b, ks, glyphs)
+  glyphs <- .ir_glyphs[[charset]]
+  ends <- .ir_cg_endlabel_data(b, ks, glyphs)
   written <- c(written, ends$label)
   ends$label <- txt(ends$label)
   ends$text <- paste(ends$symbol, ends$label)
@@ -141,15 +141,15 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   legend_rows <- if (nrow(ends)) {
     list()
   } else {
-    .ip_cg_legend_wrap(nchar(legend_labels, type = "chars") + 2L, width)
+    .ir_cg_legend_wrap(nchar(legend_labels, type = "chars") + 2L, width)
   }
 
-  lay <- .ip_cg_layout(width, height, title = !is.null(labs$title), ylab = !is.null(labs$y),
+  lay <- .ir_cg_layout(width, height, title = !is.null(labs$title), ylab = !is.null(labs$y),
                        xlab = !is.null(labs$x), caption = !is.null(labs$caption),
                        legend_rows = length(legend_rows),
                        ytick_width = max(c(nchar(yb$label, type = "chars"), 1L)),
                        end_width = end_width)
-  map <- .ip_cg_map(lay, pp$x.range, pp$y.range)
+  map <- .ir_cg_map(lay, pp$x.range, pp$y.range)
 
   cv <- list(m = matrix(" ", nrow = height, ncol = width), lay = lay, col = map$col,
              row = map$row, charset = charset, glyphs = glyphs,
@@ -157,75 +157,75 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 
   skipped <- character()
   for (i in seq_along(layers)) {
-    if (.ip_cg_is_endlabel(layers[[i]])) next
+    if (.ir_cg_is_endlabel(layers[[i]])) next
     d <- b$data[[i]]
     geom <- layers[[i]]$geom
-    kind <- .ip_cg_kind(geom)
+    kind <- .ir_cg_kind(geom)
     if (is.na(kind)) {
       skipped <- c(skipped, class(geom)[[1L]])
       next
     }
     if (!nrow(d)) next
-    if (identical(kind, "step")) d <- .ip_cg_stairs(d, layers[[i]])
+    if (identical(kind, "step")) d <- .ir_cg_stairs(d, layers[[i]])
     if (identical(kind, "text") && !is.null(d$label)) {
       written <- c(written, as.character(d$label))
     }
-    keys <- .ip_cg_keys(d, ks)
+    keys <- .ir_cg_keys(d, ks)
     cv <- switch(kind,
-      rect = .ip_cg_draw_rect(cv, d, keys),
-      ribbon = .ip_cg_draw_ribbon(cv, d, keys),
-      smooth = .ip_cg_draw_path(cv, d, keys, sort_x = TRUE),
-      line = .ip_cg_draw_path(cv, d, keys, sort_x = TRUE),
-      step = .ip_cg_draw_path(cv, d, keys, sort_x = FALSE),
-      path = .ip_cg_draw_path(cv, d, keys, sort_x = FALSE),
-      segment = .ip_cg_draw_segment(cv, d, keys),
-      range = .ip_cg_draw_range(cv, d, keys, geom),
-      hline = .ip_cg_draw_refline(cv, d, "y"),
-      vline = .ip_cg_draw_refline(cv, d, "x"),
-      point = .ip_cg_draw_point(cv, d, keys),
-      text = .ip_cg_draw_text(cv, d, txt)
+      rect = .ir_cg_draw_rect(cv, d, keys),
+      ribbon = .ir_cg_draw_ribbon(cv, d, keys),
+      smooth = .ir_cg_draw_path(cv, d, keys, sort_x = TRUE),
+      line = .ir_cg_draw_path(cv, d, keys, sort_x = TRUE),
+      step = .ir_cg_draw_path(cv, d, keys, sort_x = FALSE),
+      path = .ir_cg_draw_path(cv, d, keys, sort_x = FALSE),
+      segment = .ir_cg_draw_segment(cv, d, keys),
+      range = .ir_cg_draw_range(cv, d, keys, geom),
+      hline = .ir_cg_draw_refline(cv, d, "y"),
+      vline = .ir_cg_draw_refline(cv, d, "x"),
+      point = .ir_cg_draw_point(cv, d, keys),
+      text = .ir_cg_draw_text(cv, d, txt)
     )
   }
 
-  m <- .ip_cg_axes(cv$m, lay, xb, yb)
-  m <- .ip_cg_titles(m, lay, labs)
+  m <- .ir_cg_axes(cv$m, lay, xb, yb)
+  m <- .ir_cg_titles(m, lay, labs)
   sym <- cv$sym
   if (length(sym)) {
     unseen <- is.na(sym)
-    sym[unseen] <- .ip_cg_cycle(cv$glyphs$points, which(unseen))
+    sym[unseen] <- .ir_cg_cycle(cv$glyphs$points, which(unseen))
   }
   legend <- data.frame(key = seq_along(legend_labels), symbol = sym, label = legend_labels,
                        stringsAsFactors = FALSE)
-  m <- .ip_cg_legend(m, lay, legend, legend_rows)
-  ends$row <- .ip_cg_endlabel_rows(map$row(ends$y), ends$y, lay)
-  m <- .ip_cg_endlabels(m, lay, ends)
+  m <- .ir_cg_legend(m, lay, legend, legend_rows)
+  ends$row <- .ir_cg_endlabel_rows(map$row(ends$y), ends$y, lay)
+  m <- .ir_cg_endlabels(m, lay, ends)
   ends <- ends[order(ends$row), c("key", "symbol", "label", "row"), drop = FALSE]
   rownames(ends) <- NULL
 
   if (length(skipped)) {
-    .ip_warn(sprintf("char_grid() skipped layers it cannot draw: %s",
+    .ir_warn(sprintf("char_grid() skipped layers it cannot draw: %s",
                      paste(unique(skipped), collapse = ", ")), code = "skipped_layer")
   }
-  if (ascii && .ip_cg_unknown(written)) {
-    .ip_warn("char_grid() wrote '?' for non-ASCII characters it cannot transliterate",
+  if (ascii && .ir_cg_unknown(written)) {
+    .ir_warn("char_grid() wrote '?' for non-ASCII characters it cannot transliterate",
              code = "transliterated")
   }
   structure(list(chars = m, width = width, height = height, charset = charset,
                  legend = legend, endlabels = ends),
-            class = "inferplotR_chargrid")
+            class = "infereportR_chargrid")
 }
 
 # ASCII transliteration (SPEC amendment 01, D8). The micro sign and the Greek
 # small mu look alike, so both become "u".
-.ip_cg_ascii_table <- c(
+.ir_cg_ascii_table <- c(
   "\u2265" = ">=", "\u2264" = "<=", "\u00b1" = "+/-", "\u00d7" = "x", "\u2212" = "-",
   "\u2013" = "-", "\u2014" = "--", "\u00b5" = "u", "\u03bc" = "u", "\u03c1" = "rho"
 )
 
 # Transliterate with the table; any other non-ASCII character becomes "?".
-.ip_cg_ascii <- function(s) {
+.ir_cg_ascii <- function(s) {
   if (!length(s)) return(as.character(s))
-  out <- .ip_cg_ascii_tabled(s)
+  out <- .ir_cg_ascii_tabled(s)
   vapply(out, function(x) {
     if (is.na(x)) return(NA_character_)
     cp <- utf8ToInt(x)
@@ -234,18 +234,18 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   }, character(1), USE.NAMES = FALSE)
 }
 
-.ip_cg_ascii_tabled <- function(s) {
+.ir_cg_ascii_tabled <- function(s) {
   out <- enc2utf8(as.character(s))
-  tab <- .ip_cg_ascii_table
+  tab <- .ir_cg_ascii_table
   for (k in names(tab)) out <- gsub(k, tab[[k]], out, fixed = TRUE)
   out
 }
 
 # Does any string hold a non-ASCII character the table does not cover?
-.ip_cg_unknown <- function(s) {
+.ir_cg_unknown <- function(s) {
   s <- s[!is.na(s)]
   if (!length(s)) return(FALSE)
-  out <- .ip_cg_ascii_tabled(s)
+  out <- .ir_cg_ascii_tabled(s)
   any(vapply(out, function(x) {
     cp <- utf8ToInt(x)
     anyNA(cp) || any(cp >= 128L)
@@ -254,18 +254,18 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 
 # geom_endlabel() layers are recognised by their stat, so the check holds
 # whichever geom draws them.
-.ip_cg_is_endlabel <- function(layer) inherits(layer$stat, "StatEndlabel")
+.ir_cg_is_endlabel <- function(layer) inherits(layer$stat, "StatEndlabel")
 
 # One row per series end from every geom_endlabel() layer: the series key, its
 # point glyph and the raw label. The key comes from the layer's own key
 # aesthetic; a layer without it is matched by label text against the key
 # scale's labels; unmatched ends use key 1, like the data they label.
-.ip_cg_endlabel_data <- function(b, ks, glyphs) {
+.ir_cg_endlabel_data <- function(b, ks, glyphs) {
   out <- data.frame(key = integer(), symbol = character(), label = character(),
                     y = numeric(), stringsAsFactors = FALSE)
   layers <- b$plot$layers
   for (i in seq_along(layers)) {
-    if (!.ip_cg_is_endlabel(layers[[i]])) next
+    if (!.ir_cg_is_endlabel(layers[[i]])) next
     d <- b$data[[i]]
     if (!nrow(d) || is.null(d$label)) next
     lab <- as.character(d$label)
@@ -273,14 +273,14 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
     keep <- !is.na(lab) & is.finite(y) & is.finite(as.numeric(d$x))
     if (!any(keep)) next
     d <- d[keep, , drop = FALSE]
-    keys <- .ip_cg_keys(d, ks)
+    keys <- .ir_cg_keys(d, ks)
     if (!is.null(ks)) {
       miss <- is.na(keys)
       keys[miss] <- match(lab[keep][miss], ks$labels)
     }
     keys[is.na(keys)] <- 1L
     out <- rbind(out, data.frame(key = as.integer(keys),
-                                 symbol = .ip_cg_cycle(glyphs$points, keys),
+                                 symbol = .ir_cg_cycle(glyphs$points, keys),
                                  label = lab[keep], y = y[keep], stringsAsFactors = FALSE))
   }
   out
@@ -289,7 +289,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 # Rows of the end labels: start at the row of the series' last y, highest y on
 # top (ties keep layer order), and push a label down one row when the one above
 # already holds that row. Labels pushed below the plot are pulled back up.
-.ip_cg_endlabel_rows <- function(start, y, lay) {
+.ir_cg_endlabel_rows <- function(start, y, lay) {
   n <- length(start)
   if (!n) return(integer())
   o <- order(-y, seq_len(n))
@@ -304,27 +304,27 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   out
 }
 
-.ip_cg_endlabels <- function(m, lay, ends) {
+.ir_cg_endlabels <- function(m, lay, ends) {
   for (k in seq_len(nrow(ends))) {
-    m <- .ip_cg_put(m, ends$row[[k]], lay$end_col, ends$text[[k]])
+    m <- .ir_cg_put(m, ends$row[[k]], lay$end_col, ends$text[[k]])
   }
   m
 }
 
 # Plot labels as single strings, or NULL when absent. get_labs() resolves the
 # labels on ggplot2 >= 3.5.2; older versions keep them in plot$labels.
-.ip_cg_labels <- function(plot) {
+.ir_cg_labels <- function(plot) {
   labs <- if ("get_labs" %in% getNamespaceExports("ggplot2")) {
     ggplot2::get_labs(plot)
   } else {
     plot$labels
   }
   out <- list()
-  for (nm in c("title", "x", "y", "caption")) out[nm] <- list(.ip_cg_text(labs[[nm]]))
+  for (nm in c("title", "x", "y", "caption")) out[nm] <- list(.ir_cg_text(labs[[nm]]))
   out
 }
 
-.ip_cg_text <- function(x) {
+.ir_cg_text <- function(x) {
   if (is.null(x) || inherits(x, "waiver") || !length(x)) return(NULL)
   if (is.expression(x)) x <- x[[1L]]
   s <- if (is.language(x)) paste(deparse(x), collapse = "") else as.character(x)[[1L]]
@@ -332,7 +332,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 }
 
 # Break positions (npc) and labels of a view scale, inside [0, 1] only.
-.ip_cg_breaks <- function(vs) {
+.ir_cg_breaks <- function(vs) {
   pos <- as.numeric(vs$break_positions())
   lab <- as.character(vs$get_labels())
   n <- min(length(pos), length(lab))
@@ -344,7 +344,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 
 # Greedy wrap of legend entries of the given widths, 3 blanks apart, into rows
 # of at most `width` characters. Returns a list of index vectors, one per row.
-.ip_cg_legend_wrap <- function(widths, width) {
+.ir_cg_legend_wrap <- function(widths, width) {
   rows <- list()
   cur <- integer()
   used <- 0L
@@ -364,7 +364,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 }
 
 # Rows and columns of every region (SPEC 4.10, layout steps 1-4).
-.ip_cg_layout <- function(width, height, title = FALSE, ylab = FALSE, xlab = FALSE,
+.ir_cg_layout <- function(width, height, title = FALSE, ylab = FALSE, xlab = FALSE,
                           caption = FALSE, legend_rows = 0L, ytick_width = 1L,
                           end_width = 0L) {
   top <- 1L
@@ -389,7 +389,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   ph <- r1 - r0 + 1L
   pw <- c1 - c0 + 1L
   if (ph < 4L || pw < 10L) {
-    .ip_abort(sprintf(
+    .ir_abort(sprintf(
       "a %d x %d grid is too small for the labels; plot area would be %d x %d (needs 10 x 4)",
       as.integer(width), as.integer(height), pw, ph), code = "too_small")
   }
@@ -402,7 +402,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 }
 
 # Data-to-cell mapping closures. A degenerate range maps to the middle.
-.ip_cg_map <- function(lay, xr, yr) {
+.ir_cg_map <- function(lay, xr, yr) {
   frac <- function(v, r) {
     d <- diff(r)
     if (!is.finite(d) || d == 0) return(rep(0.5, length(v)))
@@ -410,14 +410,14 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   }
   force(lay)
   list(
-    col = function(x) lay$c0 + .ip_round(frac(x, xr) * (lay$pw - 1L)),
-    row = function(y) lay$r1 - .ip_round(frac(y, yr) * (lay$ph - 1L))
+    col = function(x) lay$c0 + .ir_round(frac(x, xr) * (lay$pw - 1L)),
+    row = function(y) lay$r1 - .ir_round(frac(y, yr) * (lay$ph - 1L))
   )
 }
 
 # The series key scale: the first discrete non-position scale (fill, colour,
 # shape, linetype) with at least two breaks; NULL when there is none.
-.ip_cg_key_scale <- function(b) {
+.ir_cg_key_scale <- function(b) {
   for (aes in c("fill", "colour", "shape", "linetype")) {
     sc <- b$plot$scales$get_scales(aes)
     if (is.null(sc) || !isTRUE(sc$is_discrete())) next
@@ -433,7 +433,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 # Key per row: the index of the row's value among the mapped breaks. Rows of a
 # layer without the key aesthetic (or with an unmapped value) get NA and draw
 # with key 1, but do not set a legend symbol.
-.ip_cg_keys <- function(d, ks) {
+.ir_cg_keys <- function(d, ks) {
   n <- nrow(d)
   if (is.null(ks)) return(rep(1L, n))
   v <- d[[ks$aes]]
@@ -448,19 +448,19 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   match(as.character(v), as.character(ks$mapped))
 }
 
-.ip_cg_cycle <- function(set, key) {
+.ir_cg_cycle <- function(set, key) {
   key <- ifelse(is.na(key), 1L, key)
   set[(as.integer(key) - 1L) %% length(set) + 1L]
 }
 
 # Slope glyph for a segment of dc columns and dr rows (rows grow downwards).
 # Cells are twice as tall as wide, hence dr * 2. NA for a zero-length segment.
-.ip_cg_glyph_slope <- function(dc, dr, charset = "ascii") {
+.ir_cg_glyph_slope <- function(dc, dr, charset = "ascii") {
   if (dc == 0 && dr == 0) return(NA_character_)
   a <- atan2(-dr * 2, dc) * 180 / pi
   if (a <= -90) a <- a + 180
   if (a > 90) a <- a - 180
-  g <- .ip_glyphs[[charset]]$line1
+  g <- .ir_glyphs[[charset]]$line1
   if (abs(a) < 22.5) {
     g[["horizontal"]]
   } else if (abs(a) > 67.5) {
@@ -473,15 +473,15 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 }
 
 # Cells of a straight line, n = max(|dc|, |dr|, 1) steps with half-up rounding.
-.ip_cg_line <- function(ca, ra, cb, rb) {
+.ir_cg_line <- function(ca, ra, cb, rb) {
   n <- max(abs(cb - ca), abs(rb - ra), 1)
   t <- seq.int(0, n) / n
-  cells <- data.frame(r = .ip_round(ra + (rb - ra) * t), c = .ip_round(ca + (cb - ca) * t))
+  cells <- data.frame(r = .ir_round(ra + (rb - ra) * t), c = .ir_round(ca + (cb - ca) * t))
   cells[!duplicated(cells), , drop = FALSE]
 }
 
 # Write glyphs into cells inside the plot rectangle; others are dropped.
-.ip_cg_set <- function(cv, r, c, g, blank_only = FALSE) {
+.ir_cg_set <- function(cv, r, c, g, blank_only = FALSE) {
   lay <- cv$lay
   g <- rep_len(g, length(r))
   ok <- is.finite(r) & is.finite(c) & r >= lay$r0 & r <= lay$r1 & c >= lay$c0 & c <= lay$c1
@@ -498,31 +498,31 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 }
 
 # Remember the first glyph drawn for each key, for the legend.
-.ip_cg_note <- function(cv, key, glyph) {
+.ir_cg_note <- function(cv, key, glyph) {
   if (length(key) != 1L || is.na(key) || key > length(cv$sym) || is.na(glyph)) return(cv)
   if (is.na(cv$sym[[key]])) cv$sym[[key]] <- glyph
   cv
 }
 
-.ip_cg_point_glyph <- function(cv, key) .ip_cg_cycle(cv$glyphs$points, key)
-.ip_cg_fill_glyph <- function(cv, key) .ip_cg_cycle(cv$glyphs$fills, key)
+.ir_cg_point_glyph <- function(cv, key) .ir_cg_cycle(cv$glyphs$points, key)
+.ir_cg_fill_glyph <- function(cv, key) .ir_cg_cycle(cv$glyphs$fills, key)
 
 # Draw one segment between two cells with the line glyph of the key.
-.ip_cg_segment <- function(cv, ca, ra, cb, rb, key) {
+.ir_cg_segment <- function(cv, ca, ra, cb, rb, key) {
   if (!all(is.finite(c(ca, ra, cb, rb)))) return(cv)
   k <- if (is.na(key)) 1L else key
   g <- if (k == 1L) {
-    .ip_cg_glyph_slope(cb - ca, rb - ra, cv$charset)
+    .ir_cg_glyph_slope(cb - ca, rb - ra, cv$charset)
   } else {
-    .ip_cg_cycle(cv$glyphs$lines, k - 1L)
+    .ir_cg_cycle(cv$glyphs$lines, k - 1L)
   }
-  if (is.na(g)) g <- .ip_cg_point_glyph(cv, k)
-  cells <- .ip_cg_line(ca, ra, cb, rb)
-  cv <- .ip_cg_note(cv, key, g)
-  .ip_cg_set(cv, cells$r, cells$c, g)
+  if (is.na(g)) g <- .ir_cg_point_glyph(cv, k)
+  cells <- .ir_cg_line(ca, ra, cb, rb)
+  cv <- .ir_cg_note(cv, key, g)
+  .ir_cg_set(cv, cells$r, cells$c, g)
 }
 
-.ip_cg_kind <- function(geom) {
+.ir_cg_kind <- function(geom) {
   table <- list(rect = "GeomRect", ribbon = "GeomRibbon", smooth = "GeomSmooth",
                 line = "GeomLine", step = "GeomStep", path = "GeomPath",
                 segment = "GeomSegment",
@@ -533,7 +533,7 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   NA_character_
 }
 
-.ip_cg_draw_rect <- function(cv, d, keys) {
+.ir_cg_draw_rect <- function(cv, d, keys) {
   lay <- cv$lay
   for (j in seq_len(nrow(d))) {
     cs <- cv$col(c(d$xmin[[j]], d$xmax[[j]]))
@@ -541,24 +541,24 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
     if (anyNA(cs) || anyNA(rs)) next
     cs <- pmin(pmax(cs, lay$c0), lay$c1)
     rs <- pmin(pmax(rs, lay$r0), lay$r1)
-    g <- .ip_cg_fill_glyph(cv, keys[[j]])
+    g <- .ir_cg_fill_glyph(cv, keys[[j]])
     cells <- expand.grid(r = seq(min(rs), max(rs)), c = seq(min(cs), max(cs)))
-    cv <- .ip_cg_note(cv, keys[[j]], g)
-    cv <- .ip_cg_set(cv, cells$r, cells$c, g)
+    cv <- .ir_cg_note(cv, keys[[j]], g)
+    cv <- .ir_cg_set(cv, cells$r, cells$c, g)
   }
   cv
 }
 
-.ip_cg_draw_ribbon <- function(cv, d, keys) {
+.ir_cg_draw_ribbon <- function(cv, d, keys) {
   if (is.null(d$ymin) || is.null(d$ymax)) return(cv)
   lay <- cv$lay
   grp <- if (is.null(d$group)) rep(1L, nrow(d)) else d$group
-  for (part in .ip_cg_parts(keys, grp)) {
+  for (part in .ir_cg_parts(keys, grp)) {
     e <- d[part, , drop = FALSE]
     key <- keys[part[[1L]]]
     e <- e[order(e$x), , drop = FALSE]
     e <- e[is.finite(e$x) & is.finite(e$ymin) & is.finite(e$ymax), , drop = FALSE]
-    g <- .ip_cg_fill_glyph(cv, key)
+    g <- .ir_cg_fill_glyph(cv, key)
     for (j in seq_len(max(nrow(e) - 1L, 0L))) {
       ca <- cv$col(e$x[[j]])
       cb <- cv$col(e$x[[j + 1L]])
@@ -568,8 +568,8 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
         hi <- e$ymax[[j]] + (e$ymax[[j + 1L]] - e$ymax[[j]]) * t
         rs <- pmin(pmax(cv$row(c(lo, hi)), lay$r0), lay$r1)
         rows <- seq(min(rs), max(rs))
-        cv <- .ip_cg_note(cv, key, g)
-        cv <- .ip_cg_set(cv, rows, rep(cc, length(rows)), g)
+        cv <- .ir_cg_note(cv, key, g)
+        cv <- .ir_cg_set(cv, rows, rep(cc, length(rows)), g)
       }
     }
   }
@@ -577,12 +577,12 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 }
 
 # Row indices split by key and group; unmatched keys (NA) form their own series.
-.ip_cg_parts <- function(keys, grp) {
+.ir_cg_parts <- function(keys, grp) {
   split(seq_along(keys), list(ifelse(is.na(keys), 0L, keys), grp), drop = TRUE)
 }
 
 # geom_step(): expand the points into stairs before connecting them.
-.ip_cg_stairs <- function(d, layer) {
+.ir_cg_stairs <- function(d, layer) {
   dir <- layer$geom_params$direction
   vh <- identical(dir, "vh")
   grp <- if (is.null(d$group)) rep(1L, nrow(d)) else d$group
@@ -603,36 +603,36 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   do.call(rbind, unname(out))
 }
 
-.ip_cg_draw_path <- function(cv, d, keys, sort_x) {
+.ir_cg_draw_path <- function(cv, d, keys, sort_x) {
   grp <- if (is.null(d$group)) rep(1L, nrow(d)) else d$group
-  for (part in .ip_cg_parts(keys, grp)) {
+  for (part in .ir_cg_parts(keys, grp)) {
     if (sort_x) part <- part[order(d$x[part])]
     key <- keys[[part[[1L]]]]
     cs <- cv$col(d$x[part])
     rs <- cv$row(d$y[part])
     if (length(part) == 1L) {
-      cv <- .ip_cg_segment(cv, cs, rs, cs, rs, key)
+      cv <- .ir_cg_segment(cv, cs, rs, cs, rs, key)
       next
     }
     for (j in seq_len(length(part) - 1L)) {
-      cv <- .ip_cg_segment(cv, cs[[j]], rs[[j]], cs[[j + 1L]], rs[[j + 1L]], key)
+      cv <- .ir_cg_segment(cv, cs[[j]], rs[[j]], cs[[j + 1L]], rs[[j + 1L]], key)
     }
   }
   cv
 }
 
-.ip_cg_draw_segment <- function(cv, d, keys) {
+.ir_cg_draw_segment <- function(cv, d, keys) {
   cs <- cv$col(d$x)
   rs <- cv$row(d$y)
   ce <- cv$col(d$xend)
   re <- cv$row(d$yend)
   for (j in seq_len(nrow(d))) {
-    cv <- .ip_cg_segment(cv, cs[[j]], rs[[j]], ce[[j]], re[[j]], keys[[j]])
+    cv <- .ir_cg_segment(cv, cs[[j]], rs[[j]], ce[[j]], re[[j]], keys[[j]])
   }
   cv
 }
 
-.ip_cg_draw_range <- function(cv, d, keys, geom) {
+.ir_cg_draw_range <- function(cv, d, keys, geom) {
   vert <- cv$glyphs$line1[["vertical"]]
   horiz <- cv$glyphs$line1[["horizontal"]]
   caps <- inherits(geom, "GeomErrorbar")
@@ -645,19 +645,19 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
       rs <- cv$row(c(d$ymin[[j]], d$ymax[[j]]))
       if (anyNA(c(cx, rs))) next
       rows <- seq(min(rs), max(rs))
-      cv <- .ip_cg_note(cv, key, vert)
-      cv <- .ip_cg_set(cv, rows, rep(cx, length(rows)), vert)
+      cv <- .ir_cg_note(cv, key, vert)
+      cv <- .ir_cg_set(cv, rows, rep(cx, length(rows)), vert)
       if (caps) {
-        span <- .ip_cg_cap_span(cv$col(c(d$xmin[[j]], d$xmax[[j]])), cx)
-        for (r in unique(rs)) cv <- .ip_cg_set(cv, rep(r, length(span)), span, horiz)
+        span <- .ir_cg_cap_span(cv$col(c(d$xmin[[j]], d$xmax[[j]])), cx)
+        for (r in unique(rs)) cv <- .ir_cg_set(cv, rep(r, length(span)), span, horiz)
       }
     } else {
       r <- cv$row(d$y[[j]])
       cs <- cv$col(c(d$xmin[[j]], d$xmax[[j]]))
       if (anyNA(c(r, cs))) next
       cols <- seq(min(cs), max(cs))
-      cv <- .ip_cg_note(cv, key, horiz)
-      cv <- .ip_cg_set(cv, rep(r, length(cols)), cols, horiz)
+      cv <- .ir_cg_note(cv, key, horiz)
+      cv <- .ir_cg_set(cv, rep(r, length(cols)), cols, horiz)
       if (caps) {
         span <- if (is.null(d$ymin) || is.null(d$ymax)) {
           r
@@ -665,52 +665,52 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
           rr <- cv$row(c(d$ymin[[j]], d$ymax[[j]]))
           if (anyNA(rr)) r else seq(min(rr), max(rr))
         }
-        for (cx in unique(cs)) cv <- .ip_cg_set(cv, span, rep(cx, length(span)), vert)
+        for (cx in unique(cs)) cv <- .ir_cg_set(cv, span, rep(cx, length(span)), vert)
       }
     }
     if (inherits(geom, "GeomPointrange")) {
-      cv <- .ip_cg_set(cv, cv$row(d$y[[j]]), cv$col(d$x[[j]]), .ip_cg_point_glyph(cv, key))
+      cv <- .ir_cg_set(cv, cv$row(d$y[[j]]), cv$col(d$x[[j]]), .ir_cg_point_glyph(cv, key))
     }
   }
   cv
 }
 
 # Error-bar caps span the bar's width, but at least one cell either side.
-.ip_cg_cap_span <- function(cs, cx) {
+.ir_cg_cap_span <- function(cs, cx) {
   if (anyNA(cs)) return(seq(cx - 1L, cx + 1L))
   seq(min(min(cs), cx - 1L), max(max(cs), cx + 1L))
 }
 
-.ip_cg_draw_refline <- function(cv, d, axis) {
+.ir_cg_draw_refline <- function(cv, d, axis) {
   lay <- cv$lay
   if (identical(axis, "y")) {
     g <- cv$glyphs$line1[["horizontal"]]
     for (r in unique(cv$row(d$yintercept))) {
       cols <- seq(lay$c0, lay$c1)
-      cv <- .ip_cg_set(cv, rep(r, length(cols)), cols, g, blank_only = TRUE)
+      cv <- .ir_cg_set(cv, rep(r, length(cols)), cols, g, blank_only = TRUE)
     }
   } else {
     g <- cv$glyphs$line1[["vertical"]]
     for (cx in unique(cv$col(d$xintercept))) {
       rows <- seq(lay$r0, lay$r1)
-      cv <- .ip_cg_set(cv, rows, rep(cx, length(rows)), g, blank_only = TRUE)
+      cv <- .ir_cg_set(cv, rows, rep(cx, length(rows)), g, blank_only = TRUE)
     }
   }
   cv
 }
 
-.ip_cg_draw_point <- function(cv, d, keys) {
+.ir_cg_draw_point <- function(cv, d, keys) {
   rs <- cv$row(d$y)
   cs <- cv$col(d$x)
   for (j in seq_len(nrow(d))) {
-    g <- .ip_cg_point_glyph(cv, keys[[j]])
-    if (is.finite(rs[[j]]) && is.finite(cs[[j]])) cv <- .ip_cg_note(cv, keys[[j]], g)
-    cv <- .ip_cg_set(cv, rs[[j]], cs[[j]], g)
+    g <- .ir_cg_point_glyph(cv, keys[[j]])
+    if (is.finite(rs[[j]]) && is.finite(cs[[j]])) cv <- .ir_cg_note(cv, keys[[j]], g)
+    cv <- .ir_cg_set(cv, rs[[j]], cs[[j]], g)
   }
   cv
 }
 
-.ip_cg_hjust <- function(h) {
+.ir_cg_hjust <- function(h) {
   if (is.null(h)) return(0.5)
   if (is.numeric(h)) return(ifelse(is.finite(h), h, 0.5))
   h <- as.character(h)
@@ -722,23 +722,23 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   out
 }
 
-.ip_cg_draw_text <- function(cv, d, txt) {
+.ir_cg_draw_text <- function(cv, d, txt) {
   if (is.null(d$label)) return(cv)
   labels <- txt(as.character(d$label))
-  hj <- rep_len(.ip_cg_hjust(d$hjust), nrow(d))
+  hj <- rep_len(.ir_cg_hjust(d$hjust), nrow(d))
   rs <- cv$row(d$y)
   cs <- cv$col(d$x)
   for (j in seq_len(nrow(d))) {
     s <- labels[[j]]
     if (is.na(s) || !is.finite(rs[[j]]) || !is.finite(cs[[j]])) next
-    start <- cs[[j]] - .ip_round(hj[[j]] * (nchar(s, type = "chars") - 1L))
-    cv$m <- .ip_cg_put(cv$m, rs[[j]], start, s)
+    start <- cs[[j]] - .ir_round(hj[[j]] * (nchar(s, type = "chars") - 1L))
+    cv$m <- .ir_cg_put(cv$m, rs[[j]], start, s)
   }
   cv
 }
 
 # Write a string cell by cell from (r, c); cells off the grid are dropped.
-.ip_cg_put <- function(m, r, c, s) {
+.ir_cg_put <- function(m, r, c, s) {
   if (is.na(r) || r < 1L || r > nrow(m) || is.na(s) || !nzchar(s)) return(m)
   ch <- strsplit(s, "")[[1L]]
   cc <- c + seq_along(ch) - 1L
@@ -747,47 +747,47 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
   m
 }
 
-.ip_cg_axes <- function(m, lay, xb, yb) {
+.ir_cg_axes <- function(m, lay, xb, yb) {
   m[seq(lay$r0, lay$r1), lay$ac] <- "|"
   m[lay$axis_row, seq(lay$c0, lay$c1)] <- "-"
   m[lay$axis_row, lay$ac] <- "+"
   for (j in seq_len(nrow(yb))) {
-    r <- lay$r1 - .ip_round(yb$pos[[j]] * (lay$ph - 1L))
+    r <- lay$r1 - .ir_round(yb$pos[[j]] * (lay$ph - 1L))
     m[r, lay$ac] <- "+"
     lab <- yb$label[[j]]
-    m <- .ip_cg_put(m, r, lay$ac - 1L - nchar(lab, type = "chars"), lab)
+    m <- .ir_cg_put(m, r, lay$ac - 1L - nchar(lab, type = "chars"), lab)
   }
   last_end <- -Inf
   for (j in seq_len(nrow(xb))) {
-    cx <- lay$c0 + .ip_round(xb$pos[[j]] * (lay$pw - 1L))
+    cx <- lay$c0 + .ir_round(xb$pos[[j]] * (lay$pw - 1L))
     m[lay$axis_row, cx] <- "+"
     lab <- xb$label[[j]]
     n <- nchar(lab, type = "chars")
     start <- cx - (n - 1L) %/% 2L
     if (n > 0L && start > last_end + 1L) {
-      m <- .ip_cg_put(m, lay$tick_row, start, lab)
+      m <- .ir_cg_put(m, lay$tick_row, start, lab)
       last_end <- start + n - 1L
     }
   }
   m
 }
 
-.ip_cg_titles <- function(m, lay, labs) {
-  if (!is.null(labs$title)) m <- .ip_cg_put(m, lay$title_row, 1L, labs$title)
-  if (!is.null(labs$y)) m <- .ip_cg_put(m, lay$ylab_row, 1L, labs$y)
+.ir_cg_titles <- function(m, lay, labs) {
+  if (!is.null(labs$title)) m <- .ir_cg_put(m, lay$title_row, 1L, labs$title)
+  if (!is.null(labs$y)) m <- .ir_cg_put(m, lay$ylab_row, 1L, labs$y)
   if (!is.null(labs$x)) {
     s <- labs$x
     start <- max(1L, lay$c0 + (lay$pw - nchar(s, type = "chars")) %/% 2L)
-    m <- .ip_cg_put(m, lay$xlab_row, start, s)
+    m <- .ir_cg_put(m, lay$xlab_row, start, s)
   }
-  if (!is.null(labs$caption)) m <- .ip_cg_put(m, lay$caption_row, 1L, labs$caption)
+  if (!is.null(labs$caption)) m <- .ir_cg_put(m, lay$caption_row, 1L, labs$caption)
   m
 }
 
-.ip_cg_legend <- function(m, lay, legend, rows) {
+.ir_cg_legend <- function(m, lay, legend, rows) {
   for (i in seq_along(rows)) {
     entries <- paste(legend$symbol[rows[[i]]], legend$label[rows[[i]]])
-    m <- .ip_cg_put(m, lay$legend_row + i - 1L, 1L, paste(entries, collapse = "   "))
+    m <- .ir_cg_put(m, lay$legend_row + i - 1L, 1L, paste(entries, collapse = "   "))
   }
   m
 }

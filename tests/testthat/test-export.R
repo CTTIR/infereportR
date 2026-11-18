@@ -14,10 +14,10 @@ small_plot <- function() {
 }
 
 test_that("figure_size returns every preset exactly", {
-  for (i in seq_len(nrow(.ip_presets))) {
+  for (i in seq_len(nrow(.ir_presets))) {
     expect_identical(
-      figure_size(.ip_presets$preset[[i]]),
-      list(width = .ip_presets$width[[i]], height = .ip_presets$height[[i]], units = "mm")
+      figure_size(.ir_presets$preset[[i]]),
+      list(width = .ir_presets$width[[i]], height = .ir_presets$height[[i]], units = "mm")
     )
   }
   expect_identical(figure_size(), list(width = 85, height = 70, units = "mm"))
@@ -39,9 +39,9 @@ test_that("save_figure writes a slide preset at 44 mm height", {
 })
 
 test_that("figure_size rejects unknown presets", {
-  expect_error(figure_size("a4"), class = "inferplotR_invalid_input")
-  expect_error(figure_size(NA_character_), class = "inferplotR_invalid_input")
-  expect_error(figure_size(1), class = "inferplotR_invalid_input")
+  expect_error(figure_size("a4"), class = "infereportR_invalid_input")
+  expect_error(figure_size(NA_character_), class = "infereportR_invalid_input")
+  expect_error(figure_size(1), class = "infereportR_invalid_input")
 })
 
 test_that("save_figure writes pdf", {
@@ -83,27 +83,27 @@ test_that("explicit width and height override the preset", {
 })
 
 test_that("missing Cairo raises device_unsupported for pdf", {
-  local_mocked_bindings(.ip_cairo_available = function() FALSE)
+  local_mocked_bindings(.ir_cairo_available = function() FALSE)
   f <- withr::local_tempfile(fileext = ".pdf")
-  expect_error(save_figure(small_plot(), f), class = "inferplotR_device_unsupported")
+  expect_error(save_figure(small_plot(), f), class = "infereportR_device_unsupported")
   expect_false(file.exists(f))
-  local_mocked_bindings(.ip_ragg_available = function() FALSE)
+  local_mocked_bindings(.ir_ragg_available = function() FALSE)
   f_png <- withr::local_tempfile(fileext = ".png")
-  expect_error(save_figure(small_plot(), f_png), class = "inferplotR_device_unsupported")
+  expect_error(save_figure(small_plot(), f_png), class = "infereportR_device_unsupported")
 })
 
 test_that("bad file, plot and size arguments raise invalid_input", {
   p <- small_plot()
-  expect_error(save_figure(p, "x.jpeg"), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, ""), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, NA), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, NA_character_), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, "pdf"), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, c("a.pdf", "b.pdf")), class = "inferplotR_invalid_input")
-  expect_error(save_figure(1, "x.pdf"), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, "x.pdf", preset = "a4"), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, "x.pdf", width = -1), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, "x.pdf", height = "40"), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, "x.pdf", dpi = 0), class = "inferplotR_invalid_input")
-  expect_error(save_figure(p, "x.pdf", bg = NA), class = "inferplotR_invalid_input")
+  expect_error(save_figure(p, "x.jpeg"), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, ""), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, NA), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, NA_character_), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, "pdf"), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, c("a.pdf", "b.pdf")), class = "infereportR_invalid_input")
+  expect_error(save_figure(1, "x.pdf"), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, "x.pdf", preset = "a4"), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, "x.pdf", width = -1), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, "x.pdf", height = "40"), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, "x.pdf", dpi = 0), class = "infereportR_invalid_input")
+  expect_error(save_figure(p, "x.pdf", bg = NA), class = "infereportR_invalid_input")
 })

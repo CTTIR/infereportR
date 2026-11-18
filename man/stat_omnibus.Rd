@@ -46,11 +46,11 @@ label size) by default.}
 the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, the layer draws no background fill (open
-marks stay empty); passed by \code{\link[=inferplot]{inferplot()}} with \code{mode}.}
+marks stay empty); passed by \code{\link[=report_figure]{report_figure()}} with \code{mode}.}
 }
 \value{
 A ggplot2 layer drawing one label per panel. The computed data has
-columns \code{x}, \code{y}, \code{label}, \code{.ip_result} and \code{.ip_result_id}.
+columns \code{x}, \code{y}, \code{label}, \code{.ir_result} and \code{.ir_result_id}.
 }
 \description{
 Runs one explicitly named omnibus procedure of 'infercalcR' per panel,
@@ -60,7 +60,7 @@ statistic and the p-value. Each panel is its own analysis.
 }
 \details{
 Degrees of freedom are not shown, because 'infereportR' 0.1.0 provides no
-display string for them and inferplotR does not format numbers itself. The
+display string for them and infereportR does not format numbers itself. The
 full result, including \code{df} and \code{df.denominator}, is available from
 \code{\link[=inference_results]{inference_results()}}. Rows with non-finite x or y are dropped first.
 }

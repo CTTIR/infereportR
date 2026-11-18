@@ -61,7 +61,7 @@ for none.}
 for; \code{"slide_full"} (134 mm) by default. Save the figure at that width.}
 }
 \value{
-A ggplot. Its marker layer carries \code{.ip_result}, so
+A ggplot. Its marker layer carries \code{.ir_result}, so
 \code{\link[=inference_results]{inference_results()}} returns the results and \code{\link[=figure_report]{figure_report()}} reports
 them.
 }
@@ -72,7 +72,7 @@ vertical line at the null value, and three text columns, label | n | plot
 | estimate text. Nothing is computed here: estimates, intervals, null value
 and n come from \code{\link[infercalcR:result_data]{infercalcR::result_data()}}, and the right-hand text is
 \code{paste(estimate_display, interval_display)} from
-\code{\link[infereportR:report_table]{infereportR::report_table()}}. Any 'infercalcR' method whose result has a
+\code{\link[=report_table]{report_table()}}. Any 'infercalcR' method whose result has a
 contrast row with an estimate and interval can be shown, for example
 \code{"t_means_two_independent_welch"} or \code{"t_means_paired"}.
 }

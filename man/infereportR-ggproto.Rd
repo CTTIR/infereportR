@@ -2,8 +2,8 @@
 % Please edit documentation in R/endlabel.R, R/geom-bracket.R,
 %   R/stat-compare.R, R/stat-correlation.R, R/stat-ecdf-guides.R,
 %   R/stat-means.R, R/stat-omnibus.R, R/stat-paired.R, R/stat-stacklabel.R
-\name{inferplotR-ggproto}
-\alias{inferplotR-ggproto}
+\name{infereportR-ggproto}
+\alias{infereportR-ggproto}
 \alias{StatEndlabel}
 \alias{GeomEndlabel}
 \alias{GeomBracket}
@@ -17,9 +17,9 @@
 \alias{StatPaired}
 \alias{GeomPaired}
 \alias{StatStacklabel}
-\title{ggproto objects of inferplotR}
+\title{ggproto objects of infereportR}
 \description{
-The ggproto classes behind the layers of inferplotR. They are exported so
+The ggproto classes behind the layers of infereportR. They are exported so
 that other extensions can build on them; most users call the layer
 functions instead.
 \itemize{

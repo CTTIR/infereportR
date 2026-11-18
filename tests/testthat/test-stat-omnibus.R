@@ -8,10 +8,10 @@ test_that("stat_omnibus labels a direct anova_one_way run", {
   shown <- infereportR::report_table(direct)
   expect_true(grepl(shown$statistic_display, d$label, fixed = TRUE))
   expect_true(grepl(shown$p_display, d$label, fixed = TRUE))
-  expect_equal(infercalcR::result_data(d$.ip_result[[1]])$statistic,
+  expect_equal(infercalcR::result_data(d$.ir_result[[1]])$statistic,
                infercalcR::result_data(direct)$statistic)
-  expect_identical(d$.ip_result_id, "inferplotR:omnibus:anova_one_way:panel1")
-  expect_identical(d$colour, .ip_ink)
+  expect_identical(d$.ir_result_id, "infereportR:omnibus:anova_one_way:panel1")
+  expect_identical(d$colour, .ir_ink)
   expect_no_warning(draws_silently(p))
 })
 
@@ -19,11 +19,11 @@ test_that("other omnibus methods and arguments work", {
   for (m in c("anova_one_way_welch", "kruskal_wallis")) {
     d <- layer_data_of(ggplot2::ggplot(pg, ggplot2::aes(group, weight)) +
                          ggplot2::geom_point() + stat_omnibus(method = m), 2L)
-    expect_identical(infercalcR::result_metadata(d$.ip_result[[1]])$method_id, m)
+    expect_identical(infercalcR::result_metadata(d$.ir_result[[1]])$method_id, m)
   }
-  bad <- "inferplotR_invalid_input"
+  bad <- "infereportR_invalid_input"
   expect_error(stat_omnibus(), class = bad)
-  expect_error(stat_omnibus(method = "t_test"), class = "inferplotR_unsupported")
+  expect_error(stat_omnibus(method = "t_test"), class = "infereportR_unsupported")
   expect_error(stat_omnibus(method = "anova_one_way", label_x = NA), class = bad)
   expect_error(stat_omnibus(method = "anova_one_way", hjust = "a"), class = bad)
   expect_error(stat_omnibus(method = "anova_one_way", method_args = list(group = 1)),

@@ -15,7 +15,7 @@ same rules in this version: the slide theme shares the paper text range.}
 \value{
 A \code{data.frame} with exactly 6 rows (\code{text_size}, \code{font_family},
 \code{two_values}, \code{axis_labels}, \code{embedded_title}, \code{legend_case}) and the
-character columns \code{check}, \code{source} (\code{"APA 7"} or \code{"inferplotR"}),
+character columns \code{check}, \code{source} (\code{"APA 7"} or \code{"infereportR"}),
 \code{status} (\code{"pass"}, \code{"fail"} or \code{"note"}) and \code{detail} (\code{""} when there
 is nothing to report).
 }
@@ -23,7 +23,7 @@ is nothing to report).
 Builds the plot once and reports where it departs from the rules of the
 APA Style page on figures (American Psychological Association, \emph{Figures},
 7th ed., \url{https://apastyle.apa.org/style-grammar-guidelines/tables-figures/figures})
-and from inferplotR's own black-and-white rule. The rules it implements,
+and from infereportR's own black-and-white rule. The rules it implements,
 as worded there: "use a sans serif font" of "between 8 and 14 points" for
 text in the image; place the legend within the figure's borders, in title
 case; label axes clearly and give units of measurement; put the figure
@@ -42,7 +42,7 @@ every text label layer (\code{\link[ggplot2:geom_text]{ggplot2::geom_text()}},
 \item{\code{font_family}}{(APA 7) \code{fail} if a resolved family looks like a
 serif face (matches "serif", "times", "georgia", "garamond",
 "palatino" or "cambria" but not "sans").}
-\item{\code{two_values}}{(inferplotR) every \code{colour} and \code{fill} value in the
+\item{\code{two_values}}{(infereportR) every \code{colour} and \code{fill} value in the
 built layer data, and the colors of drawn theme lines, rectangles and
 text, is black, white, \code{NA}, fully transparent or a grid pattern.
 This holds in every mode: light (black on white), dark (white on
@@ -85,5 +85,5 @@ q <- ggplot(mtcars, aes(wt, mpg)) +
 check_figure(q)
 }
 \seealso{
-\code{\link[=theme_figure]{theme_figure()}}, \code{\link[=inferplot]{inferplot()}}, \code{\link[=save_figure]{save_figure()}}
+\code{\link[=theme_figure]{theme_figure()}}, \code{\link[=report_figure]{report_figure()}}, \code{\link[=save_figure]{save_figure()}}
 }

@@ -25,8 +25,8 @@ test_that("all text resolves to 8 to 14 pt at base_size 9", {
 })
 
 test_that("paper base sizes outside the APA range warn", {
-  expect_warning(theme_figure("paper", base_size = 7), class = "inferplotR_apa_text_size")
-  expect_warning(theme_figure("paper", base_size = 15), class = "inferplotR_apa_text_size")
+  expect_warning(theme_figure("paper", base_size = 7), class = "infereportR_apa_text_size")
+  expect_warning(theme_figure("paper", base_size = 15), class = "infereportR_apa_text_size")
   expect_no_warning(theme_figure("slide", base_size = 7))
   expect_no_warning(theme_figure("slide", base_size = 15))
   expect_no_warning(theme_figure("paper", base_size = 8))
@@ -34,7 +34,7 @@ test_that("paper base sizes outside the APA range warn", {
 })
 
 test_that("every colour and fill is ink, paper or NA", {
-  allowed <- grDevices::col2rgb(c(.ip_ink, .ip_paper), alpha = TRUE)
+  allowed <- grDevices::col2rgb(c(.ir_ink, .ir_paper), alpha = TRUE)
   is_allowed <- function(x) {
     if (is.null(x)) return(TRUE)
     if (all(is.na(x))) return(TRUE)
@@ -130,22 +130,22 @@ test_that("plots with theme_figure build without warnings", {
 })
 
 test_that("theme_figure validates its arguments", {
-  expect_error(theme_figure(target = "poster"), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(base_size = "9"), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(base_size = -1), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(base_size = NA_real_), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(border = NA), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(base_family = 1), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(legend = "top"), class = "inferplotR_invalid_input")
-  expect_error(theme_figure(grid = c("x", "y")), class = "inferplotR_invalid_input")
+  expect_error(theme_figure(target = "poster"), class = "infereportR_invalid_input")
+  expect_error(theme_figure(base_size = "9"), class = "infereportR_invalid_input")
+  expect_error(theme_figure(base_size = -1), class = "infereportR_invalid_input")
+  expect_error(theme_figure(base_size = NA_real_), class = "infereportR_invalid_input")
+  expect_error(theme_figure(border = NA), class = "infereportR_invalid_input")
+  expect_error(theme_figure(base_family = 1), class = "infereportR_invalid_input")
+  expect_error(theme_figure(legend = "top"), class = "infereportR_invalid_input")
+  expect_error(theme_figure(grid = c("x", "y")), class = "infereportR_invalid_input")
 })
 
 test_that("slide axis titles fall back to the base family", {
-  local_mocked_bindings(.ip_has_font = function(family) FALSE)
+  local_mocked_bindings(.ir_has_font = function(family) FALSE)
   th <- theme_figure("slide", base_family = "serif")
   expect_identical(ggplot2::calc_element("axis.title.x", th)$family, "serif")
   expect_identical(ggplot2::calc_element("axis.text.x", th)$family, "serif")
-  local_mocked_bindings(.ip_has_font = function(family) TRUE)
+  local_mocked_bindings(.ir_has_font = function(family) TRUE)
   th <- theme_figure("slide", base_family = "serif")
   expect_identical(ggplot2::calc_element("axis.title.x", th)$family, "IBM Plex Sans Condensed")
   th <- theme_figure("paper", base_family = "serif")

@@ -10,21 +10,21 @@ gallery_numbers <- function(v) {
   as.numeric(regmatches(v, gregexpr("-?[0-9]+(\\.[0-9]+)?", v))[[1]])
 }
 
-test_that(".ip_with_seed() restores an existing seed and removes a new one", {
+test_that(".ir_with_seed() restores an existing seed and removes a new one", {
   withr::local_seed(42)
   before <- get(".Random.seed", envir = globalenv())
-  a <- .ip_with_seed(1, stats::runif(2))
+  a <- .ir_with_seed(1, stats::runif(2))
   expect_identical(get(".Random.seed", envir = globalenv()), before)
-  expect_identical(a, .ip_with_seed(1, stats::runif(2)))
+  expect_identical(a, .ir_with_seed(1, stats::runif(2)))
   withr::with_preserve_seed({
     rm(".Random.seed", envir = globalenv())
-    .ip_with_seed(1, stats::runif(1))
+    .ir_with_seed(1, stats::runif(1))
     expect_false(exists(".Random.seed", envir = globalenv(), inherits = FALSE))
   })
 })
 
-test_that(".ip_gallery_data() returns the nine simulated tables", {
-  d <- .ip_gallery_data()
+test_that(".ir_gallery_data() returns the nine simulated tables", {
+  d <- .ir_gallery_data()
   expect_identical(names(d), c("cohort", "long", "med", "il6", "counts", "sc", "fp", "mk", "pl"))
   expect_identical(nrow(d$cohort), 128L)
   expect_identical(nrow(d$il6), 72L)
@@ -32,13 +32,13 @@ test_that(".ip_gallery_data() returns the nine simulated tables", {
   expect_identical(nrow(d$fp), 240L)
   expect_identical(dim(d$mk), c(90L, 5L))
   expect_identical(nrow(d$pl), 14L)
-  expect_identical(d, .ip_gallery_data())
-  expect_identical(nrow(.ip_gallery_captions), 12L)
-  expect_length(.ip_gallery_builders, 12L)
+  expect_identical(d, .ir_gallery_data())
+  expect_identical(nrow(.ir_gallery_captions), 12L)
+  expect_length(.ir_gallery_builders, 12L)
 })
 
 test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the oracle", {
-  p <- .ip_gallery_02(.ip_gallery_data())
+  p <- .ir_gallery_02(.ir_gallery_data())
   rep <- figure_report(p)
   means <- rep[rep$method_id == "t_mean_one_sample", ]
   groups <- c("ISS < 16", "ISS 16-24", "ISS \u2265 25")
@@ -57,7 +57,7 @@ test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the 
 })
 
 test_that("figure 04 reproduces the correlation of the oracle", {
-  p <- .ip_gallery_04(.ip_gallery_data())
+  p <- .ir_gallery_04(.ir_gallery_data())
   rep <- figure_report(p)
   res <- inference_results(p)
   expect_identical(nrow(rep), 1L)
@@ -71,7 +71,7 @@ test_that("figure 04 reproduces the correlation of the oracle", {
 })
 
 test_that("figure 05 reproduces the medians of the oracle", {
-  p <- .ip_gallery_05(.ip_gallery_data())
+  p <- .ir_gallery_05(.ir_gallery_data())
   d <- ggplot2::layer_data(p, 2L)
   drop <- d[d$part == "drop", ]
   oracle <- strsplit(strsplit(gallery_value("05", "median_peak_h"), "; ")[[1]], "=")
@@ -79,7 +79,7 @@ test_that("figure 05 reproduces the medians of the oracle", {
 })
 
 test_that("figure 06 reproduces the seven forest rows of the oracle", {
-  p <- .ip_gallery_06(.ip_gallery_data())
+  p <- .ir_gallery_06(.ir_gallery_data())
   b <- ggplot2::ggplot_build(p)
   marks <- b$data[[3]]
   n_layer <- b$data[[5]]
@@ -101,13 +101,13 @@ test_that("figure 06 reproduces the seven forest rows of the oracle", {
 })
 
 test_that("caption 08 puts the circles above the diagonal and the values below", {
-  cap <- .ip_gallery_captions$caption[.ip_gallery_captions$name == "08-correlation-matrix"]
+  cap <- .ir_gallery_captions$caption[.ir_gallery_captions$name == "08-correlation-matrix"]
   expect_true(grepl("above the diagonal, circle", cap, fixed = TRUE))
   expect_true(grepl("mirrored below the diagonal", cap, fixed = TRUE))
   # The figure agrees. The diagonal runs from top left to bottom right
   # (x + y = 6 for five variables): circles (layer 1) lie above it, values
   # (layer 2) below.
-  p8 <- .ip_gallery_08(.ip_gallery_data())
+  p8 <- .ir_gallery_08(.ir_gallery_data())
   circles <- ggplot2::layer_data(p8, 1L)
   values <- ggplot2::layer_data(p8, 2L)
   expect_true(all(circles$x + circles$y > 6))
@@ -115,8 +115,8 @@ test_that("caption 08 puts the circles above the diagonal and the values below",
 })
 
 test_that("figures 08 and 09 reproduce the matrix and the paired result of the oracle", {
-  d <- .ip_gallery_data()
-  p8 <- .ip_gallery_08(d)
+  d <- .ir_gallery_data()
+  p8 <- .ir_gallery_08(d)
   res <- inference_results(p8)
   values <- ggplot2::layer_data(p8, 2L)
   vars <- colnames(d$mk)
@@ -127,14 +127,14 @@ test_that("figures 08 and 09 reproduce the matrix and the paired result of the o
     expect_near(infercalcR::result_data(res[[k]])$estimate, as.numeric(want[1]), 1e-6)
     expect_identical(values$label[k], want[2])
   }
-  rep9 <- figure_report(.ip_gallery_09(d))
+  rep9 <- figure_report(.ir_gallery_09(d))
   expect_identical(paste(rep9$estimate_display, rep9$interval_display, rep9$p_display),
                    gallery_value("09", "paired"))
 })
 
 test_that("figures 01, 06 and 12 build and pass the two-value audit (light mode)", {
-  d <- .ip_gallery_data()
-  for (f in list(.ip_gallery_01, .ip_gallery_06, .ip_gallery_12)) {
+  d <- .ir_gallery_data()
+  for (f in list(.ir_gallery_01, .ir_gallery_06, .ir_gallery_12)) {
     p <- f(d)
     expect_no_warning(draws_silently(p))
     chk <- check_figure(p, "slide")
@@ -143,11 +143,11 @@ test_that("figures 01, 06 and 12 build and pass the two-value audit (light mode)
 })
 
 test_that("figure_gallery() checks its arguments and returns a typed empty table", {
-  expect_error(figure_gallery(modes = "sepia"), class = "inferplotR_invalid_input")
-  expect_error(figure_gallery(png = NA), class = "inferplotR_invalid_input")
-  expect_error(figure_gallery(dir = 1), class = "inferplotR_invalid_input")
+  expect_error(figure_gallery(modes = "sepia"), class = "infereportR_invalid_input")
+  expect_error(figure_gallery(png = NA), class = "infereportR_invalid_input")
+  expect_error(figure_gallery(dir = 1), class = "infereportR_invalid_input")
   empty <- figure_gallery(withr::local_tempdir(), modes = character())
-  expect_identical(empty, .ip_set_empty())
+  expect_identical(empty, .ir_set_empty())
 })
 
 # The page size of a PDF in mm. Cairo writes the page dictionary in a
@@ -183,9 +183,9 @@ test_that("figure_gallery() writes 48 PDFs at their slot size, leaving the seed 
   expect_identical(names(tab), c("mode", "file", "format", "width_mm", "height_mm"))
   expect_identical(nrow(tab), 48L)
   expect_true(all(file.exists(tab$file)))
-  expect_identical(sort(unique(tab$mode)), sort(.ip_set_modes))
-  slots <- .ip_gallery_captions[match(sub("[.]pdf$", "", basename(tab$file)),
-                                      .ip_gallery_captions$name), ]
+  expect_identical(sort(unique(tab$mode)), sort(.ir_set_modes))
+  slots <- .ir_gallery_captions[match(sub("[.]pdf$", "", basename(tab$file)),
+                                      .ir_gallery_captions$name), ]
   expect_equal(tab$width_mm, slots$width_mm)
   for (i in seq_len(nrow(tab))) {
     # Cairo writes the MediaBox in whole points (243 x 124 for 86 x 44 mm), so
@@ -207,15 +207,15 @@ test_that("figure_gallery() writes 48 PDFs at their slot size, leaving the seed 
 # documented exception was approved by the owner (2026-11-17, STATE.md Q9).
 test_that("every figure passes the two-value audit in every mode except 11 (C64 colors)", {
   skip_on_cran()
-  d <- .ip_gallery_data()
-  for (folder in .ip_set_modes) {
-    args <- .ip_set_mode(folder)
-    for (i in seq_along(.ip_gallery_builders)) {
-      p <- .ip_gallery_builders[[i]](d, mode = args$mode, transparent = args$transparent)
+  d <- .ir_gallery_data()
+  for (folder in .ir_set_modes) {
+    args <- .ir_set_mode(folder)
+    for (i in seq_along(.ir_gallery_builders)) {
+      p <- .ir_gallery_builders[[i]](d, mode = args$mode, transparent = args$transparent)
       chk <- check_figure(p, "slide")
       status <- chk$status[chk$check == "two_values"]
       want <- if (i == 11L) "fail" else "pass"
-      expect_identical(status, want, label = paste(folder, .ip_gallery_captions$name[i]))
+      expect_identical(status, want, label = paste(folder, .ir_gallery_captions$name[i]))
     }
   }
 })

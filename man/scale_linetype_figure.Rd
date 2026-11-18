@@ -25,7 +25,7 @@ and \code{"2262"} (long dash-dash).
 \details{
 The scale never recycles: if the data have more groups than there are line
 types, building the plot fails with an error of class
-\code{inferplotR_too_many_groups}. Use direct labels or facets in that case.
+\code{infereportR_too_many_groups}. Use direct labels or facets in that case.
 }
 \examples{
 d <- data.frame(x = rep(1:5, 2), y = c(1:5, 5:1), g = rep(c("A", "B"), each = 5))

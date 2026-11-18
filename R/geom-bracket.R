@@ -1,4 +1,4 @@
-#' @rdname inferplotR-ggproto
+#' @rdname infereportR-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -6,8 +6,8 @@ GeomBracket <- ggplot2::ggproto("GeomBracket", ggplot2::Geom,
   required_aes = c("x", "xend", "y", "label"),
   optional_aes = "tip",
   # Quosures, evaluated at draw time, so the tokens need not exist at collation.
-  default_aes = ggplot2::aes(colour = .ip_ink, linewidth = .ip_lw(.ip_rule_hair),
-                             size = .ip_label_size_pt / ggplot2::.pt, family = "", tip = 0,
+  default_aes = ggplot2::aes(colour = .ir_ink, linewidth = .ir_lw(.ir_rule_hair),
+                             size = .ir_label_size_pt / ggplot2::.pt, family = "", tip = 0,
                              alpha = NA),
   draw_key = ggplot2::draw_key_blank,
   draw_panel = function(data, panel_params, coord) {
@@ -39,7 +39,7 @@ GeomBracket <- ggplot2::ggproto("GeomBracket", ggplot2::Geom,
                      vjust = -0.3,
                      gp = grid::gpar(col = data$colour, fontsize = data$size * ggplot2::.pt,
                                      fontfamily = family)),
-      name = "inferplotR.bracket"
+      name = "infereportR.bracket"
     )
   }
 )

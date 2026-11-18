@@ -59,9 +59,9 @@
 #' Its glyphs are square and one em wide. Pass the same `cell_ratio` to
 #' [char_size()].
 #'
-#' @param x A ggplot, converted with [char_grid()], or an `inferplotR_chargrid`
+#' @param x A ggplot, converted with [char_grid()], or an `infereportR_chargrid`
 #'   object. With a chargrid, `width`, `height`, `charset` and `case` must not be
-#'   given (error of class `inferplotR_invalid_input`).
+#'   given (error of class `infereportR_invalid_input`).
 #' @param style `"bw"` (default), `"c64"` or `"c64bw"`.
 #' @param width,height Grid size in characters for [char_grid()]. `NULL` uses
 #'   64 columns for `"bw"` and 40 for the c64 styles (38 in a slot), and 20
@@ -115,34 +115,34 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
                         charset = "ascii", case = NULL, family = NULL, width_mm = NULL,
                         cell_ratio = 1.75, char_width = 0.6, ready = NULL, slot = NULL,
                         mode = "light", transparent = FALSE) {
-  style <- .ip_check_choice(style, .ip_cf_styles, "style")
-  md <- .ip_mode(mode, transparent)
-  .ip_cf_check_positive(cell_ratio, "cell_ratio")
-  .ip_cf_check_positive(char_width, "char_width")
+  style <- .ir_check_choice(style, .ir_cf_styles, "style")
+  md <- .ir_mode(mode, transparent)
+  .ir_cf_check_positive(cell_ratio, "cell_ratio")
+  .ir_cf_check_positive(char_width, "char_width")
   if (is.null(ready)) ready <- !identical(style, "bw")
-  .ip_check_flag(ready, "ready")
-  if (is.null(family)) family <- figure_font("mono") else .ip_check_string(family, "family")
-  box <- .ip_cf_box(width_mm, slot)
+  .ir_check_flag(ready, "ready")
+  if (is.null(family)) family <- figure_font("mono") else .ir_check_string(family, "family")
+  box <- .ir_cf_box(width_mm, slot)
   if (!is.null(slot) && !is.null(height)) {
-    .ip_abort("height must not be given together with slot; the slot sets the rows")
+    .ir_abort("height must not be given together with slot; the slot sets the rows")
   }
 
-  if (inherits(x, "inferplotR_chargrid")) {
+  if (inherits(x, "infereportR_chargrid")) {
     given <- c(width = !is.null(width), height = !is.null(height),
                charset = !missing(charset), case = !is.null(case))
     if (any(given)) {
-      .ip_abort(sprintf("%s must not be given when x is a chargrid",
+      .ir_abort(sprintf("%s must not be given when x is a chargrid",
                         paste(names(given)[given], collapse = ", ")))
     }
     grid <- x
   } else {
-    .ip_check_plot(x, "x")
-    grid <- .ip_cf_grid(x, style, width, height, charset, case, box, cell_ratio, ready)
+    .ir_check_plot(x, "x")
+    grid <- .ir_cf_grid(x, style, width, height, charset, case, box, cell_ratio, ready)
   }
 
   m <- grid$chars
-  if (ready) m <- .ip_cf_ready(m)
-  geo <- .ip_cf_geometry(style, ncol(m), nrow(m), box$width, cell_ratio, box$height)
+  if (ready) m <- .ir_cf_ready(m)
+  geo <- .ir_cf_geometry(style, ncol(m), nrow(m), box$width, cell_ratio, box$height)
 
   keep <- m != " " & !is.na(m)
   cells <- data.frame(col = col(m)[keep], row = row(m)[keep], glyph = m[keep],
@@ -150,15 +150,15 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
   cells <- cells[order(cells$row, cells$col), , drop = FALSE]
   rownames(cells) <- NULL
   # char_size() reads the figure's size from here.
-  attr(cells, "inferplotR_char_size") <- c(width = geo$width, height = geo$height)
+  attr(cells, "infereportR_char_size") <- c(width = geo$width, height = geo$height)
 
-  pal <- .ip_cf_palette(style, md, transparent)
+  pal <- .ir_cf_palette(style, md, transparent)
   size <- geo$cw / char_width
   mapping <- do.call(ggplot2::aes, list(x = as.name("col"), y = call("-", as.name("row")),
                                         label = as.name("glyph")))
   fig <- ggplot2::ggplot(cells, mapping)
-  if (!is.null(pal$screen)) fig <- fig + .ip_cf_c64bw_layers(geo, pal)
-  if (ready) fig <- fig + .ip_cf_cursor(nrow(m), pal$ink)
+  if (!is.null(pal$screen)) fig <- fig + .ir_cf_c64bw_layers(geo, pal)
+  if (ready) fig <- fig + .ir_cf_cursor(nrow(m), pal$ink)
   fig <- fig + ggplot2::geom_text(colour = pal$ink, family = family, size = size)
   fig +
     ggplot2::coord_fixed(ratio = cell_ratio, xlim = geo$xlim, ylim = geo$ylim, expand = FALSE) +
@@ -185,7 +185,7 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
 #'
 #' * a [char_figure()] result: its own size, as drawn (the other arguments are
 #'   ignored);
-#' * an `inferplotR_chargrid`: its `width` and `height`, plus the `READY.` rows
+#' * an `infereportR_chargrid`: its `width` and `height`, plus the `READY.` rows
 #'   when `ready` is `TRUE`;
 #' * a ggplot: the grid [char_grid()] would draw with the defaults of
 #'   [char_figure()] for `style` and `slot`.
@@ -193,7 +193,7 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
 #' Pass the same `style`, `width_mm`, `cell_ratio`, `slot` and `ready` as to
 #' [char_figure()].
 #'
-#' @param x A ggplot, an `inferplotR_chargrid` or a [char_figure()] result.
+#' @param x A ggplot, an `infereportR_chargrid` or a [char_figure()] result.
 #' @inheritParams char_figure
 #' @return A list with `width` and `height` (numbers, millimeters) and
 #'   `units = "mm"`, ready for `save_figure(width = , height = )`.
@@ -208,83 +208,83 @@ char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height
 #' @export
 char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c64", "c64bw"),
                       slot = NULL, ready = NULL) {
-  style <- .ip_check_choice(style, .ip_cf_styles, "style")
-  .ip_cf_check_positive(cell_ratio, "cell_ratio")
+  style <- .ir_check_choice(style, .ir_cf_styles, "style")
+  .ir_cf_check_positive(cell_ratio, "cell_ratio")
   if (is.null(ready)) ready <- !identical(style, "bw")
-  .ip_check_flag(ready, "ready")
-  box <- .ip_cf_box(width_mm, slot)
+  .ir_check_flag(ready, "ready")
+  box <- .ir_cf_box(width_mm, slot)
 
-  if (inherits(x, "inferplotR_chargrid")) {
+  if (inherits(x, "infereportR_chargrid")) {
     ncol <- x$width
     nrow <- x$height
   } else {
-    .ip_check_plot(x, "x")
-    own <- .ip_cf_own_size(x)
+    .ir_check_plot(x, "x")
+    own <- .ir_cf_own_size(x)
     if (!is.null(own)) {
       return(list(width = own[["width"]], height = own[["height"]], units = "mm"))
     }
     # Only the size matters here; char_figure() reports skipped layers itself.
     grid <- withCallingHandlers(
-      .ip_cf_grid(x, style, NULL, NULL, "ascii", NULL, box, cell_ratio, ready),
-      inferplotR_skipped_layer = function(w) invokeRestart("muffleWarning"),
-      inferplotR_transliterated = function(w) invokeRestart("muffleWarning")
+      .ir_cf_grid(x, style, NULL, NULL, "ascii", NULL, box, cell_ratio, ready),
+      infereportR_skipped_layer = function(w) invokeRestart("muffleWarning"),
+      infereportR_transliterated = function(w) invokeRestart("muffleWarning")
     )
     ncol <- grid$width
     nrow <- grid$height
   }
-  if (ready) nrow <- nrow + .ip_cf_ready_rows
-  geo <- .ip_cf_geometry(style, ncol, nrow, box$width, cell_ratio, box$height)
+  if (ready) nrow <- nrow + .ir_cf_ready_rows
+  geo <- .ir_cf_geometry(style, ncol, nrow, box$width, cell_ratio, box$height)
   list(width = geo$width, height = geo$height, units = "mm")
 }
 
-.ip_cf_styles <- c("bw", "c64", "c64bw")
-.ip_cf_ready_rows <- 2L
+.ir_cf_styles <- c("bw", "c64", "c64bw")
+.ir_cf_ready_rows <- 2L
 # c64bw: border width in mm and inner padding in cells.
-.ip_cf_c64bw_border <- 3.2
-.ip_cf_c64bw_pad <- c(x = 1, y = 0.4)
+.ir_cf_c64bw_border <- 3.2
+.ir_cf_c64bw_pad <- c(x = 1, y = 0.4)
 # c64: the border is this share of the figure width on every side.
-.ip_cf_c64_border <- 0.06
+.ir_cf_c64_border <- 0.06
 
-.ip_cf_check_positive <- function(x, arg) {
-  .ip_check_number(x, arg, min = 0)
-  if (x <= 0) .ip_abort(sprintf("%s must be a positive number", arg))
+.ir_cf_check_positive <- function(x, arg) {
+  .ir_check_number(x, arg, min = 0)
+  if (x <= 0) .ir_abort(sprintf("%s must be a positive number", arg))
   invisible(x)
 }
 
 # Figure width and (with a slot) height in mm.
-.ip_cf_box <- function(width_mm, slot) {
+.ir_cf_box <- function(width_mm, slot) {
   if (is.null(slot)) {
     if (is.null(width_mm)) width_mm <- 134
-    .ip_cf_check_positive(width_mm, "width_mm")
+    .ir_cf_check_positive(width_mm, "width_mm")
     return(list(width = width_mm, height = NULL))
   }
-  slot <- .ip_check_choice(slot, .ip_presets$preset, "slot")
+  slot <- .ir_check_choice(slot, .ir_presets$preset, "slot")
   if (!is.null(width_mm)) {
-    .ip_abort("width_mm must not be given together with slot; the slot sets the width")
+    .ir_abort("width_mm must not be given together with slot; the slot sets the width")
   }
-  i <- match(slot, .ip_presets$preset)
-  list(width = .ip_presets$width[[i]], height = .ip_presets$height[[i]])
+  i <- match(slot, .ir_presets$preset)
+  list(width = .ir_presets$width[[i]], height = .ir_presets$height[[i]])
 }
 
 # Border (mm) and padding (cells) of a style.
-.ip_cf_frame <- function(style, width_mm) {
+.ir_cf_frame <- function(style, width_mm) {
   switch(style,
     bw = list(border = 0, pad = c(x = 0, y = 0)),
-    c64 = list(border = .ip_cf_c64_border * width_mm, pad = c(x = 0, y = 0)),
-    c64bw = list(border = .ip_cf_c64bw_border, pad = .ip_cf_c64bw_pad)
+    c64 = list(border = .ir_cf_c64_border * width_mm, pad = c(x = 0, y = 0)),
+    c64bw = list(border = .ir_cf_c64bw_border, pad = .ir_cf_c64bw_pad)
   )
 }
 
 # Cell width in mm for ncol columns across width_mm.
-.ip_cf_cell_width <- function(style, ncol, width_mm) {
-  fr <- .ip_cf_frame(style, width_mm)
+.ir_cf_cell_width <- function(style, ncol, width_mm) {
+  fr <- .ir_cf_frame(style, width_mm)
   (width_mm - 2 * fr$border) / (ncol + 2 * fr$pad[["x"]])
 }
 
 # Rows (READY rows included) that fit height_mm: SPEC amendment 01, D8.
-.ip_cf_slot_rows <- function(style, ncol, width_mm, height_mm, cell_ratio) {
-  fr <- .ip_cf_frame(style, width_mm)
-  ch <- .ip_cf_cell_width(style, ncol, width_mm) * cell_ratio
+.ir_cf_slot_rows <- function(style, ncol, width_mm, height_mm, cell_ratio) {
+  fr <- .ir_cf_frame(style, width_mm)
+  ch <- .ir_cf_cell_width(style, ncol, width_mm) * cell_ratio
   # The tolerance keeps an exact fit from losing a row to floating point.
   as.integer(floor((height_mm - 2 * fr$border - 2 * fr$pad[["y"]] * ch) / ch + 1e-9))
 }
@@ -293,11 +293,11 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
 # Without height_mm the figure is as tall as its content; with it, the content
 # is centred and the space left over goes to the margin (bw, c64) or to the
 # halftone border (c64bw).
-.ip_cf_geometry <- function(style, ncol, nrow, width_mm, cell_ratio, height_mm = NULL) {
-  fr <- .ip_cf_frame(style, width_mm)
-  cw <- .ip_cf_cell_width(style, ncol, width_mm)
+.ir_cf_geometry <- function(style, ncol, nrow, width_mm, cell_ratio, height_mm = NULL) {
+  fr <- .ir_cf_frame(style, width_mm)
+  cw <- .ir_cf_cell_width(style, ncol, width_mm)
   if (!is.finite(cw) || cw <= 0) {
-    .ip_abort(sprintf("width_mm = %s leaves no room for the grid", format(width_mm)),
+    .ir_abort(sprintf("width_mm = %s leaves no room for the grid", format(width_mm)),
               code = "too_small")
   }
   ch <- cw * cell_ratio
@@ -305,7 +305,7 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
   if (is.null(height_mm)) height_mm <- natural
   extra <- (height_mm - natural) / 2
   if (extra < -1e-9) {
-    .ip_abort(sprintf("%d rows need %.1f mm, more than the %.1f mm of the slot", nrow, natural,
+    .ir_abort(sprintf("%d rows need %.1f mm, more than the %.1f mm of the slot", nrow, natural,
                       height_mm), code = "too_small")
   }
   extra <- max(extra, 0)
@@ -332,31 +332,31 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
 # the mode, the c64 colours and the c64bw screen do not. Transparent figures
 # are glyphs only: no screen, no border, no panel; the glyphs keep the c64
 # light blue, else take the mode's ink.
-.ip_cf_palette <- function(style, md = .ip_mode(), transparent = FALSE) {
+.ir_cf_palette <- function(style, md = .ir_mode(), transparent = FALSE) {
   if (transparent) {
-    ink <- if (identical(style, "c64")) .ip_c64[["foreground"]] else md$ink
+    ink <- if (identical(style, "c64")) .ir_c64[["foreground"]] else md$ink
     return(list(ink = ink, panel = NA_character_, border = NA_character_))
   }
   switch(style,
     bw = list(ink = md$ink, panel = md$knock, border = md$knock),
-    c64 = list(ink = .ip_c64[["foreground"]], panel = .ip_c64[["background"]],
-               border = .ip_c64[["foreground"]]),
-    c64bw = list(ink = .ip_screen[["foreground"]], panel = NA_character_, border = md$knock,
-                 screen = .ip_screen[["background"]], dots = md$ink, paper = md$paper)
+    c64 = list(ink = .ir_c64[["foreground"]], panel = .ir_c64[["background"]],
+               border = .ir_c64[["foreground"]]),
+    c64bw = list(ink = .ir_screen[["foreground"]], panel = NA_character_, border = md$knock,
+                 screen = .ir_screen[["background"]], dots = md$ink, paper = md$paper)
   )
 }
 
-# The c64bw border: ink dots on paper, .ip_halftone_spacing apart, radius 0.18
+# The c64bw border: ink dots on paper, .ir_halftone_spacing apart, radius 0.18
 # times the spacing. Built here rather than with hatch_pattern("dots") because
 # its colours follow the mode.
-.ip_cf_halftone <- function(dots, paper, spacing = .ip_halftone_spacing) {
+.ir_cf_halftone <- function(dots, paper, spacing = .ir_halftone_spacing) {
   side <- grid::unit(spacing, "mm")
-  grid::pattern(.ip_cf_halftone_tile(dots, paper, spacing), width = side, height = side,
+  grid::pattern(.ir_cf_halftone_tile(dots, paper, spacing), width = side, height = side,
                 extend = "repeat")
 }
 
 # One tile of the halftone: a paper square with an ink dot in its centre.
-.ip_cf_halftone_tile <- function(dots, paper, spacing) {
+.ir_cf_halftone_tile <- function(dots, paper, spacing) {
   side <- grid::unit(spacing, "mm")
   centre <- grid::unit(0.5, "npc")
   background <- grid::rectGrob(centre, centre, side, side,
@@ -366,11 +366,11 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
   grid::grobTree(background, dot)
 }
 
-.ip_cf_c64bw_layers <- function(geo, pal) {
+.ir_cf_c64bw_layers <- function(geo, pal) {
   list(
     ggplot2::annotate("rect", xmin = geo$xlim[[1L]], xmax = geo$xlim[[2L]],
                       ymin = geo$ylim[[1L]], ymax = geo$ylim[[2L]],
-                      fill = list(.ip_cf_halftone(pal$dots, pal$paper)), colour = NA),
+                      fill = list(.ir_cf_halftone(pal$dots, pal$paper)), colour = NA),
     ggplot2::annotate("rect", xmin = geo$screen_x[[1L]], xmax = geo$screen_x[[2L]],
                       ymin = geo$screen_y[[1L]], ymax = geo$screen_y[[2L]],
                       fill = pal$screen, colour = NA)
@@ -379,24 +379,24 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
 
 # The cursor: a filled tile of 0.9 x 0.8 cells in the first column of the last
 # row, since IBM Plex Mono has no block glyph.
-.ip_cf_cursor <- function(row, ink) {
+.ir_cf_cursor <- function(row, ink) {
   d <- data.frame(x = 1, y = -row)
   mapping <- do.call(ggplot2::aes, list(x = as.name("x"), y = as.name("y")))
   ggplot2::geom_tile(mapping, data = d, inherit.aes = FALSE, width = 0.9, height = 0.8,
                      fill = ink, colour = NA)
 }
 
-.ip_cf_grid <- function(plot, style, width, height, charset, case, box, cell_ratio, ready) {
+.ir_cf_grid <- function(plot, style, width, height, charset, case, box, cell_ratio, ready) {
   c64 <- !identical(style, "bw")
   if (is.null(width)) width <- if (!c64) 64L else if (is.null(box$height)) 40L else 38L
   if (is.null(height)) {
     height <- if (is.null(box$height)) {
       if (c64) 25L else 20L
     } else {
-      rows <- .ip_cf_slot_rows(style, width, box$width, box$height, cell_ratio) -
-        if (ready) .ip_cf_ready_rows else 0L
+      rows <- .ir_cf_slot_rows(style, width, box$width, box$height, cell_ratio) -
+        if (ready) .ir_cf_ready_rows else 0L
       if (rows < 10L) {
-        .ip_abort(sprintf(
+        .ir_abort(sprintf(
           "the slot leaves %d grid rows for %d columns, fewer than 10; use more columns",
           rows, as.integer(width)), code = "too_small")
       }
@@ -409,8 +409,8 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
 
 # Appends the two rows of the C64 prompt below the grid: READY. flush left and
 # an empty row where the cursor tile is drawn.
-.ip_cf_ready <- function(m) {
-  prompt <- matrix(" ", nrow = .ip_cf_ready_rows, ncol = ncol(m))
+.ir_cf_ready <- function(m) {
+  prompt <- matrix(" ", nrow = .ir_cf_ready_rows, ncol = ncol(m))
   word <- strsplit("READY.", "", fixed = TRUE)[[1L]]
   n <- min(length(word), ncol(m))
   prompt[1L, seq_len(n)] <- word[seq_len(n)]
@@ -418,10 +418,10 @@ char_size <- function(x, width_mm = NULL, cell_ratio = 1.75, style = c("bw", "c6
 }
 
 # The size char_figure() stored on a figure, or NULL for any other ggplot.
-.ip_cf_own_size <- function(plot) {
+.ir_cf_own_size <- function(plot) {
   data <- plot$data
   if (!is.data.frame(data)) return(NULL)
-  size <- attr(data, "inferplotR_char_size", exact = TRUE)
+  size <- attr(data, "infereportR_char_size", exact = TRUE)
   if (is.null(size) || !all(c("col", "row", "glyph") %in% names(data))) return(NULL)
   size
 }

@@ -2,19 +2,19 @@
 % Please edit documentation in R/print-methods.R
 \name{chargrid-methods}
 \alias{chargrid-methods}
-\alias{format.inferplotR_chargrid}
-\alias{as.character.inferplotR_chargrid}
-\alias{print.inferplotR_chargrid}
+\alias{format.infereportR_chargrid}
+\alias{as.character.infereportR_chargrid}
+\alias{print.infereportR_chargrid}
 \title{Print, format or coerce a character grid}
 \usage{
-\method{format}{inferplotR_chargrid}(x, ...)
+\method{format}{infereportR_chargrid}(x, ...)
 
-\method{as.character}{inferplotR_chargrid}(x, ...)
+\method{as.character}{infereportR_chargrid}(x, ...)
 
-\method{print}{inferplotR_chargrid}(x, ...)
+\method{print}{infereportR_chargrid}(x, ...)
 }
 \arguments{
-\item{x}{An \code{inferplotR_chargrid} object.}
+\item{x}{An \code{infereportR_chargrid} object.}
 
 \item{...}{Unused; for compatibility with the generics.}
 }
@@ -24,7 +24,7 @@ lines of \code{width} characters each. \code{print()} writes those lines to the 
 and returns \code{x} invisibly.
 }
 \description{
-Methods for the \code{inferplotR_chargrid} objects returned by \code{\link[=char_grid]{char_grid()}}.
+Methods for the \code{infereportR_chargrid} objects returned by \code{\link[=char_grid]{char_grid()}}.
 }
 \examples{
 p <- ggplot2::ggplot(data.frame(x = 1:5, y = c(2, 4, 3, 5, 4)),
