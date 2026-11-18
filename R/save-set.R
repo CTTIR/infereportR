@@ -88,9 +88,14 @@
 #' dir <- file.path(tempdir(), "figures")
 #' if (capabilities("cairo")) {
 #'   files <- save_figure_set(build, "plant-growth", preset = "slide_half", dir = dir,
-#'                            modes = c("light", "dark"), png = FALSE)
+#'                            modes = "light", png = FALSE)
 #'   files
+#'   \donttest{
+#'   # Light and dark, each in its own folder under the same file name:
+#'   save_figure_set(build, "plant-growth", preset = "slide_half", dir = dir,
+#'                   modes = c("light", "dark"), png = FALSE)
 #'   list.files(dir, recursive = TRUE)
+#'   }
 #' }
 #' unlink(dir, recursive = TRUE)
 #' @export
