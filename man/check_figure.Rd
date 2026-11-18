@@ -72,7 +72,7 @@ theme (for example with grid annotations) is not seen.
 }
 \examples{
 library(ggplot2)
-# A default ggplot is not black and white (grey panel, white grid lines,
+# A default ggplot is not black and white (gray panel, white grid lines,
 # red points) and its axis labels give no units.
 p <- ggplot(mtcars, aes(wt, mpg)) + geom_point(colour = "red")
 check_figure(p)

@@ -15,27 +15,28 @@
   width_mm = c(86, 86, 86, 64, 86, 134, 134, 86, 64, 86, 64, 64),
   height_mm = rep(44, 12),
   caption = c(
-    paste("Lines are labelled at their ends; there is no legend to decode. Line type and",
-          "marker shape separate the groups, never colour."),
+    paste("Lines are labeled at their ends; there is no legend to decode. Line type and",
+          "marker shape separate the groups, never color."),
     paste("Every observation is shown (open circles), with the mean and 95% CI beside it.",
-          "Comparisons with ISS < 16: Welch t-tests, Holm-adjusted p."),
-    paste("Open, hatched and solid fills replace colour. Categories are named beside the",
+          "Comparisons with Injury Severity Score (ISS) < 16: Welch t-tests, Holm-adjusted",
+          "p."),
+    paste("Open, hatched and solid fills replace color. Categories are named beside the",
           "last bar instead of in a legend."),
     paste("Pearson correlation of log IL-6 with ISS, with its 95% CI from infercalcR. The",
-          "log axis is labelled in original units."),
+          "log axis is labeled in original units."),
     paste("The empirical distribution function shows every patient, the medians (dotted)",
           "and the spread in one figure."),
     paste("Subgroup estimates as differences with 95% CIs (Welch, infercalcR). Marker area",
           "is proportional to n; the dotted line is no difference."),
     paste("Three markers, one design: identical x axes, free y axes in their own units,",
-          "lines labelled once in the last panel."),
+          "lines labeled once in the last panel."),
     paste("Spearman correlations: above the diagonal, circle area shows the strength, filled",
           "is positive and open is negative. The values are mirrored below the diagonal."),
     paste("Each line is one patient; the thick line is the mean. Paired t-test from",
           "infercalcR: mean change with its 95% CI."),
     paste("Character mode: the time course from figure 1 redrawn with text characters, as",
-          "on an 80s home computer."),
-    paste("The same plot in C64 colours (Pepto palette) with the READY prompt. For effect",
+          "on a 1980s home computer."),
+    paste("The same plot in C64 colors (Pepto palette) with the READY prompt. For effect",
           "only; not for data slides."),
     paste("The C64 screen in two values: black screen, white glyphs, a dot-halftone border",
           "for the lighter border blue.")),
@@ -182,7 +183,7 @@
                    plot.margin = ggplot2::margin(1, 17, 1, 1, "mm"))
 }
 
-# 08 Spearman correlation matrix without colour.
+# 08 Spearman correlation matrix without color.
 .ir_gallery_08 <- function(d, mode = "light", transparent = FALSE) {
   figure_correlation_matrix(as.data.frame(d$mk), method = "correlation_spearman",
                             mode = mode, transparent = transparent)
@@ -223,7 +224,7 @@
               transparent = transparent)
 }
 
-# 11 Character mode in C64 colours.
+# 11 Character mode in C64 colors.
 .ir_gallery_11 <- function(d, mode = "light", transparent = FALSE) {
   char_figure(.ir_gallery_char_source(d), style = "c64", slot = "slide_half", mode = mode,
               transparent = transparent)
