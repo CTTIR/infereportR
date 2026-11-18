@@ -44,3 +44,13 @@ test_that("an omnibus label at the panel edge keeps a gap from the axis", {
                                                    hjust = 1), 2L)[[1]]
   expect_identical(grid::unitType(right$x), "sum")
 })
+
+test_that("a panel without finite values gives an empty omnibus layer", {
+  d <- data.frame(g = factor(c("a", "a", "b", "b")), y = c(Inf, -Inf, Inf, NaN))
+  p <- ggplot2::ggplot(d, ggplot2::aes(g, y)) + ggplot2::geom_point() +
+    stat_omnibus(method = "anova_one_way")
+  expect_identical(nrow(layer_data_of(p, 2L)), 0L)
+  empty <- .ir_text_empty()
+  expect_identical(nrow(empty), 0L)
+  expect_identical(names(empty), c("x", "y", "label", "group", ".ir_result", ".ir_result_id"))
+})

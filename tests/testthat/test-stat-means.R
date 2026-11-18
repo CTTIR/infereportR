@@ -102,3 +102,13 @@ test_that("means draw as a filled 2.1 mm point with a 1.1 pt interval", {
   other <- layer_data_of(base + stat_means(geom = "point"))
   expect_false(isTRUE(all.equal(unique(other$size) * 4, 2.1)))
 })
+
+test_that("a panel without finite values gives an empty means layer", {
+  d <- data.frame(g = factor(c("a", "a", "b", "b")), y = c(Inf, -Inf, Inf, NaN))
+  p <- ggplot2::ggplot(d, ggplot2::aes(g, y)) + ggplot2::geom_point() + stat_means()
+  expect_identical(nrow(layer_data_of(p, 2L)), 0L)
+  empty <- .ir_means_empty()
+  expect_identical(nrow(empty), 0L)
+  expect_true(all(c("x", "y", "ymin", "ymax", "label", ".ir_result", ".ir_result_id") %in%
+                    names(empty)))
+})
