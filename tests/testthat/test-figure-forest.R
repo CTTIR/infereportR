@@ -54,7 +54,8 @@ test_that("figure_forest lays text columns out from measured widths", {
   margin <- as.numeric(p$theme$plot.margin)
   # Longer labels need a wider left margin.
   long <- res
-  names(long)[2] <- paste(rep("A much longer subgroup label", 2), collapse = " ")
+  # Long enough to widen the column, short enough for any common sans font.
+  names(long)[2] <- "A much longer subgroup label"
   q <- figure_forest(long)
   expect_gt(as.numeric(q$theme$plot.margin)[4], margin[4])
   # The panel fills what is left of the slot.
