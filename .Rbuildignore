@@ -30,7 +30,7 @@
 ^.*\.ods$
 ^.*\.parquet$
 ^.*\.feather$
-^.*\.rds$
+^(?!build/).*\.rds$
 ^.*\.rda$
 ^.*\.[Rr][Dd]ata$
 ^.*\.sqlite.*$
