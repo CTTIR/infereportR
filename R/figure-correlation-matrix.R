@@ -110,7 +110,7 @@ figure_correlation_matrix <- function(data, vars = NULL, method, digits = 2L, la
   })
   cm <- do.call(rbind, lapply(cells, function(cl) cl$cell))
   results <- lapply(cells, function(cl) cl$result)
-  cm$ip_row <- seq_len(nrow(cm))
+  cm$ir_row <- seq_len(nrow(cm))
   # Positions: variable i on the diagonal at (i, k + 1 - i); the pair (i, j)
   # has its circle above the diagonal and its value mirrored below.
   cm$cx <- cm$j
@@ -142,7 +142,7 @@ figure_correlation_matrix <- function(data, vars = NULL, method, digits = 2L, la
   p <- p +
     ggplot2::layer(stat = .ir_stat_results, geom = "text", position = "identity", data = cm,
                    mapping = ggplot2::aes(x = .data$tx, y = .data$ty, label = .data$text,
-                                          ip_row = .data$ip_row),
+                                          ir_row = .data$ir_row),
                    params = list(results = results, ids = cm$id, family = sans,
                                  size = size, colour = ink),
                    show.legend = FALSE, inherit.aes = FALSE) +

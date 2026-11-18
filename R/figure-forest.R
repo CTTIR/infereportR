@@ -34,13 +34,13 @@
 }
 
 # A stat that attaches the builder's results to its rows: the row index
-# arrives as the `ip_row` aesthetic, the results as a parameter. This is how
+# arrives as the `ir_row` aesthetic, the results as a parameter. This is how
 # a builder figure carries `.ir_result`, so inference_results() and
 # figure_table() work on it.
 .ir_stat_results <- ggplot2::ggproto("StatFigureResults", ggplot2::Stat,
-  required_aes = c("ip_row"),
+  required_aes = c("ir_row"),
   compute_panel = function(data, scales, results, ids) {
-    i <- data$ip_row
+    i <- data$ir_row
     data$.ir_result <- unname(results[i])
     data$.ir_result_id <- unname(ids[i])
     data
@@ -181,7 +181,7 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
   })
   fd <- do.call(rbind, rows)
   fd$label <- labels
-  fd$ip_row <- seq_len(k)
+  fd$ir_row <- seq_len(k)
   if (is.null(null_value)) {
     nulls <- unique(fd$null[!is.na(fd$null)])
     if (length(nulls) > 1L) {
@@ -266,7 +266,7 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
     ggplot2::geom_segment(ggplot2::aes(x = .data$low, xend = .data$high, yend = .data$y),
                           linewidth = .ir_lw(0.6), colour = ink, na.rm = TRUE) +
     ggplot2::layer(stat = .ir_stat_results, geom = "point", position = "identity",
-                   mapping = ggplot2::aes(size = .data$n, ip_row = .data$ip_row),
+                   mapping = ggplot2::aes(size = .data$n, ir_row = .data$ir_row),
                    params = list(results = results, ids = .ir_forest_ids(fd), shape = 15,
                                  colour = ink, na.rm = TRUE),
                    show.legend = FALSE, inherit.aes = TRUE) +
