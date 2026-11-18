@@ -7,7 +7,8 @@
 figure_gallery(
   dir = tempdir(),
   modes = c("light", "dark", "light-transparent", "dark-transparent"),
-  png = FALSE
+  png = FALSE,
+  dpi = 300
 )
 }
 \arguments{
@@ -18,8 +19,10 @@ default.}
 \code{"light-transparent"} and \code{"dark-transparent"} (all four by default).
 \code{character()} writes nothing.}
 
-\item{png}{If \code{TRUE}, also write a 300 dpi PNG beside each PDF; \code{FALSE} by
+\item{png}{If \code{TRUE}, also write a PNG beside each PDF; \code{FALSE} by
 default.}
+
+\item{dpi}{Resolution of the PNG files in dots per inch, 300 by default.}
 }
 \value{
 The rows of \code{\link[=save_figure_set]{save_figure_set()}} for all figures, bound in figure

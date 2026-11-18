@@ -285,8 +285,9 @@
 #' @param modes Mode folders to write, any of `"light"`, `"dark"`,
 #'   `"light-transparent"` and `"dark-transparent"` (all four by default).
 #'   `character()` writes nothing.
-#' @param png If `TRUE`, also write a 300 dpi PNG beside each PDF; `FALSE` by
+#' @param png If `TRUE`, also write a PNG beside each PDF; `FALSE` by
 #'   default.
+#' @param dpi Resolution of the PNG files in dots per inch, 300 by default.
 #' @return The rows of [save_figure_set()] for all figures, bound in figure
 #'   order: a data.frame with one row per written file and the columns `mode`,
 #'   `file`, `format`, `width_mm` and `height_mm` (12 x modes x formats rows;
@@ -304,7 +305,7 @@
 #' @export
 figure_gallery <- function(dir = tempdir(),
                            modes = c("light", "dark", "light-transparent", "dark-transparent"),
-                           png = FALSE) {
+                           png = FALSE, dpi = 300) {
   .ir_check_string(dir, "dir")
   if (!is.character(modes) || anyNA(modes) || anyDuplicated(modes) ||
       !all(modes %in% .ir_set_modes)) {
@@ -312,6 +313,8 @@ figure_gallery <- function(dir = tempdir(),
                       paste0("\"", .ir_set_modes, "\"", collapse = ", ")))
   }
   .ir_check_flag(png, "png")
+  .ir_check_number(dpi, "dpi", min = 0)
+  if (dpi <= 0) .ir_abort("dpi must be a positive number")
   if (!length(modes)) return(.ir_set_empty())
   data <- .ir_gallery_data()
   rows <- lapply(seq_len(nrow(.ir_gallery_captions)), function(i) {
@@ -319,7 +322,7 @@ figure_gallery <- function(dir = tempdir(),
     build <- function(mode, transparent) builder(data, mode = mode, transparent = transparent)
     save_figure_set(build, .ir_gallery_captions$name[[i]],
                     preset = .ir_gallery_presets[[.ir_gallery_captions$slot[[i]]]], dir = dir,
-                    modes = modes, png = png)
+                    modes = modes, png = png, dpi = dpi)
   })
   out <- do.call(rbind, c(list(.ir_set_empty()), rows))
   rownames(out) <- NULL

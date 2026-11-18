@@ -146,6 +146,8 @@ test_that("figure_gallery() checks its arguments and returns a typed empty table
   expect_error(figure_gallery(modes = "sepia"), class = "infereportR_invalid_input")
   expect_error(figure_gallery(png = NA), class = "infereportR_invalid_input")
   expect_error(figure_gallery(dir = 1), class = "infereportR_invalid_input")
+  expect_error(figure_gallery(dpi = 0), class = "infereportR_invalid_input")
+  expect_error(figure_gallery(dpi = "a"), class = "infereportR_invalid_input")
   empty <- figure_gallery(withr::local_tempdir(), modes = character())
   expect_identical(empty, .ir_set_empty())
 })
@@ -200,6 +202,25 @@ test_that("figure_gallery() writes 48 PDFs at their slot size, leaving the seed 
     figure_gallery(dir, modes = "light-transparent")
     expect_false(exists(".Random.seed", envir = globalenv(), inherits = FALSE))
   })
+})
+
+# The width in pixels of a PNG file, from its IHDR chunk.
+png_width <- function(file) {
+  b <- readBin(file, "raw", 24L)
+  sum(as.integer(b[17:20]) * 256^(3:0))
+}
+
+test_that("figure_gallery(png = TRUE) writes PNGs at the requested dpi", {
+  skip_on_cran()
+  skip_if_not_installed("ragg")
+  skip_if_not(cairo_pdf_works())
+  dir <- withr::local_tempdir()
+  tab <- figure_gallery(dir, modes = "light", png = TRUE, dpi = 20)
+  expect_identical(nrow(tab), 24L)
+  png <- tab[tab$format == "png", ]
+  expect_true(all(file.exists(png$file)))
+  widths <- vapply(png$file, png_width, numeric(1))
+  expect_near(unname(widths), png$width_mm / 25.4 * 20, 1)
 })
 
 # Figure 11 (C64 colors) fails two_values in every mode, light, dark and both
