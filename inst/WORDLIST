@@ -14,6 +14,7 @@ DejaVu
 DescTools
 DescrList
 DescrTab
+ETbb
 Entscheidassistent
 Entscheidbaum
 Erdfelder
@@ -37,8 +38,11 @@ Raban
 SHA
 SIL
 Sauer
+Sparklines
 Springer
 Timmermann
+Tufte
+Tufte's
 Uhlmann
 Universität
 Welch
@@ -71,6 +75,7 @@ ggsave
 ggsignif
 ggstatsplot
 grDevices
+grey
 infercalcR
 infercalcR's
 infereportR
@@ -99,6 +104,8 @@ roxygen
 sidedness
 sig
 slopegraph
+sparkline
+sparklines
 systemfonts
 testthat
 th

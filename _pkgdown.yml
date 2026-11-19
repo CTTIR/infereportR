@@ -38,6 +38,7 @@ articles:
   - inference-layers
   - character-mode
   - figure-gallery
+  - tufte
 reference:
 - title: Tables and text
   desc: Present finalized results as tables and neutral text.
@@ -113,6 +114,18 @@ reference:
   contents:
   - figure_gallery
   - gallery_captions
+- title: Tufte
+  desc: Opt-in palettes and Tufte's figure types (Bleisatz 1.3).
+  contents:
+  - scale_colour_palette
+  - geom_rangeframe
+  - geom_dotdash
+  - stat_quartiles
+  - geom_papergrid
+  - stat_context
+  - figure_slopegraph
+  - figure_sparklines
+  - sparkline_tex
 - title: APA check
   desc: Audit a figure against the APA figure rules.
   contents:

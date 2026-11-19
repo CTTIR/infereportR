@@ -1,3 +1,35 @@
+# infereportR 0.2.0.9000
+
+Development version of 0.3.0.
+
+## Tufte options for figures (Bleisatz 1.3)
+
+* Every figure function takes `palette = "onebit"` (default, unchanged: two
+  values), `"grey"` (plus one grey for context) or `"tufte"` (plus Tufte's red
+  and green): `theme_figure()`, the layers, the builders, `report_figure()`,
+  `scale_colour_ink()`, `save_figure_set()` and `check_figure()`. The colors
+  come from the one mode resolver; red and green are lighter in dark mode.
+* `scale_colour_palette()` maps levels to the palette roles ink, grey, red,
+  green and paper.
+* New Tufte figure types: `geom_rangeframe()` and
+  `theme_figure(axes = "range")` (range frames), `geom_dotdash()` (dot-dash
+  axes), `stat_quartiles()` (quartile plot), `theme_figure(grid = "paper")`
+  and `geom_papergrid()` (a grid in the paper color through the bars),
+  `figure_slopegraph()` (slopegraph as a table-graphic),
+  `figure_sparklines()` and `sparkline_tex()` (sparklines in figures and in
+  Bleisatz LaTeX), and `stat_context()` (context in grey, the summary in ink).
+* `figure_size("margin")`: the 52 x 40 mm margin slot of the Tufte handout.
+* `figure_font("etbb")`: ET Book when installed, else `"serif"`.
+* `check_figure(palette = )`: the `two_values` row is now the palette rule;
+  with the default palette it is unchanged.
+* `save_figure_set()` writes the folders `light-grey`, `dark-grey`,
+  `light-1bit` and `dark-1bit`, and passes `palette` to a `build` function
+  that accepts it.
+* `figure_gallery(set = "tufte")` writes the Tufte set, figures 13-19 with two
+  margin variants, in six folders; `gallery_captions(set = "tufte")` returns
+  its captions.
+* New vignette "Tufte options".
+
 # infereportR 0.2.0
 
 ## The figure layer joins infereportR

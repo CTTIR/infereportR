@@ -272,6 +272,27 @@ save_figure_set(build, "chicks", preset = "slide_side",
                 dir = file.path(tempdir(), "figures"), png = FALSE)
 ```
 
+### Tufte options
+
+Every aspect of Tufte's design is an option, and the default stays the
+two-valued Bleisatz figure. `palette = "grey"` adds one grey for context and
+`palette = "tufte"` adds red and green; the figure types are layers and
+builders of their own: `geom_rangeframe()` with
+`theme_figure(axes = "range")`, `geom_dotdash()`, `stat_quartiles()`,
+`theme_figure(grid = "paper")` and `geom_papergrid()`, `figure_slopegraph()`,
+`figure_sparklines()` with `sparkline_tex()` for LaTeX, and `stat_context()`.
+`figure_size("margin")` is the 52 x 40 mm margin slot of a Tufte handout and
+`figure_font("etbb")` finds ET Book. `figure_gallery(set = "tufte")` writes the
+Tufte set of the Bleisatz gallery in six folders; see `vignette("tufte")`.
+
+```r
+ggplot(ChickWeight, aes(Time, weight, group = Chick, series = Diet, linetype = Diet)) +
+  stat_context(highlight = "3", palette = "tufte") +
+  geom_rangeframe() +
+  labs(x = "Days since birth", y = "Weight (g)") +
+  theme_figure("slide", legend = "none", axes = "range", palette = "tufte")
+```
+
 ### APA check
 
 `check_figure()` audits a plot against the APA Style figure rules and the
