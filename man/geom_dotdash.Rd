@@ -61,7 +61,7 @@ extremes turn the dashed axes into range frames.
 }
 \examples{
 library(ggplot2)
-ggplot(mtcars, aes(wt, mpg)) +
+p <- ggplot(mtcars, aes(wt, mpg)) +
   geom_point(size = 0.8) +
   geom_dotdash() +
   coord_cartesian(clip = "off") +

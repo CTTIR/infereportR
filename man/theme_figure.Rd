@@ -121,7 +121,7 @@ slide <- p + theme_figure("slide", grid = "y", legend = "bottom")
 dark <- p + theme_figure("slide", mode = "dark", transparent = TRUE)
 
 # Tufte's range frame: the axes end where the data end.
-p + geom_rangeframe() + theme_figure("slide", axes = "range")
+framed <- p + geom_rangeframe() + theme_figure("slide", axes = "range")
 }
 \seealso{
 \code{\link[=figure_font]{figure_font()}} for the default family; \code{check_figure()} audits a

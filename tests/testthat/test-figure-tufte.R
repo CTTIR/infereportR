@@ -9,6 +9,7 @@ text_layers <- function(p) {
 }
 
 test_that("figure_slopegraph() spaces labels by value, at least gap apart", {
+  skip_on_cran()
   p <- figure_slopegraph(slope_data, "name", "before", "after", highlight = "All",
                          titles = c("Before", "After"), note = "score", palette = "tufte")
   b <- ggplot2::ggplot_build(p)
@@ -70,6 +71,7 @@ spark_data <- function() {
 }
 
 test_that("figure_sparklines() marks and writes the last value and the extremes", {
+  skip_on_cran()
   d <- spark_data()
   p <- figure_sparklines(d, "x", "y", "row", group = "group", lower = "lo", upper = "hi",
                          units = c(A = "mg", B = "kg"), digits = c(A = 1, B = 0),
@@ -95,6 +97,7 @@ test_that("figure_sparklines() marks and writes the last value and the extremes"
 })
 
 test_that("figure_sparklines() stays two-valued in onebit, with a dotted band", {
+  skip_on_cran()
   d <- spark_data()
   p <- figure_sparklines(d, "x", "y", "row", group = "group", lower = "lo", upper = "hi",
                          marks = "both", mode = "dark")
@@ -169,6 +172,7 @@ test_that(".ir_format_fixed() keeps the decimals and drops a negative zero", {
 })
 
 test_that("save_figure_set() writes the palette folders and passes the palette", {
+  skip_on_cran()
   skip_if_not(cairo_pdf_works())
   dir <- withr::local_tempdir()
   seen <- character()
@@ -218,6 +222,7 @@ test_that("gallery_captions(\"tufte\") lists the nine files of figures 13-19", {
 })
 
 test_that("the Tufte figures reproduce the numbers of the reference", {
+  skip_on_cran()
   d <- .ir_gallery_data()
   spark <- ggplot2::ggplot_build(.ir_tufte_13(d))
   txt <- spark$data[[4]]$label

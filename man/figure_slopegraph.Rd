@@ -69,7 +69,7 @@ same preset.
 \examples{
 d <- data.frame(group = c("All", "Younger", "Older", "Female"),
                 before = c(62, 67, 57, 71), after = c(85, 78, 90, 85))
-figure_slopegraph(d, "group", "before", "after", highlight = "All",
+p <- figure_slopegraph(d, "group", "before", "after", highlight = "All",
                   titles = c("Before", "After"), palette = "tufte")
 }
 \seealso{

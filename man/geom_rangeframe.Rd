@@ -63,7 +63,7 @@ cannot know the data.
 }
 \examples{
 library(ggplot2)
-ggplot(mtcars, aes(wt, mpg)) +
+p <- ggplot(mtcars, aes(wt, mpg)) +
   geom_point(size = 0.8) +
   geom_rangeframe() +
   scale_x_continuous(breaks = range(mtcars$wt)) +

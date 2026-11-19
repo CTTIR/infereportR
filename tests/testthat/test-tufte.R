@@ -23,6 +23,7 @@ test_that("theme_figure() takes palette and axes", {
 })
 
 test_that("grid = \"paper\" draws the grid in the paper colour above the data", {
+  skip_on_cran()
   for (mode in c("light", "dark")) {
     th <- theme_figure(grid = "paper", mode = mode)
     paper <- .ir_mode(mode)$paper
@@ -106,6 +107,7 @@ test_that("geom_dotdash() draws one dash per observation on each axis", {
 })
 
 test_that("stat_quartiles() computes the five numbers with quantile type 7", {
+  skip_on_cran()
   p <- ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) + stat_quartiles()
   d <- layer_data_of(p)
   for (i in seq_len(3)) {
@@ -153,6 +155,7 @@ ctx_data <- function() {
 }
 
 test_that("stat_context() draws grey context and the median per series in ink", {
+  skip_on_cran()
   d <- ctx_data()
   p <- ggplot2::ggplot(d, ggplot2::aes(time, score, group = id, series = arm)) +
     stat_context(highlight = "B", palette = "tufte")
@@ -194,6 +197,7 @@ test_that("stat_context() draws grey context and the median per series in ink", 
 })
 
 test_that("scale_colour_palette() maps roles by palette and mode", {
+  skip_on_cran()
   d <- data.frame(x = 1:3, y = 1:3, g = c("a", "b", "c"))
   p <- ggplot2::ggplot(d, ggplot2::aes(x, y, colour = g)) + ggplot2::geom_point()
   cols <- function(...) layer_data_of(p + scale_colour_palette(...))$colour
@@ -212,6 +216,7 @@ test_that("scale_colour_palette() maps roles by palette and mode", {
 })
 
 test_that("check_figure() applies the palette rule", {
+  skip_on_cran()
   d <- data.frame(x = 1:3, y = 1:3, g = c("a", "b", "c"))
   p <- ggplot2::ggplot(d, ggplot2::aes(x, y, colour = g)) + ggplot2::geom_point() +
     scale_colour_palette(c("grey", "red", "green"), palette = "tufte") +
@@ -224,6 +229,7 @@ test_that("check_figure() applies the palette rule", {
 })
 
 test_that("the layers and builders accept palette and stay in ink", {
+  skip_on_cran()
   p <- ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) +
     report_figure("slide", compare = welch, comparisons = list(c("ctrl", "trt1")),
                   adjust = "none", palette = "grey")

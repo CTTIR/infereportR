@@ -83,7 +83,7 @@ library(ggplot2)
 d <- data.frame(id = rep(1:12, each = 5), time = rep(1:5, 12),
                 arm = rep(c("A", "B"), each = 30))
 d$score <- d$time * ifelse(d$arm == "A", 1, 1.5) + sin(d$id * d$time)
-ggplot(d, aes(time, score, group = id, series = arm, linetype = arm)) +
+p <- ggplot(d, aes(time, score, group = id, series = arm, linetype = arm)) +
   stat_context(highlight = "B", palette = "tufte") +
   labs(x = "Week", y = "Score (points)") +
   theme_figure("slide", legend = "none", palette = "tufte")

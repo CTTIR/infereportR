@@ -104,7 +104,7 @@ same preset.
 \examples{
 d <- data.frame(week = rep(1:8, 2), arm = rep(c("Drug", "Placebo"), each = 8),
                 score = c(3, 5, 6, 8, 7, 6, 5, 5, 3, 4, 4, 5, 5, 4, 4, 4))
-figure_sparklines(d, "week", "score", "arm", marks = "both", extremes = "max",
+p <- figure_sparklines(d, "week", "score", "arm", marks = "both", extremes = "max",
                   x_unit = " wk", titles = c(series = "Score", max = "Peak", last = "Week 8"),
                   palette = "tufte")
 }

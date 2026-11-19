@@ -91,7 +91,7 @@
 #' dark <- p + theme_figure("slide", mode = "dark", transparent = TRUE)
 #'
 #' # Tufte's range frame: the axes end where the data end.
-#' p + geom_rangeframe() + theme_figure("slide", axes = "range")
+#' framed <- p + geom_rangeframe() + theme_figure("slide", axes = "range")
 #' @export
 theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_family = NULL,
                          legend = c("inside", "right", "bottom", "none"),

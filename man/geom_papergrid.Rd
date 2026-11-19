@@ -40,7 +40,7 @@ the bars there too.
 \examples{
 library(ggplot2)
 d <- data.frame(group = c("A", "B", "C"), pct = c(12, 21, 30))
-ggplot(d, aes(group, pct)) +
+p <- ggplot(d, aes(group, pct)) +
   geom_col(width = 0.5) +
   geom_papergrid() +
   geom_text(aes(label = group), vjust = -0.5, size = 3) +

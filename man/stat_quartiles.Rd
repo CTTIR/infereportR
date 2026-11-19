@@ -62,7 +62,7 @@ usual rules: a discrete \code{x} groups by level; with a numeric \code{x}, map
 }
 \examples{
 library(ggplot2)
-ggplot(PlantGrowth, aes(group, weight)) +
+p <- ggplot(PlantGrowth, aes(group, weight)) +
   stat_quartiles() +
   labs(x = NULL, y = "Dried weight (g)") +
   theme_figure("slide")

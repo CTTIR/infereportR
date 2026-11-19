@@ -94,7 +94,7 @@ GeomRangeframe <- ggplot2::ggproto(
 #' @seealso [theme_figure()], [geom_dotdash()], `vignette("tufte")`.
 #' @examples
 #' library(ggplot2)
-#' ggplot(mtcars, aes(wt, mpg)) +
+#' p <- ggplot(mtcars, aes(wt, mpg)) +
 #'   geom_point(size = 0.8) +
 #'   geom_rangeframe() +
 #'   scale_x_continuous(breaks = range(mtcars$wt)) +
@@ -137,7 +137,7 @@ geom_rangeframe <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @seealso [geom_rangeframe()], `vignette("tufte")`.
 #' @examples
 #' library(ggplot2)
-#' ggplot(mtcars, aes(wt, mpg)) +
+#' p <- ggplot(mtcars, aes(wt, mpg)) +
 #'   geom_point(size = 0.8) +
 #'   geom_dotdash() +
 #'   coord_cartesian(clip = "off") +
@@ -242,7 +242,7 @@ GeomQuartiles <- ggplot2::ggproto(
 #' @seealso [geom_rangeframe()], `vignette("tufte")`.
 #' @examples
 #' library(ggplot2)
-#' ggplot(PlantGrowth, aes(group, weight)) +
+#' p <- ggplot(PlantGrowth, aes(group, weight)) +
 #'   stat_quartiles() +
 #'   labs(x = NULL, y = "Dried weight (g)") +
 #'   theme_figure("slide")
@@ -406,7 +406,7 @@ GeomContext <- ggplot2::ggproto(
 #' d <- data.frame(id = rep(1:12, each = 5), time = rep(1:5, 12),
 #'                 arm = rep(c("A", "B"), each = 30))
 #' d$score <- d$time * ifelse(d$arm == "A", 1, 1.5) + sin(d$id * d$time)
-#' ggplot(d, aes(time, score, group = id, series = arm, linetype = arm)) +
+#' p <- ggplot(d, aes(time, score, group = id, series = arm, linetype = arm)) +
 #'   stat_context(highlight = "B", palette = "tufte") +
 #'   labs(x = "Week", y = "Score (points)") +
 #'   theme_figure("slide", legend = "none", palette = "tufte")
@@ -494,7 +494,7 @@ GeomPapergrid <- ggplot2::ggproto(
 #' @examples
 #' library(ggplot2)
 #' d <- data.frame(group = c("A", "B", "C"), pct = c(12, 21, 30))
-#' ggplot(d, aes(group, pct)) +
+#' p <- ggplot(d, aes(group, pct)) +
 #'   geom_col(width = 0.5) +
 #'   geom_papergrid() +
 #'   geom_text(aes(label = group), vjust = -0.5, size = 3) +

@@ -63,7 +63,7 @@ The scale never recycles: more levels than \code{roles} is an error of class
 }
 \examples{
 d <- data.frame(x = rep(1:5, 2), y = c(1:5, 5:1), g = rep(c("All", "Watch"), each = 5))
-ggplot2::ggplot(d, ggplot2::aes(x, y, colour = g)) +
+p <- ggplot2::ggplot(d, ggplot2::aes(x, y, colour = g)) +
   ggplot2::geom_line() +
   scale_colour_palette(c("grey", "red"), palette = "tufte", guide = "none") +
   theme_figure(palette = "tufte")
