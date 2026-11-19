@@ -31,7 +31,7 @@ the left and right values (numeric).}
 \item{titles}{Column titles above the left and right labels, a character
 vector of length 2; \code{c(left, right)} by default, \code{NULL} for none.}
 
-\item{note}{\code{NULL} (default) or a short note centred above the titles,
+\item{note}{\code{NULL} (default) or a short note centered above the titles,
 in grey, for example the measure and its unit.}
 
 \item{digits}{Decimals of the values, 0 by default.}
