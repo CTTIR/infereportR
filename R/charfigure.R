@@ -105,11 +105,13 @@
 #' f <- tempfile(fileext = ".png")
 #' save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
 #'
+#' \donttest{
 #' # A Commodore 64 screen in two values, filling a half-width slide slot.
 #' # style = "c64" gives the blue screen; mode = "dark" and transparent = TRUE
 #' # give the dark-slide and glyph-only versions.
 #' half <- char_figure(p, style = "c64bw", slot = "slide_half")
 #' char_size(half)
+#' }
 #' @export
 char_figure <- function(x, style = c("bw", "c64", "c64bw"), width = NULL, height = NULL,
                         charset = "ascii", case = NULL, family = NULL, width_mm = NULL,

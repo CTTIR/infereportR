@@ -143,11 +143,13 @@ s <- char_size(bw)
 f <- tempfile(fileext = ".png")
 save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
 
+\donttest{
 # A Commodore 64 screen in two values, filling a half-width slide slot.
 # style = "c64" gives the blue screen; mode = "dark" and transparent = TRUE
 # give the dark-slide and glyph-only versions.
 half <- char_figure(p, style = "c64bw", slot = "slide_half")
 char_size(half)
+}
 }
 \seealso{
 \code{\link[=char_grid]{char_grid()}} for the grid, \code{\link[=char_size]{char_size()}} for the matching file size,
