@@ -37,6 +37,13 @@ test_that(".ir_gallery_data() returns the nine simulated tables", {
   expect_length(.ir_gallery_builders, 12L)
 })
 
+test_that("the subgroup names of figure 06 are the real characters in any locale", {
+  nm <- names(.ir_gallery_subsets(.ir_gallery_data()$fp))
+  expect_length(nm, 7L)
+  expect_identical(utf8ToInt(nm[[3]]), utf8ToInt("\u2265 50 years"))
+  expect_identical(utf8ToInt(nm[[7]]), c(utf8ToInt("ISS "), 0x2265L, utf8ToInt(" 25")))
+})
+
 test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the oracle", {
   p <- .ir_gallery_02(.ir_gallery_data())
   rep <- figure_table(p)

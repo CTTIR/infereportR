@@ -39,6 +39,11 @@
 * Changed `stat_omnibus()` to set a label at the left or right panel edge
   1 mm in from the axis, and `stat_ecdf_guides()` to place a curve label
   clear of the curve over the label's own height.
+* Fixed the ASCII transliteration of `char_grid()` and the subgroup labels
+  of gallery figure 06 for a package installed under a non-UTF-8 locale:
+  their names were written as argument tags such as `"\u2265" = ">="`, which
+  R stores as `"<U+2265>"` in such a locale. The names are now set with
+  `stats::setNames()` and tested to be the real characters.
 * Added testthat (edition 3) tests for the figure layer under
   `tests/testthat/`; the reporting tests stay plain `tests/*.R` scripts. The
   quality gate `tools/gate.R` runs both. On CRAN only a fast subset of the
