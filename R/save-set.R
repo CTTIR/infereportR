@@ -30,7 +30,7 @@
 #' Save a figure in light, dark and transparent modes
 #'
 #' Writes one figure in up to four modes, each into its own folder below
-#' `dir`, with the same file name in every folder:
+#' `dir`, with the same file name in every folder; for `dir = "figures"`:
 #'
 #' ```
 #' figures/light/<name>.pdf               figures/light/<name>.png
@@ -55,8 +55,9 @@
 #' its background. The transparent modes are saved with `transparent = TRUE`, so their PNG
 #' files keep an alpha channel and their PDF files have no page background.
 #'
-#' Nothing is written outside `dir`: `name` must be a plain file name, and the
-#' folders are created as needed. Every argument is checked before `build` is
+#' Nothing is written outside `dir`, which has no default, so nothing is
+#' written to the working directory unless it is asked for: `name` must be a
+#' plain file name, and the folders are created as needed. Every argument is checked before `build` is
 #' first called.
 #'
 #' @param build A function with the arguments `mode` and `transparent` that
@@ -64,7 +65,8 @@
 #' @param name File name without directory and extension, used in every mode
 #'   folder.
 #' @param preset Size preset, see [figure_size()]. Required.
-#' @param dir Directory that holds the mode folders; `"figures"` by default.
+#' @param dir Directory that holds the mode folders, created if needed.
+#'   Required; use `"figures"` for the folder layout of a Bleisatz deck.
 #' @param modes Mode folders to write, any of `"light"`, `"dark"`,
 #'   `"light-transparent"` and `"dark-transparent"` (all four by default).
 #'   `character()` writes nothing.
@@ -99,7 +101,7 @@
 #' }
 #' unlink(dir, recursive = TRUE)
 #' @export
-save_figure_set <- function(build, name, preset, dir = "figures",
+save_figure_set <- function(build, name, preset, dir,
                             modes = c("light", "dark", "light-transparent", "dark-transparent"),
                             png = TRUE, dpi = 300) {
   if (!is.function(build)) {
@@ -109,6 +111,7 @@ save_figure_set <- function(build, name, preset, dir = "figures",
   .ir_check_base_name(name)
   if (missing(preset)) .ir_abort("preset must be given")
   preset <- .ir_check_choice(preset, .ir_presets$preset, "preset")
+  if (missing(dir)) .ir_abort("dir must be given")
   .ir_check_string(dir, "dir")
   if (!is.character(modes) || anyNA(modes) || anyDuplicated(modes) ||
       !all(modes %in% .ir_set_modes)) {

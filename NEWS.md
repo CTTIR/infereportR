@@ -36,6 +36,9 @@
   to "Comparison families", with when to use which.
 * Added a `dpi` argument to `figure_gallery()` for its PNG files (300 by
   default).
+* Removed the default `dir = "figures"` of `save_figure_set()`: `dir` is now
+  required, so the function never writes to the working directory unless
+  asked to. Pass `dir = "figures"` for the folder layout of a Bleisatz deck.
 * Added `gallery_captions()`, which returns the file names, slots, sizes and
   captions of the twelve gallery figures; the help page of
   `figure_gallery()` and the vignette "The figure gallery" referred to an
