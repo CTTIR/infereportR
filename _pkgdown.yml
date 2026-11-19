@@ -21,8 +21,9 @@ home:
     - citation
     - authors
   title: infereportR
-  description: Tables, text and plot annotations for finalized statistical results,
-    reported at full precision without recomputation.
+  description: Tables, text, plot annotations and black-and-white figures for
+    finalized statistical results, reported at full precision without
+    recomputation.
 articles:
 - title: Learn infereportR
   navbar: null
@@ -30,6 +31,13 @@ articles:
   - getting-started
   - comparison-families
   - descriptive-tables
+- title: Figures
+  navbar: Figures
+  contents:
+  - figures
+  - inference-layers
+  - character-mode
+  - figure-gallery
 reference:
 - title: Tables and text
   desc: Present finalized results as tables and neutral text.
@@ -47,7 +55,75 @@ reference:
   contents:
   - report_descriptive
 - title: Plot annotations
-  desc: Optional ggplot2 layers built from stored results.
+  desc: ggplot2 layers that draw precomputed results at explicit positions.
   contents:
   - stat_inference
   - annotate_inference
+- title: Inference layers
+  desc: Layers that run named infercalcR procedures per panel and label them
+    with the display strings of report_table().
+  contents:
+  - stat_means
+  - stat_compare
+  - stat_omnibus
+  - stat_correlation
+  - stat_paired
+- title: Figure bundle
+  desc: Theme, scales, observations and inference layers in one call.
+  contents:
+  - report_figure
+- title: Figure builders
+  desc: Complete figures built from infercalcR results.
+  contents:
+  - figure_forest
+  - figure_correlation_matrix
+- title: Figure results
+  desc: The infercalcR results behind a figure, as objects or as one table.
+  contents:
+  - inference_results
+  - figure_table
+- title: Figure theme
+  desc: The black-and-white theme for papers and slides and its font lookup.
+  contents:
+  - theme_figure
+  - figure_font
+- title: Scales and fills
+  desc: Line types, point shapes, ink and hatch patterns instead of color.
+  contents:
+  - scale_colour_ink
+  - scale_linetype_figure
+  - scale_shape_figure
+  - scale_fill_hatch
+  - hatch_pattern
+- title: Labels
+  desc: Direct labels and guides instead of a legend.
+  contents:
+  - geom_endlabel
+  - stat_stacklabel
+  - stat_ecdf_guides
+- title: Export
+  desc: Size presets and saving for journals and slides, in light, dark and
+    transparent modes.
+  contents:
+  - figure_size
+  - save_figure
+  - save_figure_set
+- title: Gallery
+  desc: The twelve Bleisatz example figures, rebuilt with the package API.
+  contents:
+  - figure_gallery
+- title: APA check
+  desc: Audit a figure against the APA figure rules.
+  contents:
+  - check_figure
+- title: Character mode
+  desc: Redraw a plot on a character grid and render it as a figure.
+  contents:
+  - char_grid
+  - '`chargrid-methods`'
+  - char_figure
+  - char_size
+- title: ggproto objects
+  desc: The ggproto classes behind the figure layers, for extension developers.
+  contents:
+  - '`infereportR-ggproto`'

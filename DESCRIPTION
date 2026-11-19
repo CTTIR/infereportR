@@ -1,22 +1,33 @@
 Package: infereportR
 Type: Package
-Title: Tables, Text and Plot Annotations for Statistical Results
-Version: 0.1.0
+Title: Tables, Text and Figures for Statistical Results
+Version: 0.2.0
 Authors@R: person("R.", "Heller", , "raban.heller@uni-ulm.de",
     role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-8006-9742"))
 Description: Formats finalized statistical results as tables, text and
-    optional plot annotations. Results follow the common result contract of
-    'infercalcR'; stored estimates, intervals, p-values and method metadata
-    are reported at full precision and are never recomputed. Optional
-    'ggplot2' layers annotate plots with the stored results.
+    figures. Results follow the common result contract of 'infercalcR';
+    stored estimates, intervals, p-values and method metadata are reported
+    at full precision and are never recomputed. Its figure layer extends
+    'ggplot2' with a black-and-white theme for papers following the APA
+    style rules and for slides, scales that replace color with line types,
+    point shapes and hatch patterns, direct labels and size presets.
+    Inference layers run explicitly named 'infercalcR' procedures, label
+    them with the package's own display strings and keep the full results
+    retrievable from the figure; annotation layers draw precomputed results
+    at explicit positions. A character mode redraws plots on a monospaced
+    text grid in the style of 1980s home computers.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
 Depends: R (>= 4.1.0)
-Imports: infercalcR (>= 0.1.0), utils
-Suggests: ggplot2 (>= 3.4.0), knitr, rmarkdown
+Imports: ggplot2 (>= 3.5.0), infercalcR (>= 0.1.0), grid, grDevices,
+    stats, utils
+Suggests: knitr, rmarkdown, ragg, systemfonts, testthat (>= 3.1.7), withr
 VignetteBuilder: knitr
 URL: https://github.com/CTTIR/infereportR,
     https://cttir.github.io/infereportR/
 BugReports: https://github.com/CTTIR/infereportR/issues
+Config/testthat/edition: 3
 Config/Needs/website: CTTIR/themakR
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.1

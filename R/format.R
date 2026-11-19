@@ -1,7 +1,3 @@
-.ir_abort <- function(message, code = "invalid_input") {
-  stop(structure(list(message = message, call = NULL),
-    class = c(paste0("infereportR_", code), "error", "condition")))
-}
 .ir_string <- function(x) is.character(x) && length(x) == 1L && !is.na(x) && nzchar(x)
 .ir_digits <- function(digits, decimal_mark) {
   if (!is.numeric(digits) || length(digits) != 1L || is.na(digits) ||
@@ -9,6 +5,7 @@
   if (!.ir_string(decimal_mark) || !decimal_mark %in% c(".", ",")) .ir_abort("decimal_mark must be '.' or ','")
 }
 #' Format values without changing stored numbers
+#' @noRd
 #' @export
 format_estimate <- function(x, digits = 3L, decimal_mark = ".", missing = "unavailable") {
   .ir_digits(digits, decimal_mark)
@@ -20,6 +17,7 @@ format_estimate <- function(x, digits = 3L, decimal_mark = ".", missing = "unava
   }, "", USE.NAMES = FALSE)
 }
 #' Format p-values with a declared display threshold
+#' @noRd
 #' @export
 format_p <- function(x, digits = 3L, decimal_mark = ".", prefix = TRUE) {
   .ir_digits(digits, decimal_mark)
@@ -35,6 +33,7 @@ format_p <- function(x, digits = 3L, decimal_mark = ".", prefix = TRUE) {
   }, "", USE.NAMES = FALSE)
 }
 #' Format stored confidence endpoints
+#' @noRd
 #' @export
 format_interval <- function(low, high, digits = 3L, decimal_mark = ".") {
   .ir_digits(digits, decimal_mark)

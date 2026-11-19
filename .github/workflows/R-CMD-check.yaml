@@ -27,7 +27,6 @@ jobs:
     env:
       INFER_SUITE_FULL: ${{ matrix.lane == 'full' && 'true' || 'false' }}
       _R_CHECK_FORCE_SUGGESTS_: 'false'
-      TESTTHAT_CPUS: '2'
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
