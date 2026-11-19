@@ -83,42 +83,31 @@ check_figure(p, "slide", palette = "tufte")$status[3]
 check_figure(p, "slide")$status[3]
 ```
 
-## Range frame
+## Range frame and dot-dash axes
 
 A range frame is an axis that runs only from the smallest to the largest
 value. `geom_rangeframe()` draws it from the layer data, per panel and after
 scale transformations; `theme_figure(axes = "range")` removes the full axis
-lines and keeps the ticks. Breaks at the extremes complete it.
+lines and keeps the ticks, and breaks at the extremes complete it.
+
+`geom_dotdash()` goes one step further and draws each axis as one dash per
+observation, a rug outside the panel where the axis would be, so the axes
+carry both margins. The dashes lie outside the panel: switch clipping off,
+drop the ticks and move the axis text a little away. The figure below has
+both: the frame on the left, the dashes on the bottom.
 
 ```{r rangeframe, fig.width = mm(64), fig.height = mm(44)}
 ggplot(mtcars, aes(wt, mpg)) +
   geom_point(size = 0.8) +
-  geom_rangeframe() +
-  scale_x_continuous(breaks = c(min(mtcars$wt), 3, 4, max(mtcars$wt))) +
-  scale_y_continuous(breaks = c(min(mtcars$mpg), 20, 30, max(mtcars$mpg))) +
-  labs(x = "Weight (1000 lb)", y = "Fuel economy (mpg)") +
-  theme_figure("slide", axes = "range")
-```
-
-## Dot-dash axes
-
-`geom_dotdash()` draws each axis as one dash per observation, a rug outside
-the panel where the axis would be, so the axes carry both margins. The
-dashes lie outside the panel: switch clipping off, drop the ticks and move the
-axis text a little away.
-
-```{r dotdash, fig.width = mm(64), fig.height = mm(44)}
-ggplot(mtcars, aes(wt, mpg)) +
-  geom_point(size = 0.8) +
-  geom_dotdash() +
+  geom_rangeframe(sides = "l") +
+  geom_dotdash(sides = "b") +
   coord_cartesian(clip = "off") +
   scale_x_continuous(breaks = range(mtcars$wt)) +
-  scale_y_continuous(breaks = range(mtcars$mpg)) +
+  scale_y_continuous(breaks = c(min(mtcars$mpg), 20, 30, max(mtcars$mpg))) +
   labs(x = "Weight (1000 lb)", y = "Fuel economy (mpg)") +
   theme_figure("slide", axes = "range") +
-  theme(axis.ticks = element_blank(),
-        axis.text.x = element_text(margin = margin(t = 2.2, unit = "mm")),
-        axis.text.y = element_text(margin = margin(r = 2.2, unit = "mm")))
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_text(margin = margin(t = 2.2, unit = "mm")))
 ```
 
 ## Quartile plot
