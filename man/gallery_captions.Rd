@@ -4,25 +4,31 @@
 \alias{gallery_captions}
 \title{File names, slots and captions of the gallery figures}
 \usage{
-gallery_captions()
+gallery_captions(set = c("bleisatz", "tufte"))
+}
+\arguments{
+\item{set}{\code{"bleisatz"} (default) or \code{"tufte"}.}
 }
 \value{
-A data.frame with 12 rows and the columns \code{name} (file name without
-extension, as written by \code{\link[=figure_gallery]{figure_gallery()}}), \code{slot} (\code{"full"}, \code{"side"}
-or \code{"half"}), \code{width_mm} and \code{height_mm} (the size of the slot in mm) and
-\code{caption} (character).
+A data.frame with 12 rows (9 for \code{"tufte"}) and the columns \code{name}
+(file name without extension, as written by \code{\link[=figure_gallery]{figure_gallery()}}), \code{slot}
+(\code{"full"}, \code{"side"}, \code{"half"} or \code{"margin"}), \code{width_mm} and
+\code{height_mm} (the size of the slot in mm) and \code{caption} (character).
 }
 \description{
 \code{gallery_captions()} returns the table behind \code{\link[=figure_gallery]{figure_gallery()}}: one row
 per example figure of the Bleisatz gallery deck, in figure order, with the
 file name, the slide slot, the slot size and the caption used in the deck
-and in the vignette "The figure gallery". The table is kept in the package
-as an R object; no data file is shipped.
+and in the vignette "The figure gallery". \code{set = "tufte"} returns the nine
+files of the Tufte set (figures 13-19 with the two margin variants), with
+the captions of the Bleisatz Tufte set. The tables are kept in the package
+as R objects; no data file is shipped.
 }
 \examples{
 captions <- gallery_captions()
 captions[, c("name", "slot", "width_mm")]
 strwrap(captions$caption[[6]], width = 60)
+gallery_captions("tufte")[, c("name", "slot", "width_mm", "height_mm")]
 }
 \seealso{
 \code{\link[=figure_gallery]{figure_gallery()}}, \code{\link[=figure_size]{figure_size()}}

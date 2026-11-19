@@ -8,31 +8,39 @@ figure_gallery(
   dir = tempdir(),
   modes = c("light", "dark", "light-transparent", "dark-transparent"),
   png = FALSE,
-  dpi = 300
+  dpi = 300,
+  set = c("bleisatz", "tufte")
 )
 }
 \arguments{
 \item{dir}{Directory that holds the mode folders; a temporary directory by
 default.}
 
-\item{modes}{Mode folders to write, any of \code{"light"}, \code{"dark"},
-\code{"light-transparent"} and \code{"dark-transparent"} (all four by default).
+\item{modes}{Mode folders to write. For \code{set = "bleisatz"} any of
+\code{"light"}, \code{"dark"}, \code{"light-transparent"} and \code{"dark-transparent"}
+(all four by default); for \code{set = "tufte"} any folder of
+\code{\link[=save_figure_set]{save_figure_set()}}, by default the six \code{"light"}, \code{"dark"},
+\code{"light-grey"}, \code{"dark-grey"}, \code{"light-1bit"} and \code{"dark-1bit"}.
 \code{character()} writes nothing.}
 
 \item{png}{If \code{TRUE}, also write a PNG beside each PDF; \code{FALSE} by
 default.}
 
 \item{dpi}{Resolution of the PNG files in dots per inch, 300 by default.}
+
+\item{set}{\code{"bleisatz"} (default) for the twelve figures 01-12 or
+\code{"tufte"} for the nine files of figures 13-19.}
 }
 \value{
 The rows of \code{\link[=save_figure_set]{save_figure_set()}} for all figures, bound in figure
 order: a data.frame with one row per written file and the columns \code{mode},
-\code{file}, \code{format}, \code{width_mm} and \code{height_mm} (12 x modes x formats rows;
-0 rows with the same columns for \code{modes = character()}).
+\code{file}, \code{format}, \code{width_mm} and \code{height_mm} (12 or 9 x modes x formats
+rows; 0 rows with the same columns for \code{modes = character()}).
 }
 \description{
 \code{figure_gallery()} writes the twelve example figures of the Bleisatz Beamer
-theme, each in up to four modes, with \code{\link[=save_figure_set]{save_figure_set()}}. Every figure
+theme, each in up to four modes, with \code{\link[=save_figure_set]{save_figure_set()}}; with
+\code{set = "tufte"} it writes the Tufte set instead (see below). Every figure
 teaches one rule of the black-and-white system and is sized for one
 Bleisatz slot (all 44 mm high): \code{"slide_full"} (134 mm), \code{"slide_side"}
 (86 mm) or \code{"slide_half"} (64 mm).
@@ -69,6 +77,29 @@ deck regenerates its \verb{figures/} folder with
 
 The file names, slots, sizes and captions of the gallery deck are returned
 by \code{\link[=gallery_captions]{gallery_captions()}}; no data file is shipped.
+
+\strong{The Tufte set} (\code{set = "tufte"}, Bleisatz 1.3) has seven figure types
+from Tufte's books, nine files with the two margin variants, built with
+the Tufte options of the package:\tabular{lll}{
+   File \tab Slot \tab Built with \cr
+   \code{13-sparklines} \tab side \tab \code{\link[=figure_sparklines]{figure_sparklines()}} \cr
+   \code{14-range-frame-dot-dash} \tab half \tab \code{\link[=geom_dotdash]{geom_dotdash()}}, \code{theme_figure(axes = "range")} \cr
+   \code{15-quartile-plot} \tab half \tab \code{\link[=stat_quartiles]{stat_quartiles()}}, \code{\link[=geom_rangeframe]{geom_rangeframe()}} \cr
+   \code{16-bars-white-grid} \tab side \tab \code{\link[=geom_papergrid]{geom_papergrid()}}, \code{theme_figure(axes = "none")} \cr
+   \code{17-slopegraph} \tab side \tab \code{\link[=figure_slopegraph]{figure_slopegraph()}} \cr
+   \code{18-small-multiples} \tab full \tab facets, \code{\link[=stat_context]{stat_context()}} for the stratum median \cr
+   \code{14-range-frame-dot-dash-margin} \tab margin \tab figure 14 at 52 x 40 mm \cr
+   \code{15-quartile-plot-margin} \tab margin \tab figure 15 at 52 x 40 mm \cr
+   \code{19-context-grey} \tab side \tab \code{\link[=stat_context]{stat_context()}}, \code{\link[=geom_rangeframe]{geom_rangeframe()}} \cr
+}
+
+
+It is written in six folders, the convention of Bleisatz
+\verb{figures/tufte/<folder>/}: \code{light} and \code{dark} in Tufte's palette (ink,
+paper, grey, red and green; \code{palette = "tufte"}), \code{light-grey} and
+\code{dark-grey} (ink, paper and the grey) and \verb{light-1bit} and \verb{dark-1bit}
+(two values; the grey becomes thin or dotted ink). So for a deck,
+\code{figure_gallery(file.path("figures", "tufte"), set = "tufte")}.
 }
 \examples{
 \donttest{
