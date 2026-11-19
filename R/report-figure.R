@@ -76,14 +76,15 @@
 #'   [check_figure()]
 #' @examples
 #' library(ggplot2)
-#' # One line:
+#' # One line (print p to draw it; the tests run when it is drawn):
 #' p <- ggplot(PlantGrowth, aes(group, weight)) +
 #'   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
 #'                 adjust = "holm", omnibus = "anova_one_way") +
 #'   labs(x = "Group", y = "Dried weight (g)")
-#' p
 #'
 #' \donttest{
+#' p
+#'
 #' # The same figure, part by part:
 #' q <- ggplot(PlantGrowth, aes(group, weight)) +
 #'   theme_figure("paper", base_size = 9, legend = "inside") +

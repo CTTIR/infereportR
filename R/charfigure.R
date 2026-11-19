@@ -104,6 +104,7 @@
 #' s <- char_size(bw)
 #' f <- tempfile(fileext = ".png")
 #' save_figure(bw, f, width = s$width, height = s$height, dpi = 150)
+#' unlink(f)
 #'
 #' \donttest{
 #' # A Commodore 64 screen in two values, filling a half-width slide slot.

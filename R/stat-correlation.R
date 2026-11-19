@@ -180,10 +180,12 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #'   geom_point(shape = 1) +
 #'   stat_correlation(method = "correlation_pearson", fit = TRUE)
 #'
+#' \donttest{
 #' # Two lines with the number of pairs.
 #' ggplot(mtcars, aes(wt, mpg)) +
 #'   geom_point(shape = 1) +
 #'   stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n")
+#' }
 #' @export
 stat_correlation <- function(mapping = NULL, data = NULL, ..., method, alternative = NULL,
                              conf.level = NULL, method_args = list(), label_x = -Inf,
