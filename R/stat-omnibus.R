@@ -89,6 +89,9 @@ GeomOmnibusText <- ggplot2::ggproto("GeomOmnibusText", ggplot2::GeomText,
 #'   the mode of [theme_figure()].
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); passed by [report_figure()] with `mode`.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer drawing one label per panel. The computed data has
 #'   columns `x`, `y`, `label`, `.ir_result` and `.ir_result_id`.
 #' @seealso [stat_compare()], [inference_results()]
@@ -101,8 +104,8 @@ GeomOmnibusText <- ggplot2::ggproto("GeomOmnibusText", ggplot2::GeomText,
 stat_omnibus <- function(mapping = NULL, data = NULL, ..., method, method_args = list(),
                          label_x = -Inf, label_y = Inf, hjust = 0, vjust = 1,
                          text_size = NULL, family = NULL, mode = "light",
-                         transparent = FALSE, inherit.aes = TRUE) {
-  m <- .ir_mode(mode, transparent)
+                         transparent = FALSE, palette = "onebit", inherit.aes = TRUE) {
+  m <- .ir_mode(mode, transparent, palette)
   method <- .ir_check_method(if (missing(method)) NULL else method, "omnibus")
   .ir_check_method_args(method_args)
   .ir_check_position(label_x, "label_x")

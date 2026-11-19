@@ -56,6 +56,8 @@
 #' @param mode `"light"` (black on white) or `"dark"` (white on black).
 #' @param transparent If `TRUE`, no background is drawn.
 #' @param base_size Base font size in points.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The matrix stays in ink in every palette.
 #' @return A ggplot with `coord_fixed()`. Its value layer carries
 #'   `.ir_result`, so [inference_results()] returns one result per pair.
 #' @seealso [stat_correlation()] for a single pair with a scatter plot,
@@ -65,9 +67,10 @@
 #'                           method = "correlation_spearman")
 #' @export
 figure_correlation_matrix <- function(data, vars = NULL, method, digits = 2L, labels = NULL,
-                                      mode = "light", transparent = FALSE, base_size = 9) {
+                                      mode = "light", transparent = FALSE, base_size = 9,
+                                      palette = "onebit") {
   method <- .ir_check_method(if (missing(method)) NULL else method, "correlation")
-  m <- .ir_mode(mode, transparent)
+  m <- .ir_mode(mode, transparent, palette)
   if (!is.data.frame(data)) .ir_abort("data must be a data frame")
   if (is.null(vars)) vars <- names(data)[vapply(data, is.numeric, logical(1))]
   if (!is.character(vars) || length(vars) < 2L || anyNA(vars) || anyDuplicated(vars)) {

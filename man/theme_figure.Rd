@@ -9,10 +9,12 @@ theme_figure(
   base_size = 9,
   base_family = NULL,
   legend = c("inside", "right", "bottom", "none"),
-  grid = c("none", "y", "x", "xy"),
+  grid = c("none", "y", "x", "xy", "paper"),
   border = FALSE,
   mode = "light",
-  transparent = FALSE
+  transparent = FALSE,
+  palette = "onebit",
+  axes = c("full", "range", "none")
 )
 }
 \arguments{
@@ -28,7 +30,8 @@ uses \code{figure_font("sans")}.}
 the panel), \code{"right"}, \code{"bottom"} or \code{"none"}.}
 
 \item{grid}{Major grid lines: \code{"none"} (default), \code{"y"} (horizontal lines),
-\code{"x"} (vertical lines) or \code{"xy"} (both).}
+\code{"x"} (vertical lines), \code{"xy"} (both) or \code{"paper"} (horizontal lines in
+the paper color, drawn above the data; no axis lines, no ticks).}
 
 \item{border}{If \code{TRUE}, draw a black rectangle without fill around the
 panel.}
@@ -37,6 +40,12 @@ panel.}
 black).}
 
 \item{transparent}{If \code{TRUE}, no background is drawn.}
+
+\item{palette}{\code{"onebit"} (default, two values), \code{"grey"} or \code{"tufte"}.}
+
+\item{axes}{\code{"full"} (default) draws the axis lines across the panel;
+\code{"range"} leaves them to \code{\link[=geom_rangeframe]{geom_rangeframe()}}; \code{"none"} draws neither
+axis lines nor ticks.}
 }
 \value{
 A complete 'ggplot2' theme object (\code{attr(, "complete")} is \code{TRUE})
@@ -79,6 +88,23 @@ ink and background so that default geom colors stay black and white.
 \code{transparent = TRUE} the plot, panel and legend backgrounds are not drawn
 (\code{fill = NA}), so only the information is left; open fills of the \code{geom}
 element are empty too. Pair it with \code{save_figure(transparent = TRUE)}.
+
+\strong{Palettes.} The figure stays strictly two-valued by default
+(\code{palette = "onebit"}). \code{palette = "grey"} adds one grey (\verb{#999999}) for
+context, and \code{palette = "tufte"} adds Tufte's red and green on top (see
+\code{vignette("tufte")}). In the theme the palette only changes requested grid
+lines: with a grey in the palette they are solid grey hairlines instead of
+dotted ink. The layers and builders of the package take the same argument.
+
+\strong{Tufte options.} \code{axes = "range"} drops the axis lines, so that
+\code{\link[=geom_rangeframe]{geom_rangeframe()}} can draw them from the smallest to the largest value of
+the data; the ticks stay. \code{axes = "none"} drops axis lines and ticks.
+\code{grid = "paper"} draws horizontal grid lines in the color of the paper on
+top of the data (\code{panel.ontop}, with an empty panel background) and
+removes the axis lines and ticks: the lines cut through the bars, where a
+scale is needed. Use it for bar charts; since the theme grid lies above
+every layer, use \code{\link[=geom_papergrid]{geom_papergrid()}} with \code{axes = "none"} when labels must
+stay above the grid.
 }
 \examples{
 library(ggplot2)
@@ -93,6 +119,9 @@ p + theme_figure("paper")
 # Print it to draw; the dark version has no background.
 slide <- p + theme_figure("slide", grid = "y", legend = "bottom")
 dark <- p + theme_figure("slide", mode = "dark", transparent = TRUE)
+
+# Tufte's range frame: the axes end where the data end.
+p + geom_rangeframe() + theme_figure("slide", axes = "range")
 }
 \seealso{
 \code{\link[=figure_font]{figure_font()}} for the default family; \code{check_figure()} audits a

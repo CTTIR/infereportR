@@ -204,6 +204,9 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); passed by [report_figure()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer. The computed data has columns `x`, `xend`, `y`,
 #'   `yend`, `label`, `tip`, `headroom` (`TRUE` for the invisible headroom
 #'   row), `.ir_result` (the family result) and `.ir_result_id`.
@@ -221,9 +224,9 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
                          conf.level = NULL, method_args = list(),
                          label = c("p", "estimate_ci", "estimate_ci_p", "stars"),
                          first = 0.10, step = 0.20, tip = 0.02, headroom = 1, text_size = NULL,
-                         family = NULL, mode = "light", transparent = FALSE,
+                         family = NULL, mode = "light", transparent = FALSE, palette = "onebit",
                          na.rm = FALSE, inherit.aes = TRUE) {
-  m <- .ir_mode(mode, transparent)
+  m <- .ir_mode(mode, transparent, palette)
   method <- .ir_check_method(if (missing(method)) NULL else method, "compare")
   comparisons <- .ir_check_comparisons(comparisons)
   reference <- .ir_check_optional_string(reference, "reference")

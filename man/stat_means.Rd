@@ -16,6 +16,7 @@ stat_means(
   offset = 0,
   mode = "light",
   transparent = FALSE,
+  palette = "onebit",
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -45,6 +46,10 @@ the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, the layer draws no background fill (open
 marks stay empty); passed by \code{\link[=report_figure]{report_figure()}} with \code{mode}.}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
+\code{\link[=theme_figure]{theme_figure()}}. The layer draws in ink in every palette; the argument
+keeps the interface of the figure layer uniform.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }

@@ -24,12 +24,20 @@
 #'   last (or first) x position and labels them with their fill level.
 #' * `StatEcdfGuides` and `GeomEcdfGuides`, the stat and geom of
 #'   [stat_ecdf_guides()]: dotted quantile guides and curve labels.
+#' * `GeomRangeframe`, the geom of [geom_rangeframe()]: axis lines from the
+#'   smallest to the largest value of the layer, per panel.
+#' * `StatQuartiles` and `GeomQuartiles`, the stat and geom of
+#'   [stat_quartiles()]: the five numbers (`stats::quantile()` type 7) and the
+#'   quartile plot drawn from them.
+#' * `StatContext` and `GeomContext`, the stat and geom of [stat_context()]:
+#'   context lines per unit and a summary per series.
 #'
 #' @format NULL
 #' @usage NULL
 #' @seealso [geom_endlabel()], [stat_means()], [stat_compare()], [stat_omnibus()],
 #'   [stat_correlation()], [stat_paired()], [stat_stacklabel()],
-#'   [stat_ecdf_guides()], [ggplot2::Stat]
+#'   [stat_ecdf_guides()], [geom_rangeframe()], [stat_quartiles()],
+#'   [stat_context()], [ggplot2::Stat]
 #' @name infereportR-ggproto
 #' @aliases StatEndlabel
 #' @export
@@ -155,6 +163,9 @@ makeContent.infereportR_endlabel <- function(x) {
 #'   `FALSE`, since the labels replace the legend.
 #' @param inherit.aes If `FALSE`, overrides the default aesthetics rather than
 #'   combining with them.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer (a `LayerInstance` object) that can be added to a
 #'   plot with `+`.
 #' @seealso [figure_font()] for the default family, [save_figure()] for export;
@@ -173,9 +184,10 @@ makeContent.infereportR_endlabel <- function(x) {
 #' p
 #' @export
 geom_endlabel <- function(mapping = NULL, data = NULL, ..., hjust = 0, size = NULL,
-                          family = NULL, mode = "light", transparent = FALSE, na.rm = FALSE,
+                          family = NULL, mode = "light", transparent = FALSE,
+                          palette = "onebit", na.rm = FALSE,
                           show.legend = FALSE, inherit.aes = TRUE) {
-  ink <- .ir_mode(mode, transparent)$ink
+  ink <- .ir_mode(mode, transparent, palette)$ink
   .ir_check_number(hjust, "hjust")
   if (is.null(size)) {
     size <- .ir_label_size_pt / ggplot2::.pt

@@ -36,6 +36,27 @@
 .ir_means_offset <- 0.28
 .ir_endlabel_gap <- 1.15
 
+# Opt-in palettes beyond the two values (Bleisatz 1.3, Tufte options). "grey"
+# adds the one grey for context; "tufte" adds red (first/last values, the one
+# series to watch) and green (highs and lows), lighter on black paper. The
+# C64 variants are the VIC-II grey, red and green of the Pepto palette.
+.ir_palettes <- c("onebit", "grey", "tufte")
+.ir_grey <- c(plex = "#999999", c64 = "#959595")
+# Red and green per mode, in the order of .ir_modes (light, then dark).
+.ir_red <- list(plex = c("#B3202A", "#E5484D"), c64 = c("#9F4E44", "#CB7E75"))
+.ir_green <- list(plex = c("#2E7D32", "#5DB760"), c64 = c("#5CAB5E", "#9AE29B"))
+
+# Tufte figure weights in points: thin series lines, context lines, the 1-bit
+# hairline that stands in for the grey, the casing that separates a summary
+# line from its context, and the paper-coloured grid through bars.
+.ir_thin_line <- 0.6
+.ir_context_line <- 0.3
+.ir_fine_line <- 0.15
+.ir_casing_line <- 2.6
+.ir_paper_grid <- 0.9
+# Dash length of geom_dotdash() in mm.
+.ir_dotdash_length <- 1.3
+
 # The C64 black-and-white screen, fixed in every mode.
 .ir_screen <- c(background = "#000000", foreground = "#FFFFFF")
 
@@ -45,11 +66,13 @@
 .ir_hatch_types <- c(.ir_hatches, "horizontal", "vertical")
 
 .ir_presets <- data.frame(
-  preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half"),
-  width = c(85, 174, 134, 86, 64),
+  preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half",
+             "margin"),
+  width = c(85, 174, 134, 86, 64, 52),
   # Slide slots: the Bleisatz frame body below a two-line title, minus one
-  # source line, measured at 44 mm.
-  height = c(70, 100, 44, 44, 44),
+  # source line, measured at 44 mm. The margin slot is the 52 mm margin of the
+  # Tufte handout layout of bleisatz.cls.
+  height = c(70, 100, 44, 44, 44, 40),
   stringsAsFactors = FALSE
 )
 

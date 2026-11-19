@@ -21,14 +21,19 @@
 #'   \item{`font_family`}{(APA 7) `fail` if a resolved family looks like a
 #'     serif face (matches "serif", "times", "georgia", "garamond",
 #'     "palatino" or "cambria" but not "sans").}
-#'   \item{`two_values`}{(infereportR) every `colour` and `fill` value in the
-#'     built layer data, and the colors of drawn theme lines, rectangles and
-#'     text, is black, white, `NA`, fully transparent or a grid pattern.
-#'     This holds in every mode: light (black on white), dark (white on
-#'     black) and the transparent modes, whose backgrounds are empty (`NA`).
-#'     `fail` lists the offending colors as hex codes. The `"c64"` style of
-#'     [char_figure()] is the one documented exception: its C64 blues fail
-#'     here by design.}
+#'   \item{`two_values`}{(infereportR) the palette rule. Every `colour` and
+#'     `fill` value in the built layer data, and the colors of drawn theme
+#'     lines, rectangles and text, is a color of `palette`, `NA`, fully
+#'     transparent or a grid pattern. With the default `palette = "onebit"`
+#'     the colors are black and white only, the two values of the figure
+#'     layer. `palette = "grey"` also allows the grey `#999999`, and
+#'     `palette = "tufte"` also Tufte's red and green of both modes
+#'     (`#B3202A`, `#2E7D32`, `#E5484D`, `#5DB760`). This holds in every mode:
+#'     light (black on white), dark (white on black) and the transparent
+#'     modes, whose backgrounds are empty (`NA`). `fail` lists the offending
+#'     colors as hex codes. The row keeps its name `two_values` for
+#'     compatibility. The `"c64"` style of [char_figure()] is the one
+#'     documented exception: its C64 blues fail here by design.}
 #'   \item{`axis_labels`}{(APA 7) `fail` if the x or y label is missing or
 #'     empty; `note` if a label of a continuous axis has no unit marker (a
 #'     parenthesis, `%` or a comma followed by a unit). Discrete axes have no
@@ -52,6 +57,8 @@
 #' @param plot A ggplot.
 #' @param target `"paper"` (default) or `"slide"`. Both targets apply the
 #'   same rules in this version: the slide theme shares the paper text range.
+#' @param palette The palette the figure was drawn in, `"onebit"` (default),
+#'   `"grey"` or `"tufte"`; sets the colors the `two_values` check allows.
 #' @return A `data.frame` with exactly 6 rows (`text_size`, `font_family`,
 #'   `two_values`, `axis_labels`, `embedded_title`, `legend_case`) and the
 #'   character columns `check`, `source` (`"APA 7"` or `"infereportR"`),
@@ -72,9 +79,10 @@
 #'   labs(x = "Weight (1000 lb)", y = "Fuel economy (miles per gallon)")
 #' check_figure(q)
 #' @export
-check_figure <- function(plot, target = c("paper", "slide")) {
+check_figure <- function(plot, target = c("paper", "slide"), palette = "onebit") {
   .ir_check_plot(plot)
   target <- .ir_check_choice(target, c("paper", "slide"), "target")
+  palette <- .ir_check_choice(palette, .ir_palettes, "palette")
   b <- ggplot2::ggplot_build(plot)
   theme <- .ir_full_theme(plot)
   labs <- .ir_plot_labels(plot)
@@ -85,7 +93,7 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   rows <- list(
     .ir_check_text_size(theme, elements, layers),
     .ir_check_font_family(theme, elements, layers),
-    .ir_check_two_values(b, theme, elements, legend),
+    .ir_check_two_values(b, theme, elements, legend, .ir_palette_colours(palette)),
     .ir_check_axis_labels(b, labs),
     .ir_check_title(labs),
     .ir_check_legend_case(legend)
@@ -247,8 +255,9 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   .ir_result_row(if (length(offenders)) "fail" else "pass", offenders)
 }
 
-# Colours that are not black, white, missing or fully transparent, as hex codes.
-.ir_off_colours <- function(values) {
+# Colours that are not allowed (black and white by default), missing or fully
+# transparent, as hex codes.
+.ir_off_colours <- function(values, allowed = c(.ir_ink, .ir_paper)) {
   if (is.list(values)) {
     values <- values[!vapply(values, function(v) inherits(v, "GridPattern"), logical(1))]
     atomic <- vapply(values, function(v) is.atomic(v) && length(v) == 1L, logical(1))
@@ -261,11 +270,10 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   if (!length(values)) return(character())
   rgba <- tryCatch(grDevices::col2rgb(values, alpha = TRUE), error = function(e) NULL)
   if (is.null(rgba)) return(as.character(values))
-  ink <- grDevices::col2rgb(.ir_ink, alpha = TRUE)[, 1L]
-  paper <- grDevices::col2rgb(.ir_paper, alpha = TRUE)[, 1L]
+  ok <- grDevices::col2rgb(allowed, alpha = TRUE)
   keep <- vapply(seq_len(ncol(rgba)), function(j) {
     v <- rgba[, j]
-    !(v[[4L]] == 0 || all(v == ink) || all(v == paper))
+    !(v[[4L]] == 0 || any(colSums(ok == v) == 4L))
   }, logical(1))
   rgba <- rgba[, keep, drop = FALSE]
   if (!ncol(rgba)) return(character())
@@ -276,12 +284,13 @@ check_figure <- function(plot, target = c("paper", "slide")) {
   unique(hex)
 }
 
-.ir_check_two_values <- function(b, theme, elements, legend) {
+.ir_check_two_values <- function(b, theme, elements, legend,
+                                 allowed = c(.ir_ink, .ir_paper)) {
   offenders <- character()
   for (i in seq_along(b$data)) {
     d <- b$data[[i]]
     for (column in intersect(c("colour", "fill"), names(d))) {
-      off <- .ir_off_colours(d[[column]])
+      off <- .ir_off_colours(d[[column]], allowed)
       if (length(off)) {
         offenders <- c(offenders, sprintf("layer %d %s %s", i, column,
                                           paste(off, collapse = ", ")))
@@ -300,7 +309,7 @@ check_figure <- function(plot, target = c("paper", "slide")) {
     if (is.null(el) || inherits(el, "element_blank")) next
     fields <- if (n %in% rects) c("colour", "fill") else "colour"
     for (f in fields) {
-      off <- .ir_off_colours(el[[f]])
+      off <- .ir_off_colours(el[[f]], allowed)
       if (length(off)) offenders <- c(offenders, sprintf("%s %s %s", n, f,
                                                          paste(off, collapse = ", ")))
     }

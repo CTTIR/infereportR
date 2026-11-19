@@ -33,6 +33,8 @@
 #' theme, [scale_colour_ink()], [scale_fill_hatch()], the points and every
 #' layer), so one argument switches the whole figure between light, dark and
 #' transparent; see [save_figure_set()] to write all four versions.
+#' `palette` is passed the same way; with `"grey"` or `"tufte"` the raw points
+#' are drawn in grey as context, and every other component stays in ink.
 #'
 #' No test is ever added unless its procedure is named: `compare`, `omnibus`
 #' and `correlation` take 'infercalcR' method ids and default to `NULL`. With
@@ -66,6 +68,8 @@
 #' @param mode `"light"` (default, black on white) or `"dark"` (white on
 #'   black), as in [theme_figure()].
 #' @param transparent If `TRUE`, no background is drawn, as in
+#'   [theme_figure()].
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
 #'   [theme_figure()].
 #' @param ... Must be empty; any other argument is an error of class
 #'   `infereportR_invalid_input`.
@@ -110,7 +114,7 @@ report_figure <- function(target = c("paper", "slide"), compare = NULL, comparis
                           reference = NULL, adjust = NULL, omnibus = NULL, correlation = NULL,
                           means = TRUE, points = c("jitter", "plain", "none"), label = "p",
                           conf.level = 0.95, legend = "inside", base_size = 9,
-                          mode = "light", transparent = FALSE, ...) {
+                          mode = "light", transparent = FALSE, palette = "onebit", ...) {
   dots <- list(...)
   if (length(dots)) {
     nm <- names(dots)
@@ -128,7 +132,7 @@ report_figure <- function(target = c("paper", "slide"), compare = NULL, comparis
   label <- .ir_check_choice(label, c("p", "estimate_ci", "estimate_ci_p", "stars"), "label")
   .ir_check_number(base_size, "base_size")
   if (base_size <= 0) .ir_abort("base_size must be a positive number")
-  m <- .ir_mode(mode, transparent)
+  m <- .ir_mode(mode, transparent, palette)
   if (!is.null(compare)) .ir_check_method(compare, "compare", "compare")
   if (!is.null(omnibus)) .ir_check_method(omnibus, "omnibus", "omnibus")
   if (!is.null(correlation)) .ir_check_method(correlation, "correlation", "correlation")
@@ -143,8 +147,8 @@ report_figure <- function(target = c("paper", "slide"), compare = NULL, comparis
 
   # Layer constructors run (and validate) before anything is returned.
   theme <- theme_figure(target, base_size = base_size, legend = legend, mode = mode,
-                        transparent = transparent)
-  out <- list(theme, scale_colour_ink(mode = mode), scale_linetype_figure(),
+                        transparent = transparent, palette = palette)
+  out <- list(theme, scale_colour_ink(mode = mode, palette = palette), scale_linetype_figure(),
               scale_shape_figure(), scale_fill_hatch(mode = mode, transparent = transparent))
   if (points != "none") {
     position <- if (points == "jitter") {
@@ -152,17 +156,19 @@ report_figure <- function(target = c("paper", "slide"), compare = NULL, comparis
     } else {
       ggplot2::position_identity()
     }
-    out <- c(out, list(ggplot2::geom_point(shape = 1, colour = m$ink, size = 1.2,
+    # The raw points are context: grey when the palette has a grey.
+    out <- c(out, list(ggplot2::geom_point(shape = 1, colour = m$grey, size = 1.2,
                                            position = position)))
   }
   if (means) {
     # Beside jittered points the summary moves right, so they never overlap.
     offset <- if (points == "jitter") .ir_means_offset else 0
     out <- c(out, list(stat_means(conf.level = conf.level, offset = offset, mode = mode,
-                                  transparent = transparent)))
+                                  transparent = transparent, palette = palette)))
   }
   if (!is.null(omnibus)) {
-    out <- c(out, list(stat_omnibus(method = omnibus, mode = mode, transparent = transparent)))
+    out <- c(out, list(stat_omnibus(method = omnibus, mode = mode, transparent = transparent,
+                                    palette = palette)))
   }
   if (!is.null(compare)) {
     # With an omnibus label at the panel top, one more step of headroom keeps
@@ -171,11 +177,11 @@ report_figure <- function(target = c("paper", "slide"), compare = NULL, comparis
     out <- c(out, list(stat_compare(method = compare, comparisons = comparisons,
                                     reference = reference, adjust = adjust, label = label,
                                     headroom = headroom, mode = mode,
-                                    transparent = transparent)))
+                                    transparent = transparent, palette = palette)))
   }
   if (!is.null(correlation)) {
     out <- c(out, list(stat_correlation(method = correlation, mode = mode,
-                                        transparent = transparent)))
+                                        transparent = transparent, palette = palette)))
   }
   structure(out, class = "list")
 }

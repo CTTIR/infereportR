@@ -110,6 +110,8 @@
 #' @param base_size Base font size of the axis text in points.
 #' @param slot A preset of [figure_size()] whose width the figure is laid out
 #'   for; `"slide_full"` (134 mm) by default. Save the figure at that width.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. With a grey in the palette the null-value line is grey.
 #' @return A ggplot. Its marker layer carries `.ir_result`, so
 #'   [inference_results()] returns the results and [figure_table()] reports
 #'   them.
@@ -132,8 +134,8 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
                           null_value = NULL, xlab = NULL, xlim = NULL,
                           header = c("Subgroup", "n", "Difference [95% CI]"), overall = 1L,
                           mode = "light", transparent = FALSE, base_size = 9,
-                          slot = "slide_full") {
-  m <- .ir_mode(mode, transparent)
+                          slot = "slide_full", palette = "onebit") {
+  m <- .ir_mode(mode, transparent, palette)
   if (!is.list(results) || inherits(results, "inference_result") || !length(results)) {
     .ir_abort("results must be a non-empty list of infercalcR results")
   }
@@ -263,7 +265,7 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
   p <- ggplot2::ggplot(fd, ggplot2::aes(x = .data$estimate, y = .data$y))
   if (is.finite(null_value)) {
     p <- p + ggplot2::geom_vline(xintercept = null_value, linetype = "13",
-                                 linewidth = .ir_lw(.ir_rule_hair), colour = ink)
+                                 linewidth = .ir_lw(.ir_rule_hair), colour = m$grey)
   }
   p <- p +
     ggplot2::geom_segment(ggplot2::aes(x = .data$low, xend = .data$high, yend = .data$y),

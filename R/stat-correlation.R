@@ -170,6 +170,9 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #'   the mode of [theme_figure()].
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); passed by [report_figure()] with `mode`.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer; with `fit = TRUE`, a list of two layers (fit,
 #'   then label) that `+` adds together. The computed data carries
 #'   `.ir_result` and `.ir_result_id`.
@@ -192,8 +195,9 @@ stat_correlation <- function(mapping = NULL, data = NULL, ..., method, alternati
                              label_y = Inf, hjust = 0, vjust = 1,
                              label = c("estimate_ci_p", "estimate_ci_p_n"), fit = FALSE,
                              text_size = NULL, family = NULL, mode = "light",
-                             transparent = FALSE, inherit.aes = TRUE) {
-  m <- .ir_mode(mode, transparent)
+                             transparent = FALSE, palette = "onebit",
+                             inherit.aes = TRUE) {
+  m <- .ir_mode(mode, transparent, palette)
   method <- .ir_check_method(if (missing(method)) NULL else method, "correlation")
   alternative <- .ir_check_alternative(alternative)
   conf.level <- .ir_check_conf_level(conf.level)
