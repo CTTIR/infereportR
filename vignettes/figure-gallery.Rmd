@@ -69,7 +69,7 @@ library(infereportR)
 | 12 | `12-character-mode-c64-bw` | half | the C64 screen in two values, with a halftone border | `char_figure(style = "c64bw")` |
 
 Each figure below was rendered by the package, in light mode at the size of
-its slot, with `figure_gallery(png = TRUE, dpi = 150)`, and is shipped with
+its slot, with `figure_gallery(png = TRUE, dpi = 120)`, and is shipped with
 the vignette as an image, so that building the vignette does not draw all
 twelve figures again. The script `tools/gallery/render-vignette-png.R` in the
 package sources makes these images and the dark ones below; the captions are
@@ -174,7 +174,7 @@ not run it.
 
 The same twelve figures in dark mode, white on black, for dark Bleisatz decks
 and inverse frames, rendered in the same way with
-`figure_gallery(modes = "dark", png = TRUE, dpi = 150)`.
+`figure_gallery(modes = "dark", png = TRUE, dpi = 120)`.
 
 <img src="figures/gallery/dark/01-timecourse-direct-labels.png" alt="Time course with direct labels, dark mode" width="64%" />
 
@@ -255,7 +255,7 @@ paired <- function(mode = "light", transparent = FALSE) {
 }
 ```
 
-```{r paired, fig.show = "hold", out.width = "48%", fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 150, fig.alt = c("Paired slopegraph in light mode: one thin black line per person between Drug 1 and Drug 2, a thick line joining the means and a label with the mean change, its confidence interval and the p-value.", "The same slopegraph in dark mode: white lines and text on black.")}
+```{r paired, fig.show = "hold", out.width = "48%", fig.width = 64 / 25.4, fig.height = 44 / 25.4, dpi = 120, fig.alt = c("Paired slopegraph in light mode: one thin black line per person between Drug 1 and Drug 2, a thick line joining the means and a label with the mean change, its confidence interval and the p-value.", "The same slopegraph in dark mode: white lines and text on black.")}
 paired("light")
 paired("dark")
 ```
@@ -265,7 +265,7 @@ correlations of four variables of `mtcars`, at the side slot. Circle area
 shows the strength of each correlation, filled for positive and open for
 negative ones; the values are printed in the other triangle.
 
-```{r matrix, fig.show = "hold", out.width = "48%", fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 150, fig.alt = c("Correlation matrix of fuel economy, displacement, horsepower and weight in light mode: circles in one triangle, values in the other, variable names on the diagonal.", "The same correlation matrix in dark mode, white on black.")}
+```{r matrix, fig.show = "hold", out.width = "48%", fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 120, fig.alt = c("Correlation matrix of fuel economy, displacement, horsepower and weight in light mode: circles in one triangle, values in the other, variable names on the diagonal.", "The same correlation matrix in dark mode, white on black.")}
 cars <- mtcars[, c("mpg", "disp", "hp", "wt")]
 
 correlations <- function(mode = "light", transparent = FALSE) {

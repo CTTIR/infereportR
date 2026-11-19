@@ -33,7 +33,7 @@ resource_files:
 <!-- cttir-vignette-logo: end -->
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dpi = 72)
 ```
 
 infereportR presents statistical results that are already finished. It turns
@@ -210,7 +210,7 @@ with the same display strings as `report_table()` and keep the result with the
 figure. `report_figure()` adds the theme, the scales, the observations, the
 group means with their confidence intervals and the named tests in one call:
 
-```{r figure-bundle, fig.width = 5, fig.height = 3.5, dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png", fig.alt = "Dried plant weight by group in black and white: open circles for the plants, group means with 95% confidence intervals, a one-way analysis of variance label and two brackets with Holm-adjusted Welch comparisons against the control."}
+```{r figure-bundle, fig.width = 5, fig.height = 3.5, dpi = 96, dev = if (requireNamespace("ragg", quietly = TRUE)) "ragg_png" else "png", fig.alt = "Dried plant weight by group in black and white: open circles for the plants, group means with 95% confidence intervals, a one-way analysis of variance label and two brackets with Holm-adjusted Welch comparisons against the control."}
 fig <- ggplot(PlantGrowth, aes(group, weight)) +
   report_figure(compare = "t_means_two_independent_welch", reference = "ctrl",
     adjust = "holm", omnibus = "anova_one_way") +

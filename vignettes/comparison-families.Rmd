@@ -33,7 +33,7 @@ resource_files:
 <!-- cttir-vignette-logo: end -->
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", dpi = 72)
 ```
 
 A study often reports several related comparisons. Whether their p-values are

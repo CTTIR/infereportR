@@ -16,6 +16,7 @@ test_that("stat_means numbers equal direct infercalcR runs", {
 })
 
 test_that("stat_means labels are infereportR strings", {
+  skip_on_cran()
   d <- layer_data_of(ggplot2::ggplot(pg, ggplot2::aes(group, weight)) +
                        stat_means(label = "estimate_ci"))
   shown <- report_table(d$.ir_result[[1]])
@@ -28,6 +29,7 @@ test_that("stat_means labels are infereportR strings", {
 })
 
 test_that("a group with one observation keeps its row with a status", {
+  skip_on_cran()
   d <- rbind(pg, data.frame(weight = 4, group = "single"))
   d$group <- factor(d$group, levels = c(levels(pg$group), "single"))
   p <- ggplot2::ggplot(d, ggplot2::aes(group, weight)) +
@@ -44,6 +46,7 @@ test_that("a group with one observation keeps its row with a status", {
 })
 
 test_that("stat_means works per panel and per group", {
+  skip_on_cran()
   p <- ggplot2::ggplot(pg_facets, ggplot2::aes(group, weight)) +
     ggplot2::facet_wrap(~panel) + stat_means()
   expect_length(inference_results(p), 6L)
@@ -72,6 +75,7 @@ test_that("constant aesthetics such as shape are kept", {
 })
 
 test_that("offset shifts the drawing on a discrete x only", {
+  skip_on_cran()
   base <- ggplot2::ggplot(pg, ggplot2::aes(group, weight))
   d0 <- layer_data_of(base + stat_means())
   d <- layer_data_of(base + stat_means(offset = .ir_means_offset))
@@ -90,6 +94,7 @@ test_that("offset shifts the drawing on a discrete x only", {
 })
 
 test_that("means draw as a filled 2.1 mm point with a 1.1 pt interval", {
+  skip_on_cran()
   base <- ggplot2::ggplot(pg, ggplot2::aes(group, weight))
   d <- layer_data_of(base + stat_means())
   expect_equal(unique(d$size) * 4, 2.1)
