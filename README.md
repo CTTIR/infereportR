@@ -19,8 +19,15 @@ Reporting does not require inferguidR, a table framework or testthat.
 
 ## Installation
 
-R 4.1.0 or later is required. Neither package is on CRAN yet. Install
-infercalcR first, then infereportR, from GitHub:
+R 4.1.0 or later is required. Neither package is on CRAN yet. infereportR
+imports infercalcR, so infercalcR is submitted to CRAN first and infereportR
+follows once infercalcR is available there. Once both are on CRAN:
+
+```r
+install.packages("infereportR")
+```
+
+Until then, install infercalcR first, then infereportR, from GitHub:
 
 ```r
 install.packages("remotes")
@@ -243,7 +250,8 @@ Every function that draws takes `mode = "light"` (black on white) or `"dark"`
 two values change; pass the mode to the theme and to every layer.
 
 - `save_figure_set()` writes one figure in light, dark and both transparent
-  modes into `figures/<mode>/`, with the same file name in every folder, so
+  modes into `<dir>/<mode>/` (`dir` has no default; a deck uses
+  `dir = "figures"`), with the same file name in every folder, so
   `\graphicspath{{figures/dark/}}` switches a whole `\usetheme[dark]{Bleisatz}`
   deck.
 - `figure_gallery()` writes the twelve Bleisatz example figures this way:
