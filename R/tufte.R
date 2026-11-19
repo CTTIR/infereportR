@@ -76,10 +76,14 @@ GeomRangeframe <- ggplot2::ggproto(
 #' so it follows scale transformations and facets), because a theme element
 #' cannot know the data.
 #'
-#' @param mapping,data,stat,position,show.legend,inherit.aes As in
-#'   [ggplot2::layer()]. The layer needs `x` and `y`; pass `data` to frame a
-#'   range other than that of the plot data (for example all patients when
-#'   the plot shows a sample).
+#' @param mapping Aesthetic mappings, as in [ggplot2::layer()]. The layer
+#'   needs `x` and `y`.
+#' @param data The data of the layer, as in [ggplot2::layer()]; pass `data`
+#'   to frame a range other than that of the plot data (for example all
+#'   patients when the plot shows a sample).
+#' @param stat The stat, as in [ggplot2::layer()].
+#' @param position The position adjustment, as in [ggplot2::layer()].
+#' @param show.legend,inherit.aes As in [ggplot2::layer()].
 #' @param ... Other arguments passed on to [ggplot2::layer()], such as
 #'   `linewidth`.
 #' @param sides Which edges carry a frame: a string of `"b"` (bottom), `"l"`

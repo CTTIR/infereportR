@@ -22,6 +22,13 @@ stat_context(
 )
 }
 \arguments{
+\item{mapping}{Aesthetic mappings, as in \code{\link[ggplot2:layer]{ggplot2::layer()}}. The layer
+needs \code{x} and \code{y}.}
+
+\item{data}{The data of the layer, as in \code{\link[ggplot2:layer]{ggplot2::layer()}}; pass \code{data}
+to frame a range other than that of the plot data (for example all
+patients when the plot shows a sample).}
+
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{ggplot2::layer()}}.}
 
 \item{fun}{Summary of the units at each \code{x}: \code{"median"} (default),
@@ -41,6 +48,8 @@ default.}
 \item{mode, transparent, palette}{As in \code{\link[=theme_figure]{theme_figure()}}. The frame is ink.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently.}
+
+\item{show.legend, inherit.aes}{As in \code{\link[ggplot2:layer]{ggplot2::layer()}}.}
 }
 \value{
 A ggplot2 layer.
