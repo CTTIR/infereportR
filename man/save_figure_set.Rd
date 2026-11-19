@@ -8,7 +8,7 @@ save_figure_set(
   build,
   name,
   preset,
-  dir = "figures",
+  dir,
   modes = c("light", "dark", "light-transparent", "dark-transparent"),
   png = TRUE,
   dpi = 300
@@ -23,7 +23,8 @@ folder.}
 
 \item{preset}{Size preset, see \code{\link[=figure_size]{figure_size()}}. Required.}
 
-\item{dir}{Directory that holds the mode folders; \code{"figures"} by default.}
+\item{dir}{Directory that holds the mode folders, created if needed.
+Required; use \code{"figures"} for the folder layout of a Bleisatz deck.}
 
 \item{modes}{Mode folders to write, any of \code{"light"}, \code{"dark"},
 \code{"light-transparent"} and \code{"dark-transparent"} (all four by default).
@@ -41,7 +42,7 @@ the same columns.
 }
 \description{
 Writes one figure in up to four modes, each into its own folder below
-\code{dir}, with the same file name in every folder:
+\code{dir}, with the same file name in every folder; for \code{dir = "figures"}:
 }
 \details{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{figures/light/<name>.pdf               figures/light/<name>.png
@@ -66,8 +67,9 @@ so space a figure leaves free, as with \code{coord_fixed()}, has the color of
 its background. The transparent modes are saved with \code{transparent = TRUE}, so their PNG
 files keep an alpha channel and their PDF files have no page background.
 
-Nothing is written outside \code{dir}: \code{name} must be a plain file name, and the
-folders are created as needed. Every argument is checked before \code{build} is
+Nothing is written outside \code{dir}, which has no default, so nothing is
+written to the working directory unless it is asked for: \code{name} must be a
+plain file name, and the folders are created as needed. Every argument is checked before \code{build} is
 first called.
 }
 \examples{

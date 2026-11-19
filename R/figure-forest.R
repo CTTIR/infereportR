@@ -122,8 +122,11 @@
 #'   "trt1 vs ctrl" = infercalcR::run_inference(welch, x = groups$trt1, y = groups$ctrl),
 #'   "trt2 vs ctrl" = infercalcR::run_inference(welch, x = groups$trt2, y = groups$ctrl)
 #' )
-#' figure_forest(res, xlab = "Difference in weight (g)", overall = NULL,
-#'               header = c("Contrast", "n", "Difference [95% CI]"))
+#' fig <- figure_forest(res, xlab = "Difference in weight (g)", overall = NULL,
+#'                      header = c("Contrast", "n", "Difference [95% CI]"))
+#' \donttest{
+#' fig
+#' }
 #' @export
 figure_forest <- function(results, labels = names(results), n = NULL, row = NULL,
                           null_value = NULL, xlab = NULL, xlim = NULL,

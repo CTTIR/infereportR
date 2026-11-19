@@ -101,10 +101,12 @@ ggplot(mtcars, aes(wt, mpg)) +
   geom_point(shape = 1) +
   stat_correlation(method = "correlation_pearson", fit = TRUE)
 
+\donttest{
 # Two lines with the number of pairs.
 ggplot(mtcars, aes(wt, mpg)) +
   geom_point(shape = 1) +
   stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n")
+}
 }
 \seealso{
 \code{\link[=stat_compare]{stat_compare()}}, \code{\link[=inference_results]{inference_results()}}

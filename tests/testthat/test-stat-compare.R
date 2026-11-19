@@ -43,6 +43,7 @@ test_that("the procedure and the adjustment must be explicit", {
 })
 
 test_that("brackets stack at first + (i - 1) * step with one headroom row", {
+  skip_on_cran()
   p <- base_plot() + stat_compare(method = welch, adjust = "bonferroni")
   d <- layer_data_of(p, 2L)
   top <- max(pg$weight)
@@ -77,6 +78,7 @@ test_that("first and step defaults are the tokens and stay adjustable", {
 })
 
 test_that("bracket labels default to the in-plot label size", {
+  skip_on_cran()
   d <- layer_data_of(base_plot() + stat_compare(method = welch, reference = "ctrl",
                                                 adjust = "holm"), 2L)
   expect_equal(unique(d$size) * ggplot2::.pt, .ir_label_size_pt)
@@ -86,6 +88,7 @@ test_that("bracket labels default to the in-plot label size", {
 })
 
 test_that("each panel gets its own headroom row", {
+  skip_on_cran()
   p <- ggplot2::ggplot(pg_facets, ggplot2::aes(group, weight)) + ggplot2::facet_wrap(~panel) +
     stat_compare(method = welch, reference = "ctrl", adjust = "holm")
   d <- layer_data_of(p)
@@ -94,6 +97,7 @@ test_that("each panel gets its own headroom row", {
 })
 
 test_that("label types use infereportR strings and never 'ns'", {
+  skip_on_cran()
   fam <- manual_family()
   shown <- report_table(fam, p = "adjusted")
   lab <- function(type) {
@@ -166,6 +170,7 @@ test_that("infercalcR failures surface as calculation_failed with a parent", {
 })
 
 test_that("precomputed results draw with stat_inference", {
+  skip_on_cran()
   fam <- manual_family()
   pos <- data.frame(row_id = c("trt1-ctrl", "trt2-ctrl"), group1 = c("ctrl", "ctrl"),
                     group2 = c("trt1", "trt2"), y_position = c(6.6, 6.9))

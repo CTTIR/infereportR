@@ -91,8 +91,11 @@ res <- list(
   "trt1 vs ctrl" = infercalcR::run_inference(welch, x = groups$trt1, y = groups$ctrl),
   "trt2 vs ctrl" = infercalcR::run_inference(welch, x = groups$trt2, y = groups$ctrl)
 )
-figure_forest(res, xlab = "Difference in weight (g)", overall = NULL,
-              header = c("Contrast", "n", "Difference [95\% CI]"))
+fig <- figure_forest(res, xlab = "Difference in weight (g)", overall = NULL,
+                     header = c("Contrast", "n", "Difference [95\% CI]"))
+\donttest{
+fig
+}
 }
 \seealso{
 \code{\link[=figure_correlation_matrix]{figure_correlation_matrix()}}, \code{\link[=inference_results]{inference_results()}}

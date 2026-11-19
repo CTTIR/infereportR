@@ -497,6 +497,15 @@ test_that("the transliteration table maps every listed character", {
   expect_true(infereportR:::.ir_cg_unknown(c("ok", "\u03b1")))
 })
 
+test_that("the transliteration table names are the real characters in any locale", {
+  # Written as `"\u2265" = ...` tags, the names became "<U+2265>" when the
+  # package was installed under a non-UTF-8 locale.
+  tab <- infereportR:::.ir_cg_ascii_table
+  expect_identical(lapply(names(tab), utf8ToInt),
+                   list(0x2265L, 0x2264L, 0xb1L, 0xd7L, 0x2212L, 0x2013L, 0x2014L, 0xb5L,
+                        0x3bcL, 0x3c1L))
+})
+
 test_that("ascii grids transliterate every written string", {
   skip_on_cran()
   p <- fx_endlabels() +

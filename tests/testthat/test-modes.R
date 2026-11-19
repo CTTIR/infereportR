@@ -411,6 +411,8 @@ test_that("save_figure_set is type-stable and stays inside dir", {
     expect_error(do.call(save_figure_set, args), class = "infereportR_invalid_input")
   }
   expect_error(save_figure_set(build, "fig", dir = dir), class = "infereportR_invalid_input")
+  # dir has no default: nothing is written to the working directory
+  expect_error(save_figure_set(build, "fig", "slide_half"), class = "infereportR_invalid_input")
   expect_error(save_figure_set(function(mode, transparent) 1, "fig", "slide_half", dir = dir,
                                modes = "light"),
                class = "infereportR_invalid_input")

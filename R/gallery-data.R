@@ -114,9 +114,10 @@
 # The seven subgroups of figure 06 as logical row selections of `fp`
 # (make-figures.R, verbatim).
 .ir_gallery_subsets <- function(fp) {
-  list(
-    "All patients" = rep(TRUE, 240),
-    "< 50 years" = fp$age == "< 50 years", "\u2265 50 years" = fp$age == "\u2265 50 years",
-    "Male" = fp$sex == "Male", "Female" = fp$sex == "Female",
-    "ISS 16-24" = fp$iss == "ISS 16-24", "ISS \u2265 25" = fp$iss == "ISS \u2265 25")
+  ge50 <- "\u2265 50 years"
+  iss25 <- "ISS \u2265 25"
+  stats::setNames(
+    list(rep(TRUE, 240), fp$age == "< 50 years", fp$age == ge50, fp$sex == "Male",
+         fp$sex == "Female", fp$iss == "ISS 16-24", fp$iss == iss25),
+    c("All patients", "< 50 years", ge50, "Male", "Female", "ISS 16-24", iss25))
 }

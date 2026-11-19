@@ -217,9 +217,13 @@ char_grid <- function(plot, width = 64L, height = 20L, charset = c("ascii", "uni
 
 # ASCII transliteration (SPEC amendment 01, D8). The micro sign and the Greek
 # small mu look alike, so both become "u".
-.ir_cg_ascii_table <- c(
-  "\u2265" = ">=", "\u2264" = "<=", "\u00b1" = "+/-", "\u00d7" = "x", "\u2212" = "-",
-  "\u2013" = "-", "\u2014" = "--", "\u00b5" = "u", "\u03bc" = "u", "\u03c1" = "rho"
+# Names are set from a character vector, not written as `"\u2265" = ...`
+# argument tags: tags are parsed as symbols in the native encoding, so a
+# package installed under a non-UTF-8 locale would store "<U+2265>".
+.ir_cg_ascii_table <- stats::setNames(
+  c(">=", "<=", "+/-", "x", "-", "-", "--", "u", "u", "rho"),
+  c("\u2265", "\u2264", "\u00b1", "\u00d7", "\u2212", "\u2013", "\u2014", "\u00b5",
+    "\u03bc", "\u03c1")
 )
 
 # Transliterate with the table; any other non-ASCII character becomes "?".

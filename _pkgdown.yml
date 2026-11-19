@@ -112,6 +112,7 @@ reference:
   desc: The twelve Bleisatz example figures, rebuilt with the package API.
   contents:
   - figure_gallery
+  - gallery_captions
 - title: APA check
   desc: Audit a figure against the APA figure rules.
   contents:

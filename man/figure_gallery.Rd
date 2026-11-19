@@ -67,9 +67,8 @@ The files are written as \verb{dir/<mode>/<name>.pdf} (and \code{.png} with
 deck regenerates its \verb{figures/} folder with
 \verb{Rscript -e 'infereportR::figure_gallery("figures")'}.
 
-The captions of the gallery deck are kept in the package as the internal
-data frame \code{infereportR:::.ir_gallery_captions} (columns \code{name}, \code{slot},
-\code{width_mm}, \code{height_mm} and \code{caption}); no data file is shipped.
+The file names, slots, sizes and captions of the gallery deck are returned
+by \code{\link[=gallery_captions]{gallery_captions()}}; no data file is shipped.
 }
 \examples{
 \donttest{
@@ -82,5 +81,5 @@ if (capabilities("cairo")) {
 }
 }
 \seealso{
-\code{\link[=save_figure_set]{save_figure_set()}}, \code{\link[=figure_size]{figure_size()}}
+\code{\link[=gallery_captions]{gallery_captions()}}, \code{\link[=save_figure_set]{save_figure_set()}}, \code{\link[=figure_size]{figure_size()}}
 }

@@ -37,7 +37,25 @@ test_that(".ir_gallery_data() returns the nine simulated tables", {
   expect_length(.ir_gallery_builders, 12L)
 })
 
+test_that("the subgroup names of figure 06 are the real characters in any locale", {
+  nm <- names(.ir_gallery_subsets(.ir_gallery_data()$fp))
+  expect_length(nm, 7L)
+  expect_identical(utf8ToInt(nm[[3]]), utf8ToInt("\u2265 50 years"))
+  expect_identical(utf8ToInt(nm[[7]]), c(utf8ToInt("ISS "), 0x2265L, utf8ToInt(" 25")))
+})
+
+test_that("gallery_captions() returns the twelve file names, slots and captions", {
+  cap <- gallery_captions()
+  expect_s3_class(cap, "data.frame")
+  expect_identical(names(cap), c("name", "slot", "width_mm", "height_mm", "caption"))
+  expect_identical(cap, .ir_gallery_captions)
+  expect_identical(nrow(cap), 12L)
+  expect_true(all(cap$slot %in% c("full", "side", "half")))
+  expect_type(cap$caption, "character")
+})
+
 test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the oracle", {
+  skip_on_cran()
   p <- .ir_gallery_02(.ir_gallery_data())
   rep <- figure_table(p)
   means <- rep[rep$method_id == "t_mean_one_sample", ]
@@ -57,6 +75,7 @@ test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the 
 })
 
 test_that("figure 04 reproduces the correlation of the oracle", {
+  skip_on_cran()
   p <- .ir_gallery_04(.ir_gallery_data())
   rep <- figure_table(p)
   res <- inference_results(p)
@@ -79,6 +98,7 @@ test_that("figure 05 reproduces the medians of the oracle", {
 })
 
 test_that("figure 06 reproduces the seven forest rows of the oracle", {
+  skip_on_cran()
   p <- .ir_gallery_06(.ir_gallery_data())
   b <- ggplot2::ggplot_build(p)
   marks <- b$data[[3]]
@@ -101,6 +121,7 @@ test_that("figure 06 reproduces the seven forest rows of the oracle", {
 })
 
 test_that("caption 08 puts the circles above the diagonal and the values below", {
+  skip_on_cran()
   cap <- .ir_gallery_captions$caption[.ir_gallery_captions$name == "08-correlation-matrix"]
   expect_true(grepl("above the diagonal, circle", cap, fixed = TRUE))
   expect_true(grepl("mirrored below the diagonal", cap, fixed = TRUE))
@@ -115,6 +136,7 @@ test_that("caption 08 puts the circles above the diagonal and the values below",
 })
 
 test_that("figures 08 and 09 reproduce the matrix and the paired result of the oracle", {
+  skip_on_cran()
   d <- .ir_gallery_data()
   p8 <- .ir_gallery_08(d)
   res <- inference_results(p8)
