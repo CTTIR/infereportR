@@ -101,3 +101,21 @@ format_interval <- function(low, high, digits = 3L, decimal_mark = ".") {
   }
   ans
 }
+# Fixed decimals for numbers written beside figure marks (sparklines,
+# slopegraphs), where a column of values must share its decimals. The
+# decimal mark and missing text follow format_estimate().
+.ir_format_fixed <- function(x, decimals = 0L, decimal_mark = ".", missing = "unavailable") {
+  if (!is.numeric(decimals) || length(decimals) != 1L || is.na(decimals) ||
+      decimals != floor(decimals) || decimals < 0 || decimals > 15) {
+    .ir_abort("digits must be an integer from 0 to 15")
+  }
+  if (!is.numeric(x)) .ir_abort("x must be numeric")
+  vapply(x, function(v) {
+    if (is.na(v)) return(missing)
+    if (is.infinite(v)) return(if (v > 0) "Inf" else "-Inf")
+    out <- formatC(v, format = "f", digits = decimals, decimal.mark = decimal_mark)
+    # formatC() keeps the sign of a value that rounds to zero ("-0").
+    if (grepl("^-0([.,]0*)?$", out)) out <- sub("^-", "", out)
+    out
+  }, "", USE.NAMES = FALSE)
+}
