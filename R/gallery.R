@@ -277,9 +277,8 @@
 #' deck regenerates its `figures/` folder with
 #' `Rscript -e 'infereportR::figure_gallery("figures")'`.
 #'
-#' The captions of the gallery deck are kept in the package as the internal
-#' data frame `infereportR:::.ir_gallery_captions` (columns `name`, `slot`,
-#' `width_mm`, `height_mm` and `caption`); no data file is shipped.
+#' The file names, slots, sizes and captions of the gallery deck are returned
+#' by [gallery_captions()]; no data file is shipped.
 #'
 #' @param dir Directory that holds the mode folders; a temporary directory by
 #'   default.
@@ -293,7 +292,7 @@
 #'   order: a data.frame with one row per written file and the columns `mode`,
 #'   `file`, `format`, `width_mm` and `height_mm` (12 x modes x formats rows;
 #'   0 rows with the same columns for `modes = character()`).
-#' @seealso [save_figure_set()], [figure_size()]
+#' @seealso [gallery_captions()], [save_figure_set()], [figure_size()]
 #' @examples
 #' \donttest{
 #' if (capabilities("cairo")) {
@@ -328,4 +327,26 @@ figure_gallery <- function(dir = tempdir(),
   out <- do.call(rbind, c(list(.ir_set_empty()), rows))
   rownames(out) <- NULL
   out
+}
+
+#' File names, slots and captions of the gallery figures
+#'
+#' `gallery_captions()` returns the table behind [figure_gallery()]: one row
+#' per example figure of the Bleisatz gallery deck, in figure order, with the
+#' file name, the slide slot, the slot size and the caption used in the deck
+#' and in the vignette "The figure gallery". The table is kept in the package
+#' as an R object; no data file is shipped.
+#'
+#' @return A data.frame with 12 rows and the columns `name` (file name without
+#'   extension, as written by [figure_gallery()]), `slot` (`"full"`, `"side"`
+#'   or `"half"`), `width_mm` and `height_mm` (the size of the slot in mm) and
+#'   `caption` (character).
+#' @seealso [figure_gallery()], [figure_size()]
+#' @examples
+#' captions <- gallery_captions()
+#' captions[, c("name", "slot", "width_mm")]
+#' strwrap(captions$caption[[6]], width = 60)
+#' @export
+gallery_captions <- function() {
+  .ir_gallery_captions
 }

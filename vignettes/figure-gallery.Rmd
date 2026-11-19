@@ -73,10 +73,10 @@ its slot, with `figure_gallery(png = TRUE, dpi = 150)`, and is shipped with
 the vignette as an image, so that building the vignette does not draw all
 twelve figures again. The script `tools/gallery/render-vignette-png.R` in the
 package sources makes these images and the dark ones below; the captions are
-those of the gallery deck.
+those of the gallery deck, as returned by `gallery_captions()`.
 
 ```{r gallery-images, include = FALSE}
-captions <- infereportR:::.ir_gallery_captions
+captions <- gallery_captions()
 cap <- function(i) captions$caption[[i]]
 img <- function(i, mode = "light") {
   file.path("figures", "gallery", mode, paste0(captions$name[[i]], ".png"))

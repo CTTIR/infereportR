@@ -44,6 +44,16 @@ test_that("the subgroup names of figure 06 are the real characters in any locale
   expect_identical(utf8ToInt(nm[[7]]), c(utf8ToInt("ISS "), 0x2265L, utf8ToInt(" 25")))
 })
 
+test_that("gallery_captions() returns the twelve file names, slots and captions", {
+  cap <- gallery_captions()
+  expect_s3_class(cap, "data.frame")
+  expect_identical(names(cap), c("name", "slot", "width_mm", "height_mm", "caption"))
+  expect_identical(cap, .ir_gallery_captions)
+  expect_identical(nrow(cap), 12L)
+  expect_true(all(cap$slot %in% c("full", "side", "half")))
+  expect_type(cap$caption, "character")
+})
+
 test_that("figure 02 reproduces the means, intervals and Holm-adjusted p of the oracle", {
   p <- .ir_gallery_02(.ir_gallery_data())
   rep <- figure_table(p)

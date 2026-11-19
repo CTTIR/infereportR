@@ -36,6 +36,10 @@
   to "Comparison families", with when to use which.
 * Added a `dpi` argument to `figure_gallery()` for its PNG files (300 by
   default).
+* Added `gallery_captions()`, which returns the file names, slots, sizes and
+  captions of the twelve gallery figures; the help page of
+  `figure_gallery()` and the vignette "The figure gallery" referred to an
+  internal object for them.
 * Changed `stat_omnibus()` to set a label at the left or right panel edge
   1 mm in from the axis, and `stat_ecdf_guides()` to place a curve label
   clear of the curve over the label's own height.
