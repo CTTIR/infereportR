@@ -5,12 +5,13 @@
 \title{Figure size presets}
 \usage{
 figure_size(
-  preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half")
+  preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half",
+    "margin")
 )
 }
 \arguments{
 \item{preset}{One of \code{"journal_column"} (default), \code{"journal_page"},
-\code{"slide_full"}, \code{"slide_side"} or \code{"slide_half"}.}
+\code{"slide_full"}, \code{"slide_side"}, \code{"slide_half"} or \code{"margin"}.}
 }
 \value{
 A list with the numeric elements \code{width} and \code{height} and the
@@ -32,11 +33,13 @@ two-line title, minus one source line.
    \code{slide_full} \tab 134 \tab 44 \tab Bleisatz frame body, full width \cr
    \code{slide_side} \tab 86 \tab 44 \tab Bleisatz side figure (0.64 x 134 mm) \cr
    \code{slide_half} \tab 64 \tab 44 \tab Bleisatz two-column slot (0.48 x 134 mm) \cr
+   \code{margin} \tab 52 \tab 40 \tab margin of the Tufte handout (\code{layout=tufte}) \cr
 }
 }
 \examples{
 figure_size()
 figure_size("slide_half")
+figure_size("margin")
 }
 \seealso{
 \code{\link[=save_figure]{save_figure()}}, which uses these presets.

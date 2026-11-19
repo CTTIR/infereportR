@@ -14,18 +14,20 @@
 #' | `slide_full` | 134 | 44 | Bleisatz frame body, full width |
 #' | `slide_side` | 86 | 44 | Bleisatz side figure (0.64 x 134 mm) |
 #' | `slide_half` | 64 | 44 | Bleisatz two-column slot (0.48 x 134 mm) |
+#' | `margin` | 52 | 40 | margin of the Tufte handout (`layout=tufte`) |
 #'
 #' @param preset One of `"journal_column"` (default), `"journal_page"`,
-#'   `"slide_full"`, `"slide_side"` or `"slide_half"`.
+#'   `"slide_full"`, `"slide_side"`, `"slide_half"` or `"margin"`.
 #' @return A list with the numeric elements `width` and `height` and the
 #'   string `units = "mm"`.
 #' @seealso [save_figure()], which uses these presets.
 #' @examples
 #' figure_size()
 #' figure_size("slide_half")
+#' figure_size("margin")
 #' @export
 figure_size <- function(preset = c("journal_column", "journal_page", "slide_full",
-                                   "slide_side", "slide_half")) {
+                                   "slide_side", "slide_half", "margin")) {
   preset <- .ir_check_choice(preset, .ir_presets$preset, "preset")
   row <- .ir_presets[.ir_presets$preset == preset, , drop = FALSE]
   list(width = row$width[[1L]], height = row$height[[1L]], units = "mm")

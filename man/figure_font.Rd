@@ -4,10 +4,10 @@
 \alias{figure_font}
 \title{Font family for figures}
 \usage{
-figure_font(type = c("sans", "mono"), reset = FALSE)
+figure_font(type = c("sans", "mono", "etbb"), reset = FALSE)
 }
 \arguments{
-\item{type}{\code{"sans"} (default) or \code{"mono"}.}
+\item{type}{\code{"sans"} (default), \code{"mono"} or \code{"etbb"}.}
 
 \item{reset}{If \code{TRUE}, clear the cached lookup before looking up again.}
 }
@@ -25,12 +25,21 @@ IBM Plex ships with TeX Live (\code{fonts/opentype/ibm/plex}). To make it
 available to R through fontconfig, copy the Sans, Sans Condensed and Mono
 OTF files to \verb{~/.fonts} and run \code{fc-cache -f}; detection uses 'systemfonts'.
 
+\code{type = "etbb"} is the serif of the Tufte option of Bleisatz
+(\code{font=etbb}): it returns \code{"ETbb"} or \code{"ET Book"}, whichever 'systemfonts'
+reports, otherwise the generic \code{"serif"}. ETbb ships with TeX Live
+(\verb{texmf-dist/fonts/opentype/public/etbb/}, the \verb{ETbb-*.otf} files); install
+them for the system as above. A serif face fails the APA sans-serif rule
+of \code{\link[=check_figure]{check_figure()}} (\code{font_family}), so use it for Tufte handouts and decks
+set in ET Book, not for journal figures.
+
 The lookup is cached for the session; \code{reset = TRUE} clears the cache, for
 example after installing a font.
 }
 \examples{
 figure_font()
 figure_font("mono")
+figure_font("etbb")
 }
 \seealso{
 \code{theme_figure()} and \code{char_figure()} use this family by default.
