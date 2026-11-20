@@ -163,6 +163,9 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
                                          face = "plain"),
     panel.background = ggplot2::element_rect(fill = m$knock, colour = NA),
     panel.border = panel_border,
+    # ggplot2 3.5 keeps theme_classic's grey on the parent element; set it to
+    # ink so every theme colour is one of the two values on every version.
+    panel.grid = ggplot2::element_line(colour = m$ink),
     panel.grid.major.x = grid_x,
     panel.grid.major.y = grid_y,
     panel.grid.minor = ggplot2::element_blank(),

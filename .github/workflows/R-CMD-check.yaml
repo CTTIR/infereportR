@@ -44,9 +44,12 @@ jobs:
         with:
           dependencies: ${{ matrix.lane == 'full' && '"all"' || '"hard"' }}
           # infercalcR is not on CRAN yet; the public package comes from GitHub.
+          # The minimal lane pins the oldest supported ggplot2: ggplot2 4.x needs
+          # S7, which needs R >= 4.2, and the floor in DESCRIPTION must be tested.
           extra-packages: |
             any::rcmdcheck
             github::CTTIR/infercalcR
+            ${{ matrix.lane == 'minimal' && 'cran::ggplot2@3.5.2' || '' }}
           needs: check
       # The minimal lane has no vignette builder (knitr is suggested), so it
       # skips the vignettes; the full lanes build and check them.
