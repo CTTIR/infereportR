@@ -245,7 +245,8 @@
 #' The Bleisatz example figures
 #'
 #' `figure_gallery()` writes the twelve example figures of the Bleisatz Beamer
-#' theme, each in up to four modes, with [save_figure_set()]. Every figure
+#' theme, each in up to four modes, with [save_figure_set()]; with
+#' `set = "tufte"` it writes the Tufte set instead (see below). Every figure
 #' teaches one rule of the black-and-white system and is sized for one
 #' Bleisatz slot (all 44 mm high): `"slide_full"` (134 mm), `"slide_side"`
 #' (86 mm) or `"slide_half"` (64 mm).
@@ -280,18 +281,46 @@
 #' The file names, slots, sizes and captions of the gallery deck are returned
 #' by [gallery_captions()]; no data file is shipped.
 #'
+#' **The Tufte set** (`set = "tufte"`, Bleisatz 1.3) has seven figure types
+#' from Tufte's books, nine files with the two margin variants, built with
+#' the Tufte options of the package:
+#'
+#' | File | Slot | Built with |
+#' |---|---|---|
+#' | `13-sparklines` | side | [figure_sparklines()] |
+#' | `14-range-frame-dot-dash` | half | [geom_dotdash()], `theme_figure(axes = "range")` |
+#' | `15-quartile-plot` | half | [stat_quartiles()], [geom_rangeframe()] |
+#' | `16-bars-white-grid` | side | [geom_papergrid()], `theme_figure(axes = "none")` |
+#' | `17-slopegraph` | side | [figure_slopegraph()] |
+#' | `18-small-multiples` | full | facets, [stat_context()] for the stratum median |
+#' | `14-range-frame-dot-dash-margin` | margin | figure 14 at 52 x 40 mm |
+#' | `15-quartile-plot-margin` | margin | figure 15 at 52 x 40 mm |
+#' | `19-context-grey` | side | [stat_context()], [geom_rangeframe()] |
+#'
+#' It is written in six folders, the convention of Bleisatz
+#' `figures/tufte/<folder>/`: `light` and `dark` in Tufte's palette (ink,
+#' paper, grey, red and green; `palette = "tufte"`), `light-grey` and
+#' `dark-grey` (ink, paper and the grey) and `light-1bit` and `dark-1bit`
+#' (two values; the grey becomes thin or dotted ink). So for a deck,
+#' `figure_gallery(file.path("figures", "tufte"), set = "tufte")`.
+#'
 #' @param dir Directory that holds the mode folders; a temporary directory by
 #'   default.
-#' @param modes Mode folders to write, any of `"light"`, `"dark"`,
-#'   `"light-transparent"` and `"dark-transparent"` (all four by default).
+#' @param modes Mode folders to write. For `set = "bleisatz"` any of
+#'   `"light"`, `"dark"`, `"light-transparent"` and `"dark-transparent"`
+#'   (all four by default); for `set = "tufte"` any folder of
+#'   [save_figure_set()], by default the six `"light"`, `"dark"`,
+#'   `"light-grey"`, `"dark-grey"`, `"light-1bit"` and `"dark-1bit"`.
 #'   `character()` writes nothing.
 #' @param png If `TRUE`, also write a PNG beside each PDF; `FALSE` by
 #'   default.
 #' @param dpi Resolution of the PNG files in dots per inch, 300 by default.
+#' @param set `"bleisatz"` (default) for the twelve figures 01-12 or
+#'   `"tufte"` for the nine files of figures 13-19.
 #' @return The rows of [save_figure_set()] for all figures, bound in figure
 #'   order: a data.frame with one row per written file and the columns `mode`,
-#'   `file`, `format`, `width_mm` and `height_mm` (12 x modes x formats rows;
-#'   0 rows with the same columns for `modes = character()`).
+#'   `file`, `format`, `width_mm` and `height_mm` (12 or 9 x modes x formats
+#'   rows; 0 rows with the same columns for `modes = character()`).
 #' @seealso [gallery_captions()], [save_figure_set()], [figure_size()]
 #' @examples
 #' \donttest{
@@ -305,18 +334,21 @@
 #' @export
 figure_gallery <- function(dir = tempdir(),
                            modes = c("light", "dark", "light-transparent", "dark-transparent"),
-                           png = FALSE, dpi = 300) {
+                           png = FALSE, dpi = 300, set = c("bleisatz", "tufte")) {
   .ir_check_string(dir, "dir")
-  if (!is.character(modes) || anyNA(modes) || anyDuplicated(modes) ||
-      !all(modes %in% .ir_set_modes)) {
-    .ir_abort(sprintf("modes must be distinct values of %s",
-                      paste0("\"", .ir_set_modes, "\"", collapse = ", ")))
+  set <- .ir_check_choice(set, c("bleisatz", "tufte"), "set")
+  if (set == "tufte") {
+    if (missing(modes)) modes <- .ir_tufte_modes
+    .ir_check_set_modes(modes)
+  } else {
+    .ir_check_set_modes(modes, .ir_set_modes)
   }
   .ir_check_flag(png, "png")
   .ir_check_number(dpi, "dpi", min = 0)
   if (dpi <= 0) .ir_abort("dpi must be a positive number")
   if (!length(modes)) return(.ir_set_empty())
   data <- .ir_gallery_data()
+  if (set == "tufte") return(.ir_tufte_gallery(data, dir, modes, png, dpi))
   rows <- lapply(seq_len(nrow(.ir_gallery_captions)), function(i) {
     builder <- .ir_gallery_builders[[i]]
     build <- function(mode, transparent) builder(data, mode = mode, transparent = transparent)
@@ -334,19 +366,40 @@ figure_gallery <- function(dir = tempdir(),
 #' `gallery_captions()` returns the table behind [figure_gallery()]: one row
 #' per example figure of the Bleisatz gallery deck, in figure order, with the
 #' file name, the slide slot, the slot size and the caption used in the deck
-#' and in the vignette "The figure gallery". The table is kept in the package
-#' as an R object; no data file is shipped.
+#' and in the vignette "The figure gallery". `set = "tufte"` returns the nine
+#' files of the Tufte set (figures 13-19 with the two margin variants), with
+#' the captions of the Bleisatz Tufte set. The tables are kept in the package
+#' as R objects; no data file is shipped.
 #'
-#' @return A data.frame with 12 rows and the columns `name` (file name without
-#'   extension, as written by [figure_gallery()]), `slot` (`"full"`, `"side"`
-#'   or `"half"`), `width_mm` and `height_mm` (the size of the slot in mm) and
-#'   `caption` (character).
+#' @param set `"bleisatz"` (default) or `"tufte"`.
+#' @return A data.frame with 12 rows (9 for `"tufte"`) and the columns `name`
+#'   (file name without extension, as written by [figure_gallery()]), `slot`
+#'   (`"full"`, `"side"`, `"half"` or `"margin"`), `width_mm` and
+#'   `height_mm` (the size of the slot in mm) and `caption` (character).
 #' @seealso [figure_gallery()], [figure_size()]
 #' @examples
 #' captions <- gallery_captions()
 #' captions[, c("name", "slot", "width_mm")]
 #' strwrap(captions$caption[[6]], width = 60)
+#' gallery_captions("tufte")[, c("name", "slot", "width_mm", "height_mm")]
 #' @export
-gallery_captions <- function() {
-  .ir_gallery_captions
+gallery_captions <- function(set = c("bleisatz", "tufte")) {
+  set <- .ir_check_choice(set, c("bleisatz", "tufte"), "set")
+  if (set == "tufte") .ir_tufte_captions else .ir_gallery_captions
+}
+
+.ir_tufte_gallery <- function(data, dir, modes, png, dpi) {
+  rows <- lapply(seq_len(nrow(.ir_tufte_captions)), function(i) {
+    builder <- .ir_tufte_builders[[i]]
+    slot <- .ir_tufte_captions$slot[[i]]
+    narrow <- slot == "margin"
+    build <- function(mode, transparent, palette) {
+      builder(data, mode = mode, transparent = transparent, palette = palette, narrow = narrow)
+    }
+    save_figure_set(build, .ir_tufte_captions$name[[i]], preset = .ir_tufte_presets[[slot]],
+                    dir = dir, modes = modes, png = png, dpi = dpi, palette = "tufte")
+  })
+  out <- do.call(rbind, c(list(.ir_set_empty()), rows))
+  rownames(out) <- NULL
+  out
 }

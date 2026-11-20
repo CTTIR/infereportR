@@ -17,7 +17,8 @@ figure_forest(
   mode = "light",
   transparent = FALSE,
   base_size = 9,
-  slot = "slide_full"
+  slot = "slide_full",
+  palette = "onebit"
 )
 }
 \arguments{
@@ -59,6 +60,9 @@ for none.}
 
 \item{slot}{A preset of \code{\link[=figure_size]{figure_size()}} whose width the figure is laid out
 for; \code{"slide_full"} (134 mm) by default. Save the figure at that width.}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
+\code{\link[=theme_figure]{theme_figure()}}. With a grey in the palette the null-value line is grey.}
 }
 \value{
 A ggplot. Its marker layer carries \code{.ir_result}, so

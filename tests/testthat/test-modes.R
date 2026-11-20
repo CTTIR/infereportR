@@ -121,13 +121,13 @@ cf_source <- function() {
 # Resolver ---------------------------------------------------------------------
 
 test_that("the resolver gives the A2 values for the four modes", {
-  expect_identical(.ir_mode("light"), list(ink = "#000000", paper = "#FFFFFF",
+  expect_identical(.ir_mode("light")[1:3], list(ink = "#000000", paper = "#FFFFFF",
                                            knock = "#FFFFFF"))
-  expect_identical(.ir_mode("dark"), list(ink = "#FFFFFF", paper = "#000000",
+  expect_identical(.ir_mode("dark")[1:3], list(ink = "#FFFFFF", paper = "#000000",
                                           knock = "#000000"))
-  expect_identical(.ir_mode("light", TRUE), list(ink = "#000000", paper = "#FFFFFF",
+  expect_identical(.ir_mode("light", TRUE)[1:3], list(ink = "#000000", paper = "#FFFFFF",
                                                  knock = NA_character_))
-  expect_identical(.ir_mode("dark", TRUE), list(ink = "#FFFFFF", paper = "#000000",
+  expect_identical(.ir_mode("dark", TRUE)[1:3], list(ink = "#FFFFFF", paper = "#000000",
                                                 knock = NA_character_))
 })
 

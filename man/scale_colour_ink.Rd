@@ -5,9 +5,14 @@
 \alias{scale_color_ink}
 \title{Ink-only color scale}
 \usage{
-scale_colour_ink(..., aesthetics = "colour", mode = "light")
+scale_colour_ink(
+  ...,
+  aesthetics = "colour",
+  mode = "light",
+  palette = "onebit"
+)
 
-scale_color_ink(..., aesthetics = "colour", mode = "light")
+scale_color_ink(..., aesthetics = "colour", mode = "light", palette = "onebit")
 }
 \arguments{
 \item{...}{Arguments passed on to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}}, for example
@@ -17,6 +22,10 @@ scale_color_ink(..., aesthetics = "colour", mode = "light")
 \code{"colour"} by default. Use \code{c("colour", "fill")} to set both.}
 
 \item{mode}{\code{"light"} (default, black ink) or \code{"dark"} (white ink).}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
+\code{\link[=theme_figure]{theme_figure()}}; the scale maps to ink in every palette. Use
+\code{\link[=scale_colour_palette]{scale_colour_palette()}} to map levels to the grey, red or green.}
 }
 \value{
 A ggplot2 discrete scale object.
@@ -38,5 +47,6 @@ ggplot2::ggplot(d, ggplot2::aes(x, y, colour = g, linetype = g, shape = g)) +
   scale_shape_figure(name = "Group")
 }
 \seealso{
-\code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}}.
+\code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}},
+\code{\link[=scale_colour_palette]{scale_colour_palette()}}.
 }

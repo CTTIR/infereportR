@@ -12,7 +12,8 @@ figure_correlation_matrix(
   labels = NULL,
   mode = "light",
   transparent = FALSE,
-  base_size = 9
+  base_size = 9,
+  palette = "onebit"
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ every numeric column.}
 \item{transparent}{If \code{TRUE}, no background is drawn.}
 
 \item{base_size}{Base font size in points.}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
+\code{\link[=theme_figure]{theme_figure()}}. The matrix stays in ink in every palette.}
 }
 \value{
 A ggplot with \code{coord_fixed()}. Its value layer carries

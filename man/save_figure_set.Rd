@@ -11,12 +11,13 @@ save_figure_set(
   dir,
   modes = c("light", "dark", "light-transparent", "dark-transparent"),
   png = TRUE,
-  dpi = 300
+  dpi = 300,
+  palette = "onebit"
 )
 }
 \arguments{
-\item{build}{A function with the arguments \code{mode} and \code{transparent} that
-returns a ggplot.}
+\item{build}{A function with the arguments \code{mode} and \code{transparent}, and
+optionally \code{palette}, that returns a ggplot.}
 
 \item{name}{File name without directory and extension, used in every mode
 folder.}
@@ -27,12 +28,16 @@ folder.}
 Required; use \code{"figures"} for the folder layout of a Bleisatz deck.}
 
 \item{modes}{Mode folders to write, any of \code{"light"}, \code{"dark"},
-\code{"light-transparent"} and \code{"dark-transparent"} (all four by default).
+\code{"light-transparent"} and \code{"dark-transparent"} (these four by default),
+\code{"light-grey"}, \code{"dark-grey"}, \code{"light-1bit"} and \code{"dark-1bit"}.
 \code{character()} writes nothing.}
 
 \item{png}{If \code{TRUE} (default), write a PNG beside each PDF.}
 
 \item{dpi}{Resolution of the PNG files in dots per inch.}
+
+\item{palette}{Palette of the plain and transparent folders: \code{"onebit"}
+(default), \code{"grey"} or \code{"tufte"}.}
 }
 \value{
 A data.frame with one row per written file and the columns \code{mode}
@@ -41,7 +46,7 @@ A data.frame with one row per written file and the columns \code{mode}
 the same columns.
 }
 \description{
-Writes one figure in up to four modes, each into its own folder below
+Writes one figure in several modes, by default four, each into its own folder below
 \code{dir}, with the same file name in every folder; for \code{dir = "figures"}:
 }
 \details{
@@ -56,10 +61,21 @@ by name only (\verb{\\includegraphics\{<name>\}}), so one line in the preamble,
 such as \verb{\\graphicspath\{\{figures/dark/\}\}} for a deck in
 \verb{\\usetheme[dark]\{Bleisatz\}}, switches every figure of the deck at once.
 
+\strong{Palette folders.} Beside the four folders above, \code{modes} may name the
+palette folders of the Tufte set of Bleisatz (\verb{figures/tufte/<folder>/}):
+\code{"light-grey"} and \code{"dark-grey"} (ink, paper and one grey) and
+\code{"light-1bit"} and \code{"dark-1bit"} (two values). The plain and transparent
+folders are drawn in \code{palette}, so the Tufte set uses \code{palette = "tufte"}
+with \code{modes = c("light", "dark", "light-grey", "dark-grey", "light-1bit", "dark-1bit")}: there plain \code{light} and \code{dark} mean Tufte's palette. A
+Bleisatz document or deck with \code{figures=tufte} finds them through
+\verb{\\figurefolder\{figures\}}.
+
 \code{build} is called once per mode, as \code{build(mode = , transparent = )} with
 \code{mode} \code{"light"} or \code{"dark"} and \code{transparent} \code{TRUE} or \code{FALSE}, and must
-return a ggplot. Pass both on to \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=report_figure]{report_figure()}}, the
-layers and builders of the package, or \code{\link[=char_figure]{char_figure()}}. Each figure is
+return a ggplot. If \code{build} has a \code{palette} argument (or \code{...}), it is
+called with \verb{palette = } as well (\code{"onebit"}, \code{"grey"} or \code{"tufte"}). Pass
+them on to \code{\link[=theme_figure]{theme_figure()}}, \code{\link[=report_figure]{report_figure()}}, the layers and builders of
+the package, or \code{\link[=char_figure]{char_figure()}}. Each figure is
 written with \code{\link[=save_figure]{save_figure()}} at the size of \code{preset}: a PDF (Cairo, fonts
 embedded) and, with \code{png = TRUE}, a PNG ('ragg' when installed) at \code{dpi}.
 The light and dark modes are saved on the mode's paper (white or black),

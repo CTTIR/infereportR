@@ -4,13 +4,16 @@
 \alias{check_figure}
 \title{Audit a figure against the APA figure rules}
 \usage{
-check_figure(plot, target = c("paper", "slide"))
+check_figure(plot, target = c("paper", "slide"), palette = "onebit")
 }
 \arguments{
 \item{plot}{A ggplot.}
 
 \item{target}{\code{"paper"} (default) or \code{"slide"}. Both targets apply the
 same rules in this version: the slide theme shares the paper text range.}
+
+\item{palette}{The palette the figure was drawn in, \code{"onebit"} (default),
+\code{"grey"} or \code{"tufte"}; sets the colors the \code{two_values} check allows.}
 }
 \value{
 A \code{data.frame} with exactly 6 rows (\code{text_size}, \code{font_family},
@@ -42,14 +45,19 @@ every text label layer (\code{\link[ggplot2:geom_text]{ggplot2::geom_text()}},
 \item{\code{font_family}}{(APA 7) \code{fail} if a resolved family looks like a
 serif face (matches "serif", "times", "georgia", "garamond",
 "palatino" or "cambria" but not "sans").}
-\item{\code{two_values}}{(infereportR) every \code{colour} and \code{fill} value in the
-built layer data, and the colors of drawn theme lines, rectangles and
-text, is black, white, \code{NA}, fully transparent or a grid pattern.
-This holds in every mode: light (black on white), dark (white on
-black) and the transparent modes, whose backgrounds are empty (\code{NA}).
-\code{fail} lists the offending colors as hex codes. The \code{"c64"} style of
-\code{\link[=char_figure]{char_figure()}} is the one documented exception: its C64 blues fail
-here by design.}
+\item{\code{two_values}}{(infereportR) the palette rule. Every \code{colour} and
+\code{fill} value in the built layer data, and the colors of drawn theme
+lines, rectangles and text, is a color of \code{palette}, \code{NA}, fully
+transparent or a grid pattern. With the default \code{palette = "onebit"}
+the colors are black and white only, the two values of the figure
+layer. \code{palette = "grey"} also allows the grey \verb{#999999}, and
+\code{palette = "tufte"} also Tufte's red and green of both modes
+(\verb{#B3202A}, \verb{#2E7D32}, \verb{#E5484D}, \verb{#5DB760}). This holds in every mode:
+light (black on white), dark (white on black) and the transparent
+modes, whose backgrounds are empty (\code{NA}). \code{fail} lists the offending
+colors as hex codes. The row keeps its name \code{two_values} for
+compatibility. The \code{"c64"} style of \code{\link[=char_figure]{char_figure()}} is the one
+documented exception: its C64 blues fail here by design.}
 \item{\code{axis_labels}}{(APA 7) \code{fail} if the x or y label is missing or
 empty; \code{note} if a label of a continuous axis has no unit marker (a
 parenthesis, \verb{\%} or a comma followed by a unit). Discrete axes have no

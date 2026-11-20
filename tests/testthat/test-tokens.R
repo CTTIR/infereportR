@@ -7,10 +7,20 @@ test_that("colour tokens are the two values and the Pepto pair", {
 
 test_that("size presets match the specification", {
   expected <- data.frame(
-    preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half"),
-    width = c(85, 174, 134, 86, 64), height = c(70, 100, 44, 44, 44),
+    preset = c("journal_column", "journal_page", "slide_full", "slide_side", "slide_half",
+               "margin"),
+    width = c(85, 174, 134, 86, 64, 52), height = c(70, 100, 44, 44, 44, 40),
     stringsAsFactors = FALSE)
   expect_identical(.ir_presets, expected)
+})
+
+test_that("the palette tokens are the Bleisatz 1.3 values", {
+  expect_identical(.ir_palettes, c("onebit", "grey", "tufte"))
+  expect_identical(.ir_grey, c(plex = "#999999", c64 = "#959595"))
+  expect_identical(.ir_red$plex, c("#B3202A", "#E5484D"))
+  expect_identical(.ir_green$plex, c("#2E7D32", "#5DB760"))
+  expect_identical(.ir_red$c64, c("#9F4E44", "#CB7E75"))
+  expect_identical(.ir_green$c64, c("#5CAB5E", "#9AE29B"))
 })
 
 test_that("sequences have the specified lengths and values", {

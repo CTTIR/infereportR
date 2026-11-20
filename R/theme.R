@@ -36,6 +36,23 @@
 #' (`fill = NA`), so only the information is left; open fills of the `geom`
 #' element are empty too. Pair it with `save_figure(transparent = TRUE)`.
 #'
+#' **Palettes.** The figure stays strictly two-valued by default
+#' (`palette = "onebit"`). `palette = "grey"` adds one grey (`#999999`) for
+#' context, and `palette = "tufte"` adds Tufte's red and green on top (see
+#' `vignette("tufte")`). In the theme the palette only changes requested grid
+#' lines: with a grey in the palette they are solid grey hairlines instead of
+#' dotted ink. The layers and builders of the package take the same argument.
+#'
+#' **Tufte options.** `axes = "range"` drops the axis lines, so that
+#' [geom_rangeframe()] can draw them from the smallest to the largest value of
+#' the data; the ticks stay. `axes = "none"` drops axis lines and ticks.
+#' `grid = "paper"` draws horizontal grid lines in the color of the paper on
+#' top of the data (`panel.ontop`, with an empty panel background) and
+#' removes the axis lines and ticks: the lines cut through the bars, where a
+#' scale is needed. Use it for bar charts; since the theme grid lies above
+#' every layer, use [geom_papergrid()] with `axes = "none"` when labels must
+#' stay above the grid.
+#'
 #' @param target `"paper"` (default) for journal figures or `"slide"` for
 #'   Bleisatz slides.
 #' @param base_size Base font size in points, a single positive number.
@@ -44,12 +61,17 @@
 #' @param legend Legend placement: `"inside"` (default, top right corner of
 #'   the panel), `"right"`, `"bottom"` or `"none"`.
 #' @param grid Major grid lines: `"none"` (default), `"y"` (horizontal lines),
-#'   `"x"` (vertical lines) or `"xy"` (both).
+#'   `"x"` (vertical lines), `"xy"` (both) or `"paper"` (horizontal lines in
+#'   the paper color, drawn above the data; no axis lines, no ticks).
 #' @param border If `TRUE`, draw a black rectangle without fill around the
 #'   panel.
 #' @param mode `"light"` (default, black on white) or `"dark"` (white on
 #'   black).
 #' @param transparent If `TRUE`, no background is drawn.
+#' @param palette `"onebit"` (default, two values), `"grey"` or `"tufte"`.
+#' @param axes `"full"` (default) draws the axis lines across the panel;
+#'   `"range"` leaves them to [geom_rangeframe()]; `"none"` draws neither
+#'   axis lines nor ticks.
 #' @return A complete 'ggplot2' theme object (`attr(, "complete")` is `TRUE`)
 #'   that can be added to a plot with `+`.
 #' @seealso [figure_font()] for the default family; `check_figure()` audits a
@@ -67,19 +89,24 @@
 #' # Print it to draw; the dark version has no background.
 #' slide <- p + theme_figure("slide", grid = "y", legend = "bottom")
 #' dark <- p + theme_figure("slide", mode = "dark", transparent = TRUE)
+#'
+#' # Tufte's range frame: the axes end where the data end.
+#' framed <- p + geom_rangeframe() + theme_figure("slide", axes = "range")
 #' @export
 theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_family = NULL,
                          legend = c("inside", "right", "bottom", "none"),
-                         grid = c("none", "y", "x", "xy"), border = FALSE,
-                         mode = "light", transparent = FALSE) {
+                         grid = c("none", "y", "x", "xy", "paper"), border = FALSE,
+                         mode = "light", transparent = FALSE, palette = "onebit",
+                         axes = c("full", "range", "none")) {
   target <- .ir_check_choice(target, c("paper", "slide"), "target")
   .ir_check_number(base_size, "base_size")
   if (base_size <= 0) .ir_abort("base_size must be a positive number")
   if (!is.null(base_family)) .ir_check_string(base_family, "base_family")
   legend <- .ir_check_choice(legend, c("inside", "right", "bottom", "none"), "legend")
-  grid <- .ir_check_choice(grid, c("none", "y", "x", "xy"), "grid")
+  grid <- .ir_check_choice(grid, c("none", "y", "x", "xy", "paper"), "grid")
   .ir_check_flag(border, "border")
-  m <- .ir_mode(mode, transparent)
+  axes <- .ir_check_choice(axes, c("full", "range", "none"), "axes")
+  m <- .ir_mode(mode, transparent, palette)
   ink <- m$ink
 
   if (target == "paper" && (base_size < .ir_text_min_pt || base_size > .ir_text_max_pt)) {
@@ -95,8 +122,12 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
   }
   margin_mm <- if (target == "slide") 1 else 2
 
-  grid_line <- ggplot2::element_line(colour = ink, linewidth = .ir_lw(.ir_rule_hair),
-                                     linetype = "13")
+  grid_line <- if (m$palette == "onebit") {
+    ggplot2::element_line(colour = ink, linewidth = .ir_lw(.ir_rule_hair), linetype = "13")
+  } else {
+    ggplot2::element_line(colour = m$grey, linewidth = .ir_lw(.ir_rule_hair),
+                          linetype = "solid")
+  }
   grid_x <- if (grid %in% c("x", "xy")) grid_line else ggplot2::element_blank()
   grid_y <- if (grid %in% c("y", "xy")) grid_line else ggplot2::element_blank()
   panel_border <- if (border) {
@@ -152,6 +183,19 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
                                        face = "bold", hjust = 0)
   )
   out <- base + changes + do.call(ggplot2::theme, legend_args)
+  if (axes != "full") out <- out + ggplot2::theme(axis.line = ggplot2::element_blank())
+  if (axes == "none") out <- out + ggplot2::theme(axis.ticks = ggplot2::element_blank())
+  if (grid == "paper") {
+    # The grid must lie above the bars, so the panel is drawn on top of the
+    # data with an empty background.
+    out <- out + ggplot2::theme(
+      axis.line = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(),
+      panel.ontop = TRUE,
+      panel.background = ggplot2::element_rect(fill = NA, colour = NA),
+      panel.grid.major.y = ggplot2::element_line(colour = m$paper,
+                                                 linewidth = .ir_lw(.ir_paper_grid),
+                                                 linetype = "solid"))
+  }
   out <- .ir_theme_geom_bw(out, m)
   attr(out, "complete") <- TRUE
   out

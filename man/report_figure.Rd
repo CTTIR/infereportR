@@ -20,6 +20,7 @@ report_figure(
   base_size = 9,
   mode = "light",
   transparent = FALSE,
+  palette = "onebit",
   ...
 )
 }
@@ -59,6 +60,9 @@ intervals (\code{\link[=stat_means]{stat_means()}}).}
 black), as in \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, no background is drawn, as in
+\code{\link[=theme_figure]{theme_figure()}}.}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
 \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{...}{Must be empty; any other argument is an error of class
@@ -102,6 +106,8 @@ the panel top sits above the top bracket label;
 theme, \code{\link[=scale_colour_ink]{scale_colour_ink()}}, \code{\link[=scale_fill_hatch]{scale_fill_hatch()}}, the points and every
 layer), so one argument switches the whole figure between light, dark and
 transparent; see \code{\link[=save_figure_set]{save_figure_set()}} to write all four versions.
+\code{palette} is passed the same way; with \code{"grey"} or \code{"tufte"} the raw points
+are drawn in grey as context, and every other component stays in ink.
 
 No test is ever added unless its procedure is named: \code{compare}, \code{omnibus}
 and \code{correlation} take 'infercalcR' method ids and default to \code{NULL}. With

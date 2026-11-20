@@ -203,6 +203,9 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #'   marks stay empty); accepted by every layer of the package.
 #' @param na.rm Kept for the layer interface; incomplete pairs are always
 #'   dropped.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`, `id`,
 #'   `part` (`"unit"`, `"mean"` or `"label"`), `label`, `.ir_result` and
 #'   `.ir_result_id`, so [inference_results()] and [figure_table()] return
@@ -226,14 +229,15 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 stat_paired <- function(mapping = NULL, data = NULL, ..., method, conf.level = NULL,
                         alternative = NULL, method_args = list(),
                         label = c("estimate_ci_p", "none"), unit = NULL, mode = "light",
-                        transparent = FALSE, na.rm = FALSE, inherit.aes = TRUE) {
+                        transparent = FALSE, palette = "onebit", na.rm = FALSE,
+                        inherit.aes = TRUE) {
   method <- .ir_check_method(if (missing(method)) NULL else method, "paired")
   conf.level <- .ir_check_conf_level(conf.level)
   alternative <- .ir_check_alternative(alternative)
   .ir_check_method_args(method_args)
   label <- .ir_check_choice(label, c("estimate_ci_p", "none"), "label")
   unit <- .ir_check_optional_string(unit, "unit")
-  ink <- .ir_mode(mode, transparent)$ink
+  ink <- .ir_mode(mode, transparent, palette)$ink
   .ir_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, alternative = alternative, conf.level = conf.level,

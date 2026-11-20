@@ -13,6 +13,7 @@ stat_ecdf_guides(
   curve_labels = NULL,
   mode = "light",
   transparent = FALSE,
+  palette = "onebit",
   inherit.aes = TRUE
 )
 }
@@ -35,6 +36,10 @@ the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{If \code{TRUE}, the layer draws no background fill (open
 marks stay empty); accepted by every layer of the package.}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
+\code{\link[=theme_figure]{theme_figure()}}. The layer draws in ink in every palette; the argument
+keeps the interface of the figure layer uniform.}
 }
 \value{
 A ggplot2 layer. Its computed data has the columns \code{x}, \code{y},

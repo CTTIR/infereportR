@@ -13,6 +13,7 @@ geom_endlabel(
   family = NULL,
   mode = "light",
   transparent = FALSE,
+  palette = "onebit",
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -43,6 +44,10 @@ the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 
 \item{transparent}{Accepted for a uniform interface (text has no
 background); must be \code{TRUE} or \code{FALSE}.}
+
+\item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
+\code{\link[=theme_figure]{theme_figure()}}. The layer draws in ink in every palette; the argument
+keeps the interface of the figure layer uniform.}
 
 \item{na.rm}{If \code{FALSE} (the default), rows with missing or non-finite
 values are removed with a warning, as in every ggplot2 layer; if \code{TRUE},

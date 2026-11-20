@@ -158,6 +158,9 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
 #'   the mode of [theme_figure()].
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); accepted by every layer of the package.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`,
 #'   `part` (`"guide"`, `"drop"` or `"curve"`), `label` and `hjust`.
 #' @seealso [ggplot2::stat_ecdf()]
@@ -174,7 +177,8 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
 #' @export
 stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
                              guide_label = "median", curve_labels = NULL, mode = "light",
-                             transparent = FALSE, inherit.aes = TRUE) {
+                             transparent = FALSE, palette = "onebit",
+                             inherit.aes = TRUE) {
   if (!is.numeric(probs) || !length(probs) || anyNA(probs) || any(probs <= 0) ||
       any(probs >= 1)) {
     .ir_abort("probs must be proportions strictly between 0 and 1")
@@ -187,7 +191,7 @@ stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
                                  any(curve_labels >= 1))) {
     .ir_abort("curve_labels must be NULL or proportions strictly between 0 and 1")
   }
-  ink <- .ir_mode(mode, transparent)$ink
+  ink <- .ir_mode(mode, transparent, palette)$ink
   dots <- list(...)
   params <- c(list(probs = probs, guide_label = guide_label, curve_labels = curve_labels,
                    family = figure_font("sans"), guide_family = .ir_condensed_family()),

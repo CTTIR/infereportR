@@ -131,6 +131,9 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); passed by [report_figure()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer. The computed data has columns `x` (shifted by
 #'   `offset`), `y` (the mean),
 #'   `ymin`, `ymax`, `n`, `label`, `.ir_result` (the 'infercalcR' result) and
@@ -145,9 +148,10 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 stat_means <- function(mapping = NULL, data = NULL, geom = "pointrange",
                        position = "identity", ..., method = "t_mean_one_sample",
                        conf.level = 0.95, label = c("none", "estimate", "estimate_ci"),
-                       offset = 0, mode = "light", transparent = FALSE, na.rm = FALSE,
+                       offset = 0, mode = "light", transparent = FALSE, palette = "onebit",
+                       na.rm = FALSE,
                        show.legend = NA, inherit.aes = TRUE) {
-  m <- .ir_mode(mode, transparent)
+  m <- .ir_mode(mode, transparent, palette)
   method <- .ir_check_method(method, "means")
   conf.level <- .ir_check_conf_level(conf.level)
   if (is.null(conf.level)) .ir_abort("conf.level must be a single number between 0 and 1")

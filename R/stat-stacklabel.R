@@ -68,6 +68,9 @@ StatStacklabel <- ggplot2::ggproto("StatStacklabel", ggplot2::Stat,
 #'   the mode of [theme_figure()].
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); accepted by every layer of the package.
+#' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
+#'   [theme_figure()]. The layer draws in ink in every palette; the argument
+#'   keeps the interface of the figure layer uniform.
 #' @return A ggplot2 layer.
 #' @seealso [scale_fill_hatch()]
 #' @examples
@@ -87,14 +90,14 @@ StatStacklabel <- ggplot2::ggproto("StatStacklabel", ggplot2::Stat,
 #' @export
 stat_stacklabel <- function(mapping = NULL, data = NULL, ..., side = c("right", "left"),
                             offset = 0.38, position = c("fill", "stack"), size = NULL,
-                            family = NULL, mode = "light", transparent = FALSE,
+                            family = NULL, mode = "light", transparent = FALSE, palette = "onebit",
                             inherit.aes = TRUE) {
   side <- .ir_check_choice(side, c("right", "left"), "side")
   .ir_check_number(offset, "offset")
   position <- .ir_check_choice(position, c("fill", "stack"), "position")
   size <- .ir_check_optional_number(size, "size", min = 0)
   family <- .ir_check_optional_string(family, "family")
-  ink <- .ir_mode(mode, transparent)$ink
+  ink <- .ir_mode(mode, transparent, palette)$ink
   pos <- switch(position,
     fill = ggplot2::position_fill(vjust = 0.5),
     stack = ggplot2::position_stack(vjust = 0.5)

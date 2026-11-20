@@ -140,8 +140,13 @@ if (mode %in% c("full", "release")) {
                       character(1L))
       unname(items[nzchar(items)])
     }
+    # A development version (x.y.z.9000) always makes the check report large
+    # version components; it is accepted only while DESCRIPTION has such a
+    # version, since a release is checked with its release version.
+    dev_version <- grepl("[.]9[0-9]{3}$", read.dcf("DESCRIPTION", fields = "Version")[1L, 1L])
     accepted <- function(item) {
       identical(item, "New submission") ||
+        (dev_version && grepl("^Version contains large components \\(", item)) ||
         grepl(paste0("^Strong dependencies not in (mainstream repositories|",
                      "the CRAN or BioC software repositories): infercalcR$"), item)
     }
