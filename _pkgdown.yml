@@ -12,7 +12,7 @@ template:
     code_font: monospace
 destination: docs
 development:
-  mode: auto
+  mode: unreleased
 home:
   sidebar:
     structure:
