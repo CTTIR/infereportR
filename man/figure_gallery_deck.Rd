@@ -69,7 +69,8 @@ need LaTeX.
 \donttest{
 if (capabilities("cairo")) {
   dir <- file.path(tempdir(), "gallery-deck")
-  files <- figure_gallery_deck(dir, figure_modes = "light")
+  # Inverse slides take the opposite mode, so both light and dark are needed.
+  files <- figure_gallery_deck(dir, figure_modes = c("light", "dark"))
   table(files$type)
   unlink(dir, recursive = TRUE)
 }

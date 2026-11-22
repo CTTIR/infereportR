@@ -51,6 +51,9 @@ separate lines. \code{shorttitle} is the running head.}
 \item{palette, font, rules, typography, emphasis, figures, progress}{Theme
 options, see above; \code{NULL} (default) for the theme's default.}
 
+\item{head}{\code{NULL} (default), \code{TRUE} or \code{FALSE}: the running head with the
+folio. \code{NULL} leaves the class default (a running head).}
+
 \item{layout, notes}{Class options for the Tufte layout and sidenotes, see
 above; \code{NULL} (default) for the class default.}
 

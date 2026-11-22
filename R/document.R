@@ -210,6 +210,8 @@ document_sparkline <- function(values, labels = names(values), caption, at = NUL
 #' @param abstract The abstract, `NULL` or a character vector of paragraphs.
 #' @param paper `"a4"` (default) or `"letter"`.
 #' @param justified If `TRUE`, justified text.
+#' @param head `NULL` (default), `TRUE` or `FALSE`: the running head with the
+#'   folio. `NULL` leaves the class default (a running head).
 #' @param layout,notes Class options for the Tufte layout and sidenotes, see
 #'   above; `NULL` (default) for the class default.
 #' @param bibliography Path to a `.bib` file, or `NULL`.
