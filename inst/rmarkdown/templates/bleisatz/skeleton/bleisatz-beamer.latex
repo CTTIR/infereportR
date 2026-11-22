@@ -1,0 +1,71 @@
+% Pandoc template for Bleisatz decks (R package infereportR, MIT license).
+% Pandoc's default Beamer template loads Latin Modern before the theme, sets
+% its own caption style and adds its own section pages; this short template
+% leaves the fonts, captions and contents dividers to the Bleisatz theme and
+% defines only what pandoc's output needs.
+\documentclass[aspectratio=$if(aspectratio)$$aspectratio$$else$169$endif$,$if(fontsize)$$fontsize$$else$11pt$endif$,ignorenonframetext]{beamer}
+\usetheme$if(themeoptions)$[$for(themeoptions)$$themeoptions$$sep$,$endfor$]$endif${$if(theme)$$theme$$else$Bleisatz$endif$}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales an image to fit the text height and width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi}
+\makeatother
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+$if(tables)$
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{caption}
+\makeatletter
+\def\fnum@table{\tablename~\thetable}
+\makeatother
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+$if(title)$
+\title{$title$}
+$endif$
+$if(subtitle)$
+\subtitle{$subtitle$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$\\$endfor$}
+$endif$
+$if(institute)$
+\institute{$for(institute)$$institute$$sep$\\$endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+$if(venue)$
+\venue{$for(venue)$$venue$$sep$\\$endfor$}
+$endif$
+
+\begin{document}
+$if(title)$
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+$endif$
+
+$for(include-before)$
+$include-before$
+
+$endfor$
+$body$
+
+$for(include-after)$
+$include-after$
+
+$endfor$
+\end{document}

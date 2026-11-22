@@ -1,0 +1,62 @@
+---
+title: "Write the main claim of the talk as a sentence"
+subtitle: "Optional: what, in whom, measured how"
+author: "Author Name"
+institute: "Institute"
+venue:
+  - "Meeting name"
+  - "City"
+format:
+  bleisatz-beamer:
+    # Without options: Bleisatz 1-bit, light, IBM Plex, progress bar.
+    # Uncomment a line to change one thing; values in brackets are the defaults.
+    themeoptions:
+      # - dark              # [light] white on black
+      # - progress=dots     # [bar] | dots | none
+      # - font=mono         # [plex] | mono | c64 (pdf-engine: lualatex) | etbb
+      # - total             # folio "7 / 24"
+      # - nohead            # no running head
+      # - nosectionpages    # no contents divider at each section
+      # --- Tufte, aspect by aspect ---------------------------------------
+      # - palette=grey      # [onebit] | grey | tufte (grey, red, green)
+      # - rules=hair        # [heavy] | hair
+      # - typography=tufte  # [bleisatz] | tufte
+      # - emphasis=italic   # [inverse] | italic
+      # - figures=tufte     # [bleisatz] | tufte
+      # - tufte             # all Tufte aspects at once
+execute:
+  echo: false
+---
+
+```{r}
+#| include: false
+library(ggplot2)
+library(infereportR)
+inch <- function(preset) unlist(figure_size(preset)[c("width", "height")]) / 25.4
+side <- inch("slide_side")
+plot_slide <- ggplot(PlantGrowth, aes(group, weight)) +
+  geom_point(shape = 1) +
+  theme_figure("slide") +
+  labs(x = NULL, y = "Dried weight (g)")
+```
+
+# Results
+
+## Treatment 2 plants weigh the most
+
+```{r}
+#| label: side
+#| fig-width: !expr side[[1]]
+#| fig-height: !expr side[[2]]
+#| fig-show: hide
+plot_slide
+```
+
+\sidefigure[0.64]{\includegraphics[width=\linewidth]{`r knitr::fig_chunk("side", "pdf")`}}
+  {Every plant is shown, by treatment group.}
+\source{R datasets: PlantGrowth.}
+
+## Each frame title states what the slide shows, as a sentence
+
+- Evidence, not decoration
+- One idea per slide

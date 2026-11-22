@@ -1,0 +1,82 @@
+---
+title: "Write the main finding as a sentence"
+subtitle: "Optional: what, in whom, measured how"
+shorttitle: "Short title for the running head"
+author:
+  - "Author Name"
+  - "Institute"
+institute: "Institute"
+venue:
+  - "Journal or meeting"
+  - "Draft"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+keywords: "three to five keywords"
+abstract: |
+  One paragraph: question, design, main result with its uncertainty, conclusion.
+documentclass: bleisatz
+# Without options: Bleisatz 1-bit, light, IBM Plex, progress bar, A4.
+# Uncomment a line to change one thing; values in brackets are the defaults.
+classoption:
+  # - dark              # [light] white on black, for reading on screen
+  # - progress=dots     # [bar] | dots | none
+  # - font=mono         # [plex] | mono | c64 (LuaLaTeX) | etbb (ET Book)
+  # - total             # folio "3 / 8"
+  # - nohead            # no running head
+  # - justified         # [ragged right]
+  # - letterpaper       # [a4paper]
+  # --- Tufte, aspect by aspect -------------------------------------------
+  # - layout=tufte      # [bleisatz] | tufte (110 mm column, 52 mm margin)
+  # - notes=side        # [foot] | side (numbered sidenotes)
+  # - palette=grey      # [onebit] | grey (one grey) | tufte (grey, red, green)
+  # - rules=hair        # [heavy] | hair
+  # - typography=tufte  # [bleisatz] | tufte (italic, unnumbered headings)
+  # - emphasis=italic   # [inverse] | italic (no reversed type)
+  # - figures=tufte     # [bleisatz] | tufte (Tufte figure folders first)
+  # - tufte             # all Tufte aspects at once; lines above switch single ones back
+header-includes:
+  - \figurefolder{figures}
+# References: uncomment, and cite with [@key]; biber runs with latexmk.
+# bibliography: references.bib
+output:
+  rmarkdown::pdf_document:
+    template: bleisatz-document.latex
+    dev: cairo_pdf
+    # citation_package: biblatex
+---
+
+```{r setup, include = FALSE}
+# The class file goes next to this document; figures are saved at the size
+# of the slots (full 134 mm, side 86 mm, half 64 mm) and placed with the
+# class's own commands.
+library(ggplot2)
+library(infereportR)
+file.copy(deck_theme_file("class"), ".", overwrite = TRUE)
+knitr::opts_chunk$set(echo = FALSE, fig.show = "hide")
+inch <- function(preset) unlist(figure_size(preset)[c("width", "height")]) / 25.4
+side <- inch("slide_side")
+full <- inch("slide_full")
+plot_paper <- ggplot(PlantGrowth, aes(group, weight)) +
+  geom_point(shape = 1) +
+  theme_figure("slide") +
+  labs(x = NULL, y = "Dried weight (g)")
+```
+
+# Introduction
+
+Each section heading names what the section shows.
+
+```{r side, fig.width = side[[1]], fig.height = side[[2]]}
+plot_paper
+```
+
+\sidefigure{`r knitr::fig_chunk("side", "pdf")`}{Every plant by treatment group; the
+caption stands beside the figure.\label{fig:side}}[R datasets: PlantGrowth.]
+
+# Results
+
+```{r full, fig.width = full[[1]], fig.height = full[[2]]}
+plot_paper
+```
+
+\fullfigure{`r knitr::fig_chunk("full", "pdf")`}{The same figure across the text
+block; the caption stands below it.}[R datasets: PlantGrowth.]

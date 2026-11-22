@@ -1,0 +1,5 @@
+name: infereportR slides (Bleisatz)
+description: >
+  A Bleisatz Beamer deck (16:9, 11 pt): black and white, figures saved at the
+  size of the theme's slots. Every theme option is listed, commented out.
+create_dir: true
