@@ -17,14 +17,23 @@ Description: Formats finalized statistical results as tables, text and
     them with the package's own display strings and keep the full results
     retrievable from the figure; annotation layers draw precomputed results
     at explicit positions. A character mode redraws plots on a monospaced
-    text grid in the style of 1980s home computers.
+    text grid in the style of 1980s home computers. Slide decks and
+    documents set the figures at the size of their slots with the bundled
+    'Bleisatz' 'Beamer' theme and document class, which are distributed
+    under the LaTeX Project Public License 1.3c (see the Copyright field);
+    compiling them is optional.
 License: MIT + file LICENSE
+Copyright: The files inst/bleisatz/beamerthemeBleisatz.sty and
+    inst/bleisatz/bleisatz.cls (Bleisatz 1.3, copyright R. Heller) are
+    distributed unmodified under the LaTeX Project Public License 1.3c;
+    the rest of the package is MIT licensed. See LICENSE.md.
 Encoding: UTF-8
 Language: en-US
 Depends: R (>= 4.1.0)
 Imports: ggplot2 (>= 3.5.0), infercalcR (>= 0.1.0), grid, grDevices,
     stats, utils
-Suggests: knitr, rmarkdown, ragg, systemfonts, testthat (>= 3.1.7), withr
+Suggests: knitr, rmarkdown, ragg, systemfonts, testthat (>= 3.1.7), tinytex,
+    withr
 VignetteBuilder: knitr
 URL: https://github.com/CTTIR/infereportR,
     https://cttir.github.io/infereportR/
