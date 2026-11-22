@@ -54,3 +54,4 @@
 ^(.*/)?prompts$
 ^CLA[U]DE\.local\.md$
 ^AGENTS\.override\.md$
+^CITATION\.cff$
