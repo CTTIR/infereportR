@@ -1,6 +1,4 @@
-# infereportR 0.2.0.9000
-
-Development version of 0.3.0.
+# infereportR 0.3.0
 
 ## Bleisatz slide decks and documents
 
