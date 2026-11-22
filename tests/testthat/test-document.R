@@ -109,7 +109,7 @@ test_that("Tufte blocks map to the class's commands", {
     document_epigraph("No source."),
     document_text(paste("C5a rose to", tex_green("20.7"), sparkline_tex(c(9, 20, 9)))),
     document_note("Unnumbered.", numbered = FALSE),
-    document_sparkline(list(`ISS ≥ 25` = c(1, 2, 3)), caption = "Sparks.",
+    document_sparkline(stats::setNames(list(c(1, 2, 3)), "ISS \u2265 25"), caption = "Sparks.",
                        note = "Simulated.", label = "tab:sp")
   )
   tex <- .ir_document_tex(figure_document(blocks, title = "D", tufte = TRUE))
