@@ -63,12 +63,13 @@
                                           caption = caps$caption[[i]], text = text,
                                           source = source, name = fr$name)))
   }
-  modes <- c(light = "Black ink on white. The default set.",
-             dark = "White ink on black, for inverse frames and dark decks.",
-             `light-transparent` = paste("Black ink, no background, no borders: information",
-                                         "only, for any light ground."),
-             `dark-transparent` = paste("White ink, no background, no borders: information",
-                                        "only, for any dark ground."))
+  # Labels of the four mode folders (set by name, not as argument tags).
+  modes <- stats::setNames(
+    c("Black ink on white. The default set.",
+      "White ink on black, for inverse frames and dark decks.",
+      "Black ink, no background, no borders: information only, for any light ground.",
+      "White ink, no background, no borders: information only, for any dark ground."),
+    .ir_set_modes)
   c(slides, list(
     section_slide("Modes"),
     figure_slide(title = "Every figure exists in four modes", layout = "text", text = modes,
