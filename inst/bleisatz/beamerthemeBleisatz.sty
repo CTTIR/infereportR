@@ -1,0 +1,1202 @@
+%% =====================================================================
+%%  beamerthemeBleisatz.sty
+%%  Bleisatz — a strictly 1-bit Beamer theme: #000000 ink on #FFFFFF paper.
+%%  No greys, no tints, no transparency, no rounded corners, no shadows.
+%%  Emphasis is carried by weight, size, position, inversion and pattern.
+%%
+%%  Version 1.3 (2026-11-19) · LPPL 1.3c
+%%  Engines: pdfLaTeX (Overleaf default), LuaLaTeX, XeLaTeX
+%%  Typeface: IBM Plex Sans / Sans Condensed / Mono (SIL OFL, in TeX Live);
+%%            optionally C64 Pro Mono (font=c64, see below)
+%%
+%%  Theme options
+%%  Without options: Bleisatz 1-bit, light, IBM Plex, progress bar.
+%%
+%%    total           folio shows "7 / 24" instead of "7"
+%%    nohead          no running head on content frames
+%%    nosectionpages  no automatic contents divider at \section
+%%    dark            the whole deck white on black (inverse frames turn black on white)
+%%    progress=bar    the head rule is a progress bar with a dot per section (default)
+%%    progress=dots   one dot per frame beside the folio, grouped by section
+%%    progress=none   the plain head rule
+%%    font=plex       IBM Plex Sans, Sans Condensed and Mono (default)
+%%    font=mono       IBM Plex Mono throughout (every engine, TeX Live fonts)
+%%    font=c64        C64 Pro Mono throughout, on square cells one em wide
+%%                    (LuaLaTeX; the font is not part of this theme, get it from
+%%                    https://style64.org/c64-truetype; without it: font=mono)
+%%    font=etbb       ET Book (ETbb, in TeX Live), Edward Tufte's typeface
+%%
+%%  Tufte (Cognitive Style of PowerPoint, Visual Display, Beautiful Evidence):
+%%  every aspect is an option of its own, Bleisatz value first (the default).
+%%    palette=onebit|grey|tufte  two values | plus one grey (#999999) for
+%%                    context, sources, markers | plus the grey, Tufte's red and green
+%%    onebit, grey    short for palette=onebit, palette=grey
+%%    font=etbb       ET Book (see above)
+%%    rules=heavy|hair         heavy head, block and title rules | hairlines only
+%%    typography=bleisatz|tufte  weight for structure | italic and size, regular
+%%                    titles, grey markers and sources, no section numbers
+%%    emphasis=inverse|italic  \inv, \alert, alertblock and inverse frames
+%%                    reversed | italic, hairlines, no reversed type
+%%    figures=bleisatz|tufte   \figurefolder searches the Bleisatz folders first |
+%%                    the Tufte set first; pgfplots in Tufte's style
+%%    head|nohead, sectionpages|nosectionpages, progress=...  (see above)
+%%    tufte           all of them at once: palette=tufte, font=etbb, rules=hair,
+%%                    typography=tufte, emphasis=italic, figures=tufte, nohead,
+%%                    progress=none, nosectionpages. Any option given beside it
+%%                    wins (tufte,head,progress=bar,font=plex,onebit ...).
+%% =====================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeBleisatz}
+  [2026/11/19 v1.3 Bleisatz: strictly black-and-white Beamer theme]
+
+\RequirePackage{iftex}
+\RequirePackage{etoolbox}
+\RequirePackage{tikz}
+\usetikzlibrary{patterns,calc}
+\RequirePackage{booktabs}
+\RequirePackage{ragged2e}
+\RequirePackage[absolute,overlay]{textpos}
+
+%% ---------------------------------------------------------------------
+%%  Options
+%% ---------------------------------------------------------------------
+\newif\ifbz@total        \bz@totalfalse
+\newif\ifbz@head         \bz@headtrue
+\newif\ifbz@sectionpages \bz@sectionpagestrue
+\newif\ifbz@dark         \bz@darkfalse
+\newif\ifbz@tufte        \bz@tuftefalse
+% which options were given explicitly (they win over the tufte defaults)
+\newif\ifbz@headset      \newif\ifbz@secpagesset
+\newif\ifbz@progressset  \newif\ifbz@fontset
+\DeclareOptionBeamer{total}{\bz@totaltrue}
+\DeclareOptionBeamer{nohead}{\bz@headfalse\bz@headsettrue}
+\DeclareOptionBeamer{head}{\bz@headtrue\bz@headsettrue}
+\DeclareOptionBeamer{nosectionpages}{\bz@sectionpagesfalse\bz@secpagessettrue}
+\DeclareOptionBeamer{sectionpages}{\bz@sectionpagestrue\bz@secpagessettrue}
+\DeclareOptionBeamer{dark}{\bz@darktrue}
+\DeclareOptionBeamer{tufte}{\bz@tuftetrue}
+% palette=onebit | grey | tufte (default onebit; with tufte: tufte)
+\def\bz@palette{}
+\DeclareOptionBeamer{palette}{\edef\bz@palette{#1}}
+\DeclareOptionBeamer{onebit}{\def\bz@palette{onebit}}
+\DeclareOptionBeamer{grey}{\def\bz@palette{grey}}
+% progress=bar | dots | none (default bar; with tufte: none; "progress" alone means bar)
+\def\bz@progress{bar}
+\DeclareOptionBeamer{progress}[bar]{\edef\bz@progress{#1}\bz@progresssettrue}
+% font=plex | mono | c64 | etbb (default plex; with tufte: etbb)
+\def\bz@font{plex}
+\DeclareOptionBeamer{font}{\edef\bz@font{#1}\bz@fontsettrue}
+% the Tufte aspects, one option each (empty = not given: Bleisatz, or Tufte under tufte)
+\def\bz@rules{}\def\bz@typography{}\def\bz@emphasis{}\def\bz@figures{}
+\DeclareOptionBeamer{rules}{\edef\bz@rules{#1}}
+\DeclareOptionBeamer{typography}{\edef\bz@typography{#1}}
+\DeclareOptionBeamer{emphasis}{\edef\bz@emphasis{#1}}
+\DeclareOptionBeamer{figures}{\edef\bz@figures{#1}}
+\ProcessOptionsBeamer
+\def\bz@str@bar{bar}\def\bz@str@dots{dots}\def\bz@str@none{none}
+\ifx\bz@progress\bz@str@bar\else\ifx\bz@progress\bz@str@dots\else\ifx\bz@progress\bz@str@none\else
+  \PackageWarning{beamerthemeBleisatz}{Unknown value progress=\bz@progress; using none}%
+  \def\bz@progress{none}%
+\fi\fi\fi
+\def\bz@str@plex{plex}\def\bz@str@mono{mono}\def\bz@str@csf{c64}\def\bz@str@etbb{etbb}
+% tufte: Tufte's defaults wherever no option said otherwise
+\ifbz@tufte
+  \ifx\bz@palette\@empty\def\bz@palette{tufte}\fi
+  \ifbz@fontset\else\def\bz@font{etbb}\fi
+  \ifbz@secpagesset\else\bz@sectionpagesfalse\fi
+  \ifbz@progressset\else\def\bz@progress{none}\fi
+  \ifbz@headset\else
+    \ifx\bz@progress\bz@str@none\bz@headfalse\fi   % an explicit progress keeps the head
+  \fi
+\else
+  \ifx\bz@palette\@empty\def\bz@palette{onebit}\fi
+\fi
+% one flag per aspect: true = Tufte's way
+\newif\ifbz@hair \newif\ifbz@ttype \newif\ifbz@italic \newif\ifbz@tfigs
+\def\bz@aspect#1#2#3#4{% value macro, Bleisatz value, Tufte value, flag name
+  \ifx#1\@empty\ifbz@tufte\def#1{#3}\else\def#1{#2}\fi\fi
+  \def\bz@tmp{#3}\ifx#1\bz@tmp\csname bz@#4true\endcsname\else
+  \def\bz@tmp{#2}\ifx#1\bz@tmp\else
+    \PackageWarning{beamerthemeBleisatz}{Unknown value \detokenize\expandafter{#1}; using #2}%
+    \def#1{#2}\fi\fi}
+\bz@aspect\bz@rules{heavy}{hair}{hair}
+\bz@aspect\bz@typography{bleisatz}{tufte}{ttype}
+\bz@aspect\bz@emphasis{inverse}{italic}{italic}
+\bz@aspect\bz@figures{bleisatz}{tufte}{tfigs}
+\ifx\bz@font\bz@str@plex\else\ifx\bz@font\bz@str@mono\else\ifx\bz@font\bz@str@csf\else
+\ifx\bz@font\bz@str@etbb\else
+  \PackageWarning{beamerthemeBleisatz}{Unknown value font=\bz@font; using plex}%
+  \def\bz@font{plex}%
+\fi\fi\fi\fi
+\def\bz@str@onebit{onebit}\def\bz@str@grey{grey}\def\bz@str@tpal{tufte}
+\newif\ifbz@grey   \bz@greyfalse    % the one grey is allowed
+\newif\ifbz@colour \bz@colourfalse  % Tufte's red and green are allowed
+\ifx\bz@palette\bz@str@tpal\bz@greytrue\bz@colourtrue\else
+\ifx\bz@palette\bz@str@grey\bz@greytrue\else
+\ifx\bz@palette\bz@str@onebit\else
+  \PackageWarning{beamerthemeBleisatz}{Unknown value palette=\bz@palette; using onebit}%
+  \def\bz@palette{onebit}%
+\fi\fi\fi
+
+%% ---------------------------------------------------------------------
+%%  Grid
+%%  16:9 page = 160 x 90 mm. One outer margin, one rule weight family.
+%% ---------------------------------------------------------------------
+\newlength\bz@margin      \setlength\bz@margin{13mm}
+\newlength\bz@heavy       \setlength\bz@heavy{1.1pt}   % head rule, block rule
+\newlength\bz@hair        \setlength\bz@hair{0.4pt}    % everything else
+\newlength\bz@fill        \setlength\bz@fill{1.1pt}    % progress bar fill
+% tufte: the smallest effective difference; no heavy rules anywhere
+\ifbz@hair\setlength\bz@heavy{\bz@hair}\fi
+\newlength\bz@titleheight \setlength\bz@titleheight{37pt} % 2 title lines
+\newlength\bz@measure     % comfortable line length for running text
+\setbeamersize{text margin left=\bz@margin, text margin right=\bz@margin}
+\TPGrid[0mm,0mm]{160}{90}% textpos unit = 1 mm on a 16:9 page
+
+% top-aligned frames by default: the grid only works if content
+% always starts at the same height
+\beamer@centeredfalse
+
+%% ---------------------------------------------------------------------
+%%  Colour: exactly two values
+%% ---------------------------------------------------------------------
+% Dark decks swap the two values themselves, so every rule, pattern and pgfplots
+% style follows without further changes.
+\ifbz@dark
+  \definecolor{bzink}{RGB}{255,255,255}
+  \definecolor{bzpaper}{RGB}{0,0,0}
+\else
+  \definecolor{bzink}{RGB}{0,0,0}
+  \definecolor{bzpaper}{RGB}{255,255,255}
+\fi
+\def\bz@ink{bzink}
+\def\bz@paper{bzpaper}
+% The palette beyond the two values: one grey (palette=grey|tufte), Tufte's
+% red and green (palette=tufte). Where the palette lacks them they are ink,
+% so a deck never shows a colour it was not allowed. C64: VIC-II colours.
+\ifbz@grey
+  \ifx\bz@font\bz@str@csf\definecolor{bzgrey}{RGB}{149,149,149}%
+  \else\definecolor{bzgrey}{RGB}{153,153,153}\fi
+\else\colorlet{bzgrey}{bzink}\fi
+\ifbz@colour
+  \ifx\bz@font\bz@str@csf
+    \ifbz@dark\definecolor{bzred}{RGB}{203,126,117}\definecolor{bzgreen}{RGB}{154,226,155}%
+    \else\definecolor{bzred}{RGB}{159,78,68}\definecolor{bzgreen}{RGB}{92,171,94}\fi
+  \else
+    \ifbz@dark\definecolor{bzred}{RGB}{229,72,77}\definecolor{bzgreen}{RGB}{93,183,96}%
+    \else\definecolor{bzred}{RGB}{179,32,42}\definecolor{bzgreen}{RGB}{46,125,50}\fi
+  \fi
+\else\colorlet{bzred}{bzink}\colorlet{bzgreen}{bzink}\fi
+% \muted{} context and sources (grey); \inred{} / \ingreen{} link numbers to
+% the marks of the same colour (palette=tufte; otherwise italic / plain ink)
+\DeclareRobustCommand\muted[1]{{\color{bzgrey}#1}}
+\DeclareRobustCommand\inred[1]{{\ifbz@colour\color{bzred}#1\else\itshape#1\fi}}
+\DeclareRobustCommand\ingreen[1]{{\ifbz@colour\color{bzgreen}\fi#1}}
+
+\newcommand\bz@applycolors{%
+  \edef\bz@tmp{%
+    \noexpand\setbeamercolor{normal text}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{background canvas}{bg=\bz@paper}%
+    \noexpand\setbeamercolor{structure}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{local structure}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{item}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{subitem}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{subsubitem}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{item projected}{fg=\bz@paper,bg=\bz@ink}%
+    \noexpand\setbeamercolor{alerted text}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{example text}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{titlelike}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{title}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{subtitle}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{frametitle}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{framesubtitle}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{block title}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{block body}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{block title example}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{block body example}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{caption name}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{footnote}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{footnote mark}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{section in toc}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{section in toc shaded}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{subsection in toc}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{subsection in toc shaded}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{palette primary}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{palette secondary}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{palette tertiary}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{palette quaternary}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{button}{fg=\bz@paper,bg=\bz@ink}%
+    \noexpand\setbeamercolor{navigation symbols}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{navigation symbols dimmed}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{bibliography item}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{bibliography entry author}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{bibliography entry title}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{bibliography entry location}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{bibliography entry note}{fg=\bz@ink}%
+    \noexpand\setbeamercolor{note page}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{note title}{fg=\bz@ink,bg=\bz@paper}%
+    \noexpand\setbeamercolor{bz inverse}{fg=\bz@paper,bg=\bz@ink}%
+  }\bz@tmp}
+
+% swap ink and paper (used by alert blocks, \inv, inverse frames)
+\newcommand\bz@swap{%
+  \let\bz@tmpc\bz@ink\let\bz@ink\bz@paper\let\bz@paper\bz@tmpc
+  \bz@applycolors}
+
+\bz@applycolors
+\setbeamercovered{invisible}% beamer's "transparent" would create grey
+
+%% ---------------------------------------------------------------------
+%%  Typefaces
+%%  font=plex  pdfLaTeX: Type 1 versions from the "plex" package;
+%%             Lua/XeLaTeX: the OpenType files of the same package
+%%  font=mono  IBM Plex Mono for every role (Type 1 or OpenType)
+%%  font=c64   C64 Pro Mono for every role (LuaLaTeX or XeLaTeX, installed)
+%%  Fallbacks: font=c64 -> font=mono (pdfLaTeX, or C64 Pro Mono missing);
+%%             Plex missing -> TeX Gyre Heros / Latin Modern Mono
+%% ---------------------------------------------------------------------
+\ifx\bz@font\bz@str@csf
+  \ifPDFTeX
+    \PackageWarning{beamerthemeBleisatz}{font=c64 needs LuaLaTeX (or XeLaTeX);
+      using font=mono}%
+    \def\bz@font{mono}%
+  \fi
+\fi
+\newif\ifbz@plex
+\newif\ifbz@etbb
+\ifPDFTeX
+  \RequirePackage[T1]{fontenc}
+  \ifx\bz@font\bz@str@etbb
+    \IfFileExists{ETbb.sty}{\bz@etbbtrue}{%
+      \PackageWarning{beamerthemeBleisatz}{ET Book (ETbb) not found; using font=plex}%
+      \def\bz@font{plex}}%
+  \fi
+  \ifbz@etbb
+    % ET Book: oldstyle proportional figures in text, lining tabular in
+    % tables and key figures; IBM Plex Mono stays the monospaced face
+    \RequirePackage[p,osf]{ETbb}
+    \renewcommand\sfdefault{ETbb-OsF}
+    \IfFileExists{T1plxMono-TLF.fd}{\renewcommand\ttdefault{plxMono-TLF}}{}
+    \newcommand\bz@light{\fontfamily{ETbb-OsF}\fontseries{m}\selectfont}
+    \newcommand\bz@cond{\fontfamily{ETbb-OsF}\fontseries{m}\selectfont}
+    \newcommand\bz@condbf{\fontfamily{ETbb-OsF}\fontseries{m}\fontshape{it}\selectfont}
+    \newcommand\bz@tabnums{\fontfamily{ETbb-TLF}\selectfont}
+    \newcommand\bz@liningnums{\fontfamily{ETbb-LF}\selectfont}
+  \else
+  \IfFileExists{T1plxSans-TLF.fd}{\bz@plextrue}{\bz@plexfalse}
+  \ifbz@plex
+    \ifx\bz@font\bz@str@mono
+      \renewcommand\sfdefault{plxMono-TLF}
+      \renewcommand\rmdefault{plxMono-TLF}
+      \renewcommand\ttdefault{plxMono-TLF}
+      \renewcommand\bfdefault{sb}
+      \newcommand\bz@light{\fontfamily{plxMono-TLF}\fontseries{l}\selectfont}
+      \newcommand\bz@cond{\fontfamily{plxMono-TLF}\fontseries{m}\selectfont}
+      \newcommand\bz@condbf{\fontfamily{plxMono-TLF}\fontseries{sb}\selectfont}
+    \else
+      \renewcommand\sfdefault{plxSans-TLF}
+      \renewcommand\rmdefault{plxSerif-TLF}
+      \renewcommand\ttdefault{plxMono-TLF}
+      \renewcommand\bfdefault{sb}
+      \newcommand\bz@light{\fontfamily{plxSans-TLF}\fontseries{l}\selectfont}
+      \newcommand\bz@cond{\fontfamily{plxSans-TLF}\fontseries{c}\selectfont}
+      \newcommand\bz@condbf{\fontfamily{plxSans-TLF}\fontseries{sbc}\selectfont}
+    \fi
+  \else
+    \PackageWarning{beamerthemeBleisatz}{IBM Plex not found, using TeX Gyre Heros}
+    \renewcommand\sfdefault{qhv}
+    \renewcommand\ttdefault{lmtt}
+    \ifx\bz@font\bz@str@mono\renewcommand\sfdefault{lmtt}\fi
+    \newcommand\bz@light{\fontfamily{\sfdefault}\fontseries{m}\selectfont}
+    \newcommand\bz@cond{\fontfamily{\sfdefault}\fontseries{m}\selectfont}
+    \newcommand\bz@condbf{\fontfamily{\sfdefault}\fontseries{b}\selectfont}
+  \fi
+  \fi
+\else
+  \RequirePackage{fontspec}
+  % C64 Pro Mono as an installed font, or as the file of the font package in
+  % the project folder (Overleaf: upload C64_Pro_Mono-STYLE.ttf next to the .tex)
+  \def\bz@csfname{}
+  \ifx\bz@font\bz@str@csf
+    \IfFontExistsTF{C64 Pro Mono}{\def\bz@csfname{C64 Pro Mono}}{%
+      \IfFontExistsTF{C64_Pro_Mono-STYLE.ttf}{\def\bz@csfname{C64_Pro_Mono-STYLE.ttf}}{%
+        \IfFontExistsTF{C64_Pro_Mono-STYLE.otf}{\def\bz@csfname{C64_Pro_Mono-STYLE.otf}}{}}}%
+    \ifx\bz@csfname\@empty
+      \PackageWarning{beamerthemeBleisatz}{C64 Pro Mono is not installed
+        (https://style64.org/c64-truetype); using font=mono}%
+      \def\bz@font{mono}%
+    \fi
+  \fi
+  \IfFontExistsTF{IBMPlexSans-Regular.otf}{\bz@plextrue}{\bz@plexfalse}
+  \ifx\bz@font\bz@str@etbb
+    \IfFontExistsTF{ETbb-Regular.otf}{\bz@etbbtrue}{%
+      \PackageWarning{beamerthemeBleisatz}{ET Book (ETbb) not found; using font=plex}%
+      \def\bz@font{plex}}%
+  \fi
+  \ifbz@etbb
+    \defaultfontfeatures{Ligatures=TeX}
+    \setsansfont{ETbb}[Extension=.otf, UprightFont=*-Regular, ItalicFont=*-Italic,
+      BoldFont=*-Bold, BoldItalicFont=*-BoldItalic, Numbers={OldStyle,Proportional}]
+    \setmainfont{ETbb}[Extension=.otf, UprightFont=*-Regular, ItalicFont=*-Italic,
+      BoldFont=*-Bold, BoldItalicFont=*-BoldItalic, Numbers={OldStyle,Proportional}]
+    \ifbz@plex
+      \setmonofont{IBMPlexMono}[Extension=.otf, UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+    \fi
+    \newcommand\bz@light{\sffamily}
+    \newcommand\bz@cond{\sffamily}
+    \newcommand\bz@condbf{\sffamily\itshape}
+    \newcommand\bz@tabnums{\addfontfeatures{Numbers={Lining,Monospaced}}}
+    \newcommand\bz@liningnums{\addfontfeatures{Numbers={Lining}}}
+  \else
+  \ifx\bz@font\bz@str@csf
+    % One face for every role. C64 Pro Mono has a single weight and no
+    % italics, so those shapes point to the same face. TeX ligatures stay off;
+    % under LuaLaTeX "--" becomes one hyphen and any glyph the font lacks
+    % (umlauts, the section sign) comes from IBM Plex Mono.
+    \ifLuaTeX
+      \directlua{luaotfload.add_fallback("bleisatzcsixtyfour",
+        {"file:IBMPlexMono-Regular.otf:mode=node;"})}%
+      % "--" and "---" set as one hyphen: the C64 had no dashes
+      \directlua{fonts.handlers.otf.addfeature{name = "bzhyphen", type = "ligature",
+        data = {[0x2D] = {0x2D, 0x2D}}}}%
+      \def\bz@csffallback{RawFeature={fallback=bleisatzcsixtyfour;+bzhyphen}}%
+    \else
+      \def\bz@csffallback{}%
+      \PackageWarning{beamerthemeBleisatz}{font=c64 under XeLaTeX: glyphs that
+        C64 Pro Mono lacks (umlauts, section sign) are dropped; LuaLaTeX fills
+        them from IBM Plex Mono}%
+    \fi
+    \edef\bz@csffeatures{Ligatures=TeXOff, BoldFont={\bz@csfname},
+      ItalicFont={\bz@csfname}, BoldItalicFont={\bz@csfname},
+      SlantedFont={\bz@csfname}, \bz@csffallback}
+    \edef\bz@tmp{%
+      \noexpand\setsansfont{\bz@csfname}[\bz@csffeatures]%
+      \noexpand\setmainfont{\bz@csfname}[\bz@csffeatures]%
+      \noexpand\setmonofont{\bz@csfname}[\bz@csffeatures]%
+      \noexpand\newfontfamily\noexpand\bz@light{\bz@csfname}[\bz@csffeatures]}%
+    \bz@tmp
+    \let\bz@cond\bz@light
+    \let\bz@condbf\bz@light
+    % What the C64 had no glyph for, written as it would have been typed.
+    \RequirePackage{newunicodechar}
+    \newunicodechar{≥}{>=}\newunicodechar{≤}{<=}\newunicodechar{±}{+/-}
+    \newunicodechar{×}{x}\newunicodechar{−}{-}\newunicodechar{–}{-}
+    \newunicodechar{—}{--}\newunicodechar{·}{/}\newunicodechar{…}{...}
+    \UndeclareTextCommand{\textendash}{TU}\DeclareTextCommand{\textendash}{TU}{-}
+    \UndeclareTextCommand{\textemdash}{TU}\DeclareTextCommand{\textemdash}{TU}{--}
+    \UndeclareTextCommand{\textperiodcentered}{TU}\DeclareTextCommand{\textperiodcentered}{TU}{/}
+    \UndeclareTextCommand{\textellipsis}{TU}\DeclareTextCommand{\textellipsis}{TU}{...}
+    % Math: letters and digits from the same face; relations as typed.
+    \edef\bz@tmp{\noexpand\DeclareSymbolFont{bzcsf}{TU}{\sfdefault}{m}{n}}\bz@tmp
+    % \bz@mc<class><char>: that character in math from the C64 face
+    \def\bz@mc#1#2{\Umathcode`#2="#1 \symbzcsf`#2\relax}
+    \AtBeginDocument{%
+      \count@=`a \loop\Umathcode\count@="7 \symbzcsf\count@
+        \advance\count@\@ne\ifnum\count@<`\{\repeat
+      \count@=`A \loop\Umathcode\count@="7 \symbzcsf\count@
+        \advance\count@\@ne\ifnum\count@<`\[\repeat
+      \count@=`0 \loop\Umathcode\count@="7 \symbzcsf\count@
+        \advance\count@\@ne\ifnum\count@<`\:\repeat
+      \bz@mc2+\bz@mc2-\bz@mc3=\bz@mc3<\bz@mc3>\bz@mc3:\bz@mc4(\bz@mc4[%
+      \bz@mc5)\bz@mc5]\bz@mc6,\bz@mc6;\bz@mc0.\bz@mc0/\bz@mc0|\bz@mc5!\bz@mc5?%
+      \renewcommand\geq{\mathrel{\mbox{>=}}}\let\ge\geq
+      \renewcommand\leq{\mathrel{\mbox{<=}}}\let\le\leq
+      \renewcommand\times{\mathbin{\mbox{x}}}%
+      \renewcommand\pm{\mathbin{\mbox{+/-}}}}%
+  \else\ifbz@plex
+    \defaultfontfeatures{Ligatures=TeX}
+    \ifx\bz@font\bz@str@mono
+      \setsansfont{IBMPlexMono}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \setmainfont{IBMPlexMono}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \setmonofont{IBMPlexMono}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \newfontfamily\bz@light{IBMPlexMono}[Extension=.otf,
+        UprightFont=*-Light, ItalicFont=*-LightItalic,
+        BoldFont=*-Medium, BoldItalicFont=*-MediumItalic]
+      \newcommand\bz@cond{\ttfamily}
+      \newcommand\bz@condbf{\ttfamily\bfseries}
+    \else
+      \setsansfont{IBMPlexSans}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \setmainfont{IBMPlexSerif}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \setmonofont{IBMPlexMono}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \newfontfamily\bz@light{IBMPlexSans}[Extension=.otf,
+        UprightFont=*-Light, ItalicFont=*-LightItalic,
+        BoldFont=*-Medium, BoldItalicFont=*-MediumItalic]
+      \newfontfamily\bz@cond{IBMPlexSansCondensed}[Extension=.otf,
+        UprightFont=*-Regular, ItalicFont=*-Italic,
+        BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic]
+      \newcommand\bz@condbf{\bz@cond\bfseries}
+    \fi
+  \else
+    \PackageWarning{beamerthemeBleisatz}{IBM Plex not found, using TeX Gyre Heros}
+    \setsansfont{TeX Gyre Heros}
+    \ifx\bz@font\bz@str@mono\setsansfont{Latin Modern Mono}\fi
+    \newcommand\bz@light{\sffamily}
+    \newcommand\bz@cond{\sffamily}
+    \newcommand\bz@condbf{\sffamily\bfseries}
+  \fi\fi
+  \fi
+\fi
+\providecommand\bz@tabnums{}
+\providecommand\bz@liningnums{}
+% ET Book has no maths: letters and digits come from the text face
+\ifbz@etbb\AtEndPreamble{\RequirePackage[italic]{mathastext}}\fi
+\RequirePackage[protrusion=true,expansion=false]{microtype}% hanging punctuation
+% a monospaced cell grid has no hanging punctuation
+\ifx\bz@font\bz@str@csf\microtypesetup{protrusion=false}\fi
+
+% public font switches
+\newcommand\lightface{\bz@light}
+\newcommand\condensed{\bz@cond}
+
+\setbeamerfont{normal text}{size=\normalsize}
+\setbeamerfont{frametitle}{size=\fontsize{15.5}{18}, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\fontsize{10.5}{13}, series=\mdseries}
+\setbeamerfont{title}{family=\bz@light, size=\fontsize{27}{30}}
+\setbeamerfont{subtitle}{size=\fontsize{12}{15}}
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{institute}{family=\bz@cond, size=\fontsize{7}{8.5}}
+\setbeamerfont{date}{family=\bz@cond, size=\fontsize{7}{8.5}}
+\setbeamerfont{bz head}{family=\bz@cond, size=\fontsize{7}{8.5}}
+\setbeamerfont{bz label}{family=\bz@condbf, size=\fontsize{8}{10}}
+\setbeamerfont{bz caption}{size=\fontsize{8}{10.5}}
+\setbeamerfont{bz source}{family=\bz@cond, size=\fontsize{6.5}{8}}
+\setbeamerfont{bz statement}{family=\bz@light, size=\fontsize{22}{26}}
+\setbeamerfont{bz keyfigure}{family=\bz@light, size=\fontsize{60}{60}}
+\setbeamerfont{section in toc}{family=\bz@light, size=\fontsize{13}{15}}
+\setbeamerfont{block title}{series=\bfseries, size=\normalsize}
+\setbeamerfont{block title alerted}{series=\bfseries, size=\normalsize}
+\setbeamerfont{block title example}{shape=\itshape, size=\normalsize}
+\setbeamerfont{block body}{size=\normalsize}
+\setbeamerfont{alerted text}{series=\bfseries}% emphasis = weight, not colour
+\setbeamerfont{footnote}{size=\fontsize{7}{8.5}}
+\setbeamerfont{caption}{size=\fontsize{8}{10.5}}
+\setbeamerfont{caption name}{family=\bz@condbf}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
+
+% the section sign of the running head; C64 Pro Mono has none
+\newcommand\bz@secsign{\textsection\,}
+\ifx\bz@font\bz@str@csf\renewcommand\bz@secsign{}\fi
+
+% font=c64: square cells. C64 Pro Mono draws every glyph on a cell one em wide
+% and one em tall (8 x 8 pixels, no line gap), so each size is set solid:
+% leading = size. The scale keeps the capital height of the Plex sizes.
+\ifx\bz@font\bz@str@csf
+  \renewcommand\tiny{\fontsize{5}{5}\selectfont}
+  \renewcommand\scriptsize{\fontsize{6}{6}\selectfont}
+  \renewcommand\footnotesize{\fontsize{7}{7}\selectfont}
+  \renewcommand\small{\fontsize{8}{8}\selectfont}
+  \renewcommand\normalsize{\fontsize{9}{9}\selectfont}
+  \renewcommand\large{\fontsize{10}{10}\selectfont}
+  \renewcommand\Large{\fontsize{12}{12}\selectfont}
+  \renewcommand\LARGE{\fontsize{14}{14}\selectfont}
+  \renewcommand\huge{\fontsize{18}{18}\selectfont}
+  \renewcommand\Huge{\fontsize{24}{24}\selectfont}
+  \normalsize
+  \setbeamerfont{frametitle}{size=\fontsize{10}{10}, series=\mdseries}
+  \setbeamerfont{framesubtitle}{size=\fontsize{8}{8}}
+  \setbeamerfont{title}{size=\fontsize{18}{18}}
+  \setbeamerfont{subtitle}{size=\fontsize{10}{10}}
+  \setbeamerfont{author}{size=\fontsize{8}{8}}
+  \setbeamerfont{institute}{size=\fontsize{6}{6}}
+  \setbeamerfont{date}{size=\fontsize{6}{6}}
+  \setbeamerfont{bz head}{size=\fontsize{6}{6}}
+  \setbeamerfont{bz label}{size=\fontsize{7}{7}}
+  \setbeamerfont{bz caption}{size=\fontsize{7}{7}}
+  \setbeamerfont{bz source}{size=\fontsize{6}{6}}
+  \setbeamerfont{bz statement}{size=\fontsize{16}{16}}
+  \setbeamerfont{bz keyfigure}{size=\fontsize{48}{48}}
+  \setbeamerfont{section in toc}{size=\fontsize{12}{12}}
+  \setbeamerfont{footnote}{size=\fontsize{6}{6}}
+  \setbeamerfont{caption}{size=\fontsize{7}{7}}
+  \setbeamerfont{block title}{series=\mdseries}
+  \setbeamerfont{block title alerted}{series=\mdseries}
+  \setbeamerfont{block title example}{shape=\upshape}
+  % on a cell grid words wrap whole, as on the screen of the machine
+  \setlength\RaggedRightRightskip{0pt plus 1fil}
+  \setlength\RaggedLeftLeftskip{0pt plus 1fil}
+  % one weight: emphasis by \alert is reverse video, as RVS ON on the C64
+  \newsavebox\bz@rvs
+  \setbeamertemplate{alerted text begin}{\begin{lrbox}{\bz@rvs}}
+  \setbeamertemplate{alerted text end}{\end{lrbox}%
+    {\setlength\fboxsep{0pt}\colorbox{\bz@ink}{\usebox\bz@rvs}}}
+  \apptocmd{\bz@applycolors}{\setbeamercolor{alerted text}{fg=\bz@paper}}{}{}
+  \bz@applycolors
+\fi
+
+%% ---------------------------------------------------------------------
+%%  typography=tufte: structure by italic and size, never by weight; markers
+%%  and context in the grey (palette grey/tufte), the rest in ink
+%% ---------------------------------------------------------------------
+\ifbz@ttype
+  \ifx\bz@font\bz@str@csf\else
+    \setbeamerfont{frametitle}{size=\fontsize{16}{19}, series=\mdseries}
+    \setbeamerfont{bz label}{size=\fontsize{8.5}{10}}
+    \setbeamerfont{bz head}{size=\fontsize{7.5}{9}}
+    \setbeamerfont{bz source}{size=\fontsize{7}{8.5}}
+  \fi
+  \setbeamerfont{framesubtitle}{shape=\itshape}
+  \setbeamerfont{subtitle}{shape=\itshape}
+  \setbeamerfont{author}{shape=\itshape}
+  \setbeamerfont{bz label}{family=\bz@cond, shape=\itshape}
+  \setbeamerfont{caption name}{family=\bz@cond, shape=\itshape}
+  \setbeamerfont{bz statement}{shape=\itshape}
+  \setbeamerfont{block title}{series=\mdseries, shape=\itshape}
+  \apptocmd{\bz@applycolors}{%
+    \setbeamercolor{item}{fg=bzgrey}\setbeamercolor{subitem}{fg=bzgrey}%
+    \setbeamercolor{subsubitem}{fg=bzgrey}}{}{}
+  \bz@applycolors
+\fi
+
+%% ---------------------------------------------------------------------
+%%  Furniture off
+%% ---------------------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{sidebar left}{}
+\setbeamertemplate{sidebar right}{}
+\setbeamertemplate{background}{}
+
+%% ---------------------------------------------------------------------
+%%  Running head:  § 2  Methods ......................................  7
+%%                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% ---------------------------------------------------------------------
+\newcommand\bz@folio{%
+  \ifbeamer@inappendix
+    A\insertframenumberinappendix
+  \else
+    \insertframenumber
+    \ifbz@total\,/\,\insertmainframenumber\fi
+  \fi}
+\newcommand\bz@headleft{%
+  \ifbeamer@inappendix Backup%
+  \else\ifnum\c@section>0
+    \ifbz@ttype\else\bz@secsign\insertsectionnumber\enspace\fi\insertsectionhead
+  \else
+    \insertshorttitle
+  \fi\fi}
+
+%% ---------------------------------------------------------------------
+%%  Progress (option progress=bar|dots)
+%%  bar:  the head rule is the bar. A hairline track runs the full width,
+%%        the heavy rule fills it up to the current frame; one dot per
+%%        section start, filled once that section has begun.
+%%          ━━━━━━━━━●━━━━━━━━━━●━━━━━━━━━○──────────────○─────────
+%%  dots: one dot per frame in the head row, left of the folio, grouped
+%%        by section; filled up to the current frame.
+%%          ●●●●  ●●●●  ●●○○  ○○○○  ○○  7
+%%  Both count main frames only (\insertmainframenumber) and step aside
+%%  in the appendix. Section starts are written to the .aux file, so
+%%  the indicator appears from the second run on.
+%% ---------------------------------------------------------------------
+\newcount\bz@cur  \newcount\bz@tot  \newcount\bz@i  \newcount\bz@s
+\newdimen\bz@x    \newdimen\bz@w    \newdimen\bz@pitch
+\newdimen\bz@gap  \newdimen\bz@r    \newdimen\bz@foliow
+\def\bz@secmarks{}
+\newcommand\bz@addsecmark[1]{\xifinlist{#1}\bz@secmarks{}{\listxadd\bz@secmarks{#1}}}
+% Remember where each section starts: the next numbered frame.
+\newcommand\bz@marksection{%
+  \ifbeamer@inappendix\else\if@filesw
+    \immediate\write\@auxout{\string\bz@addsecmark{\the\numexpr\c@framenumber+1\relax}}%
+  \fi\fi}
+\patchcmd{\beamer@section}{\beamer@sectionstartpage=\c@page}%
+  {\bz@marksection\beamer@sectionstartpage=\c@page}{}%
+  {\PackageWarning{beamerthemeBleisatz}{Could not record section starts; progress dots off}}
+% Keep the .aux readable if the theme is removed later.
+\AtBeginDocument{\if@filesw
+  \immediate\write\@auxout{\string\providecommand\string\bz@addsecmark[1]{}}\fi}
+
+% \bz@cur = current frame, \bz@tot = main frames; 0 if not known yet
+\newcommand\bz@progressvalues{%
+  \bz@cur=\c@framenumber
+  \bz@tot=\insertmainframenumber\relax
+  \ifnum\bz@tot<2 \bz@tot=0 \fi
+  \ifnum\bz@cur>\bz@tot \bz@cur=\bz@tot \fi}
+
+% the plain head rule
+\newcommand\bz@rule@none{%
+  \ifbz@hair
+    % rules=hair: a hairline under the running head; none above a title page
+    % without head
+    \ifbz@head{\color{\bz@ink}\rule{\dimexpr\paperwidth-2\bz@margin\relax}{\bz@hair}}\fi
+  \else
+    {\color{\bz@ink}\rule{\dimexpr\paperwidth-2\bz@margin\relax}{\bz@heavy}}%
+  \fi}
+
+% the head rule as a progress bar
+\newcommand\bz@rule@bar{%
+  \bz@progressvalues
+  \ifnum\bz@tot=0 \bz@rule@none\else
+  \bz@w=\dimexpr\paperwidth-2\bz@margin\relax
+  \bz@r=0.62mm
+  \begin{pgfpicture}%
+    \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\bz@w}{\bz@fill}}%
+    \pgfusepath{use as bounding box}%
+    \pgfsetfillcolor{\bz@ink}%
+    % track: hairline, centred on the fill
+    \pgfpathrectangle{\pgfpoint{0pt}{\dimexpr(\bz@fill-\bz@hair)/2\relax}}{\pgfpoint{\bz@w}{\bz@hair}}%
+    \pgfusepath{fill}%
+    % fill: the heavy rule up to the current frame
+    \bz@x=\dimexpr\bz@w*\bz@cur/\bz@tot\relax
+    \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\bz@x}{\bz@fill}}%
+    \pgfusepath{fill}%
+    % one dot per section start
+    \pgfsetlinewidth{\bz@hair}%
+    \pgfsetstrokecolor{\bz@ink}%
+    \forlistloop\bz@secdot\bz@secmarks
+  \end{pgfpicture}%
+  \fi}
+\newcommand\bz@secdot[1]{%
+  \bz@s=#1\relax
+  \ifnum\bz@s>\bz@tot\else
+    \bz@x=\dimexpr\bz@w*(\bz@s-1)/\bz@tot\relax
+    \begin{pgfscope}%
+      % open (paper inside, hairline ring) until the section has begun
+      \ifnum\bz@cur<\bz@s \pgfsetfillcolor{\bz@paper}\fi
+      \pgfpathcircle{\pgfpoint{\bz@x}{\dimexpr\bz@fill/2\relax}}{\bz@r}%
+      \ifnum\bz@cur<\bz@s \pgfusepath{fill,stroke}\else\pgfusepath{fill}\fi
+    \end{pgfscope}%
+  \fi}
+
+% one dot per frame, for the head row
+\newcommand\bz@countgap[1]{\ifnum#1>1 \ifnum#1>\bz@tot\else\advance\bz@i 1 \fi\fi}
+\newcommand\bz@progressdots{%
+  \bz@progressvalues
+  \ifnum\bz@tot=0 \else
+  % section starts that fall inside the deck add a gap of one pitch
+  \bz@i=0
+  \forlistloop\bz@countgap\bz@secmarks
+  \bz@pitch=\dimexpr 56mm/(\bz@tot+\bz@i)\relax
+  \ifdim\bz@pitch>1.9mm \bz@pitch=1.9mm \fi
+  \bz@gap=\bz@pitch
+  \bz@r=0.29\bz@pitch
+  \begin{pgfpicture}%
+    \pgfsetbaseline{0pt}%
+    \pgfsetlinewidth{\bz@hair}%
+    \pgfsetstrokecolor{\bz@ink}%
+    \pgfsetfillcolor{\bz@ink}%
+    \bz@x=0pt \bz@i=0
+    \loop\ifnum\bz@i<\bz@tot
+      \advance\bz@i 1
+      \ifnum\bz@i>1
+        \advance\bz@x\bz@pitch
+        \xifinlist{\the\bz@i}\bz@secmarks{\advance\bz@x\bz@gap}{}%
+      \fi
+      \pgfpathcircle{\pgfpoint{\bz@x}{0.5ex}}{\bz@r}%
+      \ifnum\bz@i>\bz@cur
+        \pgfusepath{stroke}%
+      \else
+        \pgfusepath{fill}%
+      \fi
+    \repeat
+    % keep the picture's width honest: dots run from -r to x+r
+    \pgfpathrectangle{\pgfpoint{-\bz@r}{0pt}}{\pgfpoint{\dimexpr\bz@x+2\bz@r\relax}{0pt}}%
+    \pgfusepath{use as bounding box}%
+  \end{pgfpicture}%
+  \fi}
+
+% right-hand side of the running head
+\newcommand\bz@headright{%
+  \ifbeamer@inappendix \bz@folio
+  \else\ifx\bz@progress\bz@str@dots
+    % fixed folio width, so the dots stay put on section pages (no folio)
+    \settowidth\bz@foliow{\ifbz@total\insertmainframenumber\,/\,\fi\insertmainframenumber}%
+    \bz@progressdots\hskip 2.6mm\hbox to\bz@foliow{\hss\bz@folio}%
+  \else
+    \bz@folio
+  \fi\fi}
+\newcommand\bz@headrule{%
+  \ifbeamer@inappendix \bz@rule@none
+  \else\ifx\bz@progress\bz@str@bar \bz@rule@bar
+  \else \bz@rule@none
+  \fi\fi}
+
+\newcommand\bz@topline[2]{%
+  \vbox to 11mm{%
+    \vskip 5.2mm
+    \nointerlineskip
+    \hbox to\paperwidth{\hskip\bz@margin
+      \usebeamercolor[fg]{normal text}\usebeamerfont{bz head}%
+      \vphantom{Ag}#1\hfill#2\hskip\bz@margin}%
+    \nointerlineskip\vskip 1.5mm
+    \hbox to\paperwidth{\hskip\bz@margin\bz@headrule\hss}%
+    \vss}}
+% \topline{left}{right}: the same running head, placed absolutely.
+% Use it on [plain] frames so they share the grid of all other slides.
+\newcommand\topline[2]{%
+  \begin{textblock*}{\paperwidth}(0mm,0mm)\bz@topline{#1}{#2}\end{textblock*}}
+
+\setbeamertemplate{headline}{%
+  \ifbz@head
+    \bz@topline{\bz@headleft}{\bz@headright}%
+  \else
+    \vbox to 8mm{\vss}%
+  \fi}
+\setbeamertemplate{footline}{\vbox to 6mm{\vss}}
+
+% display type: no hyphenation, plain ragged right
+\newcommand\bz@nohyph{\hyphenpenalty=10000 \exhyphenpenalty=10000 \rightskip=\z@ plus 1fil\relax}
+
+%% ---------------------------------------------------------------------
+%%  Frame title: flush left, sentence case, a fixed two-line slot.
+%%  Body text therefore starts at the same height on every slide.
+%% ---------------------------------------------------------------------
+\newbox\bz@tbox
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \vskip 4.2mm
+  \setbox\bz@tbox\vtop{%
+    \hsize=\textwidth
+    \usebeamercolor[fg]{frametitle}\usebeamerfont{frametitle}%
+    \RaggedRight\bz@nohyph\strut\insertframetitle\strut\par
+    \ifx\insertframesubtitle\@empty\else
+      \vskip 1.2mm
+      {\usebeamerfont{framesubtitle}\RaggedRight\bz@nohyph\insertframesubtitle\strut\par}%
+    \fi}%
+  \dimen@=\dimexpr\ht\bz@tbox+\dp\bz@tbox\relax
+  \hbox{\box\bz@tbox}%
+  \ifdim\dimen@<\bz@titleheight\vskip\dimexpr\bz@titleheight-\dimen@\relax\fi
+  \vskip 3.5mm}
+\setbeamertemplate{frametitle continuation}{\,(cont.)}
+
+%% ---------------------------------------------------------------------
+%%  Lists: markers hang in the margin, text aligns with the title
+%% ---------------------------------------------------------------------
+\setbeamertemplate{itemize item}{\textendash}
+\setbeamertemplate{itemize subitem}{\textendash}
+\setbeamertemplate{itemize subsubitem}{\textperiodcentered}
+\setbeamertemplate{enumerate item}{\insertenumlabel}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+\setbeamertemplate{description item}{\insertdescriptionitem}
+\setbeamerfont{description item}{series=\bfseries}
+\ifbz@ttype\setbeamerfont{description item}{series=\mdseries, shape=\itshape}\fi
+
+\setlength\leftmargini{0pt}
+\setlength\leftmarginii{1.1em}
+\setlength\leftmarginiii{1.1em}
+\setlength\labelsep{0.55em}
+\addtobeamertemplate{itemize/enumerate body begin}{}{%
+  \setlength\itemsep{0.55ex plus 0.3ex}\RaggedRight}
+\addtobeamertemplate{itemize/enumerate subbody begin}{}{%
+  \setlength\itemsep{0.2ex}}
+
+%% ---------------------------------------------------------------------
+%%  Blocks — no boxes. Rules and inversion only.
+%%    block         heavy rule above, title in semibold
+%%    exampleblock  hairline above and below, title in italic
+%%    alertblock    inverted: paper on ink
+%% ---------------------------------------------------------------------
+\setbeamertemplate{block begin}{%
+  \par\vskip\medskipamount
+  \ifbz@hair\else\noindent{\color{\bz@ink}\rule{\linewidth}{\bz@heavy}}\par\fi
+  \nointerlineskip\vskip 1.6mm
+  \ifx\insertblocktitle\@empty\else
+    {\usebeamercolor[fg]{block title}\usebeamerfont*{block title}%
+     \RaggedRight\insertblocktitle\par}\vskip 0.6mm
+  \fi
+  \usebeamerfont{block body}\RaggedRight}
+\setbeamertemplate{block end}{\par\vskip\smallskipamount}
+
+\newcommand\bz@softrule{\ifbz@hair bzgrey\else\bz@ink\fi}
+\setbeamertemplate{block example begin}{%
+  \par\vskip\medskipamount
+  \noindent{\color{\bz@softrule}\rule{\linewidth}{\bz@hair}}\par
+  \nointerlineskip\vskip 1.6mm
+  \ifx\insertblocktitle\@empty\else
+    {\usebeamerfont*{block title example}\RaggedRight\insertblocktitle\par}\vskip 0.6mm
+  \fi
+  \usebeamerfont{block body}\RaggedRight}
+\setbeamertemplate{block example end}{%
+  \par\vskip 1.4mm
+  \noindent{\color{\bz@softrule}\rule{\linewidth}{\bz@hair}}\par\vskip\smallskipamount}
+
+\newbox\bz@abox
+\newlength\bz@pad \setlength\bz@pad{2.4mm}
+\setbeamertemplate{block alerted begin}{%
+  \par\vskip\medskipamount
+  \setbox\bz@abox\vbox\bgroup
+    \hsize=\dimexpr\linewidth-2\bz@pad\relax \linewidth=\hsize
+    \bz@swap\usebeamercolor[fg]{normal text}%
+    \ifx\insertblocktitle\@empty\else
+      {\usebeamerfont*{block title alerted}\RaggedRight\insertblocktitle\par}\vskip 0.6mm
+    \fi
+    \usebeamerfont{block body}\RaggedRight}
+\setbeamertemplate{block alerted end}{%
+  \par\egroup
+  \noindent{\setlength\fboxsep{\bz@pad}\colorbox{\bz@ink}{\box\bz@abox}}\par
+  \vskip\smallskipamount}
+% emphasis=italic: no reversed type; the alert block is set off by ink
+% hairlines and an italic title, \alert is italic
+\ifbz@italic
+  \setbeamerfont{block title alerted}{series=\mdseries, shape=\itshape}
+  \setbeamerfont{alerted text}{series=\mdseries, shape=\itshape}
+  \setbeamertemplate{block alerted begin}{%
+    \par\vskip\medskipamount
+    \noindent{\color{\bz@ink}\rule{\linewidth}{\bz@hair}}\par
+    \nointerlineskip\vskip 1.6mm
+    \ifx\insertblocktitle\@empty\else
+      {\usebeamerfont*{block title alerted}\RaggedRight\insertblocktitle\par}\vskip 0.6mm
+    \fi
+    \usebeamerfont{block body}\RaggedRight}
+  \setbeamertemplate{block alerted end}{%
+    \par\vskip 1.4mm
+    \noindent{\color{\bz@ink}\rule{\linewidth}{\bz@hair}}\par\vskip\smallskipamount}
+\fi
+
+%% ---------------------------------------------------------------------
+%%  Title page — asymmetric, flush left, title sits low on the page
+%% ---------------------------------------------------------------------
+\def\bz@venue{}
+\newcommand\venue[1]{\def\bz@venue{#1}}
+
+\setbeamertemplate{title page}{%
+  \topline{\insertinstitute}{\insertdate}%
+  \vspace*{\fill}
+  \begin{minipage}[b]{0.86\linewidth}
+    \usebeamercolor[fg]{title}\usebeamerfont{title}\RaggedRight\bz@nohyph\inserttitle\par
+    \ifx\insertsubtitle\@empty\else
+      \vskip 3.5mm{\usebeamerfont{subtitle}\RaggedRight\bz@nohyph\insertsubtitle\par}%
+    \fi
+  \end{minipage}\par
+  \vskip 9mm
+  \ifbz@hair\else\noindent{\color{\bz@ink}\rule{\linewidth}{\bz@hair}}\par\fi
+  \vskip 2mm
+  \begin{minipage}[t]{0.62\linewidth}
+    \usebeamerfont{author}\RaggedRight\insertauthor\par
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.34\linewidth}
+    \usebeamerfont{author}\RaggedLeft\bz@venue\par
+  \end{minipage}\par
+  \ifx\inserttitlegraphic\@empty\else
+    \vskip 3mm\inserttitlegraphic\par
+  \fi
+  \vskip 5mm}
+
+%% ---------------------------------------------------------------------
+%%  Section divider = the contents, with the current section inverted
+%% ---------------------------------------------------------------------
+\newcommand\bz@tocline[2]{%
+  \hbox to\linewidth{\hbox to 2.2em{#1\hss}#2\hss}}
+% contents: the current section reversed (emphasis=italic: in italic);
+% numbers and indent with typography=bleisatz, the others in grey with
+% typography=tufte
+\newcommand\bz@tocindent{\ifbz@ttype\else\hskip 1.8mm\fi}
+\newcommand\bz@toctext{\ifbz@ttype\inserttocsection
+  \else\bz@tocline{\inserttocsectionnumber}{\inserttocsection}\fi}
+\setbeamertemplate{section in toc}{%
+  \ifbz@italic
+    {\usebeamercolor[fg]{normal text}\usebeamerfont{section in toc}\itshape
+     \vskip 0.9mm\hbox to\linewidth{\bz@tocindent\bz@toctext\hss}\vskip 1.2mm}\par
+  \else
+    {\setlength\fboxsep{0pt}%
+     \colorbox{\bz@ink}{\parbox{\linewidth}{%
+       \vskip 0.9mm
+       \hbox to\linewidth{\hskip 1.8mm{\color{\bz@paper}%
+         \usebeamerfont{section in toc}\bz@toctext}\hss}%
+       \vskip 1.2mm}}}\par
+  \fi}
+\setbeamertemplate{section in toc shaded}{%
+  {\ifbz@ttype\color{bzgrey}\else\usebeamercolor[fg]{normal text}\fi
+   \usebeamerfont{section in toc}%
+   \vskip 0.9mm\hbox to\linewidth{\bz@tocindent\bz@toctext\hss}%
+   \vskip 1.2mm}\par}
+% Beamer puts a fixed 1.5em between sections when subsections are hidden; make it
+% small so a divider fits eight sections.
+\patchcmd{\beamer@sectionintoc}{\vskip1.5em}{\vskip0.4em plus 1fil}{}%
+  {\PackageWarning{beamerthemeBleisatz}{Could not adjust the contents spacing}}
+\setbeamertemplate{subsection in toc}{}
+\setbeamertemplate{subsection in toc shaded}{}
+
+
+\setbeamertemplate{section page}{%
+  \vskip 2mm
+  {\usebeamerfont{bz head}Contents\par}\vskip 3mm
+  \tableofcontents[currentsection,hideallsubsections]}
+\AtBeginSection{%
+  \ifbz@sectionpages
+    \ifbeamer@inappendix\else
+      {\def\bz@folio{}\begin{frame}[noframenumbering]\sectionpage\end{frame}}%
+    \fi
+  \fi}
+
+%% ---------------------------------------------------------------------
+%%  Inverse frames:   \begin{inverse} \begin{frame} ... \end{frame} \end{inverse}
+%% ---------------------------------------------------------------------
+\newenvironment{inverse}{\begingroup\bz@swap\usebeamercolor[fg]{normal text}}{\endgroup}
+\ifbz@italic\renewenvironment{inverse}{\begingroup}{\endgroup}\fi
+
+%% Statement: one sentence, set large. Pull quote: hanging quotation marks.
+\newenvironment{statement}{%
+  \par\vspace*{\fill}\begin{minipage}{0.84\linewidth}%
+  \usebeamerfont{bz statement}\RaggedRight\bz@nohyph}{%
+  \par\end{minipage}\par\vspace*{1.6\fill}}
+\newenvironment{pullquote}[1][]{%
+  \def\bz@attrib{#1}%
+  \par\vspace*{\fill}\begin{minipage}{0.84\linewidth}%
+  \usebeamerfont{bz statement}\RaggedRight\bz@nohyph
+  \leavevmode\llap{\textquotedblleft}\ignorespaces}{%
+  \unskip\textquotedblright\par
+  \ifx\bz@attrib\@empty\else
+    \vskip 4mm{\usebeamerfont{normal text}\textendash\enspace\bz@attrib\par}%
+  \fi
+  \end{minipage}\par\vspace*{1.6\fill}}
+
+%% Key figure: one number, always with what it measures and its uncertainty
+%%   \keyfigure{43\,\%}{of patients ...}{95\,\% CI 38--48 \textbullet\ n = 312}
+\newcommand\keyfigure[3]{%
+  \par\vspace*{\fill}%
+  {\usebeamerfont{bz keyfigure}\bz@liningnums#1\par}\vskip 3mm
+  \begin{minipage}{0.62\linewidth}\RaggedRight\bz@nohyph
+    {\usebeamerfont{subtitle}#2\par}\vskip 1.5mm
+    {\usebeamerfont{bz head}#3\par}%
+  \end{minipage}\par\vspace*{1.6\fill}}
+
+%% Inline inversion for the one word that matters
+\newcommand\inv[1]{{\setlength\fboxsep{0.15em}%
+  \colorbox{\bz@ink}{\color{\bz@paper}\vphantom{Ågy}#1}}}
+\ifbz@italic\ifx\bz@font\bz@str@csf\else\renewcommand\inv[1]{{\itshape #1}}\fi\fi
+
+%% Side-captioned figure: \sidefigure[0.64]{<graphic>}{<caption>}
+\newcounter{bzfigure}
+\newcommand\sidefigure[3][0.64]{%
+  \refstepcounter{bzfigure}%
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{#1\textwidth}#2\end{column}%
+    \begin{column}{\dimexpr\textwidth-#1\textwidth-6mm\relax}%
+      {\usebeamerfont{bz label}Figure~\thebzfigure\par}\vskip 1mm
+      {\usebeamerfont{bz caption}\RaggedRight #3\par}%
+    \end{column}%
+  \end{columns}}
+
+%% Source / reference line at the bottom of a single frame
+\newcommand\source[1]{%
+  \begin{textblock*}{\dimexpr\paperwidth-2\bz@margin\relax}[0,1](\bz@margin,85mm)%
+    % the colour inside its own group, so that its reset stays in the block
+    % (textpos moves the block; a reset outside it would leak to later frames)
+    \begingroup\usebeamercolor[fg]{normal text}\ifbz@ttype\color{bzgrey}\fi
+    \usebeamerfont{bz source}\RaggedRight #1\par\endgroup
+  \end{textblock*}}
+
+%% Small label (condensed semibold) for panels, table heads, side notes
+\newcommand\smalllabel[1]{{\usebeamerfont{bz label}#1}}
+
+%% Comfortable measure for paragraphs (~ 65 characters)
+\newenvironment{measure}[1][0.72]{\begin{minipage}[t]{#1\linewidth}\RaggedRight}{\end{minipage}}
+
+%% ---------------------------------------------------------------------
+%%  Figures, tables, footnotes
+%% ---------------------------------------------------------------------
+\setbeamertemplate{caption}{%
+  {\usebeamerfont{caption name}\insertcaptionname~\insertcaptionnumber}%
+  \enspace\insertcaption\par}
+\setbeamertemplate{caption label separator}{}
+\setlength\heavyrulewidth{\bz@heavy}
+\setlength\lightrulewidth{\bz@hair}
+\setlength\cmidrulewidth{\bz@hair}
+\AtBeginEnvironment{tabular}{\bz@tabnums}
+
+%% \figurefolder{figures}: \graphicspath for the options of this deck
+%%   figures/<mode>/, C64 figures/c64/<mode>/, and the Tufte set
+%%   figures/tufte/<mode><palette>/ (palette tufte: "", grey: -grey, onebit: -1bit);
+%%   with figures=tufte the Tufte set is searched first, otherwise last, so
+%%   the same file names work with the switch on and off
+\newcommand\bz@figmode{\ifbz@dark dark\else light\fi}
+\newcommand\bz@palsuffix{\ifbz@colour\else\ifbz@grey -grey\else -1bit\fi\fi}
+\newcommand\figurefolder[1]{%
+  \edef\bz@tmp{\noexpand\graphicspath{%
+    \ifbz@tfigs{#1/\ifx\bz@font\bz@str@csf c64/\fi tufte/\bz@figmode\bz@palsuffix/}\fi
+    {#1/\ifx\bz@font\bz@str@csf c64/\fi\bz@figmode/}%
+    \ifbz@tfigs\else{#1/\ifx\bz@font\bz@str@csf c64/\fi tufte/\bz@figmode\bz@palsuffix/}\fi}}%
+  \bz@tmp}
+
+%% ---------------------------------------------------------------------
+%%  Sparklines (Tufte, Beautiful Evidence): data-intense, design-simple,
+%%  word-sized. No axes, no labels; write the numbers beside them.
+%%    \sparkline[<options>]{9.0, 16.9, 20.7, 19.1, 17.2, 13.3, 10.1, 9.4}
+%%  Options (key=value):
+%%    width=4em  height=1.5ex
+%%    marks=last|minmax|both|none   last value in Tufte's red, highs and lows in
+%%                      green (palette=tufte); otherwise filled and open ink dots
+%%    band={lo,hi}      a normal range behind the line (grey; 1-bit: dotted rules)
+%%    range={min,max}   fix the vertical scale (to compare several sparklines)
+%%    at={0,2,4,...}    x positions (e.g. hours) for unevenly spaced samples
+%% ---------------------------------------------------------------------
+\pgfkeys{/bz/spark/.is family, /bz/spark,
+  width/.store in=\bz@sk@w, height/.store in=\bz@sk@h, marks/.store in=\bz@sk@marks,
+  band/.store in=\bz@sk@band, range/.store in=\bz@sk@range, at/.store in=\bz@sk@at}
+\def\bz@sk@split#1,#2\@nil#3#4{\def#3{#1}\def#4{#2}}
+\newdimen\bz@skW \newdimen\bz@skH \newdimen\bz@skA \newdimen\bz@skB
+% a mark: f = filled ink, o = open, r = Tufte's red (last value), g = green (high/low);
+% without colour in the palette red and green fall back to filled ink
+\newcommand\bz@sk@dot[3]{% x, y, kind
+  \begin{pgfscope}%
+  \pgfpathcircle{\pgfpoint{#1}{#2}}{0.8pt}%
+  \if o#3\pgfsetfillcolor{\bz@paper}\pgfusepath{fill,stroke}%
+  \else
+    \if r#3\ifbz@colour\pgfsetfillcolor{bzred}\fi\fi
+    \if g#3\ifbz@colour\pgfsetfillcolor{bzgreen}\fi\fi
+    \pgfusepath{fill}%
+  \fi
+  \end{pgfscope}}
+\DeclareRobustCommand\sparkline[2][]{%
+  \begingroup
+  \pgfkeys{/bz/spark, width=4em, height=1.5ex, marks=last, band=, range=, at=, #1}%
+  \gdef\bz@sk@lo{16000}\gdef\bz@sk@hi{-16000}\gdef\bz@sk@n{0}%
+  \foreach \bz@v in {#2}{%
+    \pgfmathsetmacro\bz@t{min(\bz@sk@lo,\bz@v)}\xdef\bz@sk@lo{\bz@t}%
+    \pgfmathsetmacro\bz@t{max(\bz@sk@hi,\bz@v)}\xdef\bz@sk@hi{\bz@t}%
+    \xdef\bz@sk@n{\the\numexpr\bz@sk@n+1\relax}}%
+  \let\bz@sk@dlo\bz@sk@lo \let\bz@sk@dhi\bz@sk@hi
+  \ifx\bz@sk@band\@empty\else
+    \expandafter\bz@sk@split\bz@sk@band\@nil\bz@sk@blo\bz@sk@bhi
+    \pgfmathsetmacro\bz@sk@lo{min(\bz@sk@lo,\bz@sk@blo)}%
+    \pgfmathsetmacro\bz@sk@hi{max(\bz@sk@hi,\bz@sk@bhi)}%
+  \fi
+  \ifx\bz@sk@range\@empty\else
+    \expandafter\bz@sk@split\bz@sk@range\@nil\bz@sk@lo\bz@sk@hi
+  \fi
+  \pgfmathsetmacro\bz@sk@span{\bz@sk@hi-\bz@sk@lo}%
+  \pgfmathtruncatemacro\bz@t{\bz@sk@span==0 ? 1 : 0}\ifnum\bz@t=1 \def\bz@sk@span{1}\fi
+  \bz@skW=\bz@sk@w\relax \bz@skH=\bz@sk@h\relax
+  \def\bz@sk@y##1{\pgfmathparse{(##1-\bz@sk@lo)/\bz@sk@span*\the\bz@skH}}%
+  \ifx\bz@sk@at\@empty
+    \def\bz@sk@x##1{\pgfmathparse{\bz@sk@n<2 ? 0 : (##1-1)/(\bz@sk@n-1)*\the\bz@skW}}%
+  \else
+    \foreach \bz@a [count=\bz@k] in \bz@sk@at {%
+      \expandafter\xdef\csname bz@sk@at@\bz@k\endcsname{\bz@a}}%
+    \edef\bz@sk@a{\csname bz@sk@at@1\endcsname}%
+    \edef\bz@sk@b{\csname bz@sk@at@\bz@sk@n\endcsname}%
+    \def\bz@sk@x##1{\edef\bz@t{\csname bz@sk@at@##1\endcsname}%
+      \pgfmathparse{(\bz@t-\bz@sk@a)/(\bz@sk@b-\bz@sk@a)*\the\bz@skW}}%
+  \fi
+  \leavevmode\begin{pgfpicture}%
+    \pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\bz@skW}{\bz@skH}}%
+    \pgfusepath{use as bounding box}%
+    \pgfsetlinewidth{0.5pt}\pgfsetroundcap\pgfsetroundjoin
+    \pgfsetstrokecolor{\bz@ink}\pgfsetfillcolor{\bz@ink}%
+    \ifx\bz@sk@band\@empty\else
+      \bz@sk@y{\bz@sk@blo}\bz@skA=\pgfmathresult pt
+      \bz@sk@y{\bz@sk@bhi}\bz@skB=\pgfmathresult pt
+      \advance\bz@skB-\bz@skA
+      \begin{pgfscope}%
+        \ifbz@grey
+          \pgfsetfillcolor{bzgrey}%
+          \pgfpathrectangle{\pgfpoint{0pt}{\bz@skA}}{\pgfpoint{\bz@skW}{\bz@skB}}%
+          \pgfusepath{fill}%
+        \else
+          \pgfsetlinewidth{0.3pt}\pgfsetdash{{0.6pt}{0.9pt}}{0pt}%
+          \advance\bz@skB\bz@skA
+          \pgfpathmoveto{\pgfpoint{0pt}{\bz@skA}}\pgfpathlineto{\pgfpoint{\bz@skW}{\bz@skA}}%
+          \pgfpathmoveto{\pgfpoint{0pt}{\bz@skB}}\pgfpathlineto{\pgfpoint{\bz@skW}{\bz@skB}}%
+          \pgfusepath{stroke}%
+        \fi
+      \end{pgfscope}%
+    \fi
+    \foreach \bz@v [count=\bz@ski] in {#2}{%
+      \bz@sk@x{\bz@ski}\let\bz@px\pgfmathresult
+      \bz@sk@y{\bz@v}\let\bz@py\pgfmathresult
+      \ifnum\bz@ski=1 \pgfpathmoveto{\pgfpoint{\bz@px pt}{\bz@py pt}}%
+      \else\pgfpathlineto{\pgfpoint{\bz@px pt}{\bz@py pt}}\fi}%
+    \pgfusepath{stroke}%
+    \pgfsetlinewidth{0.4pt}%
+    \def\bz@sk@doneMax{0}\def\bz@sk@doneMin{0}%
+    \foreach \bz@v [count=\bz@ski] in {#2}{%
+      \bz@sk@x{\bz@ski}\let\bz@px\pgfmathresult
+      \bz@sk@y{\bz@v}\let\bz@py\pgfmathresult
+      \def\bz@mk{}%
+      \ifnum\bz@ski=\bz@sk@n\relax
+        \def\bz@t{last}\ifx\bz@sk@marks\bz@t\def\bz@mk{r}\fi
+        \def\bz@t{both}\ifx\bz@sk@marks\bz@t\def\bz@mk{r}\fi
+      \fi
+      \def\bz@t{minmax}\ifx\bz@sk@marks\bz@t\def\bz@mm{1}\else
+        \def\bz@t{both}\ifx\bz@sk@marks\bz@t\def\bz@mm{1}\else\def\bz@mm{0}\fi\fi
+      \ifnum\bz@mm=1
+        \pgfmathtruncatemacro\bz@t{abs(\bz@v-\bz@sk@dhi)<1e-4 ? 1 : 0}%
+        \ifnum\bz@t=1 \ifx\bz@mk\@empty\def\bz@mk{g}\fi\fi
+        \pgfmathtruncatemacro\bz@t{abs(\bz@v-\bz@sk@dlo)<1e-4 ? 1 : 0}%
+        \ifnum\bz@t=1 \ifx\bz@mk\@empty\ifbz@colour\def\bz@mk{g}\else\def\bz@mk{o}\fi\fi\fi
+      \fi
+      \ifx\bz@mk\@empty\else\bz@sk@dot{\bz@px pt}{\bz@py pt}{\bz@mk}\fi}%
+  \end{pgfpicture}%
+  \endgroup}
+
+\setbeamertemplate{footnote}{%
+  \parindent0pt\hangindent1.2em\hangafter1\RaggedRight
+  \makebox[1.2em][l]{\insertfootnotemark}\insertfootnotetext\par}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+%% ---------------------------------------------------------------------
+%%  Charts (pgfplots): line style, marker shape and hatch instead of colour
+%%    \begin{axis}[bleisatz] ...        lines and markers
+%%    \begin{axis}[bleisatz bars] ...   solid / open / hatched / dotted bars
+%% ---------------------------------------------------------------------
+\AtEndPreamble{%
+  \@ifpackageloaded{pgfplots}{%
+    \pgfplotscreateplotcyclelist{bleisatz}{%
+      {bzink, solid, mark=*, mark options={solid, fill=bzink}},%
+      {bzink, densely dashed, mark=o, mark options={solid, fill=bzpaper}},%
+      {bzink, densely dotted, mark=square*, mark options={solid, fill=bzink}},%
+      {bzink, dashdotted, mark=triangle, mark options={solid, fill=bzpaper}}}%
+    \pgfplotscreateplotcyclelist{bleisatz bars}{%
+      {draw=bzink, fill=bzink},%
+      {draw=bzink, fill=bzpaper},%
+      {draw=bzink, pattern=north east lines, pattern color=bzink},%
+      {draw=bzink, pattern=dots, pattern color=bzink},%
+      {draw=bzink, pattern=crosshatch, pattern color=bzink}}%
+    \pgfplotsset{
+      bleisatz/.style={
+        axis lines=left,
+        axis line style={bzink, line width=0.5pt, -},
+        every tick/.style={bzink, line width=0.4pt},
+        every minor tick/.style={bzink, line width=0.3pt},
+        major tick length=1.1mm, tick align=outside,
+        every tick label/.append style={font=\usebeamerfont{bz source}},
+        every axis label/.append style={font=\usebeamerfont{bz caption}},
+        label style={font=\usebeamerfont{bz caption}},
+        legend style={draw=none, fill=none, font=\usebeamerfont{bz caption}},
+        cycle list name=bleisatz,
+        bar cycle list/.style={/pgfplots/cycle list name=bleisatz bars},
+        every axis plot/.append style={line width=0.8pt},
+        mark size=1.5pt,
+        clip=false},
+      bleisatz bars/.style={
+        bleisatz, cycle list name=bleisatz bars,
+        every axis plot/.append style={line width=0.5pt},
+        axis x line*=bottom, axis y line*=left}}%
+    % tufte: axes end with the data and stand off it; bars without hatching
+    % (no moire): grey, ink, red, open
+    \pgfplotscreateplotcyclelist{bleisatz tufte bars}{%
+      {draw=none, fill=bzgrey},%
+      {draw=none, fill=bzink},%
+      {draw=none, fill=bzred},%
+      {draw=bzink, fill=bzpaper}}%
+    \pgfplotscreateplotcyclelist{bleisatz tufte}{%
+      {bzink, solid, mark=*, mark options={solid, fill=bzink}},%
+      {bzred, solid, mark=*, mark options={solid, fill=bzred}},%
+      {bzgrey, solid, mark=*, mark options={solid, fill=bzgrey}},%
+      {bzink, densely dashed, mark=o, mark options={solid, fill=bzpaper}}}%
+    \ifbz@tfigs
+      \pgfplotsset{
+        bleisatz/.append style={
+          enlargelimits=false, axis line style={line width=0.4pt},
+          axis x line shift=1.5mm, axis y line shift=1.5mm,
+          cycle list name=bleisatz tufte, mark size=1.1pt},
+        bleisatz bars/.append style={cycle list name=bleisatz tufte bars,
+          axis y line=none, ymajorgrids=false}}%
+    \fi
+  }{}}
+
+\endinput

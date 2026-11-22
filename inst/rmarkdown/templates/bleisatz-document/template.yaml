@@ -1,0 +1,6 @@
+name: infereportR document (Bleisatz)
+description: >
+  A paper, report or handout with the Bleisatz document class: the same type,
+  values and figure slots as the slides. Every class option is listed,
+  commented out.
+create_dir: true

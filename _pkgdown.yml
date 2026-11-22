@@ -39,6 +39,10 @@ articles:
   - character-mode
   - figure-gallery
   - tufte
+- title: Slides and documents
+  navbar: Slides and documents
+  contents:
+  - slides-and-documents
 reference:
 - title: Tables and text
   desc: Present finalized results as tables and neutral text.
@@ -126,6 +130,27 @@ reference:
   - figure_slopegraph
   - figure_sparklines
   - sparkline_tex
+- title: Slides
+  desc: Bleisatz Beamer decks from figures, each saved at the size of its slot.
+  contents:
+  - figure_slide
+  - figure_deck
+  - save_deck
+  - render_deck
+  - figure_gallery_deck
+- title: Documents
+  desc: Papers, reports and handouts with the Bleisatz document class.
+  contents:
+  - document_blocks
+  - figure_document
+  - save_document
+- title: Bleisatz helpers
+  desc: The bundled theme and class, LaTeX palette commands and the Quarto
+    extension.
+  contents:
+  - deck_theme_file
+  - tex_red
+  - use_deck_quarto
 - title: APA check
   desc: Audit a figure against the APA figure rules.
   contents:

@@ -1,0 +1,64 @@
+---
+title: "Write the main finding as a sentence"
+subtitle: "Optional: what, in whom, measured how"
+shorttitle: "Short title for the running head"
+author: "Author Name"
+institute: "Institute"
+venue:
+  - "Journal or meeting"
+  - "Draft"
+keywords: "three to five keywords"
+abstract: |
+  One paragraph: question, design, main result with its uncertainty, conclusion.
+# bibliography: references.bib
+format:
+  bleisatz-pdf:
+    # Without options: Bleisatz 1-bit, light, IBM Plex, progress bar, A4.
+    # Uncomment a line to change one thing; values in brackets are the defaults.
+    classoption:
+      # - dark              # [light] white on black
+      # - progress=dots     # [bar] | dots | none
+      # - font=mono         # [plex] | mono | c64 (pdf-engine: lualatex) | etbb
+      # - total             # folio "3 / 8"
+      # - nohead            # no running head
+      # - justified         # [ragged right]
+      # - letterpaper       # [a4paper]
+      # --- Tufte, aspect by aspect ---------------------------------------
+      # - layout=tufte      # [bleisatz] | tufte (110 mm column, 52 mm margin)
+      # - notes=side        # [foot] | side (numbered sidenotes)
+      # - palette=grey      # [onebit] | grey | tufte (grey, red, green)
+      # - rules=hair        # [heavy] | hair
+      # - typography=tufte  # [bleisatz] | tufte
+      # - emphasis=italic   # [inverse] | italic
+      # - figures=tufte     # [bleisatz] | tufte
+      # - tufte             # all Tufte aspects at once
+execute:
+  echo: false
+---
+
+```{r}
+#| include: false
+library(ggplot2)
+library(infereportR)
+inch <- function(preset) unlist(figure_size(preset)[c("width", "height")]) / 25.4
+side <- inch("slide_side")
+plot_paper <- ggplot(PlantGrowth, aes(group, weight)) +
+  geom_point(shape = 1) +
+  theme_figure("slide") +
+  labs(x = NULL, y = "Dried weight (g)")
+```
+
+# Introduction
+
+Each section heading names what the section shows.
+
+```{r}
+#| label: side
+#| fig-width: !expr side[[1]]
+#| fig-height: !expr side[[2]]
+#| fig-show: hide
+plot_paper
+```
+
+\sidefigure{`r knitr::fig_chunk("side", "pdf")`}{Every plant by treatment group; the
+caption stands beside the figure.}[R datasets: PlantGrowth.]

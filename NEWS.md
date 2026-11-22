@@ -1,6 +1,47 @@
-# infereportR 0.2.0.9000
+# infereportR 0.3.0
 
-Development version of 0.3.0.
+## Bleisatz slide decks and documents
+
+* New slide constructors `figure_slide()` (side, half, full and text
+  layouts, inverse frames), `section_slide()`, `keyfigure_slide()` and
+  `slide_sparkline()`, collected by `figure_deck()` into a Bleisatz Beamer
+  deck. `save_deck()` writes the deck into a directory that must be given:
+  every figure saved with `save_figure_set()` at the size of its slot, in the
+  deck's palette and in the mode folders that the theme's
+  `\figurefolder{figures}` finds, the theme file and a `.tex` file that uses
+  only the theme's own commands. It refuses to overwrite existing files
+  unless `overwrite = TRUE` (condition class `infereportR_file_exists`).
+* New document blocks `document_section()`, `document_text()`,
+  `document_figure()` (side, full, half and margin slots),
+  `document_table()`, `document_note()`, `document_newthought()`,
+  `document_fullwidth()`, `document_epigraph()` and `document_sparkline()`,
+  collected by `figure_document()` and written by `save_document()` with the
+  Bleisatz document class, optionally with a biblatex bibliography (APA
+  style, biber).
+* `figure_deck()` and `figure_document()` expose every option of Bleisatz
+  1.3 (`palette`, `font`, `rules`, `typography`, `emphasis`, `figures`,
+  `progress`, `head`, `sectionpages`, `layout`, `notes`, `tufte`, plus the
+  mode, `total`, paper size and justification); `NULL` keeps the theme
+  default, and only the options given are written.
+* `render_deck()` and `render_document()` compile with latexmk, pdfLaTeX or
+  LuaLaTeX, or TinyTeX, when available; LaTeX is never required. Without it
+  they raise `infereportR_missing_dependency`, and a failed run raises
+  `infereportR_render_failed` with the end of the log.
+* `figure_gallery_deck()` writes the twelve gallery figures as the deck of
+  the theme's `gallery.tex`, and with `set = "tufte"` the Tufte set as a
+  deck and a handout in the structure of the theme's Tufte samples.
+* `tex_red()`, `tex_green()` and `tex_muted()` return the theme's palette
+  commands as LaTeX. Slide and block text is escaped for LaTeX, leaving these
+  commands, `sparkline_tex()` output, citations and `\ref{}` intact.
+* `deck_theme_file()` returns the bundled theme or class file. The Bleisatz
+  1.3 files `beamerthemeBleisatz.sty` and `bleisatz.cls` are included
+  unmodified under the LaTeX Project Public License 1.3c; the package stays
+  MIT licensed (see `LICENSE.md`).
+* R Markdown templates "infereportR slides (Bleisatz)" and "infereportR
+  document (Bleisatz)" with short pandoc templates of their own, and a Quarto
+  extension with the formats `bleisatz-beamer` and `bleisatz-pdf`, copied by
+  `use_deck_quarto()` and `use_document_quarto()`.
+* New vignette "Slides and documents". 'tinytex' joins Suggests.
 
 ## Tufte options for figures (Bleisatz 1.3)
 

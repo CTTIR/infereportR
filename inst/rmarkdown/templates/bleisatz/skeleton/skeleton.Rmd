@@ -1,0 +1,96 @@
+---
+title: "Write the main claim of the talk as a sentence"
+subtitle: "Optional: what, in whom, measured how"
+author: "Author Name"
+institute: "Institute"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+venue:
+  - "Meeting name"
+  - "City"
+output:
+  rmarkdown::beamer_presentation:
+    template: bleisatz-beamer.latex
+    theme: Bleisatz
+    slide_level: 2
+    dev: cairo_pdf
+aspectratio: 169
+fontsize: 11pt
+# Without options: Bleisatz 1-bit, light, IBM Plex, progress bar.
+# Uncomment a line to change one thing; values in brackets are the defaults.
+themeoptions:
+  # - dark              # [light] white on black
+  # - progress=dots     # [bar] | dots | none
+  # - font=mono         # [plex] | mono | c64 (LuaLaTeX) | etbb (ET Book)
+  # - total             # folio "7 / 24"
+  # - nohead            # no running head
+  # - nosectionpages    # no contents divider at each section
+  # --- Tufte, aspect by aspect -------------------------------------------
+  # - palette=grey      # [onebit] | grey (one grey) | tufte (grey, red, green)
+  # - rules=hair        # [heavy] | hair
+  # - typography=tufte  # [bleisatz] | tufte (italic, regular titles, no numbers)
+  # - emphasis=italic   # [inverse] | italic (no reversed type)
+  # - figures=tufte     # [bleisatz] | tufte (Tufte figure folders first)
+  # - tufte             # all Tufte aspects at once; lines above switch single ones back
+---
+
+```{r setup, include = FALSE}
+# The theme file goes next to this document; the figures are saved at the
+# size of the theme's slots and placed with the theme's own commands.
+library(ggplot2)
+library(infereportR)
+file.copy(deck_theme_file("beamer"), ".", overwrite = TRUE)
+knitr::opts_chunk$set(echo = FALSE, fig.show = "hide")
+inch <- function(preset) unlist(figure_size(preset)[c("width", "height")]) / 25.4
+side <- inch("slide_side")
+half <- inch("slide_half")
+full <- inch("slide_full")
+plot_slide <- ggplot(PlantGrowth, aes(group, weight)) +
+  geom_point(shape = 1) +
+  theme_figure("slide") +
+  labs(x = NULL, y = "Dried weight (g)")
+```
+
+# Results
+
+## Treatment 2 plants weigh the most
+
+```{r side, fig.width = side[[1]], fig.height = side[[2]]}
+plot_slide
+```
+
+\sidefigure[0.64]{\includegraphics[width=\linewidth]{`r knitr::fig_chunk("side", "pdf")`}}
+  {Every plant is shown, by treatment group.\par\medskip
+   \smalllabel{Rule}\par Show the data, then the summary.}
+\source{R datasets: PlantGrowth.}
+
+## Half slot: the figure and a column of text
+
+```{r half, fig.width = half[[1]], fig.height = half[[2]]}
+plot_slide
+```
+
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{`r knitr::fig_chunk("half", "pdf")`}
+  \end{column}
+  \begin{column}{0.46\textwidth}
+    {\small The second column holds the caption and the argument.\par}
+  \end{column}
+\end{columns}
+\source{R datasets: PlantGrowth.}
+
+## Full slot: the whole width of the frame
+
+```{r full, fig.width = full[[1]], fig.height = full[[2]]}
+plot_slide
+```
+
+\includegraphics[width=\textwidth]{`r knitr::fig_chunk("full", "pdf")`}
+\source{R datasets: PlantGrowth.}
+
+## Each frame title states what the slide shows, as a sentence
+
+- Evidence, not decoration
+- One idea per slide
+
+\source{Author A et al. Journal Year; Vol: pages}

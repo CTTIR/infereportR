@@ -1,13 +1,20 @@
 ## Submission
 
-This is a new submission: infereportR 0.2.0.
+This is a new submission: infereportR 0.3.0.
 
 * Order: infereportR imports infercalcR, which is submitted to CRAN first.
   This package is submitted only after infercalcR has been accepted, so the
   incoming note on the strong dependency below will no longer apply.
 * Version 0.1.0 was prepared for CRAN but never submitted. 0.2.0 adds the
   figure layer that was formerly the separate package inferplotR; inferplotR
-  was never on CRAN and is not submitted separately.
+  was never on CRAN and is not submitted separately. 0.3.0 adds slide decks
+  and documents with the bundled Bleisatz Beamer theme and document class.
+* Licenses: the package is MIT. The two bundled files
+  inst/bleisatz/beamerthemeBleisatz.sty and inst/bleisatz/bleisatz.cls are
+  included unmodified under the LaTeX Project Public License 1.3c; this is
+  stated in the Copyright field of DESCRIPTION and in LICENSE.md.
+* No LaTeX is needed by examples, tests or vignettes; compiling is optional
+  and skipped when no LaTeX is installed.
 
 ## Test environments
 
