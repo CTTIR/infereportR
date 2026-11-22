@@ -356,6 +356,46 @@ that screen in two values, with a dot-halftone border. With `slot`, the figure
 fills a slide slot; otherwise `char_size()` gives the file size at which the
 glyphs line up, for `save_figure()`.
 
+## Slides and documents
+
+The same figures make Bleisatz slide decks and documents. Each slide or
+block places a figure in one of the slots of the theme, and `save_deck()` or
+`save_document()` saves it at exactly that size, in the deck's palette and
+modes, next to a `.tex` file that uses only the commands of the theme:
+
+```r
+time_course <- function(mode, transparent) {
+  ggplot(ChickWeight, aes(Time, weight, group = Chick)) +
+    geom_line(colour = if (mode == "dark") "white" else "black", linewidth = 0.2) +
+    theme_figure("slide", mode = mode, transparent = transparent) +
+    labs(x = "Days since birth", y = "Weight (g)")
+}
+deck <- figure_deck(
+  list(section_slide("Growth"),
+       figure_slide(time_course, "Chicks gain weight at different rates",
+                    caption = "One line per chick.", source = "R datasets: ChickWeight."),
+       keyfigure_slide("Diet 3 chicks grow fastest", "270 g", "mean weight on day 21",
+                       "diet 3, n = 10")),
+  title = "Chick growth", author = "A. Author", progress = "dots")
+save_deck(deck, "talk")       # talk/deck.tex, the theme, talk/figures/<mode>/
+render_deck("talk")           # optional: needs LaTeX (latexmk, pdflatex or TinyTeX)
+```
+
+`figure_document()` with `document_section()`, `document_text()`,
+`document_figure()`, `document_table()` and the Tufte blocks (sidenotes,
+margin figures, new thoughts, epigraphs, sparklines) writes papers, reports
+and handouts with the Bleisatz document class in the same way. Every option of
+the theme and class is an argument (palette, font, rules, typography,
+emphasis, figures, progress, head, layout, notes, and `tufte` for all of
+Tufte's aspects at once). `figure_gallery_deck()` writes the gallery decks,
+and the package has R Markdown templates ("infereportR slides (Bleisatz)",
+"infereportR document (Bleisatz)") and a Quarto extension
+(`use_deck_quarto()`, `use_document_quarto()`).
+
+The bundled Bleisatz files `beamerthemeBleisatz.sty` and `bleisatz.cls`
+(version 1.3) are distributed unmodified under the LaTeX Project Public
+License 1.3c; the rest of the package is MIT licensed (see `LICENSE.md`).
+
 ## Verification
 
 `tools/gate.R` is the quality gate for every change. Its `quick` mode checks
