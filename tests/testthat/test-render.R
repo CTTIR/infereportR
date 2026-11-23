@@ -122,7 +122,8 @@ test_that("render_deck() compiles the test deck with the right page count", {
 
 test_that("render_document() compiles the test document with biber", {
   skip_on_cran()
-  skip_if_not(latex_ready(), "no LaTeX with the Bleisatz packages")
+  # The bibliography is set in the biblatex APA style (biblatex-apa).
+  skip_if_not(latex_ready(c("apa.bbx", "apa.cbx")), "no LaTeX with the Bleisatz packages")
   skip_if(!nzchar(Sys.which("biber")), "no biber")
   skip_if_not(cairo_pdf_works())
   dir <- withr::local_tempdir()
