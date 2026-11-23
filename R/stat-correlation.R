@@ -158,9 +158,10 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' @param method_args A named list of further arguments for
 #'   [infercalcR::run_inference()]. The data arguments are set by the layer.
 #' @param label_x,label_y Label position in data units; `-Inf`/`Inf` mean the
-#'   panel edges (top left by default). The label is not moved away from the
-#'   data: for a negative association, where the points fill the top left,
-#'   put it top right with `label_x = Inf, hjust = 1`.
+#'   panel edges (top left by default). A label at an edge is set 1 mm
+#'   inside it, so it does not touch the axis line. The label is not moved
+#'   away from the data: for a negative association, where the points fill
+#'   the top left, put it top right with `label_x = Inf, hjust = 1`.
 #' @param hjust,vjust Label justification.
 #' @param label `"estimate_ci_p"` (default) writes one line, symbol, estimate,
 #'   interval and p; `"estimate_ci_p_n"` writes two lines, symbol, estimate
@@ -223,7 +224,7 @@ stat_correlation <- function(mapping = NULL, data = NULL, ..., method, alternati
     params$lineheight <- .ir_correlation_lineheight
   }
   text <- ggplot2::layer(stat = StatCorrelation, data = data, mapping = mapping,
-                         geom = "text", position = "identity", show.legend = FALSE,
+                         geom = .ir_geom_edge_text, position = "identity", show.legend = FALSE,
                          inherit.aes = inherit.aes, params = params)
   if (!fit) return(text)
   line <- ggplot2::layer(stat = StatCorrelationFit, data = data, mapping = mapping,

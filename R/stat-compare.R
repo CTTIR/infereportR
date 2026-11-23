@@ -20,6 +20,10 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
     pairs <- .ir_compare_pairs(comparisons, reference, levels)
     .ir_check_adjust(adjust, length(pairs))
     data <- .ir_finite_xy(data)
+    # A pair is compared only where both of its levels have observations in
+    # this panel: a level missing from one facet is not a comparison there.
+    present <- levels[unique(as.integer(data$x))]
+    pairs <- Filter(function(pair) all(pair %in% present), pairs)
     if (!nrow(data) || !length(pairs)) return(.ir_compare_empty())
     id <- .ir_result_id("compare", method, panel)
     spec <- .ir_spec(method, alternative = alternative, conf.level = conf.level)
@@ -157,7 +161,9 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' allowed). With explicit `comparisons` this is checked when the layer is
 #' created; with `reference` or all pairs, when the plot is built, where
 #' ggplot2 reports it with the infereportR condition as parent. Rows with
-#' non-finite x or y are dropped before the call.
+#' non-finite x or y are dropped before the call. In a panel where a level of
+#' a pair has no observations (for example a level missing from one facet),
+#' that pair is skipped and the panel's family holds the remaining pairs.
 #'
 #' Bracket i (in pair order) sits at `top + (first + (i - 1) * step) * range`
 #' of the panel's finite y values, with tips of `tip * range`. One invisible

@@ -81,6 +81,23 @@
   params
 }
 
+# The text geom of the corner labels (stat_omnibus(), stat_correlation()): as
+# geom_text(), but a label at a panel edge (x or y of -Inf or Inf) is moved
+# .ir_edge_inset mm into the panel, so it never touches the axis line. Only a
+# coordinate at an edge is moved; other labels are drawn as by GeomText.
+.ir_geom_edge_text <- ggplot2::ggproto("GeomFigureEdgeText", ggplot2::GeomText,
+  draw_panel = function(self, data, panel_params, coord, ...) {
+    grob <- ggplot2::ggproto_parent(ggplot2::GeomText, self)$draw_panel(data, panel_params,
+                                                                       coord, ...)
+    if (!inherits(grob, "text")) return(grob)
+    dx <- (data$x %in% -Inf) - (data$x %in% Inf)
+    dy <- (data$y %in% -Inf) - (data$y %in% Inf)
+    if (any(dx != 0)) grob$x <- grob$x + grid::unit(dx * .ir_edge_inset, "mm")
+    if (any(dy != 0)) grob$y <- grob$y + grid::unit(dy * .ir_edge_inset, "mm")
+    grob
+  }
+)
+
 # A layer whose stat also learns the plot's y label (used as variable_id of a
 # comparison family). Layer$setup_layer() is the one step of the build that
 # sees the plot. The label is read cheaply: an explicit labs(y = ) first, else
