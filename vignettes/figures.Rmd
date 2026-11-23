@@ -1,6 +1,6 @@
 ---
 title: "Figures: theme, scales, labels and export"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Figures: theme, scales, labels and export}

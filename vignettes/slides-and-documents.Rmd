@@ -1,6 +1,6 @@
 ---
 title: "Slides and documents: Bleisatz decks and papers from the same figures"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Slides and documents: Bleisatz decks and papers from the same figures}

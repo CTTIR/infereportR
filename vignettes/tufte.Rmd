@@ -1,6 +1,6 @@
 ---
 title: "Tufte options: palette, range frames, sparklines and more"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tufte options: palette, range frames, sparklines and more}

@@ -1,6 +1,6 @@
 ---
 title: "Character mode"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Character mode}

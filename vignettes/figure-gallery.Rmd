@@ -1,6 +1,6 @@
 ---
 title: "The figure gallery: modes, slots and Bleisatz decks"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{The figure gallery: modes, slots and Bleisatz decks}
