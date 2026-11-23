@@ -92,6 +92,14 @@
 * The examples of `stat_correlation()` and `stat_inference()` no longer draw
   the label over data points or clip it at the panel edge;
   `stat_correlation()` documents how to move the label.
+* `figure_correlation_matrix()` documents that the diagonal labels are
+  neither shrunk nor wrapped; the gallery vignette uses labels that fit.
+* Vignettes: the flipped brackets, the range frame, the paper grid and the
+  correlation label no longer overlap or clip; the Tufte figures have alt
+  text and the bars of the paper grid are black; character grids are printed
+  as plain output. The README lists all nine vignettes.
+* The documentation site shows plots as rendered in dark mode instead of
+  inverting them, so light and dark figures keep their meaning.
 * DESCRIPTION names the repository of 'infercalcR' in
   `Additional_repositories`; `CITATION.cff` carries version 0.3.0.
 
