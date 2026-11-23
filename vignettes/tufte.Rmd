@@ -231,6 +231,18 @@ Tufte's palette, `light-grey` and `dark-grey` with the grey only, and
 figure_gallery(file.path("figures", "tufte"), set = "tufte", png = TRUE)
 ```
 
+Decks and documents set with `font=c64` look for the C64 Tufte set in
+`figures/c64/tufte/`. `font = "c64"` draws it: every piece of text in C64 Pro
+Mono at 0.72 times the Plex size, in one weight, the y title above the axis,
+the short axis labels of the margin variants, the characters the font lacks
+typed out (`ISS >= 25`), and the VIC-II grey, red and green in place of
+Tufte's. The font is not part of the package; without it the set falls back
+to `figure_font("mono")` at the Plex sizes, as `char_figure()` does.
+
+```{r tufte-gallery-c64, eval = FALSE}
+figure_gallery(file.path("figures", "c64", "tufte"), set = "tufte", font = "c64")
+```
+
 The images below are the light folder, rendered by the package with
 `figure_gallery(set = "tufte", modes = "light", png = TRUE, dpi = 96)` and
 shipped with the vignette, so that building it does not draw them again

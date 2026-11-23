@@ -98,10 +98,8 @@
 }
 
 .ir_tufte_figure <- function(data, i) {
-  b <- .ir_tufte_builders[[i]]
-  narrow <- .ir_tufte_captions$slot[[i]] == "margin"
   function(mode, transparent, palette) {
-    b(data, mode = mode, transparent = transparent, palette = palette, narrow = narrow)
+    .ir_tufte_build(i, data, mode = mode, transparent = transparent, palette = palette)
   }
 }
 
@@ -237,7 +235,9 @@
 #'   "c64"`.
 #'
 #' The figures are drawn from the simulated gallery data in the deck's
-#' palette, so the decks are the same on every run. With `render = TRUE`
+#' palette, so the decks are the same on every run. A Tufte deck with
+#' `font = "c64"` draws them as the C64 Tufte set of
+#' `figure_gallery(font = "c64")` into `figures/c64/tufte/`. With `render = TRUE`
 #' they are compiled with [render_deck()] and [render_document()], which
 #' need LaTeX.
 #'
@@ -308,9 +308,13 @@ figure_gallery_deck <- function(dir, set = c("bleisatz", "tufte"), mode = c("lig
     mode = mode, progress = progress), doc_dots))
   handout <- file.path(dir, "tufte-handout.tex")
   .ir_check_targets(handout, overwrite)
-  files <- save_deck(deck, dir, file = "tufte-deck.tex", overwrite = overwrite, png = png)
+  # A C64 deck finds its figures in figures/c64/tufte/: the C64 set.
+  font <- if (identical(dots$font, "c64")) "c64" else "plex"
+  files <- .ir_with_type(font, save_deck(deck, dir, file = "tufte-deck.tex",
+                                         overwrite = overwrite, png = png))
   # The handout shares the figures written for the deck.
-  doc_files <- save_document(doc, dir, file = "tufte-handout.tex", overwrite = TRUE, png = png)
+  doc_files <- .ir_with_type(font, save_document(doc, dir, file = "tufte-handout.tex",
+                                                 overwrite = TRUE, png = png))
   if (render) {
     return(invisible(c(render_deck(dir, "tufte-deck.tex"),
                        render_document(dir, "tufte-handout.tex"))))

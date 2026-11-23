@@ -25,7 +25,7 @@ GeomBracket <- ggplot2::ggproto("GeomBracket", ggplot2::Geom,
     right_tip <- corner(data$xend, data$y - tip)
     centre <- corner((data$x + data$xend) / 2, data$y)
     family <- data$family
-    family[is.na(family) | !nzchar(family)] <- figure_font("sans")
+    family[is.na(family) | !nzchar(family)] <- .ir_sans_family()
     line_gp <- grid::gpar(col = data$colour, lwd = data$linewidth * ggplot2::.pt,
                           lineend = "butt")
     segments <- function(a, b) {

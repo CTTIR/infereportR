@@ -68,7 +68,13 @@
   that accepts it.
 * `figure_gallery(set = "tufte")` writes the Tufte set, figures 13-19 with two
   margin variants, in six folders; `gallery_captions(set = "tufte")` returns
-  its captions.
+  its captions. `font = "c64"` writes the C64 Tufte set of Bleisatz
+  (`figures/c64/tufte/`): text in C64 Pro Mono at 0.72 times the Plex size
+  and in one weight, the y title above the axis, plain characters, and the
+  VIC-II grey, red and green. The font is not bundled; without it the set
+  falls back to `figure_font("mono")` at the Plex sizes. A Tufte gallery deck
+  with `font = "c64"` draws these figures, and `check_figure()` accepts the
+  VIC-II colors in their palette roles.
 * New vignette "Tufte options".
 
 ## Fixes and documentation

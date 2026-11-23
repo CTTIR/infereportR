@@ -54,3 +54,51 @@ figure_font <- function(type = c("sans", "mono", "etbb"), reset = FALSE) {
   assign(type, family, envir = .ir_font_cache)
   family
 }
+
+# The type of the figure text. Plex by default; while the C64 Tufte set is
+# drawn (figure_gallery(font = "c64") and the C64 gallery deck), the text
+# family, the text sizes, the face and the palette colors of every figure
+# function switch to the C64 type, and back afterwards. The state holds the
+# resolved type: list(c64, real, family, scale), or NULL for Plex.
+.ir_type_state <- new.env(parent = emptyenv())
+
+# Resolved once per use: C64 Pro Mono when 'systemfonts' reports it, else
+# the figure's mono family at the Plex sizes, as char_figure() falls back.
+.ir_resolve_type <- function(font) {
+  if (!identical(font, "c64")) return(NULL)
+  real <- isTRUE(.ir_has_font(.ir_c64_family))
+  list(c64 = TRUE, real = real, family = if (real) .ir_c64_family else figure_font("mono"),
+       scale = if (real) .ir_c64_scale else 1)
+}
+
+.ir_type <- function() {
+  ty <- .ir_type_state$type
+  if (is.null(ty)) list(c64 = FALSE, real = FALSE, family = NULL, scale = 1) else ty
+}
+
+.ir_type_c64 <- function() isTRUE(.ir_type_state$type$c64)
+
+# Evaluates code with the type of `font` ("plex" or "c64"), restoring the
+# previous type on exit, also after an error.
+.ir_with_type <- function(font, code) {
+  old <- .ir_type_state$type
+  .ir_type_state$type <- .ir_resolve_type(font)
+  on.exit(.ir_type_state$type <- old, add = TRUE)
+  force(code)
+}
+
+# The sans family of figure text in the current type.
+.ir_sans_family <- function() {
+  if (.ir_type_c64()) .ir_type_state$type$family else figure_font("sans")
+}
+
+# In-plot label size in points in the current type.
+.ir_label_pt <- function() .ir_label_size_pt * .ir_type()$scale
+
+# Text the C64 type cannot set: every character it lacks typed out.
+.ir_c64_text <- function(x) {
+  for (i in seq_along(.ir_c64_glyphs)) {
+    x <- gsub(.ir_c64_glyphs[[i]], .ir_c64_typed[[i]], x, fixed = TRUE)
+  }
+  x
+}

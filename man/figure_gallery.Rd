@@ -9,7 +9,8 @@ figure_gallery(
   modes = c("light", "dark", "light-transparent", "dark-transparent"),
   png = FALSE,
   dpi = 300,
-  set = c("bleisatz", "tufte")
+  set = c("bleisatz", "tufte"),
+  font = c("plex", "c64")
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ default.}
 
 \item{set}{\code{"bleisatz"} (default) for the twelve figures 01-12 or
 \code{"tufte"} for the nine files of figures 13-19.}
+
+\item{font}{\code{"plex"} (default) or \code{"c64"} for the C64 Tufte set (see
+above); \code{"c64"} needs \code{set = "tufte"}.}
 }
 \value{
 The rows of \code{\link[=save_figure_set]{save_figure_set()}} for all figures, bound in figure
@@ -100,6 +104,24 @@ paper, grey, red and green; \code{palette = "tufte"}), \code{light-grey} and
 \code{dark-grey} (ink, paper and the grey) and \verb{light-1bit} and \verb{dark-1bit}
 (two values; the grey becomes thin or dotted ink). So for a deck,
 \code{figure_gallery(file.path("figures", "tufte"), set = "tufte")}.
+
+\strong{The C64 Tufte set} (\code{font = "c64"}) is the same set for decks and
+documents set with \code{font=c64}, which look for it in
+\verb{figures/c64/tufte/<folder>/}; so
+\code{figure_gallery(file.path("figures", "c64", "tufte"), set = "tufte", font = "c64")}. As in the C64 set of Bleisatz, every piece of text is set
+in C64 Pro Mono, in one weight, at 0.72 times the Plex size (its capitals
+are then as tall as those of Plex); the grey, red and green are the VIC-II
+colors of the Pepto palette (grey \verb{#959595}; red \verb{#9F4E44}, \verb{#CB7E75} on
+black; green \verb{#5CAB5E}, \verb{#9AE29B} on black); the y title stands above the
+axis, horizontal, as in character mode; the axes take the short labels of
+the margin variants; and the characters the font lacks are typed out
+(\code{ISS >= 25}, \code{16-24}). Text columns of the sparklines and the slopegraph
+are measured in the font, so they move to fit it. C64 Pro Mono is not part
+of the package (free to use, not to redistribute:
+\url{https://style64.org/c64-truetype}); it is used when 'systemfonts' reports
+it. Without it the set falls back, as \code{\link[=char_figure]{char_figure()}} does, to
+\code{figure_font("mono")}, at the Plex sizes, with the same colors, layout
+and plain characters.
 }
 \examples{
 \donttest{

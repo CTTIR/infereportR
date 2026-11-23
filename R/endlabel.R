@@ -190,12 +190,12 @@ geom_endlabel <- function(mapping = NULL, data = NULL, ..., hjust = 0, size = NU
   ink <- .ir_mode(mode, transparent, palette)$ink
   .ir_check_number(hjust, "hjust")
   if (is.null(size)) {
-    size <- .ir_label_size_pt / ggplot2::.pt
+    size <- .ir_label_pt() / ggplot2::.pt
   } else {
     .ir_check_number(size, "size", min = 0)
     if (size <= 0) .ir_abort("size must be a positive number")
   }
-  if (is.null(family)) family <- figure_font("sans") else .ir_check_string(family, "family")
+  if (is.null(family)) family <- .ir_sans_family() else .ir_check_string(family, "family")
   .ir_check_flag(na.rm, "na.rm")
   if (!(is.logical(show.legend) && length(show.legend) == 1L)) {
     .ir_abort("show.legend must be TRUE, FALSE or NA")

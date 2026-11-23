@@ -130,8 +130,8 @@ figure_correlation_matrix <- function(data, vars = NULL, method, digits = 2L, la
   diag <- data.frame(x = seq_len(k), y = k + 1 - seq_len(k), label = labels,
                      stringsAsFactors = FALSE)
 
-  size <- .ir_label_size_pt / ggplot2::.pt
-  sans <- figure_font("sans")
+  size <- .ir_label_pt() / ggplot2::.pt
+  sans <- .ir_sans_family()
   ink <- m$ink
   p <- ggplot2::ggplot()
   if (nrow(circles)) {

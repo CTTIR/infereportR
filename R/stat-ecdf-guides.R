@@ -194,7 +194,7 @@ stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
   ink <- .ir_mode(mode, transparent, palette)$ink
   dots <- list(...)
   params <- c(list(probs = probs, guide_label = guide_label, curve_labels = curve_labels,
-                   family = figure_font("sans"), guide_family = .ir_condensed_family()),
+                   family = .ir_sans_family(), guide_family = .ir_condensed_family()),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
   ggplot2::layer(stat = StatEcdfGuides, data = data, mapping = mapping, geom = GeomEcdfGuides,

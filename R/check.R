@@ -28,7 +28,11 @@
 #'     the colors are black and white only, the two values of the figure
 #'     layer. `palette = "grey"` also allows the grey `#999999`, and
 #'     `palette = "tufte"` also Tufte's red and green of both modes
-#'     (`#B3202A`, `#2E7D32`, `#E5484D`, `#5DB760`). This holds in every mode:
+#'     (`#B3202A`, `#2E7D32`, `#E5484D`, `#5DB760`). The C64 Tufte set
+#'     (`figure_gallery(set = "tufte", font = "c64")`) has the VIC-II colors
+#'     in the same roles, which the palette allows alike: the grey `#959595`,
+#'     red `#9F4E44` and `#CB7E75`, green `#5CAB5E` and `#9AE29B`. This holds
+#'     in every mode:
 #'     light (black on white), dark (white on black) and the transparent
 #'     modes, whose backgrounds are empty (`NA`). `fail` lists the offending
 #'     colors as hex codes. The row keeps its name `two_values` for
@@ -93,7 +97,9 @@ check_figure <- function(plot, target = c("paper", "slide"), palette = "onebit")
   rows <- list(
     .ir_check_text_size(theme, elements, layers),
     .ir_check_font_family(theme, elements, layers),
-    .ir_check_two_values(b, theme, elements, legend, .ir_palette_colours(palette)),
+    .ir_check_two_values(b, theme, elements, legend,
+                         union(.ir_palette_colours(palette),
+                               .ir_palette_colours(palette, c64 = TRUE))),
     .ir_check_axis_labels(b, labs),
     .ir_check_title(labs),
     .ir_check_legend_case(legend)

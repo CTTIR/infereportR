@@ -52,7 +52,11 @@ transparent or a grid pattern. With the default \code{palette = "onebit"}
 the colors are black and white only, the two values of the figure
 layer. \code{palette = "grey"} also allows the grey \verb{#999999}, and
 \code{palette = "tufte"} also Tufte's red and green of both modes
-(\verb{#B3202A}, \verb{#2E7D32}, \verb{#E5484D}, \verb{#5DB760}). This holds in every mode:
+(\verb{#B3202A}, \verb{#2E7D32}, \verb{#E5484D}, \verb{#5DB760}). The C64 Tufte set
+(\code{figure_gallery(set = "tufte", font = "c64")}) has the VIC-II colors
+in the same roles, which the palette allows alike: the grey \verb{#959595},
+red \verb{#9F4E44} and \verb{#CB7E75}, green \verb{#5CAB5E} and \verb{#9AE29B}. This holds
+in every mode:
 light (black on white), dark (white on black) and the transparent
 modes, whose backgrounds are empty (\code{NA}). \code{fail} lists the offending
 colors as hex codes. The row keeps its name \code{two_values} for

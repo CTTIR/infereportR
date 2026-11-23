@@ -104,6 +104,8 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
                          mode = "light", transparent = FALSE, palette = "onebit",
                          axes = c("full", "range", "none")) {
   target <- .ir_check_choice(target, c("paper", "slide"), "target")
+  # The C64 type of the Tufte set scales the default size (see figure_gallery()).
+  if (missing(base_size)) base_size <- base_size * .ir_type()$scale
   .ir_check_number(base_size, "base_size")
   if (base_size <= 0) .ir_abort("base_size must be a positive number")
   if (!is.null(base_family)) .ir_check_string(base_family, "base_family")
@@ -119,10 +121,10 @@ theme_figure <- function(target = c("paper", "slide"), base_size = 9, base_famil
                      format(base_size), format(.ir_text_min_pt), format(.ir_text_max_pt)),
              "apa_text_size")
   }
-  if (is.null(base_family)) base_family <- figure_font("sans")
+  if (is.null(base_family)) base_family <- .ir_sans_family()
 
   axis_title_family <- base_family
-  if (target == "slide" && isTRUE(.ir_has_font("IBM Plex Sans Condensed"))) {
+  if (target == "slide" && !.ir_type_c64() && isTRUE(.ir_has_font("IBM Plex Sans Condensed"))) {
     axis_title_family <- "IBM Plex Sans Condensed"
   }
   margin_mm <- if (target == "slide") 1 else 2

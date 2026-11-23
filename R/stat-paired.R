@@ -243,7 +243,7 @@ stat_paired <- function(mapping = NULL, data = NULL, ..., method, conf.level = N
   dots <- list(...)
   params <- c(list(method = method, alternative = alternative, conf.level = conf.level,
                    method_args = method_args, label_type = label, unit = unit,
-                   family = figure_font("sans"), na.rm = na.rm),
+                   family = .ir_sans_family(), na.rm = na.rm),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
   ggplot2::layer(stat = StatPaired, data = data, mapping = mapping, geom = GeomPaired,
