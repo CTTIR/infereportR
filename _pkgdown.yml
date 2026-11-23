@@ -57,6 +57,8 @@ reference:
   - format_interval
   - format_p
 - title: Descriptive tables
+  desc: Descriptive summaries with explicit denominators, optionally joined
+    with supplied inference.
   contents:
   - report_descriptive
 - title: Plot annotations

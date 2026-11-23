@@ -21,6 +21,8 @@ Erdfelder
 Faul
 Holm
 IMBI
+LPPL
+LuaLaTeX
 Lukas
 Lunteren
 Meis
@@ -34,6 +36,7 @@ Pilz
 Plex
 README
 RGBA
+RStudio
 Raban
 SHA
 SIL
@@ -41,6 +44,7 @@ Sauer
 Sparklines
 Springer
 Timmermann
+TinyTeX
 Tufte
 Tufte's
 Uhlmann
@@ -52,6 +56,9 @@ abcb
 aes
 ascorbic
 backhatch
+biber
+biblatex
+booktabs
 cambria
 chargrid
 ci
@@ -83,8 +90,10 @@ inferguidR
 inferplotR
 integrations
 jtools
+latexmk
 linetype
 metadata's
+microtype
 mit
 mmol
 nlme
@@ -95,13 +104,18 @@ ns
 odontoblasts
 oldrel
 palatino
+pandoc
+pandoc's
 papaja
+pdfLaTeX
 pkgdown
 plotcli
 ragg
 renderer
 roxygen
 sidedness
+sidenote
+sidenotes
 sig
 slopegraph
 sparkline
@@ -109,6 +123,7 @@ sparklines
 systemfonts
 testthat
 th
+tinytex
 unexecuted
 untrusted
 withr

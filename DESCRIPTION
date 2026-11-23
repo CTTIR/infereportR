@@ -34,6 +34,7 @@ Imports: ggplot2 (>= 3.5.0), infercalcR (>= 0.1.0), grid, grDevices,
     stats, utils
 Suggests: knitr, rmarkdown, ragg, systemfonts, testthat (>= 3.1.7), tinytex,
     withr
+Additional_repositories: https://cttir.r-universe.dev
 VignetteBuilder: knitr
 URL: https://github.com/CTTIR/infereportR,
     https://cttir.github.io/infereportR/
