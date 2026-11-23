@@ -144,11 +144,16 @@ if (mode %in% c("full", "release")) {
     # version components; it is accepted only while DESCRIPTION has such a
     # version, since a release is checked with its release version.
     dev_version <- grepl("[.]9[0-9]{3}$", read.dcf("DESCRIPTION", fields = "Version")[1L, 1L])
+    # With Additional_repositories in DESCRIPTION the infercalcR item also
+    # says where it is available; only the CTTIR r-universe, as available, is
+    # accepted.
     accepted <- function(item) {
       identical(item, "New submission") ||
         (dev_version && grepl("^Version contains large components \\(", item)) ||
         grepl(paste0("^Strong dependencies not in (mainstream repositories|",
-                     "the CRAN or BioC software repositories): infercalcR$"), item)
+                     "the CRAN or BioC software repositories): infercalcR",
+                     "( Availability using Additional_repositories specification: ",
+                     "infercalcR +yes +https://cttir[.]r-universe[.]dev/?)?$"), item)
     }
     is_incoming <- grepl("checking CRAN incoming feasibility", issues, fixed = TRUE)
     if (any(is_incoming)) {
