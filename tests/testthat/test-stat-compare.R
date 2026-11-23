@@ -192,7 +192,7 @@ test_that("headroom sets the invisible row in steps above the top bracket", {
                class = "infereportR_invalid_input")
 })
 
-test_that("a scale transformation changes the analysed values, a coordinate transformation does not", {
+test_that("a scale transformation changes the analyzed values, a coordinate transformation does not", {
   plot <- base_plot() + stat_compare(method = welch, reference = "ctrl", adjust = "holm")
   raw <- figure_table(plot)
   spec <- infercalcR::method_spec(welch)
