@@ -77,7 +77,8 @@
   returned the single string `"[, ]"`.
 * `save_figure()` checks that the directory of `file` exists and raises
   `infereportR_invalid_input` when it does not; the error came from 'ggplot2'
-  without a class before. No directory is created, as before.
+  without a class before. No directory is created; in an interactive session
+  'ggplot2' asked whether to create it, which no longer happens.
 * The warning of `stat_inference(unavailable = "warn")` has the classes
   `infereportR_unavailable_inference` and `infereportR_warning`; its message
   is unchanged.
