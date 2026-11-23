@@ -115,7 +115,9 @@ must be declared whenever more than one comparison is drawn (\code{"none"} is
 allowed). With explicit \code{comparisons} this is checked when the layer is
 created; with \code{reference} or all pairs, when the plot is built, where
 ggplot2 reports it with the infereportR condition as parent. Rows with
-non-finite x or y are dropped before the call.
+non-finite x or y are dropped before the call. In a panel where a level of
+a pair has no observations (for example a level missing from one facet),
+that pair is skipped and the panel's family holds the remaining pairs.
 
 Bracket i (in pair order) sits at \code{top + (first + (i - 1) * step) * range}
 of the panel's finite y values, with tips of \code{tip * range}. One invisible

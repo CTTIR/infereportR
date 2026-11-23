@@ -35,6 +35,9 @@
 .ir_bracket_step <- 0.20
 .ir_means_offset <- 0.28
 .ir_endlabel_gap <- 1.15
+# Inset in mm of a label placed at a panel edge (-Inf or Inf), so a corner
+# label never touches the axis line or the panel border.
+.ir_edge_inset <- 1
 
 # Opt-in palettes beyond the two values (Bleisatz 1.3, Tufte options). "grey"
 # adds the one grey for context; "tufte" adds red (first/last values, the one
