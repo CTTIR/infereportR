@@ -34,8 +34,8 @@ stat_omnibus(
 \code{\link[infercalcR:run_inference]{infercalcR::run_inference()}}. The data arguments are set by the layer.}
 
 \item{label_x, label_y}{Label position in data units; \code{-Inf}/\code{Inf} mean the
-panel edges (top left by default). A label at the left or right edge is
-set 1 mm in from the axis.}
+panel edges (top left by default). A label at an edge is set 1 mm
+inside it, so it does not touch the axis line.}
 
 \item{hjust, vjust}{Label justification.}
 
@@ -62,7 +62,8 @@ columns \code{x}, \code{y}, \code{label}, \code{.ir_result} and \code{.ir_result
 Runs one explicitly named omnibus procedure of 'infercalcR' per panel,
 with the y values as outcome and the x positions as groups, and writes its
 display strings of \code{\link[=report_table]{report_table()}} as a text label: the estimand, the test
-statistic and the p-value. Each panel is its own analysis.
+statistic with its symbol (\code{F} for the analyses of means, \code{H} for
+Kruskal-Wallis) and the p-value. Each panel is its own analysis.
 }
 \details{
 Degrees of freedom are not shown, because \code{\link[=report_table]{report_table()}} provides no

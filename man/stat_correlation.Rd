@@ -42,9 +42,10 @@ the level of the fitted band.}
 \code{\link[infercalcR:run_inference]{infercalcR::run_inference()}}. The data arguments are set by the layer.}
 
 \item{label_x, label_y}{Label position in data units; \code{-Inf}/\code{Inf} mean the
-panel edges (top left by default). The label is not moved away from the
-data: for a negative association, where the points fill the top left,
-put it top right with \verb{label_x = Inf, hjust = 1}.}
+panel edges (top left by default). A label at an edge is set 1 mm
+inside it, so it does not touch the axis line. The label is not moved
+away from the data: for a negative association, where the points fill
+the top left, put it top right with \verb{label_x = Inf, hjust = 1}.}
 
 \item{hjust, vjust}{Label justification.}
 

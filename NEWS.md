@@ -77,6 +77,13 @@
   observations, so facets in which a group is missing from one panel draw
   instead of failing in infercalcR; the family of that panel holds the
   remaining pairs.
+* `stat_omnibus()` writes the symbol of the test statistic in its label
+  (`F` for the analyses of means, `H` for Kruskal-Wallis), so the number is no
+  longer shown without a name.
+* `stat_omnibus()` and `stat_correlation()` set a label placed at a panel edge
+  (`-Inf` or `Inf`, the default top left) 1 mm inside the panel, at the top
+  and bottom edges as well as at the sides, so it no longer touches the axis
+  line.
 * `format_interval()` returns `character(0)` for endpoints of length zero; it
   returned the single string `"[, ]"`.
 * `save_figure()` checks that the directory of `file` exists and raises

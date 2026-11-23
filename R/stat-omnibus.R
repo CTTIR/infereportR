@@ -27,30 +27,17 @@ StatOmnibus <- ggplot2::ggproto("StatOmnibus", ggplot2::Stat,
     shown <- shown[1L, , drop = FALSE]
     # report_table() has no display string for degrees of freedom, so none is
     # shown; the figure layer does not format numbers itself.
-    text <- paste0(shown$estimand, ": ", shown$statistic_display, ", ", shown$p_display)
+    text <- paste0(shown$estimand, ": ", .ir_omnibus_symbol[[method]],
+                   shown$statistic_display, ", ", shown$p_display)
     out <- data.frame(x = label_x, y = label_y, label = text, group = 1L, PANEL = panel,
                       stringsAsFactors = FALSE)
     .ir_attach_result(out, result, id)
   }
 )
 
-# Gap in mm between an omnibus label at a panel edge (label_x = -Inf or Inf)
-# and the axis line there.
-.ir_omnibus_inset <- 1
-
-# geom_text() with the edge gap: a label at x = -Inf moves right by the gap,
-# one at x = Inf left. Other labels are drawn as by GeomText.
-GeomOmnibusText <- ggplot2::ggproto("GeomOmnibusText", ggplot2::GeomText,
-  draw_panel = function(self, data, panel_params, coord, ...) {
-    grob <- ggplot2::ggproto_parent(ggplot2::GeomText, self)$draw_panel(data, panel_params,
-                                                                       coord, ...)
-    shift <- ifelse(data$x == -Inf, 1, ifelse(data$x == Inf, -1, 0))
-    if (inherits(grob, "text") && length(shift) && any(shift != 0)) {
-      grob$x <- grob$x + grid::unit(shift * .ir_omnibus_inset, "mm")
-    }
-    grob
-  }
-)
+# The symbol written before the test statistic in the label.
+.ir_omnibus_symbol <- c(anova_one_way = "F = ", anova_one_way_welch = "F = ",
+                        kruskal_wallis = "H = ")
 
 .ir_text_empty <- function() {
   out <- data.frame(x = double(), y = double(), label = character(), group = integer(),
@@ -65,7 +52,8 @@ GeomOmnibusText <- ggplot2::ggproto("GeomOmnibusText", ggplot2::GeomText,
 #' Runs one explicitly named omnibus procedure of 'infercalcR' per panel,
 #' with the y values as outcome and the x positions as groups, and writes its
 #' display strings of [report_table()] as a text label: the estimand, the test
-#' statistic and the p-value. Each panel is its own analysis.
+#' statistic with its symbol (`F` for the analyses of means, `H` for
+#' Kruskal-Wallis) and the p-value. Each panel is its own analysis.
 #'
 #' Degrees of freedom are not shown, because [report_table()] provides no
 #' display string for them and the figure layer does not format numbers itself. The
@@ -80,8 +68,8 @@ GeomOmnibusText <- ggplot2::ggproto("GeomOmnibusText", ggplot2::GeomText,
 #' @param method_args A named list of further arguments for
 #'   [infercalcR::run_inference()]. The data arguments are set by the layer.
 #' @param label_x,label_y Label position in data units; `-Inf`/`Inf` mean the
-#'   panel edges (top left by default). A label at the left or right edge is
-#'   set 1 mm in from the axis.
+#'   panel edges (top left by default). A label at an edge is set 1 mm
+#'   inside it, so it does not touch the axis line.
 #' @param hjust,vjust Label justification.
 #' @param text_size Label size in mm (ggplot2 text units); 8 pt (the in-plot
 #'   label size) by default.
@@ -117,7 +105,7 @@ stat_omnibus <- function(mapping = NULL, data = NULL, ..., method, method_args =
   params <- c(list(method = method, method_args = method_args, label_x = label_x,
                    label_y = label_y, hjust = hjust, vjust = vjust),
               .ir_text_params(dots, text_size, family, m$ink), dots)
-  ggplot2::layer(stat = StatOmnibus, data = data, mapping = mapping, geom = GeomOmnibusText,
+  ggplot2::layer(stat = StatOmnibus, data = data, mapping = mapping, geom = .ir_geom_edge_text,
                  position = "identity", show.legend = FALSE, inherit.aes = inherit.aes,
                  params = params)
 }
