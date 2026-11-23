@@ -260,8 +260,10 @@
 #' \donttest{
 #' if (capabilities("cairo")) {
 #'   dir <- file.path(tempdir(), "gallery-deck")
-#'   # Inverse slides take the opposite mode, so both light and dark are needed.
-#'   files <- figure_gallery_deck(dir, figure_modes = c("light", "dark"))
+#'   # The Tufte deck and handout with their figures in the light folder. The
+#'   # twelve-figure deck (set = "bleisatz") has inverse slides, which take the
+#'   # opposite mode: give it figure_modes = c("light", "dark").
+#'   files <- figure_gallery_deck(dir, set = "tufte", figure_modes = "light")
 #'   table(files$type)
 #'   unlink(dir, recursive = TRUE)
 #' }

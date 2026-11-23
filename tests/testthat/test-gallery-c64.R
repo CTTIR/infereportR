@@ -156,6 +156,7 @@ test_that("figure_gallery(font = \"c64\") falls back to the mono family without 
 })
 
 test_that("a C64 Tufte deck draws its figures in the C64 type into figures/c64/tufte", {
+  skip_on_cran()
   skip_if_not(cairo_pdf_works())
   seen <- logical()
   # A stand-in figure keeps the test fast; what matters is the type it is built in.

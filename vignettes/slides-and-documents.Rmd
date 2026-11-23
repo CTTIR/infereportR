@@ -90,7 +90,7 @@ deck <- figure_deck(
                  caption = "The first figure again, on an inverse frame.")
   ),
   title = "Diet and growth in chicks", author = "A. Author", institute = "Institute",
-  venue = c("Meeting", "City"), progress = "dots"
+  venue = c("Meeting", "City"), progress = "dots", figure_modes = c("light", "dark")
 )
 deck
 ```
@@ -123,8 +123,9 @@ cat(readLines(file.path(dir, "deck.tex"))[15:40], sep = "\n")
 | `"text"` | none | one string: a paragraph; several: a list; named strings: small labels |
 
 A figure is saved in every folder of `figure_modes` (by default light, dark
-and the two transparent modes) under the same file name, so switching the
-deck to `mode = "dark"` changes one theme option and nothing else. An
+and the two transparent modes; the deck above keeps to light and dark) under
+the same file name, so switching the deck to `mode = "dark"` changes one
+theme option and nothing else. An
 inverse slide (`inverse = TRUE`) is set as the theme's inverse frame and
 points `\graphicspath` at the opposite mode folder. A plain ggplot instead
 of a function is saved unchanged in every mode, which is right for light

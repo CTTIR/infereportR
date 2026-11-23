@@ -273,6 +273,7 @@ context_layers <- function(palette, mode = "light", ...) {
 }
 
 test_that("brackets, ECDF guides and paired units draw their context in the palette grey", {
+  skip_on_cran()
   ink <- "#000000"
   grey <- "#999999"
   layers <- context_layers("grey")
@@ -311,6 +312,7 @@ test_that("brackets, ECDF guides and paired units draw their context in the pale
 })
 
 test_that("in onebit the context layers stay exactly two values", {
+  skip_on_cran()
   for (mode in c("light", "dark")) {
     layers <- context_layers("onebit", mode = mode)
     ink <- .ir_mode(mode)$ink
