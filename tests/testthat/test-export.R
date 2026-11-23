@@ -107,3 +107,10 @@ test_that("bad file, plot and size arguments raise invalid_input", {
   expect_error(save_figure(p, "x.pdf", dpi = 0), class = "infereportR_invalid_input")
   expect_error(save_figure(p, "x.pdf", bg = NA), class = "infereportR_invalid_input")
 })
+
+test_that("save_figure refuses a file in a missing directory with a classed error", {
+  dir <- file.path(withr::local_tempdir(), "no-such-folder")
+  f <- file.path(dir, "figure.png")
+  expect_error(save_figure(small_plot(), f), class = "infereportR_invalid_input")
+  expect_false(dir.exists(dir))
+})

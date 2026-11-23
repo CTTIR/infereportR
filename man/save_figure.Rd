@@ -19,7 +19,8 @@ save_figure(
 \item{plot}{A ggplot object.}
 
 \item{file}{Path of the output file. The extension (\code{pdf}, \code{png}, \code{svg} or
-\code{tiff}, in any case) selects the device.}
+\code{tiff}, in any case) selects the device. Its directory must exist;
+\code{save_figure()} creates no directories.}
 
 \item{preset}{Size preset, see \code{\link[=figure_size]{figure_size()}}. Defaults to
 \code{"journal_column"} (85 x 70 mm).}

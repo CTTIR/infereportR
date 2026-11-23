@@ -71,7 +71,8 @@ figure_size <- function(preset = c("journal_column", "journal_page", "slide_full
 #'
 #' @param plot A ggplot object.
 #' @param file Path of the output file. The extension (`pdf`, `png`, `svg` or
-#'   `tiff`, in any case) selects the device.
+#'   `tiff`, in any case) selects the device. Its directory must exist;
+#'   `save_figure()` creates no directories.
 #' @param preset Size preset, see [figure_size()]. Defaults to
 #'   `"journal_column"` (85 x 70 mm).
 #' @param width,height Width and height in millimeters. Each one given
@@ -104,6 +105,10 @@ save_figure <- function(plot, file, preset = "journal_column", width = NULL, hei
   ext <- if (grepl("[.][^./\\\\]+$", file)) tolower(sub(".*[.]", "", file)) else ""
   if (!ext %in% formats) {
     .ir_abort("file must end in .pdf, .png, .svg or .tiff")
+  }
+  # ggsave() would stop with an unclassed error; nothing is created for the caller.
+  if (!dir.exists(dirname(file))) {
+    .ir_abort(sprintf("the directory of file does not exist: %s", dirname(file)))
   }
   size <- figure_size(.ir_check_choice(preset, .ir_presets$preset, "preset"))
   .ir_check_size(width, "width")
