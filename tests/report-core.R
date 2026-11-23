@@ -8,6 +8,8 @@ stopifnot(identical(report_metadata(t),infercalcR::result_metadata(x)),identical
 stopifnot(identical(format_p(c(1e-20,0,NA,.5)),c("p < 0.001","p < 0.001","p unavailable","p = 0.500")))
 stopifnot(identical(format_estimate(c(-Inf,Inf,NA)),c("-Inf","Inf","unavailable")),identical(format_interval(-Inf,2),"[-Inf, 2]"))
 stopifnot(identical(format_p(.125,decimal_mark=","),"p = 0,125"),identical(format_estimate(1.25,decimal_mark=","),"1,25"))
+# Zero-length input gives zero strings (format_interval() once returned "[, ]").
+stopifnot(identical(format_interval(numeric(),numeric()),character()),identical(format_estimate(numeric()),character()),identical(format_p(numeric()),character()))
 invalid(format_p(1.1)); invalid(format_p(NaN)); invalid(format_estimate(1,digits=0)); invalid(format_interval(3,2)); invalid(report_table(x,rows=c("a-b","a-b")))
 invalid(report_table(x,rows="unknown")); invalid(report_table(x,p="adjusted"))
 adjusted <- infercalcR::adjust_inference(x,"holm",family_id="all-three")

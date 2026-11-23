@@ -39,6 +39,8 @@ format_interval <- function(low, high, digits = 3L, decimal_mark = ".") {
   .ir_digits(digits, decimal_mark)
   if (!is.numeric(low) || !is.numeric(high) || length(low) != length(high) ||
       any(!is.na(low) & !is.na(high) & low > high)) .ir_abort("interval endpoints must be equally sized numeric vectors in increasing order")
+  # paste0() recycles zero-length vectors to "", so no endpoints must give no strings.
+  if (!length(low)) return(character())
   out <- paste0("[", format_estimate(low, digits, decimal_mark), ", ", format_estimate(high, digits, decimal_mark), "]")
   out[is.na(low) | is.na(high)] <- "interval unavailable"
   out
