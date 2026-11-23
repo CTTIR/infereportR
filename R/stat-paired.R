@@ -104,13 +104,18 @@ StatPaired <- ggplot2::ggproto("StatPaired", ggplot2::Stat,
 GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
   required_aes = c("x", "y"),
   non_missing_aes = character(),
+  # unit_colour: the colour of the unit lines and points; NA draws them in
+  # `colour`, the colour of the means and the label.
   default_aes = ggplot2::aes(colour = .ir_ink, alpha = NA, stroke = 0.5,
-                             size = .ir_label_size_pt / ggplot2::.pt, family = ""),
+                             size = .ir_label_size_pt / ggplot2::.pt, family = "",
+                             unit_colour = NA),
   draw_key = ggplot2::draw_key_blank,
   draw_panel = function(data, panel_params, coord) {
     if (!nrow(data)) return(grid::nullGrob())
     data <- coord$transform(data, panel_params)
     ink <- ggplot2::alpha(data$colour[1L], data$alpha[1L])
+    unit_colour <- if (is.null(data$unit_colour)) NA else data$unit_colour[1L]
+    unit_ink <- if (is.na(unit_colour)) ink else ggplot2::alpha(unit_colour, data$alpha[1L])
     stroke <- data$stroke[1L]
     point_lwd <- stroke * ggplot2::.stroke / 2
     units <- data[data$part == "unit", , drop = FALSE]
@@ -122,11 +127,11 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
       grobs$lines <- grid::polylineGrob(
         name = "lines",
         units$x, units$y, id = match(units$id, unique(units$id)), default.units = "native",
-        gp = grid::gpar(col = ink, lwd = .ir_rule_hair * 96 / 72.27, lineend = "butt"))
+        gp = grid::gpar(col = unit_ink, lwd = .ir_rule_hair * 96 / 72.27, lineend = "butt"))
       grobs$points <- grid::pointsGrob(
         name = "points",
         units$x, units$y, pch = 1, default.units = "native",
-        gp = grid::gpar(col = ink, fill = NA, lwd = point_lwd,
+        gp = grid::gpar(col = unit_ink, fill = NA, lwd = point_lwd,
                         fontsize = .ir_paired_point * ggplot2::.pt + point_lwd))
     }
     if (nrow(means)) {
@@ -205,8 +210,10 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #' @param na.rm Kept for the layer interface; incomplete pairs are always
 #'   dropped.
 #' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
-#'   [theme_figure()]. The layer draws in ink in every palette; the argument
-#'   keeps the interface of the figure layer uniform.
+#'   [theme_figure()]. With `"grey"` and `"tufte"` the unit lines and their
+#'   points are context and drawn in grey, the means and the label in ink;
+#'   with `"onebit"` all are ink. A `colour` given in `...` applies to all,
+#'   unless `unit_colour` is given as well.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`, `id`,
 #'   `part` (`"unit"`, `"mean"` or `"label"`), `label`, `.ir_result` and
 #'   `.ir_result_id`, so [inference_results()] and [figure_table()] return
@@ -238,14 +245,19 @@ stat_paired <- function(mapping = NULL, data = NULL, ..., method, conf.level = N
   .ir_check_method_args(method_args)
   label <- .ir_check_choice(label, c("estimate_ci_p", "none"), "label")
   unit <- .ir_check_optional_string(unit, "unit")
-  ink <- .ir_mode(mode, transparent, palette)$ink
+  m <- .ir_mode(mode, transparent, palette)
   .ir_check_flag(na.rm, "na.rm")
   dots <- list(...)
   params <- c(list(method = method, alternative = alternative, conf.level = conf.level,
                    method_args = method_args, label_type = label, unit = unit,
-                   family = figure_font("sans"), na.rm = na.rm),
+                   family = .ir_sans_family(), na.rm = na.rm),
               dots)
-  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
+  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- m$ink
+  # The units are context for the means: the palette grey, unless a colour
+  # is given.
+  if (!any(c("colour", "color", "unit_colour", "unit_color") %in% names(dots))) {
+    params$unit_colour <- m$grey
+  }
   ggplot2::layer(stat = StatPaired, data = data, mapping = mapping, geom = GeomPaired,
                  position = "identity", show.legend = FALSE, inherit.aes = inherit.aes,
                  params = params)

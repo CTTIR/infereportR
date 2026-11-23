@@ -61,7 +61,9 @@ four reference variants are the defaults, \verb{mode = "dark", palette = "grey"}
 }
 
 The figures are drawn from the simulated gallery data in the deck's
-palette, so the decks are the same on every run. With \code{render = TRUE}
+palette, so the decks are the same on every run. A Tufte deck with
+\code{font = "c64"} draws them as the C64 Tufte set of
+\code{figure_gallery(font = "c64")} into \verb{figures/c64/tufte/}. With \code{render = TRUE}
 they are compiled with \code{\link[=render_deck]{render_deck()}} and \code{\link[=render_document]{render_document()}}, which
 need LaTeX.
 }
@@ -69,8 +71,10 @@ need LaTeX.
 \donttest{
 if (capabilities("cairo")) {
   dir <- file.path(tempdir(), "gallery-deck")
-  # Inverse slides take the opposite mode, so both light and dark are needed.
-  files <- figure_gallery_deck(dir, figure_modes = c("light", "dark"))
+  # The Tufte deck and handout with their figures in the light folder. The
+  # twelve-figure deck (set = "bleisatz") has inverse slides, which take the
+  # opposite mode: give it figure_modes = c("light", "dark").
+  files <- figure_gallery_deck(dir, set = "tufte", figure_modes = "light")
   table(files$type)
   unlink(dir, recursive = TRUE)
 }

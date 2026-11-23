@@ -3,7 +3,10 @@
 # is ported verbatim from CTTIR's make-tufte-figures.R (Bleisatz 1.3,
 # 2026-11-19); the plotting uses the package's layers and builders. Every
 # builder is a function of (data, mode, transparent, palette, narrow) where
-# `narrow` is TRUE for the 52 mm margin slot.
+# `narrow` is TRUE for the 52 mm margin slot. Called in the C64 type
+# (.ir_with_type("c64", ...)), the builders draw the C64 set: the type sets
+# family, sizes and colors, the builders use the short labels of the margin
+# slot and type out what the font lacks, and .ir_c64_finish() does the rest.
 
 .ir_tufte_captions <- data.frame(
   name = c("13-sparklines", "14-range-frame-dot-dash", "15-quartile-plot",
@@ -40,8 +43,13 @@
                        margin = "margin")
 
 .ir_tufte_ge25 <- "ISS \u2265 25"
-# The data use a hyphen in "16-24"; figures show an en dash.
-.ir_tufte_show <- function(x) gsub("16-24", "16\u201324", x, fixed = TRUE)
+# The data use a hyphen in "16-24"; figures show an en dash. Every string a
+# Tufte figure shows passes here, so the C64 type gets plain characters.
+.ir_tufte_show <- function(x) {
+  x <- gsub("16-24", "16\u201324", x, fixed = TRUE)
+  if (.ir_type_c64()) x <- .ir_c64_text(x)
+  x
+}
 
 # Tufte's theme on top of the figure theme: range-frame axes (lines drawn as
 # data), hairline ticks of 0.9 mm only where a value is labeled, no grid.
@@ -82,7 +90,8 @@
                     units = stats::setNames(unname(units), unname(markers)),
                     digits = c(C5a = 1, C3a = 0, "IL-6" = 0), marks = "both", extremes = "max",
                     numbers = c("max", "last"), x_unit = " h",
-                    titles = c(series = "Median, 0\u201348 h", max = "Peak", last = "48 h"),
+                    titles = c(series = .ir_tufte_show("Median, 0\u201348 h"), max = "Peak",
+                               last = "48 h"),
                     slot = "slide_side", mode = mode, transparent = transparent,
                     palette = palette)
 }
@@ -91,6 +100,7 @@
 .ir_tufte_14 <- function(d, mode = "light", transparent = FALSE, palette = "tufte",
                          narrow = FALSE) {
   m <- .ir_mode(mode, transparent, palette)
+  narrow <- narrow || .ir_type_c64()
   s <- d$sc
   xr <- range(s$iss)
   yr <- range(s$il6)
@@ -117,6 +127,7 @@
 .ir_tufte_15 <- function(d, mode = "light", transparent = FALSE, palette = "tufte",
                          narrow = FALSE) {
   m <- .ir_mode(mode, transparent, palette)
+  narrow <- narrow || .ir_type_c64()
   v <- d$il6
   lev <- c("ISS < 16", "ISS 16-24", .ir_tufte_ge25)
   v$x <- match(v$group, lev)
@@ -162,7 +173,7 @@
   grid_y <- seq(5, 30, by = 5)
   last <- cts[cts$g == 3, ]
   cond <- .ir_condensed_family()
-  small <- (.ir_label_size_pt - 1) / ggplot2::.pt
+  small <- (.ir_label_pt() - 1) / ggplot2::.pt
   ls <- last$outcome == "Single organ"
   labels <- data.frame(x = c(last$x[ls] + 0.15, last$x[!ls] - 0.15),
                        y = c(last$pct[ls], last$pct[!ls]) + 1.2,
@@ -188,7 +199,7 @@
                  transparent = transparent, palette = palette) +
     ggplot2::theme(axis.ticks.length = grid::unit(0.9, "mm"),
                    plot.margin = ggplot2::margin(1.5, 1.5, 1, 1, "mm"),
-                   plot.title = ggplot2::element_text(family = cond, size = .ir_label_size_pt,
+                   plot.title = ggplot2::element_text(family = cond, size = .ir_label_pt(),
                                                       colour = m$ink, face = "plain", hjust = 0,
                                                       margin = ggplot2::margin(b = 1.5,
                                                                                unit = "mm")),
@@ -245,7 +256,7 @@
   m <- .ir_mode(mode, transparent, palette)
   x <- .ir_tufte_18_data(d)
   onebit <- m$palette == "onebit"
-  pt <- .ir_label_size_pt
+  pt <- .ir_label_pt()
   cond <- .ir_condensed_family()
   x$pk$label <- paste0(format_estimate(as.numeric(x$pk$peak_h)), " h")
   ggplot2::ggplot(x$L, ggplot2::aes(.data$hours, .data$C5a)) +
@@ -263,12 +274,13 @@
     ggplot2::scale_x_continuous(breaks = c(0, 48), expand = ggplot2::expansion(mult = 0.04)) +
     ggplot2::scale_y_continuous(breaks = c(10, 40), limits = c(5, 46), expand = c(0, 0),
                                 position = "right") +
-    ggplot2::labs(x = "Hours, 0\u201348 in every panel; the number is the hour of the C5a peak",
+    ggplot2::labs(x = .ir_tufte_show(paste("Hours, 0\u201348 in every panel; the number is",
+                                           "the hour of the C5a peak")),
                   y = NULL) +
     .ir_tufte_theme(mode, transparent, palette) +
     ggplot2::theme(
       strip.text.x = ggplot2::element_blank(),
-      strip.text.y.left = ggplot2::element_text(family = figure_font("sans"), size = pt,
+      strip.text.y.left = ggplot2::element_text(family = .ir_sans_family(), size = pt,
                                                 colour = m$ink, face = "plain", angle = 0,
                                                 hjust = 0,
                                                 margin = ggplot2::margin(r = 2, unit = "mm")),
@@ -298,11 +310,11 @@
   ly <- endv$C5a
   if (diff(ly) < 2.6) ly <- mean(ly) + c(-1.3, 1.3)
   yr <- range(all$C5a)
-  pt <- .ir_label_size_pt
+  pt <- .ir_label_pt()
   ends <- data.frame(y = c(ly, max(ly) + 2.8),
                      label = c(.ir_tufte_show(as.character(endv$severity)), "median"),
                      colour = c(ifelse(endv$severity == .ir_tufte_ge25, m$red, m$ink), m$grey),
-                     family = c(figure_font("sans"), figure_font("sans"),
+                     family = c(.ir_sans_family(), .ir_sans_family(),
                                 .ir_condensed_family()),
                      size = c(pt, pt, pt - 1) / ggplot2::.pt, stringsAsFactors = FALSE)
   ggplot2::ggplot(L, ggplot2::aes(.data$hours, .data$C5a)) +
@@ -323,10 +335,53 @@
     ggplot2::labs(x = "Hours after admission", y = "C5a (ng/ml)") +
     ggplot2::coord_cartesian(clip = "off") +
     .ir_tufte_theme(mode, transparent, palette) +
-    ggplot2::theme(plot.margin = ggplot2::margin(1.5, 16, 1, 1, "mm"))
+    # The end labels are wider in the C64 type.
+    ggplot2::theme(plot.margin = ggplot2::margin(1.5, if (.ir_type_c64()) 23 else 16, 1, 1,
+                                                 "mm"))
 }
 
-.ir_tufte_builders <- list(
+# A function for the reason given at .ir_gallery_builders().
+.ir_tufte_builders <- function() list(
   .ir_tufte_13, .ir_tufte_14, .ir_tufte_15, .ir_tufte_16, .ir_tufte_17, .ir_tufte_18,
   .ir_tufte_14, .ir_tufte_15, .ir_tufte_19
 )
+
+# Figure i of the Tufte set (in the order of .ir_tufte_captions), in the
+# current type.
+.ir_tufte_build <- function(i, data, mode = "light", transparent = FALSE, palette = "tufte") {
+  narrow <- .ir_tufte_captions$slot[[i]] == "margin"
+  p <- .ir_tufte_builders()[[i]](data, mode = mode, transparent = transparent, palette = palette,
+                               narrow = narrow)
+  if (.ir_type_c64()) p <- .ir_c64_finish(p)
+  p
+}
+
+# The C64 set after make-tufte-figures.R: every theme text in the C64
+# family and one weight; in figures with axes, axis text and titles at the
+# label size and the y title above the axis, horizontal, as in character
+# mode.
+.ir_c64_finish <- function(p) {
+  family <- .ir_sans_family()
+  pt <- .ir_label_pt()
+  th <- p$theme
+  text <- names(Filter(function(e) inherits(e, "element_text"), th))
+  # inherit.blank keeps the children of blanked elements (the axes of the
+  # canvas figures) blank.
+  p <- p + do.call(ggplot2::theme, stats::setNames(lapply(text, function(nm) {
+    ggplot2::element_text(family = family, face = "plain", inherit.blank = TRUE)
+  }), text))
+  axis <- ggplot2::calc_element("axis.text.x.bottom", .ir_full_theme(p))
+  if (is.null(axis) || inherits(axis, "element_blank")) return(p)
+  p <- p + ggplot2::theme(axis.text = ggplot2::element_text(size = pt),
+                          axis.title = ggplot2::element_text(size = pt))
+  yt <- p$labels$y
+  if (is.character(yt) && length(yt) == 1L && nzchar(yt)) {
+    p <- p + ggplot2::labs(y = NULL, title = yt) +
+      ggplot2::theme(plot.title.position = "plot",
+                     plot.title = ggplot2::element_text(family = family, face = "plain",
+                                                        size = pt, hjust = 0,
+                                                        margin = ggplot2::margin(0, 0, 1.2, 0,
+                                                                                 "mm")))
+  }
+  p
+}

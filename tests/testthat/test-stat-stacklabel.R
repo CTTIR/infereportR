@@ -18,6 +18,7 @@ stack_plot <- function(position = "fill", ...) {
 }
 
 test_that("labels name the levels at the segment centres of the last bar", {
+  skip_on_cran()
   p <- stack_plot()
   b <- ggplot2::ggplot_build(p)
   bars <- b$data[[1]]

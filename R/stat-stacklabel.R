@@ -104,7 +104,7 @@ stat_stacklabel <- function(mapping = NULL, data = NULL, ..., side = c("right", 
   )
   dots <- list(...)
   params <- c(list(side = side, offset = offset,
-                   size = if (is.null(size)) .ir_label_size_pt / ggplot2::.pt else size,
+                   size = if (is.null(size)) .ir_label_pt() / ggplot2::.pt else size,
                    family = if (is.null(family)) .ir_condensed_family() else family),
               dots)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink

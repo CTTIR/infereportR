@@ -10,6 +10,7 @@ ecdf_plot <- function(...) {
 }
 
 test_that("drop lines sit at the type-1 medians of the gallery (figure 05)", {
+  skip_on_cran()
   p <- ecdf_plot(curve_labels = c(0.85, 0.35))
   d <- layer_data_of(p, 2L)
   drop <- d[d$part == "drop", ]

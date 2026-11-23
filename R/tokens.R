@@ -63,6 +63,17 @@
 # The C64 black-and-white screen, fixed in every mode.
 .ir_screen <- c(background = "#000000", foreground = "#FFFFFF")
 
+# The C64 type of the Tufte set (Bleisatz figures/c64/tufte/): C64 Pro Mono,
+# not bundled, at 0.72 x the Plex size, so that its capitals are as tall as
+# those of Plex. The characters the font lacks are typed out: their Unicode
+# code points (>=, <=, +/-, times, minus, en and em dash, middle dot,
+# ellipsis), so that the table works in any locale, and what replaces them.
+.ir_c64_family <- "C64 Pro Mono"
+.ir_c64_scale <- 0.72
+.ir_c64_glyphs <- c(0x2265L, 0x2264L, 0x00B1L, 0x00D7L, 0x2212L, 0x2013L, 0x2014L, 0x00B7L,
+                    0x2026L)
+.ir_c64_typed <- c(">=", "<=", "+/-", "x", "-", "-", "--", "/", "...")
+
 .ir_linetypes <- c("solid", "22", "13", "1343", "73", "2262")
 .ir_shapes <- c(16, 1, 15, 0, 17, 2, 18, 5)
 .ir_hatches <- c("solid", "open", "hatch", "dots", "crosshatch", "backhatch")

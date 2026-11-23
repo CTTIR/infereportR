@@ -242,3 +242,90 @@ test_that("the layers and builders accept palette and stay in ink", {
   expect_error(geom_endlabel(palette = "x"), class = "infereportR_invalid_input")
   expect_error(scale_colour_ink(palette = "x"), class = "infereportR_invalid_input")
 })
+
+# A color as "#RRGGBB" (an opaque alpha suffix dropped).
+hex6 <- function(x) sub("^(#[0-9A-F]{6})FF$", "\\1", toupper(x))
+
+# The colors a grob tree draws with (gp col and fill), without NA.
+grob_colours <- function(g) {
+  out <- c(g$gp$col, g$gp$fill)
+  for (x in g$children) out <- c(out, grob_colours(x))
+  unique(hex6(out[!is.na(out)]))
+}
+
+context_layers <- function(palette, mode = "light", ...) {
+  pg2 <- data.frame(id = rep(1:6, 2), t = factor(rep(c("before", "after"), each = 6),
+                                                levels = c("before", "after")),
+                    v = c(5, 6, 7, 6, 8, 7, 6, 8, 8, 7, 9, 9))
+  ecdf <- data.frame(v = c(1, 2, 2, 3, 5, 6, 4, 5, 7, 8, 8, 9),
+                     g = rep(c("a", "b"), each = 6))
+  list(
+    bracket = ggplot2::ggplot(PlantGrowth, ggplot2::aes(group, weight)) +
+      ggplot2::geom_point() +
+      stat_compare(method = welch, comparisons = list(c("ctrl", "trt1")), mode = mode,
+                   palette = palette, ...),
+    guides = ggplot2::ggplot(ecdf, ggplot2::aes(v, linetype = g)) +
+      ggplot2::stat_ecdf() +
+      stat_ecdf_guides(curve_labels = c(0.8, 0.3), mode = mode, palette = palette, ...),
+    paired = ggplot2::ggplot(pg2, ggplot2::aes(t, v, id = id)) +
+      stat_paired(method = "t_means_paired", mode = mode, palette = palette, ...)
+  )
+}
+
+test_that("brackets, ECDF guides and paired units draw their context in the palette grey", {
+  skip_on_cran()
+  ink <- "#000000"
+  grey <- "#999999"
+  layers <- context_layers("grey")
+  # bracket: bar and tips grey, label ink
+  g <- ggplot2::layer_grob(layers$bracket, 2L)[[1]]
+  expect_identical(hex6(g$children[[1]]$gp$col), grey)
+  expect_identical(hex6(g$children[[2]]$gp$col), grey)
+  expect_identical(hex6(g$children[[4]]$gp$col), ink)
+  expect_identical(layer_data_of(layers$bracket, 2L)$line_colour[1], grey)
+  # ECDF guides: guide line, its label and the drop lines grey, curve labels ink
+  # (children in drawing order: guide line, its label, drop lines, curve labels)
+  g <- ggplot2::layer_grob(layers$guides, 2L)[[1]]
+  expect_identical(unname(vapply(g$children, function(x) hex6(x$gp$col), "")),
+                   c(grey, grey, grey, ink))
+  expect_s3_class(g$children[[4]], "text")
+  # paired: unit lines and points grey, means and label ink
+  g <- ggplot2::layer_grob(layers$paired, 1L)[[1]]
+  expect_identical(hex6(g$children$lines$gp$col), grey)
+  expect_identical(hex6(g$children$points$gp$col), grey)
+  expect_identical(hex6(g$children$mean_line$gp$col), ink)
+  expect_identical(hex6(g$children$label$gp$col), ink)
+  # in the Tufte palette and dark mode the grey stays, the ink turns white
+  dark <- context_layers("tufte", mode = "dark")
+  expect_setequal(grob_colours(ggplot2::layer_grob(dark$paired, 1L)[[1]]),
+                  c(grey, "#FFFFFF"))
+  # a colour given to the layer applies to the context as well
+  red <- context_layers("grey", colour = "#B3202A")
+  expect_identical(grob_colours(ggplot2::layer_grob(red$bracket, 2L)[[1]]), "#B3202A")
+  expect_identical(grob_colours(ggplot2::layer_grob(red$paired, 1L)[[1]]), "#B3202A")
+  expect_identical(grob_colours(ggplot2::layer_grob(red$guides, 2L)[[1]]), "#B3202A")
+  # check_figure() sees the second colour column
+  p <- layers$bracket + ggplot2::labs(x = NULL, y = "Weight (g)") +
+    theme_figure("slide", palette = "grey")
+  expect_true(palette_ok_any(p, "grey"))
+  expect_false(palette_ok_any(p, "onebit"))
+})
+
+test_that("in onebit the context layers stay exactly two values", {
+  skip_on_cran()
+  for (mode in c("light", "dark")) {
+    layers <- context_layers("onebit", mode = mode)
+    ink <- .ir_mode(mode)$ink
+    for (nm in names(layers)) {
+      i <- if (nm == "paired") 1L else 2L
+      cols <- grob_colours(ggplot2::layer_grob(layers[[nm]], i)[[1]])
+      expect_identical(cols, ink, label = paste(mode, nm))
+      d <- layer_data_of(layers[[nm]], i)
+      cc <- unlist(d[grepl("colour$", names(d))])
+      expect_true(all(hex6(cc[!is.na(cc)]) == ink), label = paste(mode, nm))
+      expect_true(palette_ok_any(layers[[nm]] + ggplot2::labs(x = "x (u)", y = "y (u)") +
+                                   theme_figure("slide", mode = mode), "onebit"),
+                  label = paste(mode, nm))
+    }
+  }
+})

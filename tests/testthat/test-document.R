@@ -144,6 +144,13 @@ test_that("save_document() writes the .tex, the class, the bibliography and the 
   src <- withr::local_tempdir()
   bib <- file.path(src, "refs.bib")
   writeLines("@misc{a, title = {A}, year = {2020}}", bib)
+  d1 <- test_document(bibliography = bib, figure_modes = "light")
+  files <- save_document(d1, withr::local_tempdir())
+  expect_setequal(files$type, c("tex", "class", "bibliography", "figure-pdf"))
+  expect_identical(sum(files$type == "figure-pdf"), 3L)
+  # Two modes, overwriting and a bibliography already in dir: not on CRAN,
+  # where the twelve figure files above take long.
+  skip_on_cran()
   d <- test_document(bibliography = bib, figure_modes = c("light", "dark"))
   files <- save_document(d, dir)
   expect_named(files, c("file", "type"))

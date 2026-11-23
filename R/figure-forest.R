@@ -1,7 +1,9 @@
 # Helpers shared by the figure builders --------------------------------------
 
-# IBM Plex Sans Condensed when 'systemfonts' reports it, else the figure font.
+# IBM Plex Sans Condensed when 'systemfonts' reports it, else the figure font;
+# the one family of the C64 type while it is in use.
 .ir_condensed_family <- function() {
+  if (.ir_type_c64()) return(.ir_sans_family())
   if (isTRUE(.ir_has_font("IBM Plex Sans Condensed"))) return("IBM Plex Sans Condensed")
   figure_font("sans")
 }
@@ -231,9 +233,9 @@ figure_forest <- function(results, labels = names(results), n = NULL, row = NULL
   }
 
   # Text columns, measured in the figure font at the label size.
-  sans <- figure_font("sans")
+  sans <- .ir_sans_family()
   cond <- .ir_condensed_family()
-  fs <- .ir_label_size_pt
+  fs <- .ir_label_pt()
   n_text <- .ir_format_n(fd$n)
   w <- function(s, family = sans, face = 1L) {
     if (!length(s)) return(0)

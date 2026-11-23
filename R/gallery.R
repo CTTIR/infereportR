@@ -236,7 +236,11 @@
               transparent = transparent)
 }
 
-.ir_gallery_builders <- list(
+# The builders in figure order. A function, so that each builder is looked up
+# when the table is used: a list made when the package is built would hold
+# copies of the functions, which tools that trace the package's functions
+# (coverage) never see called.
+.ir_gallery_builders <- function() list(
   .ir_gallery_01, .ir_gallery_02, .ir_gallery_03, .ir_gallery_04, .ir_gallery_05,
   .ir_gallery_06, .ir_gallery_07, .ir_gallery_08, .ir_gallery_09, .ir_gallery_10,
   .ir_gallery_11, .ir_gallery_12
@@ -304,6 +308,25 @@
 #' (two values; the grey becomes thin or dotted ink). So for a deck,
 #' `figure_gallery(file.path("figures", "tufte"), set = "tufte")`.
 #'
+#' **The C64 Tufte set** (`font = "c64"`) is the same set for decks and
+#' documents set with `font=c64`, which look for it in
+#' `figures/c64/tufte/<folder>/`; so
+#' `figure_gallery(file.path("figures", "c64", "tufte"), set = "tufte",
+#' font = "c64")`. As in the C64 set of Bleisatz, every piece of text is set
+#' in C64 Pro Mono, in one weight, at 0.72 times the Plex size (its capitals
+#' are then as tall as those of Plex); the grey, red and green are the VIC-II
+#' colors of the Pepto palette (grey `#959595`; red `#9F4E44`, `#CB7E75` on
+#' black; green `#5CAB5E`, `#9AE29B` on black); the y title stands above the
+#' axis, horizontal, as in character mode; the axes take the short labels of
+#' the margin variants; and the characters the font lacks are typed out
+#' (`ISS >= 25`, `16-24`). Text columns of the sparklines and the slopegraph
+#' are measured in the font, so they move to fit it. C64 Pro Mono is not part
+#' of the package (free to use, not to redistribute:
+#' <https://style64.org/c64-truetype>); it is used when 'systemfonts' reports
+#' it. Without it the set falls back, as [char_figure()] does, to
+#' `figure_font("mono")`, at the Plex sizes, with the same colors, layout
+#' and plain characters.
+#'
 #' @param dir Directory that holds the mode folders; a temporary directory by
 #'   default.
 #' @param modes Mode folders to write. For `set = "bleisatz"` any of
@@ -317,6 +340,8 @@
 #' @param dpi Resolution of the PNG files in dots per inch, 300 by default.
 #' @param set `"bleisatz"` (default) for the twelve figures 01-12 or
 #'   `"tufte"` for the nine files of figures 13-19.
+#' @param font `"plex"` (default) or `"c64"` for the C64 Tufte set (see
+#'   above); `"c64"` needs `set = "tufte"`.
 #' @return The rows of [save_figure_set()] for all figures, bound in figure
 #'   order: a data.frame with one row per written file and the columns `mode`,
 #'   `file`, `format`, `width_mm` and `height_mm` (12 or 9 x modes x formats
@@ -334,9 +359,14 @@
 #' @export
 figure_gallery <- function(dir = tempdir(),
                            modes = c("light", "dark", "light-transparent", "dark-transparent"),
-                           png = FALSE, dpi = 300, set = c("bleisatz", "tufte")) {
+                           png = FALSE, dpi = 300, set = c("bleisatz", "tufte"),
+                           font = c("plex", "c64")) {
   .ir_check_string(dir, "dir")
   set <- .ir_check_choice(set, c("bleisatz", "tufte"), "set")
+  font <- .ir_check_choice(font, c("plex", "c64"), "font")
+  if (font == "c64" && set != "tufte") {
+    .ir_abort("font = \"c64\" draws the Tufte set; use it with set = \"tufte\"")
+  }
   if (set == "tufte") {
     if (missing(modes)) modes <- .ir_tufte_modes
     .ir_check_set_modes(modes)
@@ -348,9 +378,9 @@ figure_gallery <- function(dir = tempdir(),
   if (dpi <= 0) .ir_abort("dpi must be a positive number")
   if (!length(modes)) return(.ir_set_empty())
   data <- .ir_gallery_data()
-  if (set == "tufte") return(.ir_tufte_gallery(data, dir, modes, png, dpi))
+  if (set == "tufte") return(.ir_with_type(font, .ir_tufte_gallery(data, dir, modes, png, dpi)))
   rows <- lapply(seq_len(nrow(.ir_gallery_captions)), function(i) {
-    builder <- .ir_gallery_builders[[i]]
+    builder <- .ir_gallery_builders()[[i]]
     build <- function(mode, transparent) builder(data, mode = mode, transparent = transparent)
     save_figure_set(build, .ir_gallery_captions$name[[i]],
                     preset = .ir_gallery_presets[[.ir_gallery_captions$slot[[i]]]], dir = dir,
@@ -390,11 +420,9 @@ gallery_captions <- function(set = c("bleisatz", "tufte")) {
 
 .ir_tufte_gallery <- function(data, dir, modes, png, dpi) {
   rows <- lapply(seq_len(nrow(.ir_tufte_captions)), function(i) {
-    builder <- .ir_tufte_builders[[i]]
     slot <- .ir_tufte_captions$slot[[i]]
-    narrow <- slot == "margin"
     build <- function(mode, transparent, palette) {
-      builder(data, mode = mode, transparent = transparent, palette = palette, narrow = narrow)
+      .ir_tufte_build(i, data, mode = mode, transparent = transparent, palette = palette)
     }
     save_figure_set(build, .ir_tufte_captions$name[[i]], preset = .ir_tufte_presets[[slot]],
                     dir = dir, modes = modes, png = png, dpi = dpi, palette = "tufte")

@@ -284,7 +284,8 @@ builders of their own: `geom_rangeframe()` with
 `figure_sparklines()` with `sparkline_tex()` for LaTeX, and `stat_context()`.
 `figure_size("margin")` is the 52 x 40 mm margin slot of a Tufte handout and
 `figure_font("etbb")` finds ET Book. `figure_gallery(set = "tufte")` writes the
-Tufte set of the Bleisatz gallery in six folders; see `vignette("tufte")`.
+Tufte set of the Bleisatz gallery in six folders, and with `font = "c64"` its
+C64 version; see `vignette("tufte")`.
 
 ```r
 ggplot(ChickWeight, aes(Time, weight, group = Chick, series = Diet, linetype = Diet)) +

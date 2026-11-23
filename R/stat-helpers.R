@@ -75,8 +75,8 @@
 .ir_text_params <- function(dots, text_size, family, ink = .ir_ink) {
   text_size <- .ir_check_optional_number(text_size, "text_size", min = 0)
   family <- .ir_check_optional_string(family, "family")
-  params <- list(size = if (is.null(text_size)) .ir_label_size_pt / ggplot2::.pt else text_size,
-                 family = if (is.null(family)) figure_font("sans") else family)
+  params <- list(size = if (is.null(text_size)) .ir_label_pt() / ggplot2::.pt else text_size,
+                 family = if (is.null(family)) .ir_sans_family() else family)
   if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
   params
 }

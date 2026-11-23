@@ -211,6 +211,35 @@ ggplot(cw2, aes(Time, weight, group = Chick, series = Diet, linetype = Diet)) +
   theme_figure("slide", axes = "range", palette = "tufte")
 ```
 
+## Grey in the other layers
+
+The grey follows one rule in every layer: grey marks context, what helps to
+read the data without being a value or a result to read; ink marks the data,
+the summaries and results, and every name and number. With `palette = "grey"`
+or `"tufte"`:
+
+| Layer | Grey (context) | Ink |
+|---|---|---|
+| `theme_figure()` | grid lines | axes, axis text, titles |
+| `report_figure()` | the raw observations | means, intervals, labels |
+| `stat_compare()` | the bracket, bar and tips | the label |
+| `stat_ecdf_guides()` | guide and drop lines, the guide label | curve labels |
+| `stat_paired()` | the line and points of each unit | the mean line, its points, the label |
+| `figure_forest()` | the null line | estimates, intervals, text columns |
+| `stat_context()` | the context lines | the summary |
+| `figure_slopegraph()` | lines not highlighted, the note | names and values |
+| `figure_sparklines()` | the band, the units | lines and numbers |
+
+The other layers draw data, results or the names of data, and stay ink:
+`stat_means()`, `stat_omnibus()`, `stat_correlation()` (label, fitted line
+and band), `geom_endlabel()` (end labels have no leader line),
+`stat_stacklabel()`, `figure_correlation_matrix()` and the hatch fills. In
+`"onebit"` every grey part is ink at its usual weight, so a figure stays
+exactly two-valued and looks as it always did. A `colour` given to a layer
+applies to its context too; `line_colour` (brackets), `guide_colour` (ECDF
+guides) and `unit_colour` (paired units) set the context alone, and
+`check_figure()` checks these colors as well.
+
 ## Margin slot and ET Book
 
 `figure_size("margin")` is the 52 x 40 mm slot of the margin of a Tufte
@@ -229,6 +258,18 @@ Tufte's palette, `light-grey` and `dark-grey` with the grey only, and
 
 ```{r tufte-gallery, eval = FALSE}
 figure_gallery(file.path("figures", "tufte"), set = "tufte", png = TRUE)
+```
+
+Decks and documents set with `font=c64` look for the C64 Tufte set in
+`figures/c64/tufte/`. `font = "c64"` draws it: every piece of text in C64 Pro
+Mono at 0.72 times the Plex size, in one weight, the y title above the axis,
+the short axis labels of the margin variants, the characters the font lacks
+typed out (`ISS >= 25`), and the VIC-II grey, red and green in place of
+Tufte's. The font is not part of the package; without it the set falls back
+to `figure_font("mono")` at the Plex sizes, as `char_figure()` does.
+
+```{r tufte-gallery-c64, eval = FALSE}
+figure_gallery(file.path("figures", "c64", "tufte"), set = "tufte", font = "c64")
 ```
 
 The images below are the light folder, rendered by the package with

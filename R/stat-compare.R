@@ -221,8 +221,10 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #'   marks stay empty); passed by [report_figure()] with `mode`.
 #' @param na.rm If `TRUE`, missing values are removed silently by the geom.
 #' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
-#'   [theme_figure()]. The layer draws in ink in every palette; the argument
-#'   keeps the interface of the figure layer uniform.
+#'   [theme_figure()]. With `"grey"` and `"tufte"` the bracket (bar and tips)
+#'   is context and drawn in grey, the label in ink; with `"onebit"` both are
+#'   ink. A `colour` given in `...` applies to both, unless `line_colour` is
+#'   given as well.
 #' @return A ggplot2 layer. The computed data has columns `x`, `xend`, `y`,
 #'   `yend`, `label`, `tip`, `headroom` (`TRUE` for the invisible headroom
 #'   row), `.ir_result` (the family result) and `.ir_result_id`.
@@ -270,6 +272,10 @@ stat_compare <- function(mapping = NULL, data = NULL, ..., method, comparisons =
                    first = first, step = step, tip_length = tip, headroom_steps = headroom,
                    na.rm = na.rm),
               .ir_text_params(dots, text_size, family, m$ink), dots)
+  # The bracket is context: the palette grey, unless a colour is given.
+  if (!any(c("colour", "color", "line_colour", "line_color") %in% names(dots))) {
+    params$line_colour <- m$grey
+  }
   layer <- ggplot2::layer(stat = StatCompare, data = data, mapping = mapping,
                           geom = GeomBracket, position = "identity", show.legend = FALSE,
                           inherit.aes = inherit.aes, params = params)

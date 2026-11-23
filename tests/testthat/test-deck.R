@@ -214,3 +214,49 @@ test_that("save_deck() checks its arguments before writing", {
   expect_error(save_deck(test_deck(), dir, png = "yes"), class = "infereportR_invalid_input")
   expect_length(list.files(dir), 0L)
 })
+
+test_that("text slides check their labels and keep I() text verbatim", {
+  bad <- stats::setNames(c("a", "b"), c("Rule", NA))
+  expect_error(figure_slide(title = "T", layout = "text", text = bad),
+               class = "infereportR_invalid_input")
+  deck <- figure_deck(list(
+    figure_slide(title = "Raw", layout = "text", text = I(c(Rule = "\\textbf{5 %} more"))),
+    figure_slide(title = "Escaped", layout = "text", text = c(Rule = "5 % & more"))
+  ), title = "D")
+  tex <- .ir_deck_tex(deck)
+  expect_true("  \\textbf{5 %} more\\par" %in% tex)
+  expect_true("  5 \\% \\& more\\par" %in% tex)
+  expect_identical(sum(tex == "  \\smalllabel{Rule}\\par\\smallskip"), 2L)
+})
+
+test_that("a full slide without a caption keeps its source line", {
+  deck <- figure_deck(list(figure_slide(deck_plot, "Full", layout = "full", source = "Data.",
+                                        name = "f")), title = "D")
+  tex <- .ir_deck_tex(deck)
+  at <- grep("\\includegraphics[width=\\textwidth]{f}", tex, fixed = TRUE)
+  expect_length(at, 1L)
+  expect_identical(tex[[at + 1L]], "  \\source{Data.}")
+  expect_identical(tex[[at + 2L]], "\\end{frame}")
+})
+
+test_that("save_deck() writes a deck without figures as .tex and theme only", {
+  deck <- figure_deck(list(section_slide("Plan"),
+                           figure_slide(title = "Aims", layout = "text", text = c("a", "b")),
+                           keyfigure_slide("Key", "12", "patients", "of 40")),
+                      title = "D")
+  dir <- withr::local_tempdir()
+  files <- save_deck(deck, dir)
+  expect_identical(files$type, c("tex", "theme"))
+  expect_false(dir.exists(file.path(dir, "figures")))
+  expect_true(all(file.exists(files$file)))
+})
+
+test_that("document figures without a name are named after their caption", {
+  doc <- figure_document(list(
+    document_figure(deck_plot, caption = "Weight by group"),
+    document_figure(deck_plot, layout = "full", caption = "Weight again, \u2265 4 g")
+  ), title = "D")
+  tex <- .ir_document_tex(doc)
+  expect_true(any(grepl("^\\\\sidefigure\\{01-weight-by-group\\}", tex)))
+  expect_true(any(grepl("^\\\\fullfigure\\{02-weight-again-ge-4-g\\}", tex)))
+})

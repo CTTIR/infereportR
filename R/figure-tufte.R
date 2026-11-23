@@ -124,8 +124,8 @@ figure_slopegraph <- function(data, label, left, right, highlight = NULL,
   top <- max(c(s$ly, s$ry))
   bot <- min(c(s$ly, s$ry))
 
-  fs <- .ir_label_size_pt - 0.5
-  sans <- figure_font("sans")
+  fs <- .ir_label_pt() - 0.5
+  sans <- .ir_sans_family()
   cond <- .ir_condensed_family()
   s$ltext <- paste0(s$name, "  ", .ir_format_fixed(s$left, digits))
   s$rtext <- paste0(.ir_format_fixed(s$right, digits), "  ", s$name)
@@ -312,8 +312,8 @@ figure_sparklines <- function(data, x, y, row, group = NULL, lower = NULL, upper
   }
 
   # Text columns, measured in the figure font.
-  pt <- .ir_label_size_pt
-  sans <- figure_font("sans")
+  pt <- .ir_label_pt()
+  sans <- .ir_sans_family()
   cond <- .ir_condensed_family()
   pad <- .ir_tufte_pad
   width_of <- function(s, family = sans, size = pt) {

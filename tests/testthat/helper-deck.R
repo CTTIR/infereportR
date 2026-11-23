@@ -39,10 +39,11 @@ test_document <- function(...) {
 }
 
 # A LaTeX installation with the packages the theme and class load.
-latex_ready <- function() {
+latex_ready <- function(extra = character()) {
   if (!nzchar(Sys.which("latexmk")) && !nzchar(Sys.which("pdflatex"))) return(FALSE)
   if (!nzchar(Sys.which("kpsewhich"))) return(FALSE)
-  need <- c("beamer.cls", "textpos.sty", "plex-sans.sty", "biblatex.sty", "mathastext.sty")
+  need <- c("beamer.cls", "textpos.sty", "plex-sans.sty", "biblatex.sty", "mathastext.sty",
+            extra)
   found <- suppressWarnings(system2("kpsewhich", need, stdout = TRUE, stderr = FALSE))
   length(found) == length(need)
 }
