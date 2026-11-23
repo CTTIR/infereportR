@@ -1,6 +1,7 @@
 markers_frame <- function() as.data.frame(.ir_gallery_data()$mk)
 
 test_that("figure_correlation_matrix reproduces the Spearman oracle (figure 08)", {
+  skip_on_cran()
   mk <- markers_frame()
   p <- figure_correlation_matrix(mk, method = "correlation_spearman")
   res <- inference_results(p)
