@@ -57,7 +57,7 @@
 #' Tufte's slopegraph: each row of `data` is a line from its value on the
 #' left to its value on the right, and names and values stand on both sides
 #' as in a table, each at the height of its value. The slope is the change.
-#' Labels on one side are spread so that neighbors are at least `gap` apart
+#' Labels on one side are spread so that neighbours are at least `gap` apart
 #' (the spreading of [geom_endlabel()]: sorted, pushed apart, the mean
 #' position kept), so close values never overlap.
 #'
@@ -73,13 +73,13 @@
 #' @param data A data.frame with one row per line.
 #' @param label,left,right Names of the columns that hold the row labels and
 #'   the left and right values (numeric).
-#' @param highlight `NULL` (default) or labels of rows to emphasize.
+#' @param highlight `NULL` (default) or labels of rows to emphasise.
 #' @param titles Column titles above the left and right labels, a character
 #'   vector of length 2; `c(left, right)` by default, `NULL` for none.
-#' @param note `NULL` (default) or a short note centered above the titles,
+#' @param note `NULL` (default) or a short note centred above the titles,
 #'   in grey, for example the measure and its unit.
 #' @param digits Decimals of the values, 0 by default.
-#' @param gap Minimum distance between neighboring labels as a fraction of
+#' @param gap Minimum distance between neighbouring labels as a fraction of
 #'   the value range, 0.115 by default.
 #' @param slot Size preset the figure is drawn for, `"slide_side"` by
 #'   default.
@@ -199,7 +199,7 @@ figure_slopegraph <- function(data, label, left, right, highlight = NULL,
 #'   the extremes are filled ink dots and the last value an open dot.
 #' * **Numbers.** `numbers` selects the columns written beside the lines,
 #'   any of `"min"`, `"max"` and `"last"`, in that order; by default those
-#'   that are marked. Each number has the color of its mark. They are written
+#'   that are marked. Each number has the colour of its mark. They are written
 #'   with fixed `digits` decimals by the package's formatting functions; with
 #'   `x_unit`, the `x` of an extreme follows it (for example the hour of the
 #'   peak, `"6 h"`).

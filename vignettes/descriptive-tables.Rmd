@@ -36,7 +36,7 @@ resource_files:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-A descriptive table summarizes the analyzed data, usually by group. In
+A descriptive table summarises the analysed data, usually by group. In
 infereportR such a table states its denominators and missing counts, contains
 no hypothesis test by default, and keeps any added inference apart from the
 descriptive summaries. This vignette uses the `ToothGrowth` data set that
@@ -71,7 +71,7 @@ desc <- report_descriptive(tg, group = "supp",
   units = c(dose = "mg/day"))
 ```
 
-Continuous variables are summarized by mean, standard deviation, median,
+Continuous variables are summarised by mean, standard deviation, median,
 quartiles, minimum and maximum. Each row reports the number of observations
 used (`n`), the number missing (`n.missing`) and the group total (`n.total`):
 
@@ -105,7 +105,7 @@ No p-value columns are created and no test is chosen automatically.
 ## Report a stored description
 
 A description can also be computed once with infercalcR and reported later.
-In that case the selection and labeling arguments are not used, since they
+In that case the selection and labelling arguments are not used, since they
 already belong to the stored result:
 
 ```{r stored}

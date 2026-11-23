@@ -120,13 +120,13 @@ makeContent.infereportR_endlabel <- function(x) {
 #' End labels instead of a legend
 #'
 #' Labels each group at its last point, the point with the largest finite `x`,
-#' so that lines can be identified without a legend or color. The layer uses
+#' so that lines can be identified without a legend or colour. The layer uses
 #' the stat [StatEndlabel] and the geom [GeomEndlabel]; the text is always
-#' drawn in the ink color of `mode` (black in light, white in dark mode), at
+#' drawn in the ink colour of `mode` (black in light, white in dark mode), at
 #' 8 pt by default.
 #'
 #' Labels never overlap. When the plot is drawn, `GeomEndlabel` sorts the labels
-#' of a panel by their y position and pushes them apart until neighbors are at
+#' of a panel by their y position and pushes them apart until neighbours are at
 #' least 1.15 text heights apart (the height of `"Ag"` in the label's font),
 #' then shifts the group back so that its mean position is unchanged. Each label
 #' starts 2.5 mm to the right of its point.
@@ -145,7 +145,7 @@ makeContent.infereportR_endlabel <- function(x) {
 #'   [ggplot2::layer()].
 #' @param ... Other arguments passed on to [ggplot2::layer()] as fixed
 #'   aesthetics or parameters, for example `vjust` or `fontface`. `colour` is
-#'   fixed to the ink color and cannot be changed.
+#'   fixed to the ink colour and cannot be changed.
 #' @param hjust Horizontal justification of the label relative to its anchor,
 #'   which lies 2.5 mm right of the last point. The default `0` left-justifies
 #'   the text there.
@@ -158,7 +158,7 @@ makeContent.infereportR_endlabel <- function(x) {
 #'   background); must be `TRUE` or `FALSE`.
 #' @param na.rm If `FALSE` (the default), rows with missing or non-finite
 #'   values are removed with a warning, as in every ggplot2 layer; if `TRUE`,
-#'   silently. Either way a group is labeled at its last finite point.
+#'   silently. Either way a group is labelled at its last finite point.
 #' @param show.legend Should this layer be included in the legends? Defaults to
 #'   `FALSE`, since the labels replace the legend.
 #' @param inherit.aes If `FALSE`, overrides the default aesthetics rather than

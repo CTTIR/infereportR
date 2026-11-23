@@ -26,7 +26,7 @@
   if (isTRUE(l10n_info()[["UTF-8"]])) "\u00d7" else "x"
 }
 
-#' Correlation matrix without color
+#' Correlation matrix without colour
 #'
 #' Runs one explicitly named correlation procedure of 'infercalcR' for every
 #' pair of variables and draws the matrix in two values. Above the diagonal,

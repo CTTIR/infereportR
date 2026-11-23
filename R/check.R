@@ -23,21 +23,21 @@
 #'     "palatino" or "cambria" but not "sans").}
 #'   \item{`two_values`}{(infereportR) the palette rule. Every `colour` and
 #'     `fill` value in the built layer data (also of columns such as
-#'     `line_colour`, the second colors of the brackets, guides and unit
-#'     lines), and the colors of drawn theme
-#'     lines, rectangles and text, is a color of `palette`, `NA`, fully
+#'     `line_colour`, the second colours of the brackets, guides and unit
+#'     lines), and the colours of drawn theme
+#'     lines, rectangles and text, is a colour of `palette`, `NA`, fully
 #'     transparent or a grid pattern. With the default `palette = "onebit"`
-#'     the colors are black and white only, the two values of the figure
+#'     the colours are black and white only, the two values of the figure
 #'     layer. `palette = "grey"` also allows the grey `#999999`, and
 #'     `palette = "tufte"` also Tufte's red and green of both modes
 #'     (`#B3202A`, `#2E7D32`, `#E5484D`, `#5DB760`). The C64 Tufte set
-#'     (`figure_gallery(set = "tufte", font = "c64")`) has the VIC-II colors
+#'     (`figure_gallery(set = "tufte", font = "c64")`) has the VIC-II colours
 #'     in the same roles, which the palette allows alike: the grey `#959595`,
 #'     red `#9F4E44` and `#CB7E75`, green `#5CAB5E` and `#9AE29B`. This holds
 #'     in every mode:
 #'     light (black on white), dark (white on black) and the transparent
 #'     modes, whose backgrounds are empty (`NA`). `fail` lists the offending
-#'     colors as hex codes. The row keeps its name `two_values` for
+#'     colours as hex codes. The row keeps its name `two_values` for
 #'     compatibility. The `"c64"` style of [char_figure()] is the one
 #'     documented exception: its C64 blues fail here by design.}
 #'   \item{`axis_labels`}{(APA 7) `fail` if the x or y label is missing or
@@ -64,7 +64,7 @@
 #' @param target `"paper"` (default) or `"slide"`. Both targets apply the
 #'   same rules in this version: the slide theme shares the paper text range.
 #' @param palette The palette the figure was drawn in, `"onebit"` (default),
-#'   `"grey"` or `"tufte"`; sets the colors the `two_values` check allows.
+#'   `"grey"` or `"tufte"`; sets the colours the `two_values` check allows.
 #' @return A `data.frame` with exactly 6 rows (`text_size`, `font_family`,
 #'   `two_values`, `axis_labels`, `embedded_title`, `legend_case`) and the
 #'   character columns `check`, `source` (`"APA 7"` or `"infereportR"`),

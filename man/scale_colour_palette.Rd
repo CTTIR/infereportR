@@ -3,7 +3,7 @@
 \name{scale_colour_palette}
 \alias{scale_colour_palette}
 \alias{scale_color_palette}
-\title{Color scale of palette roles}
+\title{Colour scale of palette roles}
 \usage{
 scale_colour_palette(
   roles,
@@ -39,8 +39,8 @@ scale_color_palette(
 A ggplot2 discrete scale object.
 }
 \description{
-A discrete color (or fill) scale that maps the levels of a variable, in
-order, to roles of the figure palette instead of to colors: \code{"ink"},
+A discrete colour (or fill) scale that maps the levels of a variable, in
+order, to roles of the figure palette instead of to colours: \code{"ink"},
 \code{"grey"}, \code{"red"}, \code{"green"} or \code{"paper"}. The roles are resolved with
 \code{mode} and \code{palette} as in \code{\link[=theme_figure]{theme_figure()}}:
 }
@@ -56,7 +56,7 @@ in light mode, \verb{#E5484D} and \verb{#5DB760} in dark mode.
 
 Red marks the first or last values and the one series to watch, green the
 highs and lows (Tufte used blue for these; Bleisatz keeps to one pair of
-colors). \code{scale_color_palette()} is an alias.
+colours). \code{scale_color_palette()} is an alias.
 
 The scale never recycles: more levels than \code{roles} is an error of class
 \code{infereportR_too_many_groups}.

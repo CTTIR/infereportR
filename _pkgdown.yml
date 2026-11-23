@@ -22,7 +22,7 @@ home:
     - authors
   title: infereportR
   description: Tables, text, plot annotations and black-and-white figures for
-    finalized statistical results, reported at full precision without
+    finalised statistical results, reported at full precision without
     recomputation.
 articles:
 - title: Learn infereportR
@@ -45,7 +45,7 @@ articles:
   - slides-and-documents
 reference:
 - title: Tables and text
-  desc: Present finalized results as tables and neutral text.
+  desc: Present finalised results as tables and neutral text.
   contents:
   - report_table
   - report_text
@@ -95,7 +95,7 @@ reference:
   - theme_figure
   - figure_font
 - title: Scales and fills
-  desc: Line types, point shapes, ink and hatch patterns instead of color.
+  desc: Line types, point shapes, ink and hatch patterns instead of colour.
   contents:
   - scale_colour_ink
   - scale_linetype_figure

@@ -52,7 +52,7 @@ The five numbers are geometry, computed with
 \code{stats::quantile(type = 7)} (R's default, as in the Bleisatz reference
 script). The built data hold them as \code{ymin}, \code{lower}, \code{middle}, \code{upper},
 \code{ymax} and \code{n}. The layer prints no number; if quartiles or medians are
-reported as text, compute them as finalized results (for example a
+reported as text, compute them as finalised results (for example a
 descriptive summary from 'infercalcR') and format them with
 \code{\link[=report_table]{report_table()}} or \code{\link[=report_descriptive]{report_descriptive()}}, never from the plot.
 

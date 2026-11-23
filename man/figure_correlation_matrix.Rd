@@ -2,7 +2,7 @@
 % Please edit documentation in R/figure-correlation-matrix.R
 \name{figure_correlation_matrix}
 \alias{figure_correlation_matrix}
-\title{Correlation matrix without color}
+\title{Correlation matrix without colour}
 \usage{
 figure_correlation_matrix(
   data,

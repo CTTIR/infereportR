@@ -1,7 +1,7 @@
 # infereportR <picture class="cttir-readme-logo"><source class="cttir-logo-dark-source" media="(prefers-color-scheme: dark)" srcset="man/figures/logo-dark.png" /><img src="man/figures/logo.png" align="right" alt="infereportR logo" width="120" height="139" /></picture>
 
 Tables, manuscript-ready values, ggplot annotations and black-and-white figures
-from finalized statistical results. Numerical inference belongs to
+from finalised statistical results. Numerical inference belongs to
 **infercalcR**; guidance and prospective planning belong to **inferguidR**.
 infereportR never computes a statistic itself: every estimate, interval, test
 statistic, p-value and adjustment comes from infercalcR, and every displayed
@@ -89,7 +89,7 @@ variable denominators, missing counts, labels and units. To add already computed
 inference, supply `inference`, an explicit `mapping` data.frame with
 `variable_id`, `result_id`, `row_id`, and an `inference_population` label. At most
 one inference row per variable is supported. Descriptive and inferential
-populations remain separately labeled.
+populations remain separately labelled.
 
 ## ggplot annotations
 
@@ -229,12 +229,12 @@ save_figure(q + theme_figure("slide", legend = "none") +
 - `theme_figure()` is a complete theme with two targets. `"paper"` follows the
   APA figure rules: all text between 8 and 14 pt, one font family, the legend
   inside the panel. `"slide"` matches the Bleisatz Beamer theme: 1-bit, 1 mm
-  margins and IBM Plex when it is installed. There is no gray anywhere; grid
+  margins and IBM Plex when it is installed. There is no grey anywhere; grid
   lines, when requested, are dotted black lines. IBM Plex ships with TeX Live
   (`fonts/opentype/ibm/plex`); for R, copy the Sans, Sans Condensed and Mono
   OTF files to `~/.fonts` and run `fc-cache -f` (see `?figure_font`).
 - `scale_linetype_figure()`, `scale_shape_figure()` and `scale_colour_ink()`
-  tell groups apart by line type and point shape instead of color.
+  tell groups apart by line type and point shape instead of colour.
   `scale_fill_hatch()` and `hatch_pattern()` fill areas with solid, open,
   hatched, dotted and crosshatched grid patterns, without any extra package.
   The scales never recycle values; too many groups is an error.
@@ -311,9 +311,9 @@ check_figure(ggplot(mtcars, aes(wt, mpg)) + geom_point(colour = "red"))[, 1:3]
 #> 6    legend_case       APA 7   pass
 ```
 
-The `detail` column names the offenders: here the red points, the gray panel
+The `detail` column names the offenders: here the red points, the grey panel
 and the axis labels `wt` and `mpg`, which give no unit. The checks cover text
-size (8 to 14 pt), sans serif fonts, black and white only, labeled axes with
+size (8 to 14 pt), sans serif fonts, black and white only, labelled axes with
 units, no title inside the image and title-case legends. The figure number,
 title and note belong to the manuscript and are outside the audit.
 
@@ -402,7 +402,7 @@ License 1.3c; the rest of the package is MIT licensed (see `LICENSE.md`).
 
 `tools/gate.R` is the quality gate for every change. Its `quick` mode checks
 that the documentation is in sync with the roxygen comments, scans `R/` for
-banned patterns (color literals outside the design tokens, non-ASCII
+banned patterns (colour literals outside the design tokens, non-ASCII
 characters, `sapply()`, `T`/`F`, `library()` calls), scans tracked files and
 commit messages for attribution lines, runs the plain test scripts and runs
 the testthat suite without failures, errors or warnings. The `full` mode adds
@@ -417,7 +417,7 @@ installed package. They cover precision, interval/p-value semantics,
 no-computation guards, explicit populations/joins, and actual ggplot builds and
 drawing. `INFER_SUITE_FULL=true` runs the provider views that need further
 infercalcR dependencies; other runs label them as SKIP. Skips do not establish
-backend support. Set `INFER_SUITE_PLOT_DIR` to retain plot artifacts during
+backend support. Set `INFER_SUITE_PLOT_DIR` to retain plot artefacts during
 verification.
 
 The figure layer is tested with testthat (edition 3) under `tests/testthat/`.
@@ -442,7 +442,7 @@ These tests show that:
   reproduces every number of the Bleisatz example figures at the exact slot
   sizes.
 
-## Acknowledgments and sources
+## Acknowledgements and sources
 
 infereportR is part of an inference suite with infercalcR and inferguidR. The
 suite builds on the work of others. We gratefully acknowledge that work here and
@@ -483,7 +483,7 @@ The text-size, font, legend, axis and title rules of the theme and of
 shares its 1-bit tokens (rules, hairlines, text width) with the Bleisatz Beamer
 theme [12]; the slots, modes and twelve gallery figures follow the Bleisatz
 example figures [14]. Text uses IBM Plex [10] when it is installed; no font is
-bundled. The two colors of the C64 style are the VIC-II "blue" and "light blue"
+bundled. The two colours of the C64 style are the VIC-II "blue" and "light blue"
 of the Pepto palette by Philip Timmermann [9].
 
 ### Related work

@@ -10,7 +10,7 @@
 #' extension do.
 #'
 #' The two files are distributed under the LaTeX Project Public License
-#' (LPPL) 1.3c, not under the MIT license of the package; their headers carry
+#' (LPPL) 1.3c, not under the MIT licence of the package; their headers carry
 #' the notice. See the file `LICENSE.md` of the package source.
 #'
 #' @param type `"beamer"` (default) or `"class"`.

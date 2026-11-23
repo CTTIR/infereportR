@@ -31,7 +31,7 @@
 #' Line type scale for black-and-white figures
 #'
 #' A discrete line type scale that distinguishes groups by dash pattern
-#' instead of color. The default sequence has six line types: `"solid"`,
+#' instead of colour. The default sequence has six line types: `"solid"`,
 #' `"22"` (dashed), `"13"` (dotted), `"1343"` (dot-dash), `"73"` (long dash)
 #' and `"2262"` (long dash-dash).
 #'
@@ -65,7 +65,7 @@ scale_linetype_figure <- function(..., values = NULL) {
 #' Point shape scale for black-and-white figures
 #'
 #' A discrete shape scale that distinguishes groups by point shape instead of
-#' color. The default sequence has eight shapes that alternate between filled
+#' colour. The default sequence has eight shapes that alternate between filled
 #' and open: `16, 1, 15, 0, 17, 2, 18, 5` (circle, square, triangle, diamond).
 #'
 #' The scale never recycles: if the data have more groups than there are
@@ -93,9 +93,9 @@ scale_shape_figure <- function(..., values = NULL) {
                           palette = .ir_palette(values, "shapes"), ...)
 }
 
-#' Ink-only color scale
+#' Ink-only colour scale
 #'
-#' A discrete color scale that maps every level to the ink color: black in
+#' A discrete colour scale that maps every level to the ink colour: black in
 #' light mode, white in dark mode (see [theme_figure()]). The groups and
 #' the legend survive, so the scale is meant to be combined with
 #' [scale_linetype_figure()] or [scale_shape_figure()], which then carry the
@@ -134,10 +134,10 @@ scale_colour_ink <- function(..., aesthetics = "colour", mode = "light", palette
 #' @export
 scale_color_ink <- scale_colour_ink
 
-#' Color scale of palette roles
+#' Colour scale of palette roles
 #'
-#' A discrete color (or fill) scale that maps the levels of a variable, in
-#' order, to roles of the figure palette instead of to colors: `"ink"`,
+#' A discrete colour (or fill) scale that maps the levels of a variable, in
+#' order, to roles of the figure palette instead of to colours: `"ink"`,
 #' `"grey"`, `"red"`, `"green"` or `"paper"`. The roles are resolved with
 #' `mode` and `palette` as in [theme_figure()]:
 #'
@@ -150,7 +150,7 @@ scale_color_ink <- scale_colour_ink
 #'
 #' Red marks the first or last values and the one series to watch, green the
 #' highs and lows (Tufte used blue for these; Bleisatz keeps to one pair of
-#' colors). `scale_color_palette()` is an alias.
+#' colours). `scale_color_palette()` is an alias.
 #'
 #' The scale never recycles: more levels than `roles` is an error of class
 #' `infereportR_too_many_groups`.

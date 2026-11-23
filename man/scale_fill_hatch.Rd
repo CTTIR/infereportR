@@ -20,7 +20,7 @@ scale_fill_hatch(
 \item{patterns}{Character vector of pattern types, used in order. The
 default is the six-pattern sequence above.}
 
-\item{spacing}{Distance between lines in millimeters, between 0.5 and 10.
+\item{spacing}{Distance between lines in millimetres, between 0.5 and 10.
 The default of 1.4 mm reads well at slide size; paper figures may pass
 \code{spacing = 1.6}.}
 
@@ -37,11 +37,11 @@ A ggplot2 discrete scale object for the \code{fill} aesthetic.
 }
 \description{
 A discrete fill scale that distinguishes groups by black-and-white hatch
-patterns instead of color. The default sequence is \code{"solid"}, \code{"open"},
+patterns instead of colour. The default sequence is \code{"solid"}, \code{"open"},
 \code{"hatch"}, \code{"dots"}, \code{"crosshatch"} and \code{"backhatch"}; \code{"horizontal"} and
 \code{"vertical"} are also available. Each pattern is built with
 \code{\link[=hatch_pattern]{hatch_pattern()}}, and the palette returns a list, so the built \code{fill}
-column is a list of colors and patterns. Legend keys show the patterns.
+column is a list of colours and patterns. Legend keys show the patterns.
 }
 \details{
 The scale never recycles: if the data have more groups than \code{patterns},

@@ -48,7 +48,7 @@
 * Every figure function takes `palette = "onebit"` (default, unchanged: two
   values), `"grey"` (plus one grey for context) or `"tufte"` (plus Tufte's red
   and green): `theme_figure()`, the layers, the builders, `report_figure()`,
-  `scale_colour_ink()`, `save_figure_set()` and `check_figure()`. The colors
+  `scale_colour_ink()`, `save_figure_set()` and `check_figure()`. The colours
   come from the one mode resolver; red and green are lighter in dark mode.
 * `scale_colour_palette()` maps levels to the palette roles ink, grey, red,
   green and paper.
@@ -63,7 +63,7 @@
 * New Tufte figure types: `geom_rangeframe()` and
   `theme_figure(axes = "range")` (range frames), `geom_dotdash()` (dot-dash
   axes), `stat_quartiles()` (quartile plot), `theme_figure(grid = "paper")`
-  and `geom_papergrid()` (a grid in the paper color through the bars),
+  and `geom_papergrid()` (a grid in the paper colour through the bars),
   `figure_slopegraph()` (slopegraph as a table-graphic),
   `figure_sparklines()` and `sparkline_tex()` (sparklines in figures and in
   Bleisatz LaTeX), and `stat_context()` (context in grey, the summary in ink).
@@ -82,7 +82,7 @@
   VIC-II grey, red and green. The font is not bundled; without it the set
   falls back to `figure_font("mono")` at the Plex sizes. A Tufte gallery deck
   with `font = "c64"` draws these figures, and `check_figure()` accepts the
-  VIC-II colors in their palette roles.
+  VIC-II colours in their palette roles.
 * New vignette "Tufte options".
 
 ## Fixes and documentation
@@ -110,7 +110,7 @@
 * `stat_means()` documents that the procedure runs with `mu0 = 0`, so the
   statistic and p-value listed by `figure_table()` test the mean against zero.
 * The inference layers document that a scale transformation such as
-  `scale_y_log10()` changes the analyzed values, while a coordinate
+  `scale_y_log10()` changes the analysed values, while a coordinate
   transformation changes only the drawing.
 * `theme_figure()` documents that the default fill of bars and areas stays
   the dark grey of 'ggplot2', which `check_figure()` reports; the
@@ -210,7 +210,7 @@
 * Added the theme `theme_figure()` for APA papers and Bleisatz
   slides with all text between 8 and 14 pt and `figure_font()` for IBM Plex;
   `scale_linetype_figure()`, `scale_shape_figure()`, `scale_colour_ink()`,
-  `scale_fill_hatch()` and `hatch_pattern()`, which replace color, and
+  `scale_fill_hatch()` and `hatch_pattern()`, which replace colour, and
   `geom_endlabel()`, which labels lines at their last point.
 * Added modes and export: every drawing function takes `mode = "light"` or
   `"dark"` and `transparent`; `figure_size()` holds journal and slide-slot
@@ -229,7 +229,7 @@
   DescrTab2 inspired the suite and is acknowledged and cited; the tests it
   computes come from other packages, which infercalcR uses as optional
   originals next to its own base-R implementations.
-* Added acknowledgments and citations to the README and every vignette:
+* Added acknowledgements and citations to the README and every vignette:
   DescrTab2 (Institute of Medical Biometry, Heidelberg University), which
   deeply inspired the suite, the Methodenberatung pages of the University of
   Zurich and G*Power; the README also cites R and the packages used.
@@ -250,7 +250,7 @@
 * Changed the GitHub Actions check to install infercalcR explicitly, to
   add R-devel and R oldrel-1 on Linux and to explain what is missing when it
   cannot read infercalcR.
-* Added a CTTIR v5 hex logo in the statistical inference color shared with
+* Added a CTTIR v5 hex logo in the statistical inference colour shared with
   the other inference packages; `tools/branding/render.R` draws it in R.
 * Added plain tables, deterministic text and descriptions through infercalcR's
   shared result contract, with full-precision analytical fields and common

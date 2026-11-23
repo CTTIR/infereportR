@@ -226,7 +226,7 @@ GeomQuartiles <- ggplot2::ggproto(
 #' `stats::quantile(type = 7)` (R's default, as in the Bleisatz reference
 #' script). The built data hold them as `ymin`, `lower`, `middle`, `upper`,
 #' `ymax` and `n`. The layer prints no number; if quartiles or medians are
-#' reported as text, compute them as finalized results (for example a
+#' reported as text, compute them as finalised results (for example a
 #' descriptive summary from 'infercalcR') and format them with
 #' [report_table()] or [report_descriptive()], never from the plot.
 #'
@@ -368,10 +368,10 @@ GeomContext <- ggplot2::ggproto(
 #'
 #' Tufte's context grey. Every unit (patient, subject, region) is drawn as a
 #' thin line for context, and a summary of them, the median by default, is
-#' drawn in ink on top, separated from the context by a casing in the color
+#' drawn in ink on top, separated from the context by a casing in the colour
 #' of the paper. Map `group` to the unit; map `series` to draw one summary
 #' per series (for example per stratum), and map `linetype` to the same
-#' variable to tell the summaries apart without color.
+#' variable to tell the summaries apart without colour.
 #'
 #' The context lines are `#999999`, 0.3 pt, with `palette = "grey"` or
 #' `"tufte"`. In `palette = "onebit"` the grey becomes ink drawn as a 0.15 pt
@@ -395,7 +395,7 @@ GeomContext <- ggplot2::ggproto(
 #' @param context If `TRUE` (default), draw the units as context lines.
 #' @param highlight `NULL` (default) or values of `series` whose summary is
 #'   drawn in red (`palette = "tufte"`).
-#' @param casing If `TRUE` (default), draw a 2.6 pt line in the paper color
+#' @param casing If `TRUE` (default), draw a 2.6 pt line in the paper colour
 #'   under each summary (not in transparent modes).
 #' @param context_linetype Line type of the context lines, `"solid"` by
 #'   default.
@@ -472,7 +472,7 @@ GeomPapergrid <- ggplot2::ggproto(
 
 #' Paper grid as a layer
 #'
-#' Grid lines in the color of the paper, drawn as a layer at the breaks of
+#' Grid lines in the colour of the paper, drawn as a layer at the breaks of
 #' the `y` (or `x`) scale, so that they cut through the bars below them:
 #' Tufte's grid that appears only where it is needed. `theme_figure(grid =
 #' "paper")` draws the same grid from the theme, on top of every layer; use
@@ -480,7 +480,7 @@ GeomPapergrid <- ggplot2::ggproto(
 #' top of the grid: add it after the bars and before the text, and set
 #' `theme_figure(axes = "none")` to drop the axis lines and ticks.
 #'
-#' The lines are 0.9 pt wide and have the paper color of `mode` (white in
+#' The lines are 0.9 pt wide and have the paper colour of `mode` (white in
 #' light mode, black in dark mode), also with `transparent = TRUE`: they cut
 #' the bars there too.
 #'
