@@ -147,7 +147,7 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #'
 #' Compares x groups pairwise with an explicitly named two-sample procedure
 #' of 'infercalcR', adjusts the comparison family as declared, and draws one
-#' bracket per comparison, labeled with display strings of [report_table()]. Each
+#' bracket per comparison, labelled with display strings of [report_table()]. Each
 #' panel is its own family, so facets work.
 #'
 #' For a pair `c(A, B)` the estimand is B minus A: the values of B are passed
@@ -177,7 +177,7 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' transformed the data. With `scale_y_log10()` the procedure therefore runs
 #' on the log10 values, and its estimates, intervals and p-values are those
 #' of the transformed values, also in [figure_table()] and
-#' [inference_results()]; say so in the caption. To analyze the original
+#' [inference_results()]; say so in the caption. To analyse the original
 #' values and change only the drawing, transform the coordinates instead:
 #' `ggplot2::coord_trans(y = "log10")` (`coord_transform()` from 'ggplot2'
 #' 4.0).

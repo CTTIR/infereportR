@@ -1,7 +1,7 @@
 \name{stat_inference}
 \alias{stat_inference}
 \alias{annotate_inference}
-\title{Annotate ggplot with finalized inference}
+\title{Annotate ggplot with finalised inference}
 \description{Construct ordinary text and segment layers from stored results; no tests run during plot construction, build or drawing.}
 \usage{
 stat_inference(x, positions, rows = NULL,
@@ -14,7 +14,7 @@ stat_inference(x, positions, rows = NULL,
 annotate_inference(plot, x, positions, ...)
 }
 \arguments{
-\item{x}{A finalized shared result.}
+\item{x}{A finalised shared result.}
 \item{positions}{Data.frame with exactly one row per selected row_id and a finite y_position in original data units. Brackets require numeric xmin/xmax or named group1/group2. Text-only annotations use numeric x. Optional type is bracket or text. Omnibus rows require text.}
 \item{rows}{Unique stored row IDs, or NULL for all.}
 \item{label}{Compact display preset. \code{"stars"} uses the thresholds of \code{\link{report_text}} (\code{*} for p <= .05, \code{**} <= .01, \code{***} <= .001, \code{****} <= .0001, otherwise \code{ns}); \code{\link{stat_compare}} documents its own, stricter star labels.}

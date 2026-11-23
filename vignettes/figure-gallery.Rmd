@@ -1,6 +1,6 @@
 ---
 title: "The figure gallery: modes, slots and Bleisatz decks"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{The figure gallery: modes, slots and Bleisatz decks}
@@ -55,7 +55,7 @@ library(infereportR)
 
 | # | File name | Slot | What it shows | Built with |
 |---|---|---|---|---|
-| 01 | `01-timecourse-direct-labels` | side | lines labeled at their ends, no legend | `theme_figure()`, `scale_linetype_figure()`, `scale_shape_figure()`, `geom_endlabel()` |
+| 01 | `01-timecourse-direct-labels` | side | lines labelled at their ends, no legend | `theme_figure()`, `scale_linetype_figure()`, `scale_shape_figure()`, `geom_endlabel()` |
 | 02 | `02-raw-data-mean-ci` | side | every observation, mean and 95% CI beside it, Holm-adjusted Welch comparisons | `report_figure()` |
 | 03 | `03-stacked-hatch` | side | open, hatched and solid fills, categories named beside the last bar | `geom_col()`, `scale_fill_hatch()`, `stat_stacklabel()` |
 | 04 | `04-scatter-correlation` | half | Pearson correlation on a log axis, two-line label with n | `stat_correlation(label = "estimate_ci_p_n")` |
@@ -65,7 +65,7 @@ library(infereportR)
 | 08 | `08-correlation-matrix` | side | Spearman correlations as circles and values | `figure_correlation_matrix()` |
 | 09 | `09-paired-slopegraph` | half | one line per patient, mean change with its 95% CI | `stat_paired()` |
 | 10 | `10-character-mode` | side | figure 01 redrawn with text characters | `char_figure(style = "bw")` |
-| 11 | `11-character-mode-c64` | half | the same in Commodore 64 colors, with `READY.` | `char_figure(style = "c64")` |
+| 11 | `11-character-mode-c64` | half | the same in Commodore 64 colours, with `READY.` | `char_figure(style = "c64")` |
 | 12 | `12-character-mode-c64-bw` | half | the C64 screen in two values, with a halftone border | `char_figure(style = "c64bw")` |
 
 Each figure below was rendered by the package, in light mode at the size of
@@ -143,7 +143,7 @@ knitr::include_graphics(img(9))
 knitr::include_graphics(img(10))
 ```
 
-### 11. Character mode, C64 colors
+### 11. Character mode, C64 colours
 
 ```{r gallery-11, echo = FALSE, out.width = "48%", fig.cap = cap(11), fig.alt = "Character mode, C64 colors, light mode."}
 knitr::include_graphics(img(11))

@@ -90,7 +90,7 @@ as in Tufte's own sparklines (he used blue for the extremes); otherwise
 the extremes are filled ink dots and the last value an open dot.
 \item \strong{Numbers.} \code{numbers} selects the columns written beside the lines,
 any of \code{"min"}, \code{"max"} and \code{"last"}, in that order; by default those
-that are marked. Each number has the color of its mark. They are written
+that are marked. Each number has the colour of its mark. They are written
 with fixed \code{digits} decimals by the package's formatting functions; with
 \code{x_unit}, the \code{x} of an extreme follows it (for example the hour of the
 peak, \code{"6 h"}).

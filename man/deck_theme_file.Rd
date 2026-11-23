@@ -22,7 +22,7 @@ extension do.
 }
 \details{
 The two files are distributed under the LaTeX Project Public License
-(LPPL) 1.3c, not under the MIT license of the package; their headers carry
+(LPPL) 1.3c, not under the MIT licence of the package; their headers carry
 the notice. See the file \code{LICENSE.md} of the package source.
 }
 \examples{

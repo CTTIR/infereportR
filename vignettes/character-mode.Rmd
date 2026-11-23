@@ -1,6 +1,6 @@
 ---
 title: "Character mode"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Character mode}
@@ -40,7 +40,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
 Character mode redraws a ggplot on a grid of monospaced characters, the way
 home computers of the 1980s drew charts on a text screen. The grid prints as
 text in the console, and `char_figure()` turns it back into a ggplot of glyphs
-that can be saved as a figure, in black and white, in the colors of a
+that can be saved as a figure, in black and white, in the colours of a
 Commodore 64 screen or as that screen in two values.
 
 ```{r packages}
@@ -78,7 +78,7 @@ flipped, polar or transformed coordinates are errors of class
 
 ### Several series
 
-Series are told apart by glyph, never by color. The key comes from the first
+Series are told apart by glyph, never by colour. The key comes from the first
 discrete scale among `fill`, `colour`, `shape` and `linetype` with at least two
 breaks, and the legend under the grid shows each series' glyph:
 
@@ -154,8 +154,8 @@ The `"c64"` style imitates the screen of a Commodore 64 after power-on: light
 blue glyphs on a blue screen inside a light blue border, a 40 x 25 grid, labels
 in upper case and, by default, `READY.` with a cursor below the chart. The
 cursor is a filled tile rather than a block glyph, which IBM Plex Mono lacks. The two
-colors are the VIC-II "blue" (`#352879`) and "light blue" (`#6C5EB5`) of the
-Pepto palette by Philip Timmermann. They are the only colors in the package.
+colours are the VIC-II "blue" (`#352879`) and "light blue" (`#6C5EB5`) of the
+Pepto palette by Philip Timmermann. They are the only colours in the package.
 
 ```{r c64, fig.width = 5, fig.height = 6.5, fig.alt = "The chick weight chart in upper case on a blue screen with a light blue border, ending with READY. and a cursor, like a Commodore 64."}
 char_figure(p, style = "c64")
@@ -227,7 +227,7 @@ the font in em. The default 0.6 fits IBM Plex Mono and DejaVu Sans Mono.
 
 The figures above use `figure_font("mono")`: IBM Plex Mono when it is installed,
 otherwise R's generic `"mono"` family. For the look of the real machine, install
-the C64 Pro Mono font by Style64. Its license does not allow it to be bundled, so
+the C64 Pro Mono font by Style64. Its licence does not allow it to be bundled, so
 it is not part of this package. Make it known to the graphics device (for
 example through systemfonts for the ragg devices), then use square cells one em
 wide:
@@ -241,7 +241,7 @@ save_figure(c64, "chicks-c64.png", width = size$width, height = size$height)
 
 ## Sources
 
-The C64 colors are the Pepto palette of the VIC-II chip by Philip Timmermann,
+The C64 colours are the Pepto palette of the VIC-II chip by Philip Timmermann,
 as shipped with the VICE emulator in `pepto-pal.vpl`. IBM Plex is released
 under the SIL Open Font License (<https://github.com/IBM/plex>). See the README
 for the full list of sources.

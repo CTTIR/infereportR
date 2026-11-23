@@ -1,6 +1,6 @@
 ---
 title: "Slides and documents: Bleisatz decks and papers from the same figures"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Slides and documents: Bleisatz decks and papers from the same figures}
@@ -204,7 +204,7 @@ sidenotes (`numbered = FALSE` for an unnumbered margin note),
 to the `.tex` file and loaded with biblatex (APA style, biber); cite with
 `\parencite{key}` in any text.
 
-## Text, colors and sparklines
+## Text, colours and sparklines
 
 All text is escaped for LaTeX, so `50% & more` arrives as written. The
 palette commands of the theme come from `tex_red()`, `tex_green()` and
@@ -221,7 +221,7 @@ cat(s)
 ```
 
 `slide_sparkline()` and `document_sparkline()` set a table of sparklines
-with the peak in green and the last value in red; without colors in the
+with the peak in green and the last value in red; without colours in the
 palette the theme sets them in ink and italic.
 
 ## Compiling
@@ -272,7 +272,7 @@ For Quarto, `use_deck_quarto(dir)` and `use_document_quarto(dir)` copy the
 extension `bleisatz` (formats `bleisatz-beamer` and `bleisatz-pdf`) with a
 starting `deck.qmd` or `document.qmd`.
 
-## License of the bundled files
+## Licence of the bundled files
 
 The theme `beamerthemeBleisatz.sty` and the class `bleisatz.cls` are bundled
 unmodified and are distributed under the LaTeX Project Public License 1.3c;

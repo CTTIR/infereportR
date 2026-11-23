@@ -26,17 +26,17 @@ figure_slopegraph(
 \item{label, left, right}{Names of the columns that hold the row labels and
 the left and right values (numeric).}
 
-\item{highlight}{\code{NULL} (default) or labels of rows to emphasize.}
+\item{highlight}{\code{NULL} (default) or labels of rows to emphasise.}
 
 \item{titles}{Column titles above the left and right labels, a character
 vector of length 2; \code{c(left, right)} by default, \code{NULL} for none.}
 
-\item{note}{\code{NULL} (default) or a short note centered above the titles,
+\item{note}{\code{NULL} (default) or a short note centred above the titles,
 in grey, for example the measure and its unit.}
 
 \item{digits}{Decimals of the values, 0 by default.}
 
-\item{gap}{Minimum distance between neighboring labels as a fraction of
+\item{gap}{Minimum distance between neighbouring labels as a fraction of
 the value range, 0.115 by default.}
 
 \item{slot}{Size preset the figure is drawn for, \code{"slide_side"} by
@@ -52,7 +52,7 @@ row); the text layers hold the label positions \code{y} and labels.
 Tufte's slopegraph: each row of \code{data} is a line from its value on the
 left to its value on the right, and names and values stand on both sides
 as in a table, each at the height of its value. The slope is the change.
-Labels on one side are spread so that neighbors are at least \code{gap} apart
+Labels on one side are spread so that neighbours are at least \code{gap} apart
 (the spreading of \code{\link[=geom_endlabel]{geom_endlabel()}}: sorted, pushed apart, the mean
 position kept), so close values never overlap.
 }

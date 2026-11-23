@@ -111,7 +111,7 @@ documents set with \code{font=c64}, which look for it in
 \code{figure_gallery(file.path("figures", "c64", "tufte"), set = "tufte", font = "c64")}. As in the C64 set of Bleisatz, every piece of text is set
 in C64 Pro Mono, in one weight, at 0.72 times the Plex size (its capitals
 are then as tall as those of Plex); the grey, red and green are the VIC-II
-colors of the Pepto palette (grey \verb{#959595}; red \verb{#9F4E44}, \verb{#CB7E75} on
+colours of the Pepto palette (grey \verb{#959595}; red \verb{#9F4E44}, \verb{#CB7E75} on
 black; green \verb{#5CAB5E}, \verb{#9AE29B} on black); the y title stands above the
 axis, horizontal, as in character mode; the axes take the short labels of
 the margin variants; and the characters the font lacks are typed out
@@ -120,7 +120,7 @@ are measured in the font, so they move to fit it. C64 Pro Mono is not part
 of the package (free to use, not to redistribute:
 \url{https://style64.org/c64-truetype}); it is used when 'systemfonts' reports
 it. Without it the set falls back, as \code{\link[=char_figure]{char_figure()}} does, to
-\code{figure_font("mono")}, at the Plex sizes, with the same colors, layout
+\code{figure_font("mono")}, at the Plex sizes, with the same colours, layout
 and plain characters.
 }
 \examples{

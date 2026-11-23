@@ -1,6 +1,6 @@
 ---
 title: "Comparison families, adjusted p-values and plot annotations"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Comparison families, adjusted p-values and plot annotations}

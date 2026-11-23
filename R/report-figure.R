@@ -13,7 +13,7 @@
 #' 2. [scale_colour_ink()], [scale_linetype_figure()], [scale_shape_figure()]
 #'    and [scale_fill_hatch()];
 #' 3. unless `points = "none"`, the raw observations as open circles in the
-#'    ink color (`geom_point(shape = 1, colour = "black", size = 1.2)` in
+#'    ink colour (`geom_point(shape = 1, colour = "black", size = 1.2)` in
 #'    light mode), jittered
 #'    horizontally with `position_jitter(width = 0.08, height = 0, seed = 1)`
 #'    for `points = "jitter"` (meant for a discrete x; the fixed seed keeps the

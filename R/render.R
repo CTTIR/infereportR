@@ -131,7 +131,7 @@
 #'   `"xelatex"`.
 #' @param quiet If `TRUE` (default), the LaTeX output is captured instead of
 #'   shown.
-#' @return The normalized path of the PDF file.
+#' @return The normalised path of the PDF file.
 #' @seealso [save_deck()], [save_document()]
 #' @examples
 #' doc <- figure_document(list(document_text("One paragraph.")), title = "A short note")

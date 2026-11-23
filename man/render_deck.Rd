@@ -22,7 +22,7 @@ render_document(dir, file = "document.tex", engine = NULL, quiet = TRUE)
 shown.}
 }
 \value{
-The normalized path of the PDF file.
+The normalised path of the PDF file.
 }
 \description{
 \code{render_deck()} and \code{render_document()} compile a \code{.tex} file written by

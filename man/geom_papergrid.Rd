@@ -25,7 +25,7 @@ vertical bars) or \code{"x"}.}
 A ggplot2 layer.
 }
 \description{
-Grid lines in the color of the paper, drawn as a layer at the breaks of
+Grid lines in the colour of the paper, drawn as a layer at the breaks of
 the \code{y} (or \code{x}) scale, so that they cut through the bars below them:
 Tufte's grid that appears only where it is needed. \code{theme_figure(grid = "paper")} draws the same grid from the theme, on top of every layer; use
 this layer instead when text, such as labels above the bars, must stay on
@@ -33,7 +33,7 @@ top of the grid: add it after the bars and before the text, and set
 \code{theme_figure(axes = "none")} to drop the axis lines and ticks.
 }
 \details{
-The lines are 0.9 pt wide and have the paper color of \code{mode} (white in
+The lines are 0.9 pt wide and have the paper colour of \code{mode} (white in
 light mode, black in dark mode), also with \code{transparent = TRUE}: they cut
 the bars there too.
 }

@@ -1,6 +1,6 @@
 ---
 title: "Figures: theme, scales, labels and export"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Figures: theme, scales, labels and export}
@@ -40,7 +40,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 5, fig.height
 The figure layer of infereportR is a ggplot2 extension for black-and-white
 figures. This vignette
 covers the parts that do not compute statistics: the theme for papers and
-slides, the scales that replace color, end labels, size presets with export,
+slides, the scales that replace colour, end labels, size presets with export,
 light and dark modes, and the APA audit. The inference layers have their own vignette,
 `vignette("inference-layers", package = "infereportR")`. All examples use data
 sets that ship with R and run offline.
@@ -53,7 +53,7 @@ library(infereportR)
 ## One theme, two targets
 
 `theme_figure()` is a complete ggplot2 theme. It draws all text and lines in
-black on a white background and uses no gray. Every text element resolves to
+black on a white background and uses no grey. Every text element resolves to
 between 8 and 14 pt at the default `base_size = 9`, the range the APA Style page
 on figures asks for. `target = "paper"` is meant for journal figures: one font
 family and 2 mm margins. `target = "slide"` is meant for slides set with the
@@ -86,7 +86,7 @@ session. On this machine:
 figure_font()
 ```
 
-## Scales without color
+## Scales without colour
 
 Groups are told apart by line type, point shape or hatch pattern. The scales
 use fixed sequences and never recycle: more groups than values is an error of
@@ -129,7 +129,7 @@ ggplot(four, aes(diet, weight, fill = diet)) +
 ## End labels instead of a legend
 
 `geom_endlabel()` writes each group's label next to its last point, so lines
-can be identified without a legend or color. The labels sit outside the data,
+can be identified without a legend or colour. The labels sit outside the data,
 so leave room for them: switch clipping off and widen the right margin, or
 expand the x scale.
 
@@ -149,7 +149,7 @@ ggplot(chicks, aes(Time, weight, linetype = Diet, label = Diet)) +
 
 ## Size presets and export
 
-`figure_size()` returns a named size in millimeters. The journal presets are
+`figure_size()` returns a named size in millimetres. The journal presets are
 common single- and double-column widths; APA style prescribes no physical
 width, so check the journal's author guidelines. The slide presets match the
 slots of the Bleisatz frame, whose text width is 134 mm.
@@ -229,10 +229,10 @@ report[, c("check", "source", "status")]
 cat(paste0(report$check, ": ", report$detail)[report$status != "pass"], sep = "\n")
 ```
 
-The gray panel and the hue palette fail `two_values`; the axis labels `wt` and
+The grey panel and the hue palette fail `two_values`; the axis labels `wt` and
 `mpg` give no unit; the title belongs above the figure in the manuscript, not in
 the image; and the legend title starts in lower case. The fixed figure uses
-shapes instead of colors, the figure theme and labels with units, and moves
+shapes instead of colours, the figure theme and labels with units, and moves
 the title out of the image:
 
 ```{r check-good}

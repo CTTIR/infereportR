@@ -102,7 +102,7 @@ row), \code{.ir_result} (the family result) and \code{.ir_result_id}.
 \description{
 Compares x groups pairwise with an explicitly named two-sample procedure
 of 'infercalcR', adjusts the comparison family as declared, and draws one
-bracket per comparison, labeled with display strings of \code{\link[=report_table]{report_table()}}. Each
+bracket per comparison, labelled with display strings of \code{\link[=report_table]{report_table()}}. Each
 panel is its own family, so facets work.
 }
 \details{
@@ -133,7 +133,7 @@ Like every 'ggplot2' stat, the layer computes after the scales have
 transformed the data. With \code{scale_y_log10()} the procedure therefore runs
 on the log10 values, and its estimates, intervals and p-values are those
 of the transformed values, also in \code{\link[=figure_table]{figure_table()}} and
-\code{\link[=inference_results]{inference_results()}}; say so in the caption. To analyze the original
+\code{\link[=inference_results]{inference_results()}}; say so in the caption. To analyse the original
 values and change only the drawing, transform the coordinates instead:
 \code{ggplot2::coord_trans(y = "log10")} (\code{coord_transform()} from 'ggplot2'
 4.0).

@@ -1,6 +1,6 @@
 ---
 title: "Getting started with infereportR"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with infereportR}
@@ -203,7 +203,7 @@ never as nonsignificant. Infinite interval limits stay infinite.
 ## Figures
 
 infereportR also draws figures. Its figure layer extends ggplot2 with a
-black-and-white theme for papers and slides, scales that replace color, direct
+black-and-white theme for papers and slides, scales that replace colour, direct
 labels, size presets and inference layers. The inference layers run an
 explicitly named infercalcR procedure on the plotted data, label the result
 with the same display strings as `report_table()` and keep the result with the

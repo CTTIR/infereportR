@@ -2,7 +2,7 @@
 \alias{report_table}
 \alias{report_text}
 \alias{report_metadata}
-\title{Tables and neutral text from finalized results}
+\title{Tables and neutral text from finalised results}
 \description{Read the shared public result accessors and preserve stored numerical quantities and metadata.}
 \usage{
 report_table(x, rows = NULL, p = c("reported", "raw", "adjusted"),
@@ -14,7 +14,7 @@ report_text(x, rows = NULL, p = c("reported", "raw", "adjusted"),
 report_metadata(x)
 }
 \arguments{
-\item{x}{A finalized result supporting \code{infercalcR::result_data()} and \code{result_metadata()}; for \code{report_metadata}, a reporting output or native import.}
+\item{x}{A finalised result supporting \code{infercalcR::result_data()} and \code{result_metadata()}; for \code{report_metadata}, a reporting output or native import.}
 \item{rows}{Unique stored row IDs to display, or NULL for all.}
 \item{p}{Select stored reported, raw or adjusted p-values. An adjusted request fails if a selected value is absent.}
 \item{digits, p_digits}{Display precision for estimates and p-values.}
@@ -23,7 +23,7 @@ report_metadata(x)
 \item{template}{Optional string containing approved fields in braces: estimate, ci, p, statistic, method, estimand, contrast, status, n. This is substitution only, without evaluation.}
 }
 \value{\code{report_table} returns an ordinary data.frame. Original analytical columns retain full precision, with additional columns ending in \code{_display}, and \code{p_selected}/\code{p_selection}. Metadata is an attribute accessed by \code{report_metadata}. \code{report_text} returns a named character vector with the same metadata.}
-\details{Filtering changes presentation only; metadata retains the entire adjustment family. No test, model, interval or adjustment is recomputed. Full text preserves estimand, orientation, interval method/scale/scope, confidence level, sample size and unavailable status when supplied. It does not assign clinical meaning or infer equivalence from nonsignificance. Numerical optimization bounds are not interpreted as confidence intervals. Stars use thresholds .05, .01, .001 and .0001; missing or unresolved results never acquire stars or \code{ns}. A stored decision conflicting with these display thresholds is shown explicitly. Compact labels for non-ok rows show unavailable status.}
+\details{Filtering changes presentation only; metadata retains the entire adjustment family. No test, model, interval or adjustment is recomputed. Full text preserves estimand, orientation, interval method/scale/scope, confidence level, sample size and unavailable status when supplied. It does not assign clinical meaning or infer equivalence from nonsignificance. Numerical optimisation bounds are not interpreted as confidence intervals. Stars use thresholds .05, .01, .001 and .0001; missing or unresolved results never acquire stars or \code{ns}. A stored decision conflicting with these display thresholds is shown explicitly. Compact labels for non-ok rows show unavailable status.}
 \examples{
 x <- infercalcR::new_inference_result(
   data.frame(row_id = "contrast", estimate = 1.2, conf.low = 0.2,

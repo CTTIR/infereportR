@@ -1,6 +1,6 @@
 ---
 title: "Tufte options: palette, range frames, sparklines and more"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tufte options: palette, range frames, sparklines and more}
@@ -54,20 +54,20 @@ library(infereportR)
 
 `palette` is an argument of `theme_figure()`, of every layer and builder, of
 `report_figure()`, `save_figure_set()` and `check_figure()`. It is resolved
-together with `mode` by one internal resolver, so a figure never names a color.
+together with `mode` by one internal resolver, so a figure never names a colour.
 
-| `palette` | Colors | Use |
+| `palette` | Colours | Use |
 |---|---|---|
-| `"onebit"` (default) | ink, paper | unchanged behavior |
+| `"onebit"` (default) | ink, paper | unchanged behaviour |
 | `"grey"` | ink, paper, one grey `#999999` | context, units, sources, context lines |
 | `"tufte"` | as `"grey"`, plus red and green | red: the first or last value and the one series to watch; green: highs and lows |
 
 Red and green are `#B3202A` and `#2E7D32` on white, `#E5484D` and `#5DB760`
 on black. Tufte used blue for the extremes; Bleisatz keeps to one pair of
-colors. In `"onebit"` the grey is ink drawn as a hairline and red and green
+colours. In `"onebit"` the grey is ink drawn as a hairline and red and green
 fall back to ink, so a figure written for `"tufte"` still reads in two values.
 `scale_colour_palette()` maps levels to these roles, and `check_figure()`
-checks the colors against the palette the figure was drawn in (the row keeps
+checks the colours against the palette the figure was drawn in (the row keeps
 its name `two_values`).
 
 ```{r palette, fig.width = mm(64), fig.height = mm(44), fig.alt = "Three lines of a score over six weeks: a grey line rising for context, a green line with a peak in week four and a red line falling."}
@@ -118,7 +118,7 @@ ggplot(mtcars, aes(wt, mpg)) +
 the lower quartile, another from the upper quartile to the maximum, and a dot
 at the median. The gap is the interquartile range. The five numbers are
 geometry (`stats::quantile()`, type 7) and no number is printed; quartiles
-reported as text come from finalized results through the reporting functions.
+reported as text come from finalised results through the reporting functions.
 
 ```{r quartiles, fig.width = mm(64), fig.height = mm(44), fig.alt = "Quartile plot of dried weight for three groups: a dot for each median, vertical lines for the two outer quarters and a gap for the middle half, with the observations as grey dots beside them."}
 ggplot(PlantGrowth, aes(group, weight)) +
@@ -132,7 +132,7 @@ ggplot(PlantGrowth, aes(group, weight)) +
 
 ## Paper grid
 
-Bars need no frame, no axis line and no ticks: grid lines in the color of the
+Bars need no frame, no axis line and no ticks: grid lines in the colour of the
 paper run through the bars, where a scale is needed. `theme_figure(grid =
 "paper")` draws them from the theme, on top of every layer.
 `geom_papergrid()` draws the same lines as a layer, so text added after it
@@ -196,7 +196,7 @@ sparkline_tex(q$md[q$diet == "Diet 1"], at = unique(q$day), width = "5em",
 ## Context in grey
 
 `stat_context()` draws every unit as a thin line for context and a summary, the
-median by default, in ink on top, separated by a casing in the paper color.
+median by default, in ink on top, separated by a casing in the paper colour.
 Map `group` to the unit and `series` (with `linetype`) to the strata; the
 series named in `highlight` is red with `palette = "tufte"`. In `"onebit"`
 the context lines are ink hairlines.
@@ -238,7 +238,7 @@ and band), `geom_endlabel()` (end labels have no leader line),
 exactly two-valued and looks as it always did. A `colour` given to a layer
 applies to its context too; `line_colour` (brackets), `guide_colour` (ECDF
 guides) and `unit_colour` (paired units) set the context alone, and
-`check_figure()` checks these colors as well.
+`check_figure()` checks these colours as well.
 
 ## Margin slot and ET Book
 

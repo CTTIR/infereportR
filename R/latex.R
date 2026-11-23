@@ -124,8 +124,8 @@
 #' Bleisatz palette commands `\inred{}`, `\ingreen{}` and `\muted{}` around
 #' `x`, which is escaped for LaTeX first. They tie a number in the text to its
 #' mark in a figure: under `palette = "tufte"` red and green are Tufte's
-#' colors, `\muted{}` is the context grey of `palette = "grey"` and
-#' `"tufte"`. Without color in the palette the theme sets `\inred{}` in
+#' colours, `\muted{}` is the context grey of `palette = "grey"` and
+#' `"tufte"`. Without colour in the palette the theme sets `\inred{}` in
 #' italic and `\ingreen{}` in ink, so a text written for the Tufte palette
 #' reads correctly in two values.
 #'

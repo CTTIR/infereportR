@@ -315,7 +315,7 @@
 #' font = "c64")`. As in the C64 set of Bleisatz, every piece of text is set
 #' in C64 Pro Mono, in one weight, at 0.72 times the Plex size (its capitals
 #' are then as tall as those of Plex); the grey, red and green are the VIC-II
-#' colors of the Pepto palette (grey `#959595`; red `#9F4E44`, `#CB7E75` on
+#' colours of the Pepto palette (grey `#959595`; red `#9F4E44`, `#CB7E75` on
 #' black; green `#5CAB5E`, `#9AE29B` on black); the y title stands above the
 #' axis, horizontal, as in character mode; the axes take the short labels of
 #' the margin variants; and the characters the font lacks are typed out
@@ -324,7 +324,7 @@
 #' of the package (free to use, not to redistribute:
 #' <https://style64.org/c64-truetype>); it is used when 'systemfonts' reports
 #' it. Without it the set falls back, as [char_figure()] does, to
-#' `figure_font("mono")`, at the Plex sizes, with the same colors, layout
+#' `figure_font("mono")`, at the Plex sizes, with the same colours, layout
 #' and plain characters.
 #'
 #' @param dir Directory that holds the mode folders; a temporary directory by

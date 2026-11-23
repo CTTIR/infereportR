@@ -1,6 +1,6 @@
 ---
 title: "Inference layers"
-author: "Raban Heller"
+author: "R. Heller"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Inference layers}

@@ -39,7 +39,7 @@ patients when the plot shows a sample).}
 \item{highlight}{\code{NULL} (default) or values of \code{series} whose summary is
 drawn in red (\code{palette = "tufte"}).}
 
-\item{casing}{If \code{TRUE} (default), draw a 2.6 pt line in the paper color
+\item{casing}{If \code{TRUE} (default), draw a 2.6 pt line in the paper colour
 under each summary (not in transparent modes).}
 
 \item{context_linetype}{Line type of the context lines, \code{"solid"} by
@@ -57,10 +57,10 @@ A ggplot2 layer.
 \description{
 Tufte's context grey. Every unit (patient, subject, region) is drawn as a
 thin line for context, and a summary of them, the median by default, is
-drawn in ink on top, separated from the context by a casing in the color
+drawn in ink on top, separated from the context by a casing in the colour
 of the paper. Map \code{group} to the unit; map \code{series} to draw one summary
 per series (for example per stratum), and map \code{linetype} to the same
-variable to tell the summaries apart without color.
+variable to tell the summaries apart without colour.
 }
 \details{
 The context lines are \verb{#999999}, 0.3 pt, with \code{palette = "grey"} or

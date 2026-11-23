@@ -23,8 +23,8 @@ A single string of LaTeX.
 Bleisatz palette commands \verb{\\inred\{\}}, \verb{\\ingreen\{\}} and \verb{\\muted\{\}} around
 \code{x}, which is escaped for LaTeX first. They tie a number in the text to its
 mark in a figure: under \code{palette = "tufte"} red and green are Tufte's
-colors, \verb{\\muted\{\}} is the context grey of \code{palette = "grey"} and
-\code{"tufte"}. Without color in the palette the theme sets \verb{\\inred\{\}} in
+colours, \verb{\\muted\{\}} is the context grey of \code{palette = "grey"} and
+\code{"tufte"}. Without colour in the palette the theme sets \verb{\\inred\{\}} in
 italic and \verb{\\ingreen\{\}} in ink, so a text written for the Tufte palette
 reads correctly in two values.
 }

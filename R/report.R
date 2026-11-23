@@ -1,4 +1,4 @@
-#' Tabulate finalized inference values
+#' Tabulate finalised inference values
 #' @noRd
 #' @export
 report_table <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),
@@ -31,7 +31,7 @@ report_metadata <- function(x) {
   if (is.null(metadata)) .ir_abort("object has no reporting metadata")
   metadata
 }
-#' Render deterministic neutral text from finalized results
+#' Render deterministic neutral text from finalised results
 #' @noRd
 #' @export
 report_text <- function(x, rows = NULL, p = c("reported", "raw", "adjusted"),

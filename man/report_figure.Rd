@@ -87,7 +87,7 @@ The list holds, in this order:
 \item \code{\link[=scale_colour_ink]{scale_colour_ink()}}, \code{\link[=scale_linetype_figure]{scale_linetype_figure()}}, \code{\link[=scale_shape_figure]{scale_shape_figure()}}
 and \code{\link[=scale_fill_hatch]{scale_fill_hatch()}};
 \item unless \code{points = "none"}, the raw observations as open circles in the
-ink color (\code{geom_point(shape = 1, colour = "black", size = 1.2)} in
+ink colour (\code{geom_point(shape = 1, colour = "black", size = 1.2)} in
 light mode), jittered
 horizontally with \code{position_jitter(width = 0.08, height = 0, seed = 1)}
 for \code{points = "jitter"} (meant for a discrete x; the fixed seed keeps the
