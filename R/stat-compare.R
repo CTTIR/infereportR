@@ -166,6 +166,16 @@ StatCompare <- ggplot2::ggproto("StatCompare", ggplot2::Stat,
 #' is never clipped; it is marked `headroom = TRUE` in the layer data and not
 #' drawn.
 #'
+#' @section Transformed scales:
+#' Like every 'ggplot2' stat, the layer computes after the scales have
+#' transformed the data. With `scale_y_log10()` the procedure therefore runs
+#' on the log10 values, and its estimates, intervals and p-values are those
+#' of the transformed values, also in [figure_table()] and
+#' [inference_results()]; say so in the caption. To analyse the original
+#' values and change only the drawing, transform the coordinates instead:
+#' `ggplot2::coord_trans(y = "log10")` (`coord_transform()` from 'ggplot2'
+#' 4.0).
+#'
 #' @param mapping,data,inherit.aes As in [ggplot2::layer()].
 #' @param ... Further parameters passed to the geom, such as `linewidth`.
 #' @param method The 'infercalcR' method id, one of

@@ -191,3 +191,24 @@ test_that("headroom sets the invisible row in steps above the top bracket", {
   expect_error(stat_compare(method = welch, adjust = "holm", headroom = NA),
                class = "infereportR_invalid_input")
 })
+
+test_that("a scale transformation changes the analysed values, a coordinate transformation does not", {
+  plot <- base_plot() + stat_compare(method = welch, reference = "ctrl", adjust = "holm")
+  raw <- figure_table(plot)
+  spec <- infercalcR::method_spec(welch)
+  on_log <- infercalcR::result_data(infercalcR::run_inference(
+    spec, x = log10(pg_values("trt1")), y = log10(pg_values("ctrl")), result_id = "log"))
+  logged <- figure_table(plot + ggplot2::scale_y_log10())
+  expect_equal(logged$estimate[[1]], on_log$estimate[[1]])
+  expect_equal(logged$p.value[[1]], on_log$p.value[[1]])
+  expect_false(isTRUE(all.equal(logged$p.value, raw$p.value)))
+  ns <- asNamespace("ggplot2")
+  coord <- if (exists("coord_transform", envir = ns, inherits = FALSE)) {
+    get("coord_transform", envir = ns)(y = "log10")
+  } else {
+    ggplot2::coord_trans(y = "log10")
+  }
+  kept <- figure_table(plot + coord)
+  expect_equal(kept$estimate, raw$estimate)
+  expect_equal(kept$p.value, raw$p.value)
+})

@@ -184,6 +184,7 @@ GeomPaired <- ggplot2::ggproto("GeomPaired", ggplot2::Geom,
 #' the panel: add `coord_cartesian(clip = "off")` and a right plot margin
 #' (about 21 mm at 8 pt for a unit such as "mmol/l").
 #'
+#' @inheritSection stat_compare Transformed scales
 #' @param mapping,data,inherit.aes As in [ggplot2::layer()]. `id` is a
 #'   required aesthetic.
 #' @param ... Further parameters passed to the geom, such as `stroke`.

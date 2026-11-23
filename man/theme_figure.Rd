@@ -80,7 +80,12 @@ slots, and sets the axis titles in IBM Plex Sans Condensed when
 
 The theme only styles non-data elements. In 'ggplot2' versions with a
 \code{geom} theme element, its ink, paper and accent are also set to the mode's
-ink and background so that default geom colors stay black and white.
+ink and background so that default geom colors stay black and white. One
+default is left to 'ggplot2': the default fill of bars and areas
+(\code{geom_col()}, \code{geom_bar()}, \code{geom_histogram()}, \code{geom_area()}) is a dark
+grey (in 'ggplot2' 4.x a mix of ink and paper), which \code{\link[=check_figure]{check_figure()}}
+reports under \code{two_values}. Set \code{fill}, or map it and add
+\code{\link[=scale_fill_hatch]{scale_fill_hatch()}}.
 
 \strong{Modes.} \code{mode = "light"} (default) draws black ink on white paper,
 \code{mode = "dark"} white ink on black, for dark Bleisatz slides

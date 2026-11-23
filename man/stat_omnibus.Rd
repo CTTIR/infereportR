@@ -70,6 +70,18 @@ display string for them and the figure layer does not format numbers itself. The
 full result, including \code{df} and \code{df.denominator}, is available from
 \code{\link[=inference_results]{inference_results()}}. Rows with non-finite x or y are dropped first.
 }
+\section{Transformed scales}{
+
+Like every 'ggplot2' stat, the layer computes after the scales have
+transformed the data. With \code{scale_y_log10()} the procedure therefore runs
+on the log10 values, and its estimates, intervals and p-values are those
+of the transformed values, also in \code{\link[=figure_table]{figure_table()}} and
+\code{\link[=inference_results]{inference_results()}}; say so in the caption. To analyse the original
+values and change only the drawing, transform the coordinates instead:
+\code{ggplot2::coord_trans(y = "log10")} (\code{coord_transform()} from 'ggplot2'
+4.0).
+}
+
 \examples{
 library(ggplot2)
 ggplot(PlantGrowth, aes(group, weight)) +

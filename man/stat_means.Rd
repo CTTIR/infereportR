@@ -67,6 +67,12 @@ as a test; labels, when requested, are display strings of \code{\link[=report_ta
 panel is its own analysis, so facets work.
 }
 \details{
+The procedure needs a null value and is run with \code{mu0 = 0}. The statistic
+and p-value stored in each result, and listed by \code{\link[=figure_table]{figure_table()}} and
+\code{\link[=inference_results]{inference_results()}}, therefore test the mean against zero. The layer
+never draws them; report them only when zero is a meaningful null for the
+measured quantity.
+
 With the default \code{"pointrange"} geom the mean is a filled point (2.1 mm)
 and the interval a 1.1 pt line; \code{size}, \code{linewidth}, \code{shape} and \code{stroke}
 passed in \code{...} (or mapped) take precedence. On a discrete x scale,
@@ -79,6 +85,18 @@ for drawing. A group with fewer than two observations has no interval:
 its row is kept with the status reported by 'infercalcR' and nothing is
 drawn for the missing interval.
 }
+\section{Transformed scales}{
+
+Like every 'ggplot2' stat, the layer computes after the scales have
+transformed the data. With \code{scale_y_log10()} the procedure therefore runs
+on the log10 values, and its estimates, intervals and p-values are those
+of the transformed values, also in \code{\link[=figure_table]{figure_table()}} and
+\code{\link[=inference_results]{inference_results()}}; say so in the caption. To analyse the original
+values and change only the drawing, transform the coordinates instead:
+\code{ggplot2::coord_trans(y = "log10")} (\code{coord_transform()} from 'ggplot2'
+4.0).
+}
+
 \examples{
 library(ggplot2)
 ggplot(PlantGrowth, aes(group, weight)) +

@@ -40,8 +40,9 @@ the bars there too.
 \examples{
 library(ggplot2)
 d <- data.frame(group = c("A", "B", "C"), pct = c(12, 21, 30))
+# The fill is set: the default bar fill of ggplot2 is a dark grey.
 p <- ggplot(d, aes(group, pct)) +
-  geom_col(width = 0.5) +
+  geom_col(width = 0.5, fill = "black") +
   geom_papergrid() +
   geom_text(aes(label = group), vjust = -0.5, size = 3) +
   scale_y_continuous(breaks = c(10, 20, 30), labels = c("10\%", "20\%", "30\%")) +

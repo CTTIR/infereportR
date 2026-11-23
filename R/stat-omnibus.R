@@ -72,6 +72,7 @@ GeomOmnibusText <- ggplot2::ggproto("GeomOmnibusText", ggplot2::GeomText,
 #' full result, including `df` and `df.denominator`, is available from
 #' [inference_results()]. Rows with non-finite x or y are dropped first.
 #'
+#' @inheritSection stat_compare Transformed scales
 #' @param mapping,data,inherit.aes As in [ggplot2::layer()].
 #' @param ... Further parameters passed to [ggplot2::geom_text()].
 #' @param method The 'infercalcR' method id, one of `"anova_one_way"`,

@@ -27,7 +27,12 @@
 #'
 #' The theme only styles non-data elements. In 'ggplot2' versions with a
 #' `geom` theme element, its ink, paper and accent are also set to the mode's
-#' ink and background so that default geom colors stay black and white.
+#' ink and background so that default geom colors stay black and white. One
+#' default is left to 'ggplot2': the default fill of bars and areas
+#' (`geom_col()`, `geom_bar()`, `geom_histogram()`, `geom_area()`) is a dark
+#' grey (in 'ggplot2' 4.x a mix of ink and paper), which [check_figure()]
+#' reports under `two_values`. Set `fill`, or map it and add
+#' [scale_fill_hatch()].
 #'
 #' **Modes.** `mode = "light"` (default) draws black ink on white paper,
 #' `mode = "dark"` white ink on black, for dark Bleisatz slides

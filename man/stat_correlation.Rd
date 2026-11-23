@@ -42,7 +42,9 @@ the level of the fitted band.}
 \code{\link[infercalcR:run_inference]{infercalcR::run_inference()}}. The data arguments are set by the layer.}
 
 \item{label_x, label_y}{Label position in data units; \code{-Inf}/\code{Inf} mean the
-panel edges (top left by default).}
+panel edges (top left by default). The label is not moved away from the
+data: for a negative association, where the points fill the top left,
+put it top right with \verb{label_x = Inf, hjust = 1}.}
 
 \item{hjust, vjust}{Label justification.}
 
@@ -100,17 +102,32 @@ pointwise confidence band from \code{\link[infercalcR:predict_inference]{inferca
 the fit declares that each row is an independent unit. The line is never
 fitted with \code{\link[stats:lm]{stats::lm()}} directly.
 }
+\section{Transformed scales}{
+
+Like every 'ggplot2' stat, the layer computes after the scales have
+transformed the data. With \code{scale_y_log10()} the procedure therefore runs
+on the log10 values, and its estimates, intervals and p-values are those
+of the transformed values, also in \code{\link[=figure_table]{figure_table()}} and
+\code{\link[=inference_results]{inference_results()}}; say so in the caption. To analyse the original
+values and change only the drawing, transform the coordinates instead:
+\code{ggplot2::coord_trans(y = "log10")} (\code{coord_transform()} from 'ggplot2'
+4.0).
+}
+
 \examples{
 library(ggplot2)
+# A negative association leaves the top right free for the label.
 ggplot(mtcars, aes(wt, mpg)) +
   geom_point(shape = 1) +
-  stat_correlation(method = "correlation_pearson", fit = TRUE)
+  stat_correlation(method = "correlation_pearson", fit = TRUE,
+                   label_x = Inf, hjust = 1)
 
 \donttest{
 # Two lines with the number of pairs.
 ggplot(mtcars, aes(wt, mpg)) +
   geom_point(shape = 1) +
-  stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n")
+  stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n",
+                   label_x = Inf, hjust = 1)
 }
 }
 \seealso{

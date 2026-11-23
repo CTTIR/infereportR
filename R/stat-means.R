@@ -103,6 +103,12 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' as a test; labels, when requested, are display strings of [report_table()]. Each
 #' panel is its own analysis, so facets work.
 #'
+#' The procedure needs a null value and is run with `mu0 = 0`. The statistic
+#' and p-value stored in each result, and listed by [figure_table()] and
+#' [inference_results()], therefore test the mean against zero. The layer
+#' never draws them; report them only when zero is a meaningful null for the
+#' measured quantity.
+#'
 #' With the default `"pointrange"` geom the mean is a filled point (2.1 mm)
 #' and the interval a 1.1 pt line; `size`, `linewidth`, `shape` and `stroke`
 #' passed in `...` (or mapped) take precedence. On a discrete x scale,
@@ -115,6 +121,7 @@ StatMeans <- ggplot2::ggproto("StatMeans", ggplot2::Stat,
 #' its row is kept with the status reported by 'infercalcR' and nothing is
 #' drawn for the missing interval.
 #'
+#' @inheritSection stat_compare Transformed scales
 #' @param mapping,data,position,show.legend,inherit.aes As in
 #'   [ggplot2::layer()].
 #' @param geom The geom used to draw the means; `"pointrange"` by default.

@@ -147,6 +147,7 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' the fit declares that each row is an independent unit. The line is never
 #' fitted with [stats::lm()] directly.
 #'
+#' @inheritSection stat_compare Transformed scales
 #' @param mapping,data,inherit.aes As in [ggplot2::layer()].
 #' @param ... Further parameters passed to [ggplot2::geom_text()].
 #' @param method The 'infercalcR' method id, one of `"correlation_pearson"`,
@@ -157,7 +158,9 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' @param method_args A named list of further arguments for
 #'   [infercalcR::run_inference()]. The data arguments are set by the layer.
 #' @param label_x,label_y Label position in data units; `-Inf`/`Inf` mean the
-#'   panel edges (top left by default).
+#'   panel edges (top left by default). The label is not moved away from the
+#'   data: for a negative association, where the points fill the top left,
+#'   put it top right with `label_x = Inf, hjust = 1`.
 #' @param hjust,vjust Label justification.
 #' @param label `"estimate_ci_p"` (default) writes one line, symbol, estimate,
 #'   interval and p; `"estimate_ci_p_n"` writes two lines, symbol, estimate
@@ -179,15 +182,18 @@ StatCorrelationFit <- ggplot2::ggproto("StatCorrelationFit", ggplot2::Stat,
 #' @seealso [stat_compare()], [inference_results()]
 #' @examples
 #' library(ggplot2)
+#' # A negative association leaves the top right free for the label.
 #' ggplot(mtcars, aes(wt, mpg)) +
 #'   geom_point(shape = 1) +
-#'   stat_correlation(method = "correlation_pearson", fit = TRUE)
+#'   stat_correlation(method = "correlation_pearson", fit = TRUE,
+#'                    label_x = Inf, hjust = 1)
 #'
 #' \donttest{
 #' # Two lines with the number of pairs.
 #' ggplot(mtcars, aes(wt, mpg)) +
 #'   geom_point(shape = 1) +
-#'   stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n")
+#'   stat_correlation(method = "correlation_pearson", label = "estimate_ci_p_n",
+#'                    label_x = Inf, hjust = 1)
 #' }
 #' @export
 stat_correlation <- function(mapping = NULL, data = NULL, ..., method, alternative = NULL,
