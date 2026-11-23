@@ -71,6 +71,30 @@
   its captions.
 * New vignette "Tufte options".
 
+## Fixes and documentation
+
+* `format_interval()` returns `character(0)` for endpoints of length zero; it
+  returned the single string `"[, ]"`.
+* `save_figure()` checks that the directory of `file` exists and raises
+  `infereportR_invalid_input` when it does not; the error came unclassed from
+  'ggplot2' before. No directory is created, as before.
+* The warning of `stat_inference(unavailable = "warn")` has the classes
+  `infereportR_unavailable_inference` and `infereportR_warning`; its message
+  is unchanged.
+* `stat_means()` documents that the procedure runs with `mu0 = 0`, so the
+  statistic and p-value listed by `figure_table()` test the mean against zero.
+* The inference layers document that a scale transformation such as
+  `scale_y_log10()` changes the analysed values, while a coordinate
+  transformation changes only the drawing.
+* `theme_figure()` documents that the default fill of bars and areas stays
+  the dark grey of 'ggplot2', which `check_figure()` reports; the
+  `geom_papergrid()` example sets the fill.
+* The examples of `stat_correlation()` and `stat_inference()` no longer draw
+  the label over data points or clip it at the panel edge;
+  `stat_correlation()` documents how to move the label.
+* DESCRIPTION names the repository of 'infercalcR' in
+  `Additional_repositories`; `CITATION.cff` carries version 0.3.0.
+
 # infereportR 0.2.0
 
 ## The figure layer joins infereportR
