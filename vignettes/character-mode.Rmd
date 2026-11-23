@@ -54,7 +54,7 @@ library(infereportR)
 layers into a character matrix. The output is deterministic: the same plot
 and arguments always give the same grid.
 
-```{r grid, comment = ""}
+```{r grid, comment = "", collapse = FALSE}
 chicks <- aggregate(weight ~ Time, data = ChickWeight, FUN = mean)
 p <- ggplot(chicks, aes(Time, weight)) +
   geom_line() +
@@ -82,7 +82,7 @@ Series are told apart by glyph, never by color. The key comes from the first
 discrete scale among `fill`, `colour`, `shape` and `linetype` with at least two
 breaks, and the legend under the grid shows each series' glyph:
 
-```{r series, comment = ""}
+```{r series, comment = "", collapse = FALSE}
 diets <- aggregate(weight ~ Diet + Time, data = ChickWeight, FUN = mean,
                    subset = Diet %in% c("1", "4"))
 q <- ggplot(diets, aes(Time, weight, linetype = Diet)) +
@@ -100,7 +100,7 @@ and ordered by the series' last value, highest on top. Two labels never share
 a row: the lower one moves down. The plot area gives up the columns the labels
 need, and the legend is left out, since the end labels name the same series.
 
-```{r endlabels, comment = ""}
+```{r endlabels, comment = "", collapse = FALSE}
 labeled <- transform(diets, Diet = paste("Diet", Diet))
 e <- ggplot(labeled, aes(Time, weight, shape = Diet, label = Diet)) +
   geom_line(aes(group = Diet)) +
@@ -122,7 +122,7 @@ With `"ascii"`, every string is transliterated to ASCII as well: `≥` becomes
 dash `--`, `µ` `u` and `ρ` `rho`. Any other non-ASCII character becomes `?`,
 with one warning of class `infereportR_transliterated`.
 
-```{r unicode, comment = ""}
+```{r unicode, comment = "", collapse = FALSE}
 tooth <- aggregate(len ~ dose, data = ToothGrowth, FUN = mean)
 bars <- ggplot(tooth, aes(factor(dose), len)) +
   geom_col(width = 0.5) +
