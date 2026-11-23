@@ -254,7 +254,7 @@ test_that("save_deck() writes a deck without figures as .tex and theme only", {
 test_that("document figures without a name are named after their caption", {
   doc <- figure_document(list(
     document_figure(deck_plot, caption = "Weight by group"),
-    document_figure(deck_plot, layout = "full", caption = "Weight again, ≥ 4 g")
+    document_figure(deck_plot, layout = "full", caption = "Weight again, \u2265 4 g")
   ), title = "D")
   tex <- .ir_document_tex(doc)
   expect_true(any(grepl("^\\\\sidefigure\\{01-weight-by-group\\}", tex)))

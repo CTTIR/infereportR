@@ -95,10 +95,16 @@ figure_font <- function(type = c("sans", "mono", "etbb"), reset = FALSE) {
 # In-plot label size in points in the current type.
 .ir_label_pt <- function() .ir_label_size_pt * .ir_type()$scale
 
-# Text the C64 type cannot set: every character it lacks typed out.
+# Text the C64 type cannot set: every character it lacks typed out. Matched
+# by code point, so it works in a C locale too.
 .ir_c64_text <- function(x) {
-  for (i in seq_along(.ir_c64_glyphs)) {
-    x <- gsub(.ir_c64_glyphs[[i]], .ir_c64_typed[[i]], x, fixed = TRUE)
-  }
-  x
+  vapply(x, function(s) {
+    cp <- if (is.na(s)) NA_integer_ else utf8ToInt(enc2utf8(s))
+    if (anyNA(cp)) return(s)
+    hit <- match(cp, .ir_c64_glyphs)
+    if (all(is.na(hit))) return(s)
+    parts <- intToUtf8(cp, multiple = TRUE)
+    parts[!is.na(hit)] <- .ir_c64_typed[hit[!is.na(hit)]]
+    paste(parts, collapse = "")
+  }, character(1L), USE.NAMES = FALSE)
 }

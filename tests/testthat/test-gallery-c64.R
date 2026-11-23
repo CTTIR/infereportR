@@ -39,12 +39,12 @@ test_that("the C64 type sets family, sizes and colors and is restored afterwards
     expect_identical(dark$grey, "#959595")
     expect_identical(dark$red, dark$ink)
     expect_identical(.ir_mode("dark", palette = "tufte")$green, "#9AE29B")
-    expect_identical(.ir_tufte_show(c("ISS 16-24", "ISS ≥ 25")),
+    expect_identical(.ir_tufte_show(c("ISS 16-24", "ISS \u2265 25")),
                      c("ISS 16-24", "ISS >= 25"))
   })
   expect_false(.ir_type_c64())
   expect_identical(.ir_mode("light", palette = "tufte")$red, "#B3202A")
-  expect_identical(.ir_tufte_show("ISS 16-24"), "ISS 16–24")
+  expect_identical(.ir_tufte_show("ISS 16-24"), "ISS 16\u201324")
   expect_equal(.ir_label_pt(), 8)
   # restored after an error as well
   expect_error(.ir_with_type("c64", stop("boom")), "boom")
@@ -63,7 +63,7 @@ test_that("without C64 Pro Mono the type falls back to the mono family at Plex s
 })
 
 test_that(".ir_c64_text() types out every character the font lacks", {
-  x <- "a ≥ b ≤ c ± d × e − f – g — h · i …"
+  x <- "a \u2265 b \u2264 c \u00b1 d \u00d7 e \u2212 f \u2013 g \u2014 h \u00b7 i \u2026"
   expect_identical(.ir_c64_text(x), "a >= b <= c +/- d x e - f - g -- h / i ...")
   expect_identical(.ir_c64_text(character()), character())
 })
@@ -181,4 +181,8 @@ test_that("a C64 Tufte deck draws its figures in the C64 type into figures/c64/t
   figure_gallery_deck(withr::local_tempdir(), set = "tufte", figure_modes = "light")
   expect_true(length(seen) > 0)
   expect_false(any(seen))
+})
+
+test_that(".ir_c64_text() keeps missing values and plain strings", {
+  expect_identical(.ir_c64_text(c(NA, "ISS 16-24", "")), c(NA, "ISS 16-24", ""))
 })
