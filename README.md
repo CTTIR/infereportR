@@ -35,13 +35,14 @@ remotes::install_github("CTTIR/infercalcR")
 remotes::install_github("CTTIR/infereportR", build_vignettes = TRUE)
 ```
 
-The documentation site, with the reference and seven vignettes, is at
+The documentation site, with the reference and nine vignettes, is at
 <https://cttir.github.io/infereportR/>. Start with "Getting started with
 infereportR"; "Comparison families, adjusted p-values and plot annotations"
 and "Descriptive tables" cover the remaining reporting features. For figures,
 "Figures: theme, scales, labels and export" covers the theme, scales, labels,
-modes, export and the APA check; "Inference layers", "Character mode" and
-"The figure gallery" cover the rest.
+modes, export and the APA check; "Inference layers", "Character mode",
+"The figure gallery" and "Tufte options" cover the rest of the figure layer,
+and "Slides and documents" covers Bleisatz decks and papers.
 
 ## Tables and text
 
