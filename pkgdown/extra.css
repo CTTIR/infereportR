@@ -4,3 +4,12 @@
 .template-home .cttir-readme-logo {
   display: none;
 }
+
+/* The figures are black and white by design, and the articles show light and
+   dark versions side by side. The dark-mode inversion of plots that pkgdown
+   applies would swap the two and change the C64 colors, so plots are shown
+   as they were rendered. */
+html[data-bs-theme="dark"] img.r-plt,
+html[data-bs-theme="dark"] pre .r-plt.img img {
+  filter: none;
+}
