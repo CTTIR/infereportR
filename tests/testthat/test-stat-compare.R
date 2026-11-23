@@ -232,3 +232,22 @@ test_that("a level missing from one facet skips its pairs in that panel only", {
   expect_identical(sort(unique(as.character(d2$PANEL))), "1")
   expect_no_warning(draws_silently(p))
 })
+
+test_that("an empty level kept by drop = FALSE leaves its pairs out of the family", {
+  d <- pg
+  d$group <- factor(d$group, levels = c(levels(pg$group), "empty"))
+  p <- ggplot2::ggplot(d, ggplot2::aes(group, weight)) + ggplot2::geom_point() +
+    ggplot2::scale_x_discrete(drop = FALSE) +
+    stat_compare(method = welch, reference = "ctrl", adjust = "holm")
+  res <- inference_results(p)
+  expect_length(res, 1L)
+  rows <- infercalcR::result_data(res[[1]])
+  expect_identical(rows$row_id, c("trt1-ctrl", "trt2-ctrl"))
+  expect_identical(unique(rows$family_size), 2L)
+  # An explicit pair with an empty level draws nothing instead of failing.
+  q <- ggplot2::ggplot(d, ggplot2::aes(group, weight)) + ggplot2::geom_point() +
+    ggplot2::scale_x_discrete(drop = FALSE) +
+    stat_compare(method = welch, comparisons = list(c("ctrl", "empty")))
+  expect_length(inference_results(q), 0L)
+  expect_no_warning(draws_silently(q))
+})
