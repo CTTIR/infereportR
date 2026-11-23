@@ -17,13 +17,13 @@ annotate_inference(plot, x, positions, ...)
 \item{x}{A finalized shared result.}
 \item{positions}{Data.frame with exactly one row per selected row_id and a finite y_position in original data units. Brackets require numeric xmin/xmax or named group1/group2. Text-only annotations use numeric x. Optional type is bracket or text. Omnibus rows require text.}
 \item{rows}{Unique stored row IDs, or NULL for all.}
-\item{label}{Compact display preset.}
+\item{label}{Compact display preset. \code{"stars"} uses the thresholds of \code{\link{report_text}} (\code{*} for p <= .05, \code{**} <= .01, \code{***} <= .001, \code{****} <= .0001, otherwise \code{ns}); \code{\link{stat_compare}} documents its own, stricter star labels.}
 \item{p}{Stored p-value selection. Missing requested adjusted values are an error.}
 \item{groups}{Distinct group labels in the plotted discrete-axis order when named endpoints are used. Supply updated levels after reordering the axis.}
 \item{facet_vars}{Facet column names, which must exist and agree in both positions and stored result rows. Defaults to the result metadata's facet_vars contract, if present.}
 \item{template}{Approved field substitution as in report_text.}
 \item{digits, p_digits, decimal_mark}{Shared display precision and decimal mark.}
-\item{unavailable}{Keep an explicit unavailable label, error, or warn and keep the label.}
+\item{unavailable}{Keep an explicit unavailable label, error, or warn and keep the label. The warning has the classes \code{infereportR_unavailable_inference} and \code{infereportR_warning}.}
 \item{tip_length, label_offset}{Offsets in original y units. Choose positive-scale-compatible coordinates before applying a log scale.}
 \item{text_size, colour, linewidth}{Text and segment appearance.}
 \item{text_hjust, text_vjust}{Text justification. For a horizontal coord_flip path, use -0.1 and 0.5, respectively, and provide adequate scale expansion.}
@@ -43,7 +43,9 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
     list(method_id = "example"))
   d <- data.frame(group = rep(c("A", "B"), each = 3), y = 1:6)
   p <- ggplot2::ggplot(d, ggplot2::aes(group, y)) + ggplot2::geom_point()
+  # Room above the bracket, so that its label is not clipped at the panel edge.
   p + stat_inference(x, data.frame(row_id = "a-b", xmin = 1,
-    xmax = 2, y_position = 7))
+    xmax = 2, y_position = 7)) +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.05, 0.15)))
 }
 }

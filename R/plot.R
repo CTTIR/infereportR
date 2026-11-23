@@ -59,7 +59,7 @@ stat_inference <- function(x, positions, rows = NULL, label = c("p","estimate_ci
   bad <- .ir_unavailable(d) | (label %in% c("p","stars","estimate_ci_p") & is.na(d$p_selected))
   if (any(bad)) {
     if (unavailable=="error") .ir_abort("selected inference includes unavailable or unresolved rows")
-    if (unavailable=="warn") warning("Unavailable inference retained as an explicit annotation.",call.=FALSE)
+    if (unavailable=="warn") .ir_warn("Unavailable inference retained as an explicit annotation.","unavailable_inference")
   }
   layers <- list()
   if (any(bracket)) {

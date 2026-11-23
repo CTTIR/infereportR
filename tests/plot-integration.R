@@ -70,7 +70,8 @@ if (!requireNamespace("ggplot2",quietly=TRUE)) {
   ub <- ggplot_build(unavailableplot)
   stopifnot(grepl("unavailable",ub$data[[3]]$label),!identical(ub$data[[3]]$label,"ns"))
   invalid(stat_inference(missing,subpos,rows="a-b",groups=levels(d$group),unavailable="error"))
-  tools::assertWarning(stat_inference(missing,subpos,rows="a-b",groups=levels(d$group),unavailable="warn"))
+  tools::assertWarning(stat_inference(missing,subpos,rows="a-b",groups=levels(d$group),unavailable="warn"),
+    classes="infereportR_unavailable_inference")
   # Every validation branch of the positions and appearance raises a classed error.
   g <- levels(d$group)
   invalid(stat_inference(x,as.list(subpos),rows="a-b",groups=g))
