@@ -82,18 +82,22 @@ StatEcdfGuides <- ggplot2::ggproto("StatEcdfGuides", ggplot2::Stat,
 #' @export
 GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
   required_aes = c("x", "y"),
+  # guide_colour: the colour of the guide and drop lines and of the guide
+  # label; NA draws them in `colour`, the colour of the curve labels.
   default_aes = ggplot2::aes(colour = .ir_ink, alpha = NA,
                              size = .ir_label_size_pt / ggplot2::.pt, family = "",
-                             guide_family = ""),
+                             guide_family = "", guide_colour = NA),
   draw_key = ggplot2::draw_key_blank,
   draw_panel = function(data, panel_params, coord) {
     if (!nrow(data)) return(grid::nullGrob())
     ink <- ggplot2::alpha(data$colour[1L], data$alpha[1L])
-    hair <- grid::gpar(col = ink, lwd = .ir_rule_hair * 96 / 72.27, lty = "13",
+    guide_colour <- if (is.null(data$guide_colour)) NA else data$guide_colour[1L]
+    guide_ink <- if (is.na(guide_colour)) ink else ggplot2::alpha(guide_colour, data$alpha[1L])
+    hair <- grid::gpar(col = guide_ink, lwd = .ir_rule_hair * 96 / 72.27, lty = "13",
                        lineend = "butt")
-    text_gp <- function(family) {
+    text_gp <- function(family, col = ink) {
       if (is.na(family)) family <- ""
-      grid::gpar(col = ink, fontsize = data$size[1L] * ggplot2::.pt, fontfamily = family)
+      grid::gpar(col = col, fontsize = data$size[1L] * ggplot2::.pt, fontfamily = family)
     }
     t <- coord$transform(data, panel_params)
     zero <- coord$transform(data.frame(x = data$x, y = 0), panel_params)$y
@@ -107,7 +111,7 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
         grobs$guide_label <- grid::textGrob(
           t$label[lab], x = .ir_ecdf_label_offset, y = grid::unit(t$y[lab], "native"),
           hjust = 0, vjust = -0.3, default.units = "npc",
-          gp = text_gp(data$guide_family[1L]))
+          gp = text_gp(data$guide_family[1L], guide_ink))
       }
     }
     drop <- t$part == "drop"
@@ -159,8 +163,10 @@ GeomEcdfGuides <- ggplot2::ggproto("GeomEcdfGuides", ggplot2::Geom,
 #' @param transparent If `TRUE`, the layer draws no background fill (open
 #'   marks stay empty); accepted by every layer of the package.
 #' @param palette `"onebit"` (default), `"grey"` or `"tufte"`, as in
-#'   [theme_figure()]. The layer draws in ink in every palette; the argument
-#'   keeps the interface of the figure layer uniform.
+#'   [theme_figure()]. With `"grey"` and `"tufte"` the guide and drop lines
+#'   and the guide label are context and drawn in grey, the curve labels in
+#'   ink; with `"onebit"` all are ink. A `colour` given in `...` applies to
+#'   all, unless `guide_colour` is given as well.
 #' @return A ggplot2 layer. Its computed data has the columns `x`, `y`,
 #'   `part` (`"guide"`, `"drop"` or `"curve"`), `label` and `hjust`.
 #' @seealso [ggplot2::stat_ecdf()]
@@ -191,12 +197,16 @@ stat_ecdf_guides <- function(mapping = NULL, data = NULL, ..., probs = 0.5,
                                  any(curve_labels >= 1))) {
     .ir_abort("curve_labels must be NULL or proportions strictly between 0 and 1")
   }
-  ink <- .ir_mode(mode, transparent, palette)$ink
+  m <- .ir_mode(mode, transparent, palette)
   dots <- list(...)
   params <- c(list(probs = probs, guide_label = guide_label, curve_labels = curve_labels,
                    family = .ir_sans_family(), guide_family = .ir_condensed_family()),
               dots)
-  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- ink
+  if (!"colour" %in% names(dots) && !"color" %in% names(dots)) params$colour <- m$ink
+  # The guides are context: the palette grey, unless a colour is given.
+  if (!any(c("colour", "color", "guide_colour", "guide_color") %in% names(dots))) {
+    params$guide_colour <- m$grey
+  }
   ggplot2::layer(stat = StatEcdfGuides, data = data, mapping = mapping, geom = GeomEcdfGuides,
                  position = "identity", show.legend = FALSE, inherit.aes = inherit.aes,
                  params = params)

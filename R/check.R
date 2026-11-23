@@ -22,7 +22,9 @@
 #'     serif face (matches "serif", "times", "georgia", "garamond",
 #'     "palatino" or "cambria" but not "sans").}
 #'   \item{`two_values`}{(infereportR) the palette rule. Every `colour` and
-#'     `fill` value in the built layer data, and the colors of drawn theme
+#'     `fill` value in the built layer data (also of columns such as
+#'     `line_colour`, the second colors of the brackets, guides and unit
+#'     lines), and the colors of drawn theme
 #'     lines, rectangles and text, is a color of `palette`, `NA`, fully
 #'     transparent or a grid pattern. With the default `palette = "onebit"`
 #'     the colors are black and white only, the two values of the figure
@@ -295,7 +297,8 @@ check_figure <- function(plot, target = c("paper", "slide"), palette = "onebit")
   offenders <- character()
   for (i in seq_along(b$data)) {
     d <- b$data[[i]]
-    for (column in intersect(c("colour", "fill"), names(d))) {
+    columns <- names(d)[grepl("^(colour|fill)$|_(colour|fill)$", names(d))]
+    for (column in columns) {
       off <- .ir_off_colours(d[[column]], allowed)
       if (length(off)) {
         offenders <- c(offenders, sprintf("layer %d %s %s", i, column,

@@ -52,6 +52,14 @@
   come from the one mode resolver; red and green are lighter in dark mode.
 * `scale_colour_palette()` maps levels to the palette roles ink, grey, red,
   green and paper.
+* With `palette = "grey"` or `"tufte"` the context parts of the older layers
+  are grey: the bracket of `stat_compare()` (bar and tips; the label stays
+  ink), the guide and drop lines and the guide label of `stat_ecdf_guides()`,
+  and the unit lines and points of `stat_paired()`. With `"onebit"` they stay
+  ink and the figures are unchanged. The new aesthetics `line_colour`,
+  `guide_colour` and `unit_colour` set these parts alone, and the palette
+  rule of `check_figure()` checks them. The vignette "Tufte options" states
+  the rule for every layer.
 * New Tufte figure types: `geom_rangeframe()` and
   `theme_figure(axes = "range")` (range frames), `geom_dotdash()` (dot-dash
   axes), `stat_quartiles()` (quartile plot), `theme_figure(grid = "paper")`

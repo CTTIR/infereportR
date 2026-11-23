@@ -49,8 +49,10 @@ the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 marks stay empty); accepted by every layer of the package.}
 
 \item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
-\code{\link[=theme_figure]{theme_figure()}}. The layer draws in ink in every palette; the argument
-keeps the interface of the figure layer uniform.}
+\code{\link[=theme_figure]{theme_figure()}}. With \code{"grey"} and \code{"tufte"} the unit lines and their
+points are context and drawn in grey, the means and the label in ink;
+with \code{"onebit"} all are ink. A \code{colour} given in \code{...} applies to all,
+unless \code{unit_colour} is given as well.}
 
 \item{na.rm}{Kept for the layer interface; incomplete pairs are always
 dropped.}

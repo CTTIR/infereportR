@@ -46,7 +46,9 @@ every text label layer (\code{\link[ggplot2:geom_text]{ggplot2::geom_text()}},
 serif face (matches "serif", "times", "georgia", "garamond",
 "palatino" or "cambria" but not "sans").}
 \item{\code{two_values}}{(infereportR) the palette rule. Every \code{colour} and
-\code{fill} value in the built layer data, and the colors of drawn theme
+\code{fill} value in the built layer data (also of columns such as
+\code{line_colour}, the second colors of the brackets, guides and unit
+lines), and the colors of drawn theme
 lines, rectangles and text, is a color of \code{palette}, \code{NA}, fully
 transparent or a grid pattern. With the default \code{palette = "onebit"}
 the colors are black and white only, the two values of the figure

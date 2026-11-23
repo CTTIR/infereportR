@@ -87,8 +87,10 @@ the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 marks stay empty); passed by \code{\link[=report_figure]{report_figure()}} with \code{mode}.}
 
 \item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
-\code{\link[=theme_figure]{theme_figure()}}. The layer draws in ink in every palette; the argument
-keeps the interface of the figure layer uniform.}
+\code{\link[=theme_figure]{theme_figure()}}. With \code{"grey"} and \code{"tufte"} the bracket (bar and tips)
+is context and drawn in grey, the label in ink; with \code{"onebit"} both are
+ink. A \code{colour} given in \code{...} applies to both, unless \code{line_colour} is
+given as well.}
 
 \item{na.rm}{If \code{TRUE}, missing values are removed silently by the geom.}
 }

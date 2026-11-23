@@ -38,8 +38,10 @@ the mode of \code{\link[=theme_figure]{theme_figure()}}.}
 marks stay empty); accepted by every layer of the package.}
 
 \item{palette}{\code{"onebit"} (default), \code{"grey"} or \code{"tufte"}, as in
-\code{\link[=theme_figure]{theme_figure()}}. The layer draws in ink in every palette; the argument
-keeps the interface of the figure layer uniform.}
+\code{\link[=theme_figure]{theme_figure()}}. With \code{"grey"} and \code{"tufte"} the guide and drop lines
+and the guide label are context and drawn in grey, the curve labels in
+ink; with \code{"onebit"} all are ink. A \code{colour} given in \code{...} applies to
+all, unless \code{guide_colour} is given as well.}
 }
 \value{
 A ggplot2 layer. Its computed data has the columns \code{x}, \code{y},
