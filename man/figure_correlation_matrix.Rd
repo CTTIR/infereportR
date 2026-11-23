@@ -26,7 +26,10 @@ every numeric column.}
 
 \item{digits}{Significant digits of the displayed values.}
 
-\item{labels}{Variable labels for the diagonal; \code{vars} by default.}
+\item{labels}{Variable labels for the diagonal; \code{vars} by default. The
+cells are square and the labels are neither shrunk nor wrapped: keep
+them about as short as the cell is wide (at 86 x 44 mm with four
+variables, six characters).}
 
 \item{mode}{\code{"light"} (black on white) or \code{"dark"} (white on black).}
 

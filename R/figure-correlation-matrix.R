@@ -52,7 +52,10 @@
 #'   every numeric column.
 #' @param method The 'infercalcR' method id. Required.
 #' @param digits Significant digits of the displayed values.
-#' @param labels Variable labels for the diagonal; `vars` by default.
+#' @param labels Variable labels for the diagonal; `vars` by default. The
+#'   cells are square and the labels are neither shrunk nor wrapped: keep
+#'   them about as short as the cell is wide (at 86 x 44 mm with four
+#'   variables, six characters).
 #' @param mode `"light"` (black on white) or `"dark"` (white on black).
 #' @param transparent If `TRUE`, no background is drawn.
 #' @param base_size Base font size in points.

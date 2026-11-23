@@ -135,12 +135,14 @@ draws the fitted mean line of infercalcR's linear prediction model
 `infercalcR::predict_inference(interval = "mean")`, as dotted lines without fill.
 The fit treats every row as an independent unit, and the line is never fitted
 with `lm()` directly. With `fit = TRUE` the function returns two layers, which
-`+` adds together.
+`+` adds together. The label stands top left by default; the association is
+negative here, so it is moved to the free top right corner.
 
 ```{r correlation, fig.alt = "Fuel economy against weight for 32 cars, with a solid fitted line, two dotted confidence lines and a label giving Pearson's r, its interval and the p-value."}
 ggplot(mtcars, aes(wt, mpg)) +
   geom_point(shape = 1) +
-  stat_correlation(method = "correlation_pearson", fit = TRUE) +
+  stat_correlation(method = "correlation_pearson", fit = TRUE,
+                   label_x = Inf, hjust = 1) +
   theme_figure() +
   labs(x = "Weight (1000 lb)", y = "Fuel economy (mpg)")
 ```

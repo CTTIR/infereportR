@@ -257,11 +257,13 @@ Polar and other nonlinear coordinates are rejected.
 Positions are always given in the original data units. With
 `scale_y_log10()`, a `y_position` of 100 is drawn at 2 on the log scale,
 transformed exactly once. For horizontal plots, adjust the text justification
-and leave room for the labels:
+and leave room for the labels. A label now stands beside its bracket, so
+the widest bracket moves further out:
 
 ```{r flipped, fig.width = 6, fig.height = 4, fig.alt = "Horizontal box plots of dried plant weight with the three pairwise brackets and their labels to the right of each bracket."}
+positions_flipped <- transform(positions, y_position = c(6.5, 7.7, 6.9))
 pairwise_flipped <- base +
-  stat_inference(family, positions, groups = levels(group), p = "adjusted",
+  stat_inference(family, positions_flipped, groups = levels(group), p = "adjusted",
     tip_length = 0.1, text_hjust = -0.1, text_vjust = 0.5) +
   scale_y_continuous(expand = expansion(mult = c(0.05, 0.25))) +
   coord_flip()

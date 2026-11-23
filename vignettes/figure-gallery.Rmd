@@ -263,14 +263,16 @@ paired("dark")
 The second figure is the correlation matrix of figure 08, here with Pearson
 correlations of four variables of `mtcars`, at the side slot. Circle area
 shows the strength of each correlation, filled for positive and open for
-negative ones; the values are printed in the other triangle.
+negative ones; the values are printed in the other triangle. The cells are
+square and the labels on the diagonal are neither shrunk nor wrapped, so they
+are kept short.
 
 ```{r matrix, fig.show = "hold", out.width = "48%", fig.width = 86 / 25.4, fig.height = 44 / 25.4, dpi = 120, fig.alt = c("Correlation matrix of fuel economy, displacement, horsepower and weight in light mode: circles in one triangle, values in the other, variable names on the diagonal.", "The same correlation matrix in dark mode, white on black.")}
 cars <- mtcars[, c("mpg", "disp", "hp", "wt")]
 
 correlations <- function(mode = "light", transparent = FALSE) {
   figure_correlation_matrix(cars, method = "correlation_pearson",
-                            labels = c("Economy", "Displacement", "Power", "Weight"),
+                            labels = c("MPG", "Displ.", "Power", "Weight"),
                             mode = mode, transparent = transparent)
 }
 correlations("light")
