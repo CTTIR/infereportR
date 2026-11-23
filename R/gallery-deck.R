@@ -51,7 +51,7 @@
     fr <- .ir_gallery_frames[k, ]
     i <- match(fr$name, caps$name)
     if (nzchar(fr$section)) slides <- c(slides, list(section_slide(fr$section)))
-    builder <- .ir_gallery_builders[[i]]
+    builder <- .ir_gallery_builders()[[i]]
     plot <- local({
       b <- builder
       function(mode, transparent) b(data, mode = mode, transparent = transparent)

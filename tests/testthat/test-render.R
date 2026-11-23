@@ -139,3 +139,49 @@ test_that("render_document() compiles the test document with biber", {
   expect_true(file.exists(pdf))
   expect_gte(pdf_pages(pdf), 1)
 })
+
+test_that(".ir_run_tool() captures the output and exit status of a program", {
+  # A shell, not Rscript: an R child process would hide these lines from
+  # coverage tools that trace the package.
+  sh <- Sys.which("sh")
+  skip_if(!nzchar(sh), "no sh on the PATH")
+  res <- .ir_run_tool(sh, c("-c", shQuote("echo compiled; exit 3")))
+  expect_identical(res$status, 3L)
+  expect_true("compiled" %in% res$output)
+  ok <- .ir_run_tool(sh, c("-c", shQuote("echo done")))
+  expect_identical(ok$status, 0L)
+  # quiet = FALSE lets the output through and returns the status alone
+  loud <- .ir_run_tool(sh, c("-c", shQuote("exit 4")), quiet = FALSE)
+  expect_identical(loud$status, 4L)
+  expect_identical(loud$output, character())
+})
+
+test_that("the LaTeX lookups report what the system has", {
+  found <- .ir_which(c("no-such-latex-xyz", "sh"))
+  expect_identical(unname(found[["no-such-latex-xyz"]]), "")
+  expect_identical(unname(found[["sh"]]), unname(Sys.which("sh")))
+  skip_if_not_installed("tinytex")
+  local_mocked_bindings(is_tinytex = function(...) TRUE, .package = "tinytex")
+  expect_true(.ir_tinytex_available())
+  local_mocked_bindings(is_tinytex = function(...) FALSE, .package = "tinytex")
+  expect_false(.ir_tinytex_available())
+})
+
+test_that("TinyTeX compiles with biber for a bibliography and keeps the aux files", {
+  skip_if_not_installed("tinytex")
+  seen <- new.env()
+  local_mocked_bindings(latexmk = function(file, engine, bib_engine, emulation, clean,
+                                           install_packages, ...) {
+    seen$args <- list(file = file, engine = engine, bib_engine = bib_engine,
+                      emulation = emulation, clean = clean,
+                      install_packages = install_packages)
+    sub("tex$", "pdf", file)
+  }, .package = "tinytex")
+  .ir_tinytex_latexmk("document.tex", "lualatex", bib = TRUE, quiet = TRUE)
+  expect_identical(seen$args, list(file = "document.tex", engine = "lualatex",
+                                   bib_engine = "biber", emulation = TRUE, clean = FALSE,
+                                   install_packages = TRUE))
+  .ir_tinytex_latexmk("deck.tex", "pdflatex", bib = FALSE, quiet = TRUE)
+  expect_identical(seen$args$bib_engine, "bibtex")
+  expect_identical(seen$args$engine, "pdflatex")
+})

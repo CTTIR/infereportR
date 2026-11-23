@@ -34,7 +34,7 @@ test_that(".ir_gallery_data() returns the nine simulated tables", {
   expect_identical(nrow(d$pl), 14L)
   expect_identical(d, .ir_gallery_data())
   expect_identical(nrow(.ir_gallery_captions), 12L)
-  expect_length(.ir_gallery_builders, 12L)
+  expect_length(.ir_gallery_builders(), 12L)
 })
 
 test_that("the subgroup names of figure 06 are the real characters in any locale", {
@@ -254,8 +254,8 @@ test_that("every figure passes the two-value audit in every mode except 11 (C64 
   d <- .ir_gallery_data()
   for (folder in .ir_set_modes) {
     args <- .ir_set_mode(folder)
-    for (i in seq_along(.ir_gallery_builders)) {
-      p <- .ir_gallery_builders[[i]](d, mode = args$mode, transparent = args$transparent)
+    for (i in seq_along(.ir_gallery_builders())) {
+      p <- .ir_gallery_builders()[[i]](d, mode = args$mode, transparent = args$transparent)
       chk <- check_figure(p, "slide")
       status <- chk$status[chk$check == "two_values"]
       want <- if (i == 11L) "fail" else "pass"

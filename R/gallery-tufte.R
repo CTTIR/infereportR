@@ -340,7 +340,8 @@
                                                  "mm"))
 }
 
-.ir_tufte_builders <- list(
+# A function for the reason given at .ir_gallery_builders().
+.ir_tufte_builders <- function() list(
   .ir_tufte_13, .ir_tufte_14, .ir_tufte_15, .ir_tufte_16, .ir_tufte_17, .ir_tufte_18,
   .ir_tufte_14, .ir_tufte_15, .ir_tufte_19
 )
@@ -349,7 +350,7 @@
 # current type.
 .ir_tufte_build <- function(i, data, mode = "light", transparent = FALSE, palette = "tufte") {
   narrow <- .ir_tufte_captions$slot[[i]] == "margin"
-  p <- .ir_tufte_builders[[i]](data, mode = mode, transparent = transparent, palette = palette,
+  p <- .ir_tufte_builders()[[i]](data, mode = mode, transparent = transparent, palette = palette,
                                narrow = narrow)
   if (.ir_type_c64()) p <- .ir_c64_finish(p)
   p

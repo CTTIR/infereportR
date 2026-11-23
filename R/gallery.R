@@ -236,7 +236,11 @@
               transparent = transparent)
 }
 
-.ir_gallery_builders <- list(
+# The builders in figure order. A function, so that each builder is looked up
+# when the table is used: a list made when the package is built would hold
+# copies of the functions, which tools that trace the package's functions
+# (coverage) never see called.
+.ir_gallery_builders <- function() list(
   .ir_gallery_01, .ir_gallery_02, .ir_gallery_03, .ir_gallery_04, .ir_gallery_05,
   .ir_gallery_06, .ir_gallery_07, .ir_gallery_08, .ir_gallery_09, .ir_gallery_10,
   .ir_gallery_11, .ir_gallery_12
@@ -376,7 +380,7 @@ figure_gallery <- function(dir = tempdir(),
   data <- .ir_gallery_data()
   if (set == "tufte") return(.ir_with_type(font, .ir_tufte_gallery(data, dir, modes, png, dpi)))
   rows <- lapply(seq_len(nrow(.ir_gallery_captions)), function(i) {
-    builder <- .ir_gallery_builders[[i]]
+    builder <- .ir_gallery_builders()[[i]]
     build <- function(mode, transparent) builder(data, mode = mode, transparent = transparent)
     save_figure_set(build, .ir_gallery_captions$name[[i]],
                     preset = .ir_gallery_presets[[.ir_gallery_captions$slot[[i]]]], dir = dir,

@@ -249,8 +249,8 @@ test_that("every Tufte figure keeps to its palette in every folder", {
   for (folder in .ir_tufte_modes) {
     args <- .ir_set_mode(folder, "tufte")
     allowed <- .ir_palette_colours(args$palette)
-    for (i in seq_along(.ir_tufte_builders)) {
-      p <- .ir_tufte_builders[[i]](d, mode = args$mode, transparent = args$transparent,
+    for (i in seq_along(.ir_tufte_builders())) {
+      p <- .ir_tufte_builders()[[i]](d, mode = args$mode, transparent = args$transparent,
                                    palette = args$palette,
                                    narrow = .ir_tufte_captions$slot[i] == "margin")
       label <- paste(folder, .ir_tufte_captions$name[i])

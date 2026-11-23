@@ -116,3 +116,35 @@ test_that("figure_gallery_deck(set = \"tufte\") writes the deck and the handout"
                                     "15-quartile-plot-margin.pdf"))
   expect_lte(max(abs(mm - c(52, 40))), 25.4 / 72)
 })
+
+test_that("figure_gallery_deck(render = TRUE) compiles the deck, and the handout of the Tufte set", {
+  calls <- character()
+  written <- function(dir, file) data.frame(file = file.path(dir, file), type = "tex")
+  # The files and their compilation are stand-ins: what is tested is the order
+  # of the steps and the PDF paths returned.
+  local_mocked_bindings(
+    save_deck = function(deck, dir, file = "deck.tex", ...) {
+      calls <<- c(calls, paste("save", file))
+      written(dir, file)
+    },
+    save_document = function(doc, dir, file = "document.tex", ...) {
+      calls <<- c(calls, paste("save", file))
+      written(dir, file)
+    },
+    render_deck = function(dir, file = "deck.tex", ...) {
+      calls <<- c(calls, paste("render", file))
+      file.path(dir, sub("tex$", "pdf", file))
+    },
+    render_document = function(dir, file = "document.tex", ...) {
+      calls <<- c(calls, paste("render", file))
+      file.path(dir, sub("tex$", "pdf", file))
+    })
+  dir <- withr::local_tempdir()
+  pdf <- figure_gallery_deck(dir, render = TRUE, figure_modes = c("light", "dark"))
+  expect_identical(basename(pdf), "gallery.pdf")
+  pdfs <- figure_gallery_deck(dir, set = "tufte", render = TRUE, figure_modes = "light")
+  expect_identical(basename(pdfs), c("tufte-deck.pdf", "tufte-handout.pdf"))
+  expect_identical(calls, c("save gallery.tex", "render gallery.tex", "save tufte-deck.tex",
+                            "save tufte-handout.tex", "render tufte-deck.tex",
+                            "render tufte-handout.tex"))
+})
