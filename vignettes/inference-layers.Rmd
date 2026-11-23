@@ -164,9 +164,9 @@ two_line <- ggplot(mtcars, aes(wt, mpg)) +
 cat(layer_data(two_line, 2L)$label, sep = "\n")
 ```
 
-The label layers place their text at the panel edges (`-Inf` and `Inf`). Always
-draw them together with a data layer, such as the points here, so that ggplot2
-has data to train the position scales on.
+The label layers place their text at the panel edges (`-Inf` and `Inf`), 1 mm
+inside the panel. Always draw them together with a data layer, such as the
+points here, so that ggplot2 has data to train the position scales on.
 
 ### Paired designs
 
