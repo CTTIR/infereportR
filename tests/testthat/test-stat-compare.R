@@ -157,11 +157,10 @@ test_that("invalid comparison arguments are rejected", {
 })
 
 test_that("infercalcR failures surface as calculation_failed with a parent", {
-  d <- pg
-  d$group <- factor(d$group, levels = c(levels(pg$group), "empty"))
+  # One observation is too few for the Welch test; infercalcR stops.
+  d <- rbind(pg, data.frame(weight = 5, group = "single"))
   p <- ggplot2::ggplot(d, ggplot2::aes(group, weight)) +
-    ggplot2::scale_x_discrete(drop = FALSE) +
-    stat_compare(method = welch, comparisons = list(c("ctrl", "empty")))
+    stat_compare(method = welch, comparisons = list(c("ctrl", "single")))
   e <- tryCatch(ggplot2::ggplot_build(p), error = function(e) e)
   # ggplot2 reports layer errors with the original condition as parent.
   while (!inherits(e, "infereportR_calculation_failed") && !is.null(e$parent)) e <- e$parent
@@ -211,4 +210,25 @@ test_that("a scale transformation changes the analyzed values, a coordinate tran
   kept <- figure_table(plot + coord)
   expect_equal(kept$estimate, raw$estimate)
   expect_equal(kept$p.value, raw$p.value)
+})
+
+test_that("a level missing from one facet skips its pairs in that panel only", {
+  d <- data.frame(
+    f = rep(c("P", "Q"), each = 9),
+    g = c(rep(c("a", "b", "c"), each = 3), rep(c("a", "b"), c(5, 4))),
+    y = c(1, 2, 4, 3, 5, 6, 6, 8, 9, 2, 3, 5, 4, 6, 5, 7, 8, 9)
+  )
+  p <- ggplot2::ggplot(d, ggplot2::aes(g, y)) + ggplot2::geom_point() +
+    ggplot2::facet_wrap(~f) +
+    stat_compare(method = welch, reference = "a", adjust = "holm")
+  res <- inference_results(p)
+  expect_length(res, 2L)
+  rows <- lapply(res, function(r) infercalcR::result_data(r)$row_id)
+  expect_identical(unname(rows), list(c("b-a", "c-a"), "b-a"))
+  q <- ggplot2::ggplot(d, ggplot2::aes(g, y)) + ggplot2::geom_point() +
+    ggplot2::facet_wrap(~f) +
+    stat_compare(method = welch, comparisons = list(c("a", "c")))
+  d2 <- layer_data_of(q, 2L)
+  expect_identical(sort(unique(as.character(d2$PANEL))), "1")
+  expect_no_warning(draws_silently(p))
 })

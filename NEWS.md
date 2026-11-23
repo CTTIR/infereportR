@@ -73,6 +73,10 @@
 
 ## Fixes and documentation
 
+* `stat_compare()` skips a pair in a panel where one of its levels has no
+  observations, so facets in which a group is missing from one panel draw
+  instead of failing in infercalcR; the family of that panel holds the
+  remaining pairs.
 * `format_interval()` returns `character(0)` for endpoints of length zero; it
   returned the single string `"[, ]"`.
 * `save_figure()` checks that the directory of `file` exists and raises
